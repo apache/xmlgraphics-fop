@@ -350,6 +350,11 @@ public final class FopFactoryBuilder {
         return this;
     }
 
+    public FopFactoryBuilder setSkipPagePositionOnlyAllowed(boolean b) {
+        fopFactoryConfigBuilder.setSkipPagePositionOnlyAllowed(b);
+        return this;
+    }
+
     public static class FopFactoryConfigImpl implements FopFactoryConfig {
 
         private final EnvironmentProfile enviro;
@@ -393,6 +398,8 @@ public final class FopFactoryBuilder {
 
         private boolean tableBorderOverpaint;
         private boolean simpleLineBreaking;
+
+        private boolean skipPagePositionOnlyAllowed = true;
 
         private static final class ImageContextImpl implements ImageContext {
 
@@ -518,6 +525,10 @@ public final class FopFactoryBuilder {
             return simpleLineBreaking;
         }
 
+        public boolean isSkipPagePositionOnlyAllowed() {
+            return skipPagePositionOnlyAllowed;
+        }
+
         public Map<String, String> getHyphenationPatternNames() {
             return hyphPatNames;
         }
@@ -567,6 +578,8 @@ public final class FopFactoryBuilder {
         void setTableBorderOverpaint(boolean b);
 
         void setSimpleLineBreaking(boolean b);
+
+        void setSkipPagePositionOnlyAllowed(boolean b);
     }
 
     private static final class CompletedFopFactoryConfigBuilder implements FopFactoryConfigBuilder {
@@ -656,6 +669,10 @@ public final class FopFactoryBuilder {
         }
 
         public void setSimpleLineBreaking(boolean b) {
+            throwIllegalStateException();
+        }
+
+        public void setSkipPagePositionOnlyAllowed(boolean b) {
             throwIllegalStateException();
         }
     }
@@ -749,6 +766,10 @@ public final class FopFactoryBuilder {
 
         public void setSimpleLineBreaking(boolean b) {
             config.simpleLineBreaking = b;
+        }
+
+        public void setSkipPagePositionOnlyAllowed(boolean b) {
+            config.skipPagePositionOnlyAllowed = b;
         }
     }
 

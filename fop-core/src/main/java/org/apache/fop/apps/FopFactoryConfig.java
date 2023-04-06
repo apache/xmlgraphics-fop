@@ -167,6 +167,8 @@ public interface FopFactoryConfig {
 
     boolean isSimpleLineBreaking();
 
+    boolean isSkipPagePositionOnlyAllowed();
+
     /** @return the hyphenation pattern names */
     Map<String, String> getHyphenationPatternNames();
 

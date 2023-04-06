@@ -141,6 +141,10 @@ public final class MutableConfig implements FopFactoryConfig {
         return delegate.isSimpleLineBreaking();
     }
 
+    public boolean isSkipPagePositionOnlyAllowed() {
+        return delegate.isSkipPagePositionOnlyAllowed();
+    }
+
     public Map<String, String> getHyphenationPatternNames() {
         return delegate.getHyphenationPatternNames();
     }

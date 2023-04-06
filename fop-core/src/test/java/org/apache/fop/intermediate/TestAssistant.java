@@ -125,6 +125,7 @@ public class TestAssistant {
         builder.getFontManager().setBase14KerningEnabled(isBase14KerningEnabled(testDoc));
         builder.setTableBorderOverpaint(isTableBorderOverpaint(testDoc));
         builder.setSimpleLineBreaking(isSimpleLineBreaking(testDoc));
+        builder.setSkipPagePositionOnlyAllowed(isSkipPagePositionOnlyAllowed(testDoc));
         return builder.build();
     }
 
@@ -164,6 +165,15 @@ public class TestAssistant {
         try {
             String s = eval(testDoc, "/testcase/cfg/simple-line-breaking");
             return "true".equalsIgnoreCase(s);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException("Error while evaluating XPath expression", e);
+        }
+    }
+
+    private boolean isSkipPagePositionOnlyAllowed(Document testDoc) {
+        try {
+            String s = eval(testDoc, "/testcase/cfg/skip-page-position-only-allowed");
+            return !"false".equalsIgnoreCase(s);
         } catch (XPathExpressionException e) {
             throw new RuntimeException("Error while evaluating XPath expression", e);
         }

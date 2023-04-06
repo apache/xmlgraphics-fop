@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.area.AreaTreeHandler;
 import org.apache.fop.area.BodyRegion;
 import org.apache.fop.area.PageViewport;
@@ -78,6 +79,7 @@ public class PageProvider implements Constants {
     private PageSequence pageSeq;
 
     protected boolean skipPagePositionOnly;
+    protected FOUserAgent foUserAgent;
 
     /**
      * Main constructor.
@@ -88,6 +90,7 @@ public class PageProvider implements Constants {
         this.areaTreeHandler = ath;
         this.pageSeq = ps;
         this.startPageOfPageSequence = ps.getStartingPageNumber();
+        foUserAgent = ath.getUserAgent();
     }
 
     public void initialize() {
@@ -358,11 +361,12 @@ public class PageProvider implements Constants {
     private Page cacheNextPage(int index, boolean isBlank, boolean isLastPage, boolean spanAll) {
         String pageNumberString = pageSeq.makeFormattedPageNumber(index);
         boolean isFirstPage = (startPageOfPageSequence == index);
+        boolean skipPagePositionOnlyCheck = skipPagePositionOnly && foUserAgent.isSkipPagePositionOnlyAllowed();
         SimplePageMaster spm = pageSeq.getNextSimplePageMaster(
-                index, isFirstPage, isLastPage, isBlank, skipPagePositionOnly);
+                index, isFirstPage, isLastPage, isBlank, skipPagePositionOnlyCheck);
         boolean isPagePositionOnly = pageSeq.hasPagePositionOnly() && !skipPagePositionOnly;
         if (isPagePositionOnly) {
-            spm = pageSeq.getNextSimplePageMaster(index, isFirstPage, true, isBlank, skipPagePositionOnly);
+            spm = pageSeq.getNextSimplePageMaster(index, isFirstPage, true, isBlank, false);
         }
         Page page = new Page(spm, index, pageNumberString, isBlank, spanAll, isPagePositionOnly);
         //Set unique key obtained from the AreaTreeHandler

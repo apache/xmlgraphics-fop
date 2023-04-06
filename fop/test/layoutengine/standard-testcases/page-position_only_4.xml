@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks for the use of an 'only' conditional-page-master-reference (XSL 1.1)
+    </p>
+  </info>
+  <cfg>
+    <skip-page-position-only-allowed>false</skip-page-position-only-allowed>
+  </cfg>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="PageOnly" page-width="210mm" page-height="297mm" margin-bottom="15mm" margin-right="0mm" margin-top="0mm" margin-left="0mm">
+      <fo:region-body margin-bottom="52mm" margin-right="20mm" margin-top="35mm" margin-left="20mm" region-name="letterPageBody"/>
+      <fo:region-before region-name="letterPageFrontHeader"/>
+      <fo:region-after display-align="after" precedence="true" region-name="letterPageFooter" extent="52mm"/>
+      <fo:region-end display-align="center" region-name="letterPageRightSide" extent="5mm"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="PageFront" page-width="210mm" page-height="297mm" margin-bottom="0mm" margin-right="0mm" margin-top="0mm" margin-left="0mm">
+      <fo:region-body margin-bottom="15mm" margin-top="35mm" margin-right="20mm" margin-left="20mm" region-name="letterPageBody"/>
+      <fo:region-before region-name="letterPageFrontHeader"/>
+      <fo:region-end extent="5mm" display-align="center" region-name="letterPageRightSide"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="RestPages" page-width="210mm" page-height="297mm" margin-bottom="0mm" margin-right="0mm" margin-top="0mm" margin-left="0mm">
+      <fo:region-body margin-top="25mm" margin-right="20mm" margin-left="20mm" margin-bottom="15mm" region-name="letterPageBody"/>
+      <fo:region-before region-name="letterPageBackHeader"/>
+    </fo:simple-page-master>
+    <fo:simple-page-master master-name="Last_Page" page-width="210mm" page-height="297mm" margin-bottom="20mm" margin-right="0mm" margin-top="0mm" margin-left="0mm">
+      <fo:region-body margin-top="25mm" margin-bottom="120mm" margin-right="20mm" margin-left="20mm" region-name="letterPageBody"/>
+      <fo:region-before region-name="letterPageBackHeader"/>
+      <fo:region-after extent="150mm" display-align="after" precedence="true" region-name="letterPageFooter"/>
+    </fo:simple-page-master>
+    <fo:page-sequence-master master-name="LetterPages">
+      <fo:repeatable-page-master-alternatives>
+        <fo:conditional-page-master-reference page-position="only" master-reference="PageOnly"/>
+        <fo:conditional-page-master-reference page-position="first" master-reference="PageFront"/>
+        <fo:conditional-page-master-reference page-position="rest" master-reference="RestPages"/>
+        <fo:conditional-page-master-reference page-position="last" master-reference="Last_Page"/>
+      </fo:repeatable-page-master-alternatives>
+    </fo:page-sequence-master>
+  </fo:layout-master-set>
+  <fo:page-sequence format="1" id="th_default_sequence1" initial-page-number="auto" force-page-count="auto" master-reference="LetterPages">
+    <fo:flow flow-name="letterPageBody">
+      <fo:block-container height="45mm">
+        <fo:block margin-top="20mm" space-before="19mm" margin-left="18mm">
+          <fo:block font-size="10pt">Mr Markus Sample</fo:block>
+          <fo:block font-size="10pt">39 XXX Street</fo:block>
+          <fo:block font-size="10pt">MELBOURNE VIC 3000</fo:block>
+        </fo:block>
+      </fo:block-container>
+      <fo:block-container>
+        <fo:block margin-top="15mm">
+          <fo:block font-size="10pt">18 November 2022</fo:block>
+        </fo:block>
+      </fo:block-container>
+      <fo:block-container>
+        <fo:block space-before="6mm">
+          <fo:block line-height="13pt" text-align="right" space-after="0pt" space-before="3pt" font-size="10pt">Policy Type: Life Insurance</fo:block>
+          <fo:block line-height="13pt" text-align="right" space-after="0pt" space-before="3pt" font-size="10pt">Policy Number: 55553420</fo:block>
+          <fo:block line-height="13pt" space-after="0pt" space-before="24pt" font-size="10pt">Hi Markus,</fo:block>
+          <fo:block line-height="20pt" space-after="6pt" space-before="18pt" font-size="16pt" role="H1" id="N10102">Help keep your life on track</fo:block>
+          <fo:block line-height="13pt" space-after="0pt" space-before="3pt" font-size="10pt">Mrs Vanessa Sample recently set up an XXXX Life Insurance policy and listed you as a life insured. To help us set up the policy some of your personal information was provided.</fo:block>
+          <fo:block line-height="13pt" space-after="0pt" space-before="3pt" font-size="10pt">We have enclosed this information. A copy of the policy documentation has been sent to Mrs Vanessa Sample, as the Policy Owner, but to protect your privacy we have not shared any of your sensitive information.</fo:block>
+          <fo:block line-height="15pt" space-after="3pt" space-before="12pt" font-size="13pt" keep-with-next.within-page="always" role="H2" id="N1014F">We value your privacy</fo:block>
+          <fo:block line-height="13pt" space-after="0pt" space-before="3pt" font-size="10pt">The ways in which your personal information is collected, used, secured and disclosed, are set out in the respective privacy policies of XXXX (as the product distributor) and xxx (as the product issuer). You can either view these online at xxxx.com.au/lifeprivacy and xxx.com.au/privacy or call 1300 209 088 to request a printed copy free of charge.</fo:block>
+          <fo:block line-height="15pt" space-after="3pt" space-before="12pt" font-size="13pt" keep-with-next.within-page="always" role="H2" id="N1015E">What you need to do</fo:block>
+          <fo:block line-height="13pt" space-after="0pt" space-before="3pt" font-size="10pt">It’s important that you read the enclosed documents and ensure your details are correct otherwise it could result in us refusing a claim or cancelling the policy.</fo:block>
+          <fo:block line-height="15pt" space-after="3pt" space-before="12pt" font-size="13pt" keep-with-next.within-page="always" role="H2" id="N1016D">Our commitment to you</fo:block>
+          <fo:block line-height="13pt" space-after="0pt" space-before="3pt" font-size="10pt">The insurer of xxxx Life Insurance is committed to the Life Insurance Code of Practice, further ensuring that you will continue to receive the highest possible quality service. Read more at xxxx.com.au/contact/code-of-practice.</fo:block>
+          <fo:block line-height="15pt" space-after="3pt" space-before="12pt" font-size="13pt" keep-with-next.within-page="always" role="H2" id="N1019E">We're here to help</fo:block>
+          <fo:block line-height="13pt" space-after="0pt" space-before="3pt" font-size="10pt">If you have any questions or need to update your details please call us on <fo:inline keep-together.within-line="always">
+              <fo:inline keep-together.within-line="always" font-weight="700">1300 420 233</fo:inline>.</fo:inline>
+          </fo:block>
+          <fo:block line-height="13pt" space-after="0pt" space-before="30pt" font-size="10pt" keep-with-previous.within-page="always">Take care,</fo:block>
+          <fo:block line-height="13pt" space-after="0pt" space-before="3pt" font-size="10pt" keep-with-previous.within-page="always">The Life Insurance Team</fo:block>
+        </fo:block>
+      </fo:block-container>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="2" xpath="count(//page)"/>
+    <eval expected="PageFront" xpath="/areaTree/pageSequence/pageViewport[1]/@simple-page-master-name"/>
+    <eval expected="Last_Page" xpath="/areaTree/pageSequence/pageViewport[2]/@simple-page-master-name"/>
+  </checks>
+</testcase>

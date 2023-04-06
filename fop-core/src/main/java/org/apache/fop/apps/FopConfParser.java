@@ -58,6 +58,7 @@ public class FopConfParser {
     private static final String PREFER_RENDERER = "prefer-renderer";
     private static final String TABLE_BORDER_OVERPAINT = "table-border-overpaint";
     private static final String SIMPLE_LINE_BREAKING = "simple-line-breaking";
+    private static final String SKIP_PAGE_POSITION_ONLY_ALLOWED = "skip-page-position-only-allowed";
 
     private final Log log = LogFactory.getLog(FopConfParser.class);
 
@@ -285,6 +286,15 @@ public class FopConfParser {
             try {
                 fopFactoryBuilder.setSimpleLineBreaking(
                         cfg.getChild(SIMPLE_LINE_BREAKING).getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(log, e, false);
+            }
+        }
+
+        if (cfg.getChild(SKIP_PAGE_POSITION_ONLY_ALLOWED, false) != null) {
+            try {
+                fopFactoryBuilder.setSkipPagePositionOnlyAllowed(
+                        cfg.getChild(SKIP_PAGE_POSITION_ONLY_ALLOWED).getValueAsBoolean());
             } catch (ConfigurationException e) {
                 LogUtil.handleException(log, e, false);
             }
