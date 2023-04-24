@@ -617,4 +617,41 @@ public class TTFFileTestCase {
         ttfFile.updateBBoxAndOffset();
         Assert.assertEquals(ttfFile.mtxTab[0].getBoundingBox()[0], 4);
     }
+
+    @Test
+    public void testSymbolCmap() throws Exception {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+        dos.writeShort(0);
+        dos.writeShort(1); //num tables
+        dos.writeShort(3); //cmapPID
+        dos.writeShort(0); //cmapEID
+        dos.writeInt(12); //cmapOffset
+        dos.writeShort(4); //cmapFormat
+        dos.writeShort(0); //skip cmap length
+        dos.writeShort(0); //skip cmap version
+        dos.writeShort(2); //cmapSegCountX2
+        dos.writeShort(0); //cmapSearchRange
+        dos.writeShort(0); //cmapEntrySelector
+        dos.writeShort(0); //cmapRangeShift
+        dos.writeShort(0xF020); //cmapEndCounts
+        dos.writeShort(0); //Skip reservedPad
+        dos.writeShort(0xF020); //cmapStartCounts
+        dos.writeShort(0); //cmapDeltas
+        dos.writeShort(0); //cmapRangeOffsets
+        TTFFile symbolTTFFile = new TTFFile();
+        symbolTTFFile.mtxTab = new OFMtxEntry[0xF020 + 1];
+        symbolTTFFile.mtxTab[0] = new OFMtxEntry();
+        symbolTTFFile.mtxTab[0xF020] = new OFMtxEntry();
+        symbolTTFFile.dirTabs = new HashMap<>();
+        symbolTTFFile.dirTabs.put(OFTableName.CMAP, new OFDirTabEntry());
+        symbolTTFFile.fontFile = new FontFileReader(new ByteArrayInputStream(bos.toByteArray()));
+        symbolTTFFile.initAnsiWidths();
+        symbolTTFFile.readCMAP();
+        Assert.assertEquals(symbolTTFFile.unicodeMappings.get(0).getUnicodeIndex(), 0xF020);
+        Assert.assertEquals(symbolTTFFile.unicodeMappings.get(0).getGlyphIndex(), 0xF020);
+        Assert.assertEquals(symbolTTFFile.unicodeMappings.get(1).getUnicodeIndex(), 32);
+        Assert.assertEquals(symbolTTFFile.unicodeMappings.get(1).getGlyphIndex(), 0xF020);
+        Assert.assertEquals(symbolTTFFile.unicodeMappings.size(), 2);
+    }
 }

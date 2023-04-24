@@ -557,17 +557,7 @@ public abstract class OpenFont {
                             unicodeMappings.add(new UnicodeMapping(this, glyphIdx, j));
                             mtxTab[glyphIdx].getUnicodeIndex().add(j);
 
-                            if (encodingID == 0 && j >= 0xF020 && j <= 0xF0FF) {
-                                //Experimental: Mapping 0xF020-0xF0FF to 0x0020-0x00FF
-                                //Tested with Wingdings and Symbol TTF fonts which map their
-                                //glyphs in the region 0xF020-0xF0FF.
-                                int mapped = j - 0xF000;
-                                if (!eightBitGlyphs.get(mapped)) {
-                                    //Only map if Unicode code point hasn't been mapped before
-                                    unicodeMappings.add(new UnicodeMapping(this, glyphIdx, mapped));
-                                    mtxTab[glyphIdx].getUnicodeIndex().add(mapped);
-                                }
-                            }
+                            mapSymbol(encodingID, j, eightBitGlyphs, glyphIdx);
 
                             // Also add winAnsiWidth
                             List<Integer> v = ansiIndex.get(j);
@@ -611,6 +601,8 @@ public abstract class OpenFont {
                                                    + " out of range: "
                                                    + mtxTab.length);
                             }
+
+                            mapSymbol(encodingID, j, eightBitGlyphs, glyphIdx);
 
                             // Also add winAnsiWidth
                             List<Integer> v = ansiIndex.get(j);
@@ -725,6 +717,20 @@ public abstract class OpenFont {
             return false;
         }
         return true;
+    }
+
+    private void mapSymbol(int encodingID, int unicodeIndex, BitSet eightBitGlyphs, int glyphIdx) {
+        if (encodingID == 0 && unicodeIndex >= 0xF020 && unicodeIndex <= 0xF0FF) {
+            /* Experimental: Mapping 0xF020-0xF0FF to 0x0020-0x00FF
+            Tested with Wingdings and Symbol TTF fonts which map their
+            glyphs in the region 0xF020-0xF0FF. */
+            int mapped = unicodeIndex - 0xF000;
+            if (!eightBitGlyphs.get(mapped)) {
+                //Only map if Unicode code point hasn't been mapped before
+                unicodeMappings.add(new UnicodeMapping(this, glyphIdx, mapped));
+                mtxTab[glyphIdx].getUnicodeIndex().add(mapped);
+            }
+        }
     }
 
     private boolean isInPrivateUseArea(int start, int end) {
