@@ -46,6 +46,7 @@ import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.FontUris;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.NamedCharacter;
+import org.apache.fop.fonts.SingleByteEncoding;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.truetype.OFFontLoader;
 
@@ -111,6 +112,35 @@ public class PDFFactoryTestCase {
     }
 
     @Test
+    public void testDifferencesStartValue() throws IOException {
+        PDFDocument doc = new PDFDocument("");
+        PDFFactory pdfFactory = new PDFFactory(doc);
+        TestSingleByteFont sb = new TestSingleByteFont(null);
+        sb.setFlags(0);
+        sb.setMapping(new SingleByteEncoding() {
+            public String getName() {
+                return "FOPPDFEncoding";
+            }
+
+            public char mapChar(char c) {
+                return 0;
+            }
+
+            public String[] getCharNameMap() {
+                return new String[]{"a"};
+            }
+
+            public char[] getUnicodeCharMap() {
+                return new char[]{1};
+            }
+        });
+        pdfFactory.makeFont("a", "a", "WinAnsiEncoding", sb, sb);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        doc.outputTrailer(bos);
+        assertTrue(bos.toString().contains("/Differences [1 /a]"));
+    }
+
+    @Test
     public void testMakeTrueTypeFont() throws IOException {
         PDFDocument doc = new PDFDocument("");
         PDFFactory pdfFactory = new PDFFactory(doc);
@@ -134,6 +164,10 @@ public class PDFFactoryTestCase {
         public InputStream getInputStream() throws IOException {
             File f = new File("test/resources/fonts/type1/a010013l.pfb");
             return new FileInputStream(f);
+        }
+
+        public void setMapping(SingleByteEncoding mapping) {
+            this.mapping = mapping;
         }
     }
 

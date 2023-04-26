@@ -1092,7 +1092,7 @@ public class PDFFactory {
                         if (charNameMap.length < len) {
                             len = charNameMap.length;
                         }
-                        int last = 0;
+                        int last = Integer.MIN_VALUE;
                         for (int i = 0; i < len; i++) {
                             if (intmap[i] - 1 != last) {
                                 differences.add(intmap[i]);
