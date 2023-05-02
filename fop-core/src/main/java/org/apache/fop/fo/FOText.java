@@ -20,6 +20,7 @@
 package org.apache.fop.fo;
 
 import java.awt.Color;
+import java.nio.Buffer;
 import java.nio.CharBuffer;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
@@ -49,7 +50,7 @@ import org.apache.fop.util.CharUtilities;
 public class FOText extends FONode implements CharSequence, TextFragment {
 
     /** the <code>CharBuffer</code> containing the text */
-    private CharBuffer charBuffer;
+    private Buffer charBuffer;
 
     // cached iterator
     private CharacterIterator charIterator;
@@ -135,16 +136,20 @@ public class FOText extends FONode implements CharSequence, TextFragment {
                 }
                 CharBuffer newBuffer = CharBuffer.allocate(newCapacity);
                 charBuffer.rewind();
-                newBuffer.put(charBuffer);
+                newBuffer.put(getCharBuffer());
                 charBuffer = newBuffer;
             }
         }
         // extend limit to capacity
         charBuffer.limit(charBuffer.capacity());
         // append characters
-        charBuffer.put(data, start, length);
+        getCharBuffer().put(data, start, length);
         // shrink limit to position
         charBuffer.limit(charBuffer.position());
+    }
+
+    private CharBuffer getCharBuffer() {
+        return (CharBuffer) charBuffer;
     }
 
     /**
@@ -157,7 +162,7 @@ public class FOText extends FONode implements CharSequence, TextFragment {
             return null;
         }
         this.charBuffer.rewind();
-        return this.charBuffer.asReadOnlyBuffer().subSequence(0, this.charBuffer.limit());
+        return getCharBuffer().asReadOnlyBuffer().subSequence(0, this.charBuffer.limit());
     }
 
     /** {@inheritDoc} */
@@ -170,7 +175,7 @@ public class FOText extends FONode implements CharSequence, TextFragment {
             if (charBuffer != null) {
                 ft.charBuffer = CharBuffer.allocate(charBuffer.limit());
                 charBuffer.rewind();
-                ft.charBuffer.put(charBuffer);
+                ft.getCharBuffer().put(getCharBuffer());
                 ft.charBuffer.rewind();
             }
         }
@@ -232,7 +237,7 @@ public class FOText extends FONode implements CharSequence, TextFragment {
         char ch;
         charBuffer.rewind();
         while (charBuffer.hasRemaining()) {
-            ch = charBuffer.get();
+            ch = getCharBuffer().get();
             if (!((ch == CharUtilities.SPACE)
                     || (ch == CharUtilities.LINEFEED_CHAR)
                     || (ch == CharUtilities.CARRIAGE_RETURN)
@@ -282,12 +287,12 @@ public class FOText extends FONode implements CharSequence, TextFragment {
         }
 
         charBuffer.rewind();
-        CharBuffer tmp = charBuffer.slice();
+        CharBuffer tmp = getCharBuffer().slice();
         char c;
         int lim = charBuffer.limit();
         int pos = -1;
         while (++pos < lim) {
-            c = charBuffer.get();
+            c = getCharBuffer().get();
             switch (textTransform) {
                 case Constants.EN_UPPERCASE:
                     tmp.put(Character.toUpperCase(c));
@@ -537,7 +542,7 @@ public class FOText extends FONode implements CharSequence, TextFragment {
             if (this.currentPosition < charBuffer.limit()) {
                 this.canRemove = true;
                 this.canReplace = true;
-                return charBuffer.get(currentPosition++);
+                return getCharBuffer().get(currentPosition++);
             } else {
                 throw new NoSuchElementException();
             }
@@ -550,13 +555,13 @@ public class FOText extends FONode implements CharSequence, TextFragment {
             if (this.canRemove) {
                 charBuffer.position(currentPosition);
                 // Slice the buffer at the current position
-                CharBuffer tmp = charBuffer.slice();
+                CharBuffer tmp = getCharBuffer().slice();
                 // Reset position to before current character
                 charBuffer.position(--currentPosition);
                 if (tmp.hasRemaining()) {
                     // Transfer any remaining characters
                     charBuffer.mark();
-                    charBuffer.put(tmp);
+                    getCharBuffer().put(tmp);
                     charBuffer.reset();
                 }
                 // Decrease limit
@@ -573,7 +578,7 @@ public class FOText extends FONode implements CharSequence, TextFragment {
         public void replaceChar(char c) {
 
             if (this.canReplace) {
-                charBuffer.put(currentPosition - 1, c);
+                getCharBuffer().put(currentPosition - 1, c);
             } else {
                 throw new IllegalStateException();
             }
@@ -698,7 +703,7 @@ public class FOText extends FONode implements CharSequence, TextFragment {
         if (charBuffer == null) {
             return "";
         } else {
-            CharBuffer cb = charBuffer.duplicate();
+            Buffer cb = getCharBuffer().duplicate();
             cb.rewind();
             return cb.toString();
         }
@@ -725,12 +730,12 @@ public class FOText extends FONode implements CharSequence, TextFragment {
 
     /** {@inheritDoc} */
     public char charAt(int position) {
-        return charBuffer.get(position);
+        return getCharBuffer().get(position);
     }
 
     /** {@inheritDoc} */
     public CharSequence subSequence(int start, int end) {
-        return charBuffer.subSequence(start, end);
+        return getCharBuffer().subSequence(start, end);
     }
 
     /** {@inheritDoc} */

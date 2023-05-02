@@ -19,6 +19,7 @@
 
 package org.apache.fop.complexscripts.fonts;
 
+import java.nio.Buffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
     /** alternates index */
     private int[] alternatesIndex;
     /** current output glyph sequence */
-    private IntBuffer ogb;
+    private Buffer ogb;
     /** current output glyph to character associations */
     private List oal;
     /** character association predications */
@@ -131,13 +132,17 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
      */
     public void putGlyph(int glyph, CharAssociation a, Object predication) {
         if (!ogb.hasRemaining()) {
-            ogb = growBuffer(ogb);
+            ogb = growBuffer(getIntBuffer());
         }
-        ogb.put(glyph);
+        getIntBuffer().put(glyph);
         if (predications && (predication != null)) {
             a.setPredication(feature, predication);
         }
         oal.add(a);
+    }
+
+    private IntBuffer getIntBuffer() {
+        return (IntBuffer) ogb;
     }
 
     /**
@@ -165,7 +170,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
         if (position > 0) {
             ogb.limit(position);
             ogb.rewind();
-            return new GlyphSequence(igs.getCharacters(), ogb, oal);
+            return new GlyphSequence(igs.getCharacters(), getIntBuffer(), oal);
         } else {
             return igs;
         }
@@ -241,12 +246,12 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
         }
     }
 
-    private static IntBuffer growBuffer(IntBuffer ib) {
+    private static IntBuffer growBuffer(Buffer ib) {
         int capacity = ib.capacity();
         int capacityNew = capacity * 2;
         IntBuffer ibNew = IntBuffer.allocate(capacityNew);
         ib.rewind();
-        return ibNew.put(ib);
+        return ibNew.put((IntBuffer) ib);
     }
 
 }

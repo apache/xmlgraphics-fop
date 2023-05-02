@@ -21,6 +21,7 @@ package org.apache.fop.fonts;
 
 import java.awt.Rectangle;
 import java.io.InputStream;
+import java.nio.Buffer;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -682,8 +683,10 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
             cb.put(cc);
             gb.put(gi);
         }
-        cb.flip();
-        gb.flip();
+        Buffer cbBase = cb;
+        cbBase.flip();
+        Buffer gbBase = gb;
+        gbBase.flip();
         if ((associations != null) && (associations.size() == cs.length())) {
             associations = new java.util.ArrayList(associations);
         } else {
@@ -732,7 +735,8 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
             cb.put(c);
         }
 
-        cb.flip();
+        Buffer cbBase = cb;
+        cbBase.flip();
         return cb;
     }
 
@@ -799,7 +803,8 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
                     nal.add(a);
                 }
             }
-            ngb.flip();
+            Buffer ngbBase = ngb;
+            ngbBase.flip();
             return new GlyphSequence(gs.getCharacters(), ngb, nal, gs.getPredications());
         } else {
             return gs;

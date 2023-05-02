@@ -19,6 +19,7 @@
 
 package org.apache.fop.complexscripts.util;
 
+import java.nio.Buffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -464,7 +465,8 @@ public class GlyphSequence implements Cloneable {
         if (lga != null) {
             gb.put(lga);
         }
-        gb.flip();
+        Buffer gbBase = gb;
+        gbBase.flip();
         return gb;
     }
 

@@ -19,6 +19,7 @@
 
 package org.apache.fop.complexscripts.fonts;
 
+import java.nio.Buffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -935,7 +936,8 @@ public class GlyphProcessingState {
             gb.put(igs.getGlyph(i));
             al.add(igs.getAssociation(i));
         }
-        gb.flip();
+        Buffer gbBase = gb;
+        gbBase.flip();
         assert igs != null;
         if (igs.compareGlyphs(gb) != 0) {
             this.igs = new GlyphSequence(igs.getCharacters(), gb, al);
