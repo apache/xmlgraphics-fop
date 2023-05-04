@@ -18,11 +18,11 @@
     <checkstyle.plugin.version>2.14</checkstyle.plugin.version>
     <commons.io.version>2.11.0</commons.io.version>
     <commons.logging.version>1.0.4</commons.logging.version>
-    <compiler.plugin.version>3.1</compiler.plugin.version>
+    <compiler.plugin.version>3.11.0</compiler.plugin.version>
     <exec.plugin.version>1.4.0</exec.plugin.version>
     <findbugs.plugin.version>3.0.4</findbugs.plugin.version>
     <jar.plugin.version>3.1.1</jar.plugin.version>
-    <java.version>1.8</java.version>
+    <java.version>8</java.version>
     <junit.version>4.11</junit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.info.reports.plugin.version>2.8</project.info.reports.plugin.version>
@@ -131,6 +131,15 @@
           </plugins>
         </pluginManagement>
       </build>
+    </profile>
+    <profile>
+      <id>java-8-api</id>
+      <activation>
+        <jdk>[9,)</jdk>
+      </activation>
+      <properties>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+      </properties>
     </profile>
   </profiles>
 
