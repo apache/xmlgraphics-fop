@@ -32,6 +32,7 @@ import static org.apache.fop.render.pdf.PDFEncryptionOption.USER_PASSWORD;
 import static org.apache.fop.render.pdf.PDFRendererOption.DISABLE_SRGB_COLORSPACE;
 import static org.apache.fop.render.pdf.PDFRendererOption.FILTER_LIST;
 import static org.apache.fop.render.pdf.PDFRendererOption.FORM_XOBJECT;
+import static org.apache.fop.render.pdf.PDFRendererOption.MERGE_FORM_FIELDS;
 import static org.apache.fop.render.pdf.PDFRendererOption.OUTPUT_PROFILE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_A_MODE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_X_MODE;
@@ -96,6 +97,11 @@ public final class PDFRendererConfBuilder extends RendererConfBuilder {
 
     public PDFRendererConfBuilder setFormXObjectEnabled(boolean b) {
         createTextElement(FORM_XOBJECT, String.valueOf(b));
+        return this;
+    }
+
+    public PDFRendererConfBuilder setMergeFormFieldsEnabled(boolean b) {
+        createTextElement(MERGE_FORM_FIELDS, String.valueOf(b));
         return this;
     }
 

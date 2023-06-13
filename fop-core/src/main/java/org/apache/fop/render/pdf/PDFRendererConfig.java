@@ -60,6 +60,7 @@ import static org.apache.fop.render.pdf.PDFRendererOption.FILTER_LIST;
 import static org.apache.fop.render.pdf.PDFRendererOption.FORM_XOBJECT;
 import static org.apache.fop.render.pdf.PDFRendererOption.LINEARIZATION;
 import static org.apache.fop.render.pdf.PDFRendererOption.MERGE_FONTS;
+import static org.apache.fop.render.pdf.PDFRendererOption.MERGE_FORM_FIELDS;
 import static org.apache.fop.render.pdf.PDFRendererOption.OUTPUT_PROFILE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_A_MODE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_UA_MODE;
@@ -150,6 +151,7 @@ public final class PDFRendererConfig implements RendererConfig {
                 parseAndPut(OUTPUT_PROFILE, cfg);
                 parseAndPut(DISABLE_SRGB_COLORSPACE, cfg);
                 parseAndPut(MERGE_FONTS, cfg);
+                parseAndPut(MERGE_FORM_FIELDS, cfg);
                 parseAndPut(LINEARIZATION, cfg);
                 parseAndPut(FORM_XOBJECT, cfg);
                 parseAndPut(VERSION, cfg);

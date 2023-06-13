@@ -87,6 +87,12 @@ public enum PDFRendererOption implements RendererConfigOption {
             return Boolean.valueOf(value);
         }
     },
+    MERGE_FORM_FIELDS("merge-form-fields", false) {
+        @Override
+        Boolean deserialize(String value) {
+            return Boolean.valueOf(value);
+        }
+    },
     LINEARIZATION("linearization", false) {
         @Override
         Boolean deserialize(String value) {

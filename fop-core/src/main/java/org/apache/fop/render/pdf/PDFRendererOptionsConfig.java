@@ -36,6 +36,7 @@ import static org.apache.fop.render.pdf.PDFRendererOption.FILTER_LIST;
 import static org.apache.fop.render.pdf.PDFRendererOption.FORM_XOBJECT;
 import static org.apache.fop.render.pdf.PDFRendererOption.LINEARIZATION;
 import static org.apache.fop.render.pdf.PDFRendererOption.MERGE_FONTS;
+import static org.apache.fop.render.pdf.PDFRendererOption.MERGE_FORM_FIELDS;
 import static org.apache.fop.render.pdf.PDFRendererOption.OUTPUT_PROFILE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_A_MODE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_UA_MODE;
@@ -138,6 +139,10 @@ public final class PDFRendererOptionsConfig {
 
     public Boolean getMergeFontsEnabled() {
         return (Boolean)properties.get(MERGE_FONTS);
+    }
+
+    public Boolean getMergeFormFieldsEnabled() {
+        return (Boolean)properties.get(MERGE_FORM_FIELDS);
     }
 
     public Boolean getLinearizationEnabled() {

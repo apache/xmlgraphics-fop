@@ -176,6 +176,8 @@ public class PDFDocument {
 
     private boolean mergeFontsEnabled;
 
+    private boolean mergeFormFieldsEnabled;
+
     private boolean linearizationEnabled;
 
     private boolean formXObjectEnabled;
@@ -432,7 +434,7 @@ public class PDFDocument {
      * @param obj {@link PDFObject} to add
      * @return the added {@link PDFObject} added (with its object number set)
      */
-    <T extends PDFObject> T registerTrailerObject(T obj) {
+    public <T extends PDFObject> T registerTrailerObject(T obj) {
         assignObjectNumber(obj);
         addTrailerObject(obj);
         return obj;
@@ -1185,6 +1187,14 @@ public class PDFDocument {
         if (mergeFontsEnabled) {
             getResources().createFontsAsObj();
         }
+    }
+
+    public boolean isMergeFormFieldsEnabled() {
+        return mergeFormFieldsEnabled;
+    }
+
+    public void setMergeFormFieldsEnabled(boolean mergeFormFieldsEnabled) {
+        this.mergeFormFieldsEnabled = mergeFormFieldsEnabled;
     }
 
     private interface TrailerOutputHelper {

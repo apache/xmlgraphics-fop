@@ -40,6 +40,7 @@ public class PDFRenderingContext extends AbstractRenderingContext {
     private FontInfo fontInfo;
     private PDFPage page;
     private MarkedContentInfo mci;
+    private Map<String, Object> usedFieldNames;
     private Map<Integer, PDFArray> pageNumbers;
     private PDFLogicalStructureHandler pdfLogicalStructureHandler;
     private PDFStructElem currentSessionStructElem;
@@ -94,6 +95,14 @@ public class PDFRenderingContext extends AbstractRenderingContext {
 
     MarkedContentInfo getMarkedContentInfo() {
         return mci;
+    }
+
+    public Map<String, Object> getUsedFieldNames() {
+        return usedFieldNames;
+    }
+
+    public void setUsedFieldNames(Map<String, Object> usedFieldNames) {
+        this.usedFieldNames = usedFieldNames;
     }
 
     public Map<Integer, PDFArray> getPageNumbers() {

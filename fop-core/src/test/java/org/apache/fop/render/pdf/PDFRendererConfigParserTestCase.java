@@ -226,4 +226,10 @@ public class PDFRendererConfigParserTestCase
     public void testErroneousPDFVersionsNotSet() throws Exception {
         pdfVersionTester("");
     }
+
+    @Test
+    public void testMergeFormFields() throws Exception {
+        parseConfig(createRenderer().setMergeFormFieldsEnabled(true));
+        assertTrue(conf.getConfigOptions().getMergeFormFieldsEnabled());
+    }
 }
