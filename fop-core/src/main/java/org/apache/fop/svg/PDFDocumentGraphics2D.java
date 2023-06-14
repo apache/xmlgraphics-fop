@@ -380,7 +380,7 @@ public class PDFDocumentGraphics2D extends PDFGraphics2D {
 
         closePage();
         if (fontInfo != null) {
-            pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
+            pdfDoc.getResources().addFonts(pdfDoc, fontInfo, null);
         }
         this.pdfDoc.output(outputStream);
         pdfDoc.outputTrailer(outputStream);

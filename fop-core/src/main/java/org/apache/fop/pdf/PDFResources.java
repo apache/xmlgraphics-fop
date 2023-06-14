@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
+import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.fonts.FontDescriptor;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.Typeface;
@@ -116,8 +117,9 @@ public class PDFResources extends PDFDictionary {
      *
      * @param doc PDF document to add fonts to
      * @param fontInfo font info object to get font information from
+     * @param eventBroadcaster Event broadcaster.
      */
-   public void addFonts(PDFDocument doc, FontInfo fontInfo) {
+   public void addFonts(PDFDocument doc, FontInfo fontInfo, EventBroadcaster eventBroadcaster) {
         Map<String, Typeface> usedFonts = fontInfo.getUsedFonts();
         for (Map.Entry<String, Typeface> e : usedFonts.entrySet()) {
             String f = e.getKey();
@@ -135,7 +137,7 @@ public class PDFResources extends PDFDictionary {
                     encoding = null; //Symbolic fonts shouldn't specify an encoding value in PDF
                 }
                 addFont(doc.getFactory().makeFont(
-                    f, font.getEmbedFontName(), encoding, font, desc));
+                    f, font.getEmbedFontName(), encoding, font, desc, eventBroadcaster));
             }
         }
    }
