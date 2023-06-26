@@ -165,6 +165,15 @@ list of possible build targets.
   <property name="samedir" value="${basedir}"/>
   <property name="junit.reports.dir" value="${build.dir}/test-reports"/>
   <property name="junit.html.reports.dir" value="${build.dir}/test-reports/html"/>
+  <property name="copy.dependencies.arg" value=""/>
+  
+  <condition property="isWindows">
+    <os family="windows" />
+  </condition>
+  <condition property="isUnix">
+    <os family="unix" />
+  </condition>    
+  
 <!-- Importing Apache Forrest for building the docs -->
 <!--
   <property environment="env"/>
@@ -471,6 +480,44 @@ list of possible build targets.
       </fileset>
     </jar>
   </target>
+  <target name="mvn-jars" depends="mvn-jars-unix,mvn-jars-windows" unless="dev">
+    <delete failonerror="false">
+      <fileset dir="${basedir}/lib">
+        <include name="*.jar"/>
+        <exclude name="checkstyle*.jar"/>
+        <exclude name="jacocoant*.jar"/>
+        <exclude name="twelvemonkeys*.jar"/>
+        <exclude name="zxing*.jar"/>
+        <exclude name="avalon*.jar"/>
+        <exclude name="barcode4j*.jar"/>
+        <exclude name="bcprov*.jar"/>
+        <exclude name="fop-pdf-images*.jar"/>
+        <exclude name="jai_imageio*.jar"/>
+        <exclude name="levigo*.jar"/>
+      </fileset>
+    </delete>
+    <copy todir="${basedir}/lib">
+      <fileset dir="${basedir}/../fop-core/target/dependency">
+        <include name="*.jar"/>
+        <exclude name="fop*SNAPSHOT.jar"/>
+        <exclude name="ant*.jar"/>
+      </fileset>
+    </copy>
+  </target>
+  <target name="mvn-jars-unix" if="isUnix" unless="dev">
+    <exec executable="mvn" dir="${basedir}/.." failonerror="true">
+      <arg value="clean"/>
+      <arg line="${copy.dependencies.arg} dependency:copy-dependencies -DskipTests"/>
+    </exec>
+  </target>
+  <target name="mvn-jars-windows" if="isWindows" unless="dev">
+    <exec executable="cmd" dir="${basedir}/.." failonerror="true">
+	  <arg value="/c"/>
+	  <arg value="mvn"/>    
+      <arg value="clean"/>
+      <arg line="${copy.dependencies.arg} dependency:copy-dependencies -DskipTests"/>
+    </exec>
+  </target>
   <target name="uptodate-jar-sandbox" depends="compile">
     <uptodate property="jar.sandbox.uptodate" targetfile="${build.dir}/fop-sandbox.jar">
       <srcfiles dir="${build.sandbox-classes.dir}"/>
@@ -522,7 +569,7 @@ list of possible build targets.
 <!-- =================================================================== -->
 <!-- Creates the class package                                           -->
 <!-- =================================================================== -->
-  <target name="package" depends="jar-main,jar-hyphenation,jar-sandbox" description="Generates the jar files"/>
+  <target name="package" depends="mvn-jars,jar-main,jar-hyphenation,jar-sandbox" description="Generates the jar files"/>
   <target name="servlet" depends="package" description="Generates the WAR with the sample FOP servlet">
     <echo message="Creating the WAR file"/>
     <war warfile="${build.dir}/fop.war" webxml="${servlet.src.dir}/main/webapp/WEB-INF/web.xml">
