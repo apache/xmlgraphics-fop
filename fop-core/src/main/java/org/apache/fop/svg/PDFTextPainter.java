@@ -118,32 +118,30 @@ class PDFTextPainter extends NativeTextPainter {
             String fk = gvtFont.getFontKey();
             Font f = gvtFont.getFont();
             Point2D initialPos = gv.getGlyphPosition(0);
-            if (f.isMultiByte()) {
-                int         fs              = f.getFontSize();
-                float       fsPoints        = fs / 1000f;
-                double      xc              = 0f;
-                double      yc              = 0f;
-                double      xoLast          = 0f;
-                double      yoLast          = 0f;
-                textUtil.writeTextMatrix(new AffineTransform(1, 0, 0, -1, initialPos.getX(), initialPos.getY()));
-                textUtil.updateTf(fk, fsPoints, true, false);
-                int[][] dp = gv.getGlyphPositionAdjustments();
-                for (int i = 0, n = gv.getNumGlyphs(); i < n; i++) {
-                    int     gc              = gv.getGlyphCode(i);
-                    int[]   pa              = ((i > dp.length) || (dp[i] == null)) ? paZero : dp[i];
-                    double  xo              = xc + pa[0];
-                    double  yo              = yc + pa[1];
-                    double  xa              = f.getWidth(gc);
-                    double  ya              = 0;
-                    double  xd              = (xo - xoLast) / 1000f;
-                    double  yd              = (yo - yoLast) / 1000f;
-                    textUtil.writeTd(xd, yd);
-                    textUtil.writeTj((char) gc, true, false);
-                    xc += xa + pa[2];
-                    yc += ya + pa[3];
-                    xoLast = xo;
-                    yoLast = yo;
-                }
+            int         fs              = f.getFontSize();
+            float       fsPoints        = fs / 1000f;
+            double      xc              = 0f;
+            double      yc              = 0f;
+            double      xoLast          = 0f;
+            double      yoLast          = 0f;
+            textUtil.writeTextMatrix(new AffineTransform(1, 0, 0, -1, initialPos.getX(), initialPos.getY()));
+            textUtil.updateTf(fk, fsPoints, f.isMultiByte(), false);
+            int[][] dp = gv.getGlyphPositionAdjustments();
+            for (int i = 0, n = gv.getNumGlyphs(); i < n; i++) {
+                int     gc              = gv.getGlyphCode(i);
+                int[]   pa              = ((i > dp.length) || (dp[i] == null)) ? paZero : dp[i];
+                double  xo              = xc + pa[0];
+                double  yo              = yc + pa[1];
+                double  xa              = f.getWidth(gc);
+                double  ya              = 0;
+                double  xd              = (xo - xoLast) / 1000f;
+                double  yd              = (yo - yoLast) / 1000f;
+                textUtil.writeTd(xd, yd);
+                textUtil.writeTj((char) gc, f.isMultiByte(), false);
+                xc += xa + pa[2];
+                yc += ya + pa[3];
+                xoLast = xo;
+                yoLast = yo;
             }
         }
     }

@@ -20,16 +20,29 @@
 package org.apache.fop.svg;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.io.StringWriter;
 
+import org.junit.Assert;
 import org.junit.Test;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.apache.batik.bridge.TextPainter;
+import org.apache.batik.gvt.text.TextPaintInfo;
 
 import org.apache.xmlgraphics.java2d.GraphicContext;
 
+import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.base14.Base14FontCollection;
 import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.svg.font.FOPGVTFont;
+import org.apache.fop.svg.font.FOPGVTGlyphVector;
 
 public class PDFTextPainterTestCase extends NativeTextPainterTest {
 
@@ -145,4 +158,48 @@ public class PDFTextPainterTestCase extends NativeTextPainterTest {
                 .addOperatorMatch("TJ", "[(IJ)] TJ\n"));
     }
 
+    /**
+     * Tests that glyph vectors in single-byte fonts with glyph position adjustments are properly written.
+     * @throws Exception
+     */
+    @Test
+    public void testSingleByteAdjustments() throws Exception {
+        FontInfo fontInfo = new FontInfo();
+        new Base14FontCollection(true).setup(0, fontInfo);
+
+        PDFTextPainter painter = new PDFTextPainter(fontInfo);
+        PDFGraphics2D g2d = mock(PDFGraphics2D.class);
+        g2d.currentStream = new StringWriter();
+        painter.preparePainting(g2d);
+        painter.setInitialTransform(new AffineTransform());
+        TextPaintInfo tpi = new TextPaintInfo();
+        tpi.visible = true;
+        painter.tpi = tpi;
+        painter.beginTextObject();
+
+        FOPGVTGlyphVector mockGV = mock(FOPGVTGlyphVector.class);
+        FontTriplet triplet = new FontTriplet("Times", "normal", 400);
+        Font font = fontInfo.getFontInstance(triplet, 12);
+
+        FOPGVTFont mockGvtFont = mock(FOPGVTFont.class);
+        org.apache.fop.fonts.FontMetrics fontMetrics = font.getFontMetrics();
+        when(mockGvtFont.getFont()).thenReturn(new Font("Times", triplet, fontMetrics, 12));
+        when(mockGvtFont.getFontKey()).thenReturn("Times");
+
+        when(mockGV.getFont()).thenReturn(mockGvtFont);
+        when(mockGV.getGlyphPositionAdjustments()).thenReturn(new int[][] {{2, 3, 4, 5}, {6, 7, 8, 9}});
+        when(mockGV.getGlyphPosition(0)).thenReturn(new Point(0, 0));
+        when(mockGV.getNumGlyphs()).thenReturn(1);
+        when(mockGV.getGlyphCode(0)).thenReturn(1);
+
+        GeneralPath gp = new GeneralPath();
+
+        painter.writeGlyphs(mockGV, gp);
+        Assert.assertEquals("BT\n"
+                        + "3 Tr\n"
+                        + "1 0 0 -1 0 0 Tm /Times 0.012 Tf\n"
+                        + "0.002 0.003 Td\n"
+                        + "(\\1) Tj\n",
+                g2d.currentStream.toString());
+    }
 }
