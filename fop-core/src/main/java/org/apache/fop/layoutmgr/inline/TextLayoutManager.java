@@ -781,6 +781,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         int level = -1;
         int prevLevel = -1;
         boolean retainControls = false;
+        Font lastFont = null;
+        int lastFontPos = -1;
         while (nextStart < foText.length()) {
             ch = foText.charAt(nextStart);
             level = foText.bidiLevelAt(nextStart);
@@ -813,10 +815,22 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                             + "}");
             }
             if (inWord) {
-                if (breakOpportunity
-                     || GlyphMapping.isSpace(ch)
-                     || CharUtilities.isExplicitBreak(ch)
-                     || ((prevLevel != -1) && (level != prevLevel))) {
+                boolean processWord = breakOpportunity
+                        || GlyphMapping.isSpace(ch)
+                        || CharUtilities.isExplicitBreak(ch)
+                        || ((prevLevel != -1) && (level != prevLevel));
+                if (!processWord && foText.getCommonFont().getFontSelectionStrategy() == EN_CHARACTER_BY_CHARACTER) {
+                    if (lastFont == null || lastFontPos != nextStart - 1) {
+                        lastFont = FontSelector.selectFontForCharactersInText(
+                                foText, nextStart - 1, nextStart, foText, this);
+                    }
+                    Font font = FontSelector.selectFontForCharactersInText(
+                            foText, nextStart, nextStart + 1, foText, this);
+                    processWord = font != lastFont;
+                    lastFont = font;
+                    lastFontPos = nextStart;
+                }
+                if (processWord) {
                     // this.foText.charAt(lastIndex) == CharUtilities.SOFT_HYPHEN
                     prevMapping = processWord(alignment, sequence, prevMapping, ch,
                         breakOpportunity, true, prevLevel, retainControls);
