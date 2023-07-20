@@ -424,6 +424,15 @@ public class PDFContentGenerator {
     }
 
     /**
+     * Resets the current character spacing (Tc) value to zero.
+     */
+    public void resetCharacterSpacing() {
+        if (getState().setCharacterSpacing(0)) {
+            getStream().add(format(0) + " Tc\n");
+        }
+    }
+
+    /**
      * Establishes a new foreground or fill color.
      * @param col the color to apply
      * @param fill true to set the fill color, false for the foreground color

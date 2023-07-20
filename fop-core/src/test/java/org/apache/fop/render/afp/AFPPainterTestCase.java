@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +43,8 @@ import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.apache.commons.io.IOUtils;
 
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
@@ -155,7 +156,7 @@ public class AFPPainterTestCase {
     }
 
     @Test
-    public void testPresentationText() throws URISyntaxException, IFException, IOException {
+    public void testPresentationText() throws Exception {
         List<String> strings = new ArrayList<String>();
         strings.add("test");
         Assert.assertEquals(writeText(strings), "BEGIN DOCUMENT DOC00001\n"
@@ -190,7 +191,7 @@ public class AFPPainterTestCase {
     }
 
     @Test
-    public void testPresentationText2() throws URISyntaxException, IFException, IOException {
+    public void testPresentationText2() throws Exception {
         List<String> strings = new ArrayList<String>();
         for (int i = 0; i < 5000; i++) {
             strings.add("tes");
@@ -211,7 +212,37 @@ public class AFPPainterTestCase {
                 + "END DOCUMENT DOC00001\n");
     }
 
-    private String writeText(List<String> text) throws URISyntaxException, IOException, IFException {
+    /**
+     * Checks that letter spacing is reset to 0 after the relevant text block.
+     */
+    @Test
+    public void testLetterSpacingReset() throws Exception {
+        List<String> strings = new ArrayList<>();
+        strings.add("xxxx");
+        InputStream inputStream = getDocResultInputStream(strings, 10000);
+        byte[] bytes = IOUtils.toByteArray(inputStream);
+        // The 134th byte is incremented by 5 to account for the 5 extra bytes inserted for the reset.
+        Assert.assertEquals((byte)39, bytes[134]);
+        // And these are the 5 reset bytes.
+        Assert.assertEquals((byte)5, bytes[163]);
+        Assert.assertEquals((byte)195, bytes[164]);
+        Assert.assertEquals((byte)0, bytes[165]);
+        Assert.assertEquals((byte)0, bytes[166]);
+        Assert.assertEquals((byte)0, bytes[167]);
+    }
+
+    private String writeText(List<String> text) throws Exception {
+        InputStream bis = getDocResultInputStream(text);
+        StringBuilder sb = new StringBuilder();
+        new AFPParser(false).read(bis, sb);
+        return sb.toString();
+    }
+
+    private static InputStream getDocResultInputStream(List<String> text) throws Exception {
+        return getDocResultInputStream(text, 0);
+    }
+
+    private static InputStream getDocResultInputStream(List<String> text, int letterSpacing) throws Exception {
         FOUserAgent agent = FopFactory.newInstance(new URI(".")).newFOUserAgent();
         IFContext context = new IFContext(agent);
         AFPDocumentHandler doc = new AFPDocumentHandler(context);
@@ -232,14 +263,11 @@ public class AFPPainterTestCase {
         doc.startDocument();
         doc.startPage(0, "", "", new Dimension());
         for (String s : text) {
-            afpPainter.drawText(0, 0, 0, 0, null, s);
+            afpPainter.drawText(0, 0, letterSpacing, 0, null, s);
         }
         doc.endDocument();
 
-        InputStream bis = new ByteArrayInputStream(outputStream.toByteArray());
-        StringBuilder sb = new StringBuilder();
-        new AFPParser(false).read(bis, sb);
-        return sb.toString();
+        return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
     @Test

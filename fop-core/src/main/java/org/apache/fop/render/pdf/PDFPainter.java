@@ -526,6 +526,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
 
         }
         textutil.writeTJ();
+        generator.resetCharacterSpacing();
         endSimulateStyle(tf, triplet);
     }
 
@@ -599,6 +600,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                 xoLast = xo;
                 yoLast = yo;
             }
+            generator.resetCharacterSpacing();
             endSimulateStyle(tf, triplet);
         }
     }

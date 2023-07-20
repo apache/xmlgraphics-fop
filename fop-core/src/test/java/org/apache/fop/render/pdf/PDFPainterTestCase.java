@@ -184,6 +184,32 @@ public class PDFPainterTestCase {
         verify(pdfContentGenerator).add("0 Tr\n");
     }
 
+    /**
+     * Tests that letter spacing is set and reset appropriately.
+     * @throws IFException
+     */
+    @Test
+    public void testLetterSpacing() throws IFException {
+        final StringBuilder sb = new StringBuilder();
+        pdfDocumentHandler = makePDFDocumentHandler(sb);
+
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("f1", new FontTriplet("a", "normal", 400));
+        MultiByteFont font = new MultiByteFont(null, null);
+        fi.addMetrics("f1", font);
+        pdfDocumentHandler.setFontInfo(fi);
+        MyPDFPainter pdfPainter = new MyPDFPainter(pdfDocumentHandler, null);
+        pdfPainter.setFont("a", "normal", 400, null, 12, null);
+        pdfPainter.drawText(0, 0, 4321, 0, null, "test");
+
+        assertEquals("BT\n"
+                + "/f1 0.012 Tf\n"
+                + "1 0 0 -1 0 0 Tm [<0000000000000000>] TJ\n",
+                sb.toString());
+        verify(pdfContentGenerator).updateCharacterSpacing(4.321f);
+        verify(pdfContentGenerator).resetCharacterSpacing();
+    }
+
     @Test
     public void testSimulateStyleColor() throws Exception {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
