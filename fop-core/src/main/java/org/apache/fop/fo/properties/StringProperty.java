@@ -125,8 +125,7 @@ public final class StringProperty extends Property {
         }
         if (obj instanceof StringProperty) {
             StringProperty sp = (StringProperty)obj;
-            return (sp.str == this.str
-                    || sp.str.equals(this.str));
+            return sp.str.equals(this.str);
         }
         return false;
     }

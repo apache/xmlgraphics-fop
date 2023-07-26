@@ -101,7 +101,7 @@ final class FoUnitsConverter {
         // convert number to integer
         try {
             if (number != null && number.trim().length() > 0) {
-                result = Float.valueOf(number);
+                result = Float.parseFloat(number);
             }
         } catch (Exception e) {
             throw new FOPException("number format error: cannot convert '"
@@ -132,7 +132,7 @@ final class FoUnitsConverter {
         float result = 0;
         size = size.substring(0, size.length() - sFONTSUFFIX.length());
         try {
-            result = (Float.valueOf(size));
+            result = Float.parseFloat(size);
         } catch (Exception e) {
             throw new FOPException("Invalid font size value '" + size + "'");
         }

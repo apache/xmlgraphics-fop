@@ -413,6 +413,23 @@
       <Class name="org.apache.fop.servlet.FopServlet"/>
     </And>    
   </Match>
+  
+  <Match>
+    <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE"/>
+  </Match>
+  <Match>
+    <Bug pattern="FL_FLOATS_AS_LOOP_COUNTERS"/>
+  </Match>
+  <Match>
+    <Bug pattern="IM_MULTIPLYING_RESULT_OF_IREM"/>
+  </Match>
+  <Match>
+    <Bug pattern="MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR"/>
+  </Match>
+  <Match>
+    <Bug pattern="MS_EXPOSE_REP"/>
+  </Match>
+
   <!-- Bug in findbugs? -->
   <Match>
     <Bug pattern="RC_REF_COMPARISON"/>
