@@ -146,14 +146,19 @@ public final class Main {
         }
     }
 
+    public static void startFOP(String[] args) {
+        startFOP(args, new SystemWrapper());
+    }
+
     /**
      * Executes FOP with the given arguments. If no argument is provided, returns its
      * version number as well as a short usage statement; if '-v' is provided, returns its
      * version number alone; if '-h' is provided, returns its short help message.
      *
      * @param args command-line arguments
+     * @param systemWrapper Object on which exit() is to be called.
      */
-    public static void startFOP(String[] args) {
+    public static void startFOP(String[] args, SystemWrapper systemWrapper) {
         //System.out.println("static CCL: "
         //    + Thread.currentThread().getContextClassLoader().toString());
         //System.out.println("static CL: " + Fop.class.getClassLoader().toString());
@@ -165,7 +170,7 @@ public final class Main {
             options = new CommandLineOptions();
             if (!options.parse(args)) {
                 // @SuppressFBWarnings("DM_EXIT")
-                System.exit(0);
+                systemWrapper.exit(0);
             }
 
             foUserAgent = options.getFOUserAgent();
@@ -192,7 +197,7 @@ public final class Main {
             // AWTRenderer closes with window shutdown, so exit() should not
             // be called here
             if (!MimeConstants.MIME_FOP_AWT_PREVIEW.equals(outputFormat)) {
-                System.exit(0);
+                systemWrapper.exit(0);
             }
         } catch (Exception e) {
             if (options != null) {
@@ -201,7 +206,7 @@ public final class Main {
                     options.getOutputFile().delete();
                 }
             }
-            System.exit(1);
+            systemWrapper.exit(1);
         }
     }
 
@@ -217,4 +222,12 @@ public final class Main {
         }
     }
 
+    /**
+     * Wrapper to support dependency injection.
+     */
+    public static class SystemWrapper {
+        public void exit(int status) {
+            System.exit(status);
+        }
+    }
 }

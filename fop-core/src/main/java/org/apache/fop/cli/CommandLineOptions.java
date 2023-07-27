@@ -102,6 +102,8 @@ public class CommandLineOptions {
     private File iffile;
     /* area tree input file */
     private File imagefile;
+    /* output filename */
+    private String outfilename;
     /* output file */
     private File outfile;
     /* input mode */
@@ -403,6 +405,9 @@ public class CommandLineOptions {
                 System.exit(1);
             }
         }
+        if (outfilename != null) {
+            outfile = new File(outfilename);
+        }
         return true;
     }    // end parseOptions
 
@@ -527,7 +532,7 @@ public class CommandLineOptions {
         if (isSystemInOutFile(filename)) {
             this.useStdOut = true;
         } else {
-            outfile = new File(filename);
+            outfilename = filename;
         }
     }
 
@@ -1351,15 +1356,15 @@ public class CommandLineOptions {
             log.info("not set");
         } else if (MimeConstants.MIME_FOP_AWT_PREVIEW.equals(outputmode)) {
             log.info("awt on screen");
-            if (outfile != null) {
+            if (outfilename != null) {
                 log.error("awt mode, but outfile is set:");
-                log.error("out file: " + outfile.toString());
+                log.error("out file: " + outfilename);
             }
         } else if (MimeConstants.MIME_FOP_PRINT.equals(outputmode)) {
             log.info("print directly");
-            if (outfile != null) {
+            if (outfilename != null) {
                 log.error("print mode, but outfile is set:");
-                log.error("out file: " + outfile.toString());
+                log.error("out file: " + outfilename);
             }
         } else if (MimeConstants.MIME_FOP_AREA_TREE.equals(outputmode)) {
             log.info("area tree");
@@ -1369,17 +1374,17 @@ public class CommandLineOptions {
             if (isOutputToStdOut()) {
                 log.info("output file: to stdout");
             } else {
-                log.info("output file: " + outfile.toString());
+                log.info("output file: " + outfilename);
             }
         } else if (MimeConstants.MIME_FOP_IF.equals(outputmode)) {
             log.info("intermediate format");
-            log.info("output file: " + outfile.toString());
+            log.info("output file: " + outfilename);
         } else {
             log.info(outputmode);
             if (isOutputToStdOut()) {
                 log.info("output file: to stdout");
             } else {
-                log.info("output file: " + outfile.toString());
+                log.info("output file: " + outfilename);
             }
         }
 
