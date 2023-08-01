@@ -960,7 +960,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
         /** @todo see if pdfDoc and res can be linked here,
         (currently res <> PDFDocument's resources) so addFonts()
         can be moved to PDFDocument class */
-        res.addFonts(pdfDoc, specialFontInfo, null);
+        res.addFonts(pdfDoc, specialFontInfo);
 
         PDFPattern myPat = pdfDoc.getFactory().makePattern(
                                 resourceContext, 1, res, 1, 1, bbox,

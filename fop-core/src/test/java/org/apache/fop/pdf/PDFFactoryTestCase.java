@@ -84,10 +84,10 @@ public class PDFFactoryTestCase {
                 thisURI, resolver);
         MockedFont font = new MockedFont(resourceResolver);
 
-        PDFFont pdfDejaVu = pdfFactory.makeFont("DejaVu", "DejaVu", "TTF", font, font, null);
+        PDFFont pdfDejaVu = pdfFactory.makeFont("DejaVu", "DejaVu", "TTF", font, font);
         assertEquals("/EAAAAA+DejaVu", pdfDejaVu.getBaseFont().toString());
 
-        PDFFont pdfArial = pdfFactory.makeFont("Arial", "Arial", "TTF", font, font, null);
+        PDFFont pdfArial = pdfFactory.makeFont("Arial", "Arial", "TTF", font, font);
         assertEquals("/EAAAAB+Arial", pdfArial.getBaseFont().toString());
     }
 
@@ -104,7 +104,7 @@ public class PDFFactoryTestCase {
         sb.addUnencodedCharacter(new NamedCharacter("xyz", String.valueOf((char) 0x2202)), 0, new Rectangle());
         sb.mapChar((char) 0x2202);
         sb.setEncoding(new CodePointMapping("FOPPDFEncoding", new int[0]));
-        PDFFont font = pdfFactory.makeFont("a", "a", "WinAnsiEncoding", sb, sb, null);
+        PDFFont font = pdfFactory.makeFont("a", "a", "WinAnsiEncoding", sb, sb);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         font.output(bos);
         assertTrue(bos.toString().contains("/BaseFont /EAAAAA+a"));
@@ -134,7 +134,7 @@ public class PDFFactoryTestCase {
                 return new char[]{1};
             }
         });
-        pdfFactory.makeFont("a", "a", "WinAnsiEncoding", sb, sb, null);
+        pdfFactory.makeFont("a", "a", "WinAnsiEncoding", sb, sb);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         doc.outputTrailer(bos);
         assertTrue(bos.toString().contains("/Differences [1 /a]"));
@@ -151,7 +151,7 @@ public class PDFFactoryTestCase {
         sb.setFlags(0);
         sb.setEncoding(new CodePointMapping("FOPPDFEncoding", new int[0]));
         String enc = "MacRomanEncoding";
-        PDFFont font = pdfFactory.makeFont("a", "a", enc, sb, sb, null);
+        PDFFont font = pdfFactory.makeFont("a", "a", enc, sb, sb);
         font.output(new ByteArrayOutputStream());
         assertEquals(((PDFName)font.entries.get("Encoding")).getName(), enc);
     }
@@ -183,7 +183,7 @@ public class PDFFactoryTestCase {
         for (char c = 0; c < 512; c++) {
             sb.mapChar(c);
         }
-        pdfFactory.makeFont("a", "a", "WinAnsiEncoding", sb, sb, null);
+        pdfFactory.makeFont("a", "a", "WinAnsiEncoding", sb, sb);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         doc.outputTrailer(bos);
 
@@ -217,7 +217,7 @@ public class PDFFactoryTestCase {
         for (char c = 0; c < 512; c++) {
             sb.mapChar(c);
         }
-        pdfFactory.makeFont("a", "a", "WinAnsiEncoding", sb, sb, null);
+        pdfFactory.makeFont("a", "a", "WinAnsiEncoding", sb, sb);
         PDFFont pdfFont = pdfFactory.getDocument().getFontMap().get("a_1");
         PDFFontDescriptor fontDescriptor = (PDFFontDescriptor) pdfFont.get("FontDescriptor");
         assertNull(fontDescriptor.getCIDSet());

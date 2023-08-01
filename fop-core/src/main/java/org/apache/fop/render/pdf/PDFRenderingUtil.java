@@ -603,6 +603,7 @@ class PDFRenderingUtil {
                     = VersionController.getFixedVersionController(maxPDFVersion);
             this.pdfDoc = new PDFDocument(producer, controller);
         }
+        pdfDoc.getFactory().setEventBroadcaster(userAgent.getEventBroadcaster());
         updateInfo();
         updatePDFProfiles();
         pdfDoc.setFilterMap(rendererConfig.getFilterMap());

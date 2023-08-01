@@ -185,7 +185,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     /** {@inheritDoc} */
     public void endDocument() throws IFException {
         documentNavigationHandler.registerIncompleteActions();
-        pdfDoc.getResources().addFonts(pdfDoc, fontInfo, getUserAgent().getEventBroadcaster());
+        pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
         try {
             if (pdfDoc.isLinearizationEnabled()) {
                 generator.flushPDFDoc();

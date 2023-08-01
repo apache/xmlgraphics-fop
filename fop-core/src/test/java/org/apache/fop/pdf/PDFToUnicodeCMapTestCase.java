@@ -43,11 +43,11 @@ import org.apache.fop.events.model.EventSeverity;
 
 public class PDFToUnicodeCMapTestCase {
 
-    static final int UNICODE_CHAR_MAP_SIZE = 200;
+    private static final int UNICODE_CHAR_MAP_SIZE = 200;
 
-    static final char[] S_UNICODE_CHAR_MAP = new char[UNICODE_CHAR_MAP_SIZE];
+    private static final char[] S_UNICODE_CHAR_MAP = new char[UNICODE_CHAR_MAP_SIZE];
 
-    EventBroadcaster eventBroadcaster;
+    private EventBroadcaster eventBroadcaster;
 
     @Before
     public void initUnicodeChatMap() {
