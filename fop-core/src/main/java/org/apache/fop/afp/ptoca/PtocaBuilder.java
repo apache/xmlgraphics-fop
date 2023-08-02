@@ -361,26 +361,6 @@ public abstract class PtocaBuilder implements PtocaConstants {
     }
 
     /**
-     * Resets the intercharacter adjustment (additional increment or decrement between graphic
-     * characters) to 0.
-     * <p>
-     * This is a modal control sequence.
-     *
-     * @throws IOException if an I/O error occurs
-     */
-    public void resetInterCharacterAdjustment() throws IOException {
-        if (0 == this.currentInterCharacterAdjustment) {
-            return;
-        }
-        newControlSequence();
-        writeShort(0); //Increment
-        writeBytes(0); // Direction
-        commit(chained(SIA));
-
-        this.currentInterCharacterAdjustment = 0;
-    }
-
-    /**
      * A control sequence is a sequence of bytes that specifies a control
      * function. A control sequence consists of a control sequence introducer
      * and zero or more parameters. The control sequence can extend multiple

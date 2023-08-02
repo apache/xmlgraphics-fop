@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,8 +45,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.apache.commons.io.IOUtils;
-
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
@@ -63,6 +62,9 @@ import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.fonts.CharactersetEncoder;
 import org.apache.fop.afp.fonts.OutlineFontTestCase;
 import org.apache.fop.afp.fonts.RasterFont;
+import org.apache.fop.afp.parser.MODCAParser;
+import org.apache.fop.afp.parser.UnparsedStructuredField;
+import org.apache.fop.afp.ptoca.PtocaConstants;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.events.Event;
@@ -212,34 +214,35 @@ public class AFPPainterTestCase {
                 + "END DOCUMENT DOC00001\n");
     }
 
-    /**
-     * Checks that letter spacing is reset to 0 after the relevant text block.
-     */
     @Test
-    public void testLetterSpacingReset() throws Exception {
+    public void testLetterSpacing() throws Exception {
         List<String> strings = new ArrayList<>();
         strings.add("xxxx");
-        InputStream inputStream = getDocResultInputStream(strings, 10000);
-        byte[] bytes = IOUtils.toByteArray(inputStream);
-        // The 134th byte is incremented by 5 to account for the 5 extra bytes inserted for the reset.
-        Assert.assertEquals((byte)39, bytes[134]);
-        // And these are the 5 reset bytes.
-        Assert.assertEquals((byte)5, bytes[163]);
-        Assert.assertEquals((byte)195, bytes[164]);
-        Assert.assertEquals((byte)0, bytes[165]);
-        Assert.assertEquals((byte)0, bytes[166]);
-        Assert.assertEquals((byte)0, bytes[167]);
+        InputStream bis = getDocResultInputStream(strings, 10000);
+        MODCAParser parser = new MODCAParser(bis);
+        UnparsedStructuredField field;
+        while ((field = parser.readNextStructuredField()) != null) {
+            if (field.toString().contains("Data Presentation Text")) {
+                break;
+            }
+        }
+        DataInputStream data = new DataInputStream(new ByteArrayInputStream(field.getData()));
+        data.skip(13); //2 for controlInd
+        Assert.assertEquals(data.readByte(), 5); //len
+        Assert.assertEquals(data.readByte(), PtocaConstants.SIA  | PtocaConstants.CHAIN_BIT); //functionType
+        Assert.assertEquals(data.readShort(), 33); //Increment
+        Assert.assertEquals(data.readByte(), 0); //Direction
+        data.skip(4); //varSpaceCharacterIncrement
+        //flushText:
+        Assert.assertEquals(data.readByte(), 2); //len
+        Assert.assertEquals(data.readByte(), PtocaConstants.TRN  | PtocaConstants.CHAIN_BIT); //functionType
     }
 
     private String writeText(List<String> text) throws Exception {
-        InputStream bis = getDocResultInputStream(text);
+        InputStream bis = getDocResultInputStream(text, 0);
         StringBuilder sb = new StringBuilder();
         new AFPParser(false).read(bis, sb);
         return sb.toString();
-    }
-
-    private static InputStream getDocResultInputStream(List<String> text) throws Exception {
-        return getDocResultInputStream(text, 0);
     }
 
     private static InputStream getDocResultInputStream(List<String> text, int letterSpacing) throws Exception {
@@ -266,7 +269,6 @@ public class AFPPainterTestCase {
             afpPainter.drawText(0, 0, letterSpacing, 0, null, s);
         }
         doc.endDocument();
-
         return new ByteArrayInputStream(outputStream.toByteArray());
     }
 

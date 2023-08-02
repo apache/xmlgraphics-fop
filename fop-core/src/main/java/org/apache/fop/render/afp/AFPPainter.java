@@ -1102,7 +1102,6 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
                     }
                 }
             }
-            builder.resetInterCharacterAdjustment();
             flushText(builder, sb, charSet);
             if (pto != null) {
                 bytesAvailable = pto.getBytesAvailable();
