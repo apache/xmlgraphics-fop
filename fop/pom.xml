@@ -43,32 +43,33 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <mainClass>org.apache.fop.cli.Main</mainClass>
+            </manifest>
+            <manifestEntries>
+              <SpecificationTitle>XSL-FO - Extensible Stylesheet Language</SpecificationTitle>
+              <SpecificationVersion>1.1</SpecificationVersion>
+              <SpecificationVendor>World Wide Web Consortium</SpecificationVendor>
+              <SpecificationURL>http://www.w3.org/TR/xsl</SpecificationURL>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>package-all</id>
-            <phase>package</phase>
+            <phase>install</phase>
             <goals>
-              <goal>single</goal>
+              <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <addMavenDescriptor>false</addMavenDescriptor>
-              <appendAssemblyId>false</appendAssemblyId>
-              <archive>
-                <manifest>
-                  <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                  <mainClass>org.apache.fop.cli.Main</mainClass>
-                </manifest>
-                <manifestEntries>
-                  <SpecificationTitle>XSL-FO - Extensible Stylesheet Language</SpecificationTitle>
-                  <SpecificationVersion>1.1</SpecificationVersion>
-                  <SpecificationVendor>World Wide Web Consortium</SpecificationVendor>
-                  <SpecificationURL>http://www.w3.org/TR/xsl</SpecificationURL>
-                </manifestEntries>
-              </archive>
-              <descriptors>
-                <descriptor>src/tools/resources/assembly/assembly.xml</descriptor>
-              </descriptors>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+              <includeArtifactIds>fop-core,fop-util,fop-events</includeArtifactIds>
             </configuration>
           </execution>
         </executions>
