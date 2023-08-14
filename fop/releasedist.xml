@@ -173,7 +173,11 @@
       <fileset dir="${build.javadocs.dir}"/>
     </copy>
     <mkdir dir="${dist.bin.result.dir}/fop/build"/>
-    <copy todir="${dist.bin.result.dir}/fop/build" file="target/fop-${version}.jar"/>
+    <copy todir="${dist.bin.result.dir}/fop/build" flatten="true">
+      <fileset dir="target">
+        <include name="fop-*${version}.jar"/>
+      </fileset>
+    </copy>
     <chmod file="${dist.bin.result.dir}/fop/fop" perm="ugo+rx"/>
     <zip zipfile="${name}-${version}-bin.zip" basedir="${dist.bin.dir}" includes="**"/>
     <tar longfile="gnu" destfile="${name}-${version}-bin.tar">
