@@ -18,7 +18,7 @@
 <project basedir="." name="fop">
 
   <property name="name" value="fop"/>
-  <property name="version" value="2.8.0-SNAPSHOT"/>
+  <property name="version" value="2.9.0-SNAPSHOT"/>
   <property name="dist.bin.dir" value="${basedir}/dist-bin"/>
   <property name="dist.src.dir" value="${basedir}/dist-src"/>
   <property name="dist.bin.result.dir" value="${dist.bin.dir}/${name}-${version}"/>

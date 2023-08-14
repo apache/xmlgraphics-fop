@@ -107,6 +107,18 @@ under the ./fop sub-directory.
   RELEASE NOTES
 ==============================================================================
 
+Version 2.9
+===========
+
+Major Changes in Version 2.9
+----------------------------
+
+* Add support for font-selection-strategy=character-by-character
+* Allow XMP at PDF page level
+* Allow use of page position only on redo of layout
+
+This release also contains a number of bug fixes.
+
 Version 2.8
 ===========
 
