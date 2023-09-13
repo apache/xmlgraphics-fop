@@ -42,6 +42,7 @@ import static org.junit.Assert.assertTrue;
 import org.apache.batik.gvt.font.GVTFontFamily;
 import org.apache.batik.gvt.font.GVTLineMetrics;
 
+import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.FontInfo;
 
 public class FOPFontFamilyResolverTestCase {
@@ -77,6 +78,14 @@ public class FOPFontFamilyResolverTestCase {
         assertEquals(FontInfoBuilder.DROID_SANS_MONO, family.getFamilyName());
         family = resolver.getFamilyThatCanDisplay('\u02DF');
         assertNull(family);
+    }
+
+    @Test
+    public void testGetFamilyThatCanDisplayNoFamily() {
+        CustomFont font = (CustomFont) fontInfo.getFonts().values().iterator().next();
+        font.setFamilyNames(Collections.<String>emptySet());
+        GVTFontFamily family = resolver.getFamilyThatCanDisplay('\u0180');
+        assertEquals(font.getFontName(), family.getFamilyName());
     }
 
     @Test

@@ -21,6 +21,7 @@ package org.apache.fop.svg.font;
 
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.batik.bridge.FontFace;
 import org.apache.batik.gvt.font.GVTFontFace;
@@ -68,7 +69,11 @@ public class FOPFontFamilyResolverImpl implements FOPFontFamilyResolver {
         Map<String, Typeface> fonts = fontInfo.getFonts();
         for (Typeface font : fonts.values()) {
             if (font.hasChar(c)) {
-                String fontFamily = font.getFamilyNames().iterator().next();
+                Set<String> familyNames = font.getFamilyNames();
+                String fontFamily = font.getFontName();
+                if (!familyNames.isEmpty()) {
+                    fontFamily = familyNames.iterator().next();
+                }
                 return new FOPGVTFontFamily(fontInfo, fontFamily,
                         new FontTriplet(fontFamily, Font.STYLE_NORMAL, Font.WEIGHT_NORMAL),
                         new GVTFontFace(fontFamily));
