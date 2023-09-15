@@ -47,6 +47,7 @@
         <configuration>
           <archive>
             <manifest>
+              <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               <mainClass>org.apache.fop.cli.Main</mainClass>
             </manifest>

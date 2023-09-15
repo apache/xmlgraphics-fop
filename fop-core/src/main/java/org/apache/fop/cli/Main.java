@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -62,22 +63,18 @@ public final class Main {
         } else {
             buildDir = new File(baseDir, "build");
         }
-        File fopJar = new File(buildDir, "fop.jar");
-        if (!fopJar.exists()) {
-            fopJar = new File(baseDir, "fop.jar");
-        }
-        if (!fopJar.exists()) {
-            throw new RuntimeException("fop.jar not found in directory: "
-                    + baseDir.getAbsolutePath() + " (or below)");
-        }
-        List jars = new java.util.ArrayList();
-        jars.add(fopJar.toURI().toURL());
-        File[] files;
+        List jars = new ArrayList();
         FileFilter filter = new FileFilter() {
             public boolean accept(File pathname) {
                 return pathname.getName().endsWith(".jar");
             }
         };
+        File[] files = buildDir.listFiles(filter);
+        if (files != null) {
+            for (File file : files) {
+                jars.add(file.toURI().toURL());
+            }
+        }
         File libDir = new File(baseDir, "lib");
         if (!libDir.exists()) {
             libDir = baseDir;
@@ -97,12 +94,7 @@ public final class Main {
                 }
             }
         }
-        URL[] urls = (URL[])jars.toArray(new URL[jars.size()]);
-        /*
-        for (int i = 0, c = urls.length; i < c; i++) {
-            System.out.println(urls[i]);
-        }*/
-        return urls;
+        return (URL[])jars.toArray(new URL[jars.size()]);
     }
 
     /**
