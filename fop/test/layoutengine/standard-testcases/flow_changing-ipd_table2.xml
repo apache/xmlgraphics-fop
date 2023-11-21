@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that a table immediately following a changing IPD break is handled properly.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" font-family="Helvetica">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="OverlayPage" page-width="8.5in" page-height="11in">
+          <fo:region-body region-name="Body"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master margin-top="0.5in" margin-left="0.7in" page-width="8.5in" page-height="11in" master-name="AcordSuppPage" margin-bottom="0.5in" margin-right="0.5in">
+          <fo:region-body margin-top="1.5in" margin-left="0.25in" region-name="Body" margin-bottom="1in"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="LetterPages">
+          <fo:repeatable-page-master-reference maximum-repeats="1" master-reference="OverlayPage"/>
+          <fo:repeatable-page-master-reference maximum-repeats="no-limit" master-reference="AcordSuppPage"/>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence format="1" id="th_default_sequence1" master-reference="LetterPages">
+        <fo:flow flow-name="Body">
+          <fo:block>
+            <fo:block-container keep-together.within-page="always" break-before="page">
+              <fo:block font-size="0">
+                <fo:block font-size="0">
+                  <fo:external-graphic scaling="uniform" src="url(black.png)" content-height="11in"/>
+                </fo:block>
+              </fo:block>
+            </fo:block-container>
+            <fo:table table-layout="fixed" width="100%">
+              <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+              <fo:table-body>
+                <fo:table-row>
+                  <fo:table-cell border-right-style="solid" border-bottom-color="black" border-top-width="1pt" border-left-style="solid" border-right-width="1pt" border-bottom-width="1pt" border-left-color="black" border-top-color="black" border-bottom-style="solid" border-right-color="black" border-left-width="1pt" border-top-style="solid">
+                    <fo:block>
+                      <fo:block>Table 2</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell border-right-style="solid" border-bottom-color="black" border-left-style="solid" border-right-width="1pt" border-bottom-width="1pt" border-left-color="black" border-bottom-style="solid" border-right-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="506600" xpath="//pageViewport[2]//lineArea[1]/@ipd"/>
+    <eval expected="466580" xpath="//pageViewport[2]//lineArea[1]/@end-indent"/>
+  </checks>
+</testcase>
