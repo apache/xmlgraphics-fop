@@ -56,8 +56,9 @@
             WEB-INF/lib/batik-all-*.jar,
             WEB-INF/lib/commons-io-${commons.io.version}.jar,
             WEB-INF/lib/commons-logging-${commons.logging.version}.jar,
-            WEB-INF/lib/fop-${project.version}.jar,
-            WEB-INF/lib/xmlgraphics-commons-*.jar
+            WEB-INF/lib/fop-*${project.version}.jar,
+            WEB-INF/lib/xmlgraphics-commons-*.jar,
+            WEB-INF/lib/fontbox-*.jar,
           </packagingIncludes>
           <archive>
             <addMavenDescriptor>false</addMavenDescriptor>
