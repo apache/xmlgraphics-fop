@@ -23,6 +23,7 @@ package org.apache.fop.render.pdf;
 
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -117,7 +118,7 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
             // here we need to inflate the PNG pixel data, which includes alpha, separate the alpha channel
             // and then deflate it back again
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            DeflaterOutputStream dos = new DeflaterOutputStream(baos, new Deflater());
+            BufferedOutputStream dos = new BufferedOutputStream(new DeflaterOutputStream(baos, new Deflater()));
             InputStream in = ((ImageRawStream) image).createInputStream();
             try {
                 InflaterInputStream infStream = new InflaterInputStream(in, new Inflater());
@@ -226,7 +227,7 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
                 int filter;
                 // here we need to inflate the PNG pixel data, which includes alpha, separate the alpha
                 // channel and then deflate the RGB channels back again
-                DeflaterOutputStream dos = new DeflaterOutputStream(out, new Deflater());
+                BufferedOutputStream dos = new BufferedOutputStream(new DeflaterOutputStream(out, new Deflater()));
                 while ((filter = dataStream.read()) != -1) {
                     byte[] bytes = new byte[bytesPerRow];
                     dataStream.readFully(bytes, 0, bytesPerRow);
