@@ -19,9 +19,13 @@
 
 package org.apache.fop.fo.flow;
 
+import java.util.Iterator;
+import java.util.Stack;
+
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.complexscripts.bidi.DelimitedTextRange;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
@@ -147,6 +151,25 @@ public class Footnote extends FObj implements CommonAccessibilityHolder {
      */
     public int getNameId() {
         return FO_FOOTNOTE;
+    }
+
+    @Override
+    protected Stack<DelimitedTextRange> collectDelimitedTextRanges(Stack<DelimitedTextRange> ranges,
+                                                                   DelimitedTextRange currentRange) {
+        FootnoteBody body = getFootnoteBody();
+        if (body != null) {
+            ranges = body.collectDelimitedTextRanges(ranges);
+        }
+
+        Inline inline = getFootnoteCitation();
+        if (inline != null) {
+            ranges = inline.collectDelimitedTextRanges(ranges);
+        }
+
+        for (Iterator it = getChildNodes(); (it != null) && it.hasNext();) {
+            ranges = ((FONode) it.next()).collectDelimitedTextRanges(ranges);
+        }
+        return ranges;
     }
 }
 
