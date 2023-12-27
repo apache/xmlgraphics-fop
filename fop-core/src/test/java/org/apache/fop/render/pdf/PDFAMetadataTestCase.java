@@ -19,7 +19,9 @@
 
 package org.apache.fop.render.pdf;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -27,10 +29,16 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.xmlgraphics.util.QName;
 import org.apache.xmlgraphics.xmp.Metadata;
+import org.apache.xmlgraphics.xmp.XMPArray;
+import org.apache.xmlgraphics.xmp.XMPArrayType;
+import org.apache.xmlgraphics.xmp.XMPConstants;
+import org.apache.xmlgraphics.xmp.XMPProperty;
 import org.apache.xmlgraphics.xmp.schemas.DublinCoreAdapter;
 import org.apache.xmlgraphics.xmp.schemas.DublinCoreSchema;
 import org.apache.xmlgraphics.xmp.schemas.XMPBasicAdapter;
@@ -42,6 +50,7 @@ import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFMetadata;
+import org.apache.fop.pdf.PDFUAMode;
 
 /**
  * Test case for PDF/A metadata handling.
@@ -142,5 +151,75 @@ public class PDFAMetadataTestCase {
                 .contains("rdf:Bag"));
         assertFalse(meta.getProperty("http://purl.org/dc/elements/1.1/", "date").getValue().toString()
                 .contains("rdf:Seq"));
+    }
+
+    @Test
+    public void testPDFAExtensionSchema() {
+        PDFDocument doc = new PDFDocument("SuperFOP");
+        doc.getProfile().setPDFAMode(PDFAMode.PDFA_1A);
+        doc.getProfile().setPDFUAMode(PDFUAMode.PDFUA_1);
+        Metadata meta = PDFMetadata.createXMPFromPDFDocument(doc);
+
+        XMPProperty schemas = meta.getProperty(XMPConstants.PDF_A_EXTENSION, "schemas");
+        assertProperties(schemas, XMPConstants.PDF_A_EXTENSION, "schemas", null, null);
+        assertNotNull("When PDF/A and PDF/UA are both active, we need to add an "
+                + "extension element to avoid validation errors from PDF/A validators", schemas);
+
+        List<XMPProperty> schemasArrayList = assertArrayValue(schemas, XMPArrayType.BAG);
+        assertProperties(schemasArrayList.get(0), XMPConstants.PDF_A_SCHEMA, "schema",
+                "pdfaSchema", "PDF/UA identification schema");
+        assertProperties(schemasArrayList.get(1), XMPConstants.PDF_A_SCHEMA, "namespaceURI",
+                "pdfaSchema", "http://www.aiim.org/pdfua/ns/id/");
+        assertProperties(schemasArrayList.get(2), XMPConstants.PDF_A_SCHEMA, "prefix",
+                "pdfaSchema", "pdfuaid");
+        assertProperties(schemasArrayList.get(3), XMPConstants.PDF_A_SCHEMA, "property",
+                "pdfaSchema", null);
+
+        List<XMPProperty> propertyArrayList = assertArrayValue(schemasArrayList.get(3), XMPArrayType.SEQ);
+        assertProperties(propertyArrayList.get(0), XMPConstants.PDF_A_PROPERTY, "name",
+                "pdfaProperty", "part");
+        assertProperties(propertyArrayList.get(1), XMPConstants.PDF_A_PROPERTY, "valueType",
+                "pdfaProperty", "Integer");
+        assertProperties(propertyArrayList.get(2), XMPConstants.PDF_A_PROPERTY, "category",
+                "pdfaProperty", "internal");
+        assertProperties(propertyArrayList.get(3), XMPConstants.PDF_A_PROPERTY, "description",
+                "pdfaProperty", "Indicates, which part of ISO 14289 standard is followed");
+    }
+
+    private void assertProperties(XMPProperty prop, String ns, String localName, String prefix,
+                                  String value) {
+        QName name = prop.getName();
+        assertEquals("Property must have expected value or the validator might fail",
+                ns, name.getNamespaceURI());
+        assertEquals("Property must have expected value or the validator might fail",
+                localName, name.getLocalName());
+        assertEquals("Property must have expected value or the validator might fail",
+                prefix, name.getPrefix());
+
+        if (value != null) {
+            assertEquals("Property must have expected value or the validator might fail",
+                    value, prop.getValue());
+        }
+    }
+
+    private List<XMPProperty> assertArrayValue(XMPProperty prop, XMPArrayType type) {
+        Object value = prop.getValue();
+        assertEquals("Property value must be an array", XMPArray.class, value.getClass());
+
+        XMPArray array = (XMPArray) value;
+        assertEquals("The property expects an array of the given type",
+                type, array.getType());
+        assertEquals("Array must only have 1 element with 4 properties inside",
+                1, array.getSize());
+
+        Object arrayValue = array.getValue(0);
+        assertEquals("Array must only have 1 element with 4 properties inside",
+                ArrayList.class, arrayValue.getClass());
+
+        List<XMPProperty> arrayList = (List<XMPProperty>) arrayValue;
+        assertEquals("Array must only have 1 element with 4 properties inside",
+                4, arrayList.size());
+
+        return arrayList;
     }
 }
