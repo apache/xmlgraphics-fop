@@ -271,4 +271,8 @@ public interface LayoutManager extends PercentBaseContext {
      */
     List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
             Position positionAtIPDChange, LayoutManager restartAtLM);
+
+    boolean isFromFootnote();
+
+    void setFromFootnote(boolean fromFootnote);
 }

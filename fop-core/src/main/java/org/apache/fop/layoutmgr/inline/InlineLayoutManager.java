@@ -540,6 +540,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
         // Not sure if lastPos can legally be null or if that masks a different problem.
         // But it seems to fix bug 38053.
         setTraits(areaCreated, lastPos == null || !isLast(lastPos));
+        getCurrentArea().setFromFootnote(isFromFootnote());
         parentLayoutManager.addChildArea(getCurrentArea());
 
         registerMarkers(

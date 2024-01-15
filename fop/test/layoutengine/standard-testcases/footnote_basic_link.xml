@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks footnotes.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="3in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal" white-space-collapse="true">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>
+            <!-- Mid-Link Footnote -->
+            <fo:block>
+              <fo:basic-link external-destination="https://www.google.com/">
+                <fo:inline>This is a link with a footnote</fo:inline>
+                <fo:footnote>
+                  <fo:inline>
+                    <fo:basic-link id="fn-ref-2" internal-destination="fn-2" color="blue">
+                      <fo:inline baseline-shift="super" font-size="80%">1</fo:inline>
+                    </fo:basic-link>
+                  </fo:inline>
+                  <fo:footnote-body>
+                    <fo:block color="black" text-decoration="none">
+                      <fo:table table-layout="fixed" width="100%">
+                        <fo:table-column column-width="proportional-column-width(5)"/>
+                        <fo:table-column column-width="proportional-column-width(95)"/>
+                        <fo:table-body>
+                          <fo:table-row>
+                            <fo:table-cell>
+                              <fo:block>
+                                <fo:basic-link id="fn-2" internal-destination="fn-ref-2" color="blue">1</fo:basic-link>
+                              </fo:block>
+                            </fo:table-cell>
+                            <fo:table-cell>
+                              <fo:block>Note text</fo:block>
+                            </fo:table-cell>
+                          </fo:table-row>
+                        </fo:table-body>
+                      </fo:table>
+                    </fo:block>
+                  </fo:footnote-body>
+                </fo:footnote>
+                <fo:inline> inside</fo:inline>
+              </fo:basic-link>
+            </fo:block>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <!-- block with footnote -->
+    <eval expected="This is a link with a footnote   1 inside" xpath="//inlineparent[1]"/>
+    <eval expected="  1" xpath="//inlineparent[2]"/>
+    <!-- the footnote -->
+    <eval expected="4552" xpath="//inlineparent[1]/@offset"/>
+    <eval expected="11100" xpath="//inlineparent[1]/@bpd"/>
+    <eval expected="11100" xpath="//inlineparent[1]/@bpda"/>
+
+    <eval expected="0" xpath="//inlineparent[2]/@offset"/>
+    <eval expected="11100" xpath="//inlineparent[2]/@bpd"/>
+    <eval expected="11100" xpath="//inlineparent[2]/@bpda"/>
+
+    <eval expected="15652" xpath="//lineArea/@bpd"/>
+    <eval expected="18952" xpath="//lineArea/@bpda"/>
+  </checks>
+</testcase>

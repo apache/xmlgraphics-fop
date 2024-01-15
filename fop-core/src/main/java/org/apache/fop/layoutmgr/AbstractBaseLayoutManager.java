@@ -51,6 +51,8 @@ public abstract class AbstractBaseLayoutManager
      */
     private static final Log LOG = LogFactory.getLog(AbstractBaseLayoutManager.class);
 
+    private boolean fromFootnote;
+
     /**
      * Abstract base layout manager.
      */
@@ -293,5 +295,13 @@ public abstract class AbstractBaseLayoutManager
 
     public void recreateChildrenLMs() {
 
+    }
+
+    public boolean isFromFootnote() {
+        return fromFootnote || (getParent() != null && getParent().isFromFootnote());
+    }
+
+    public void setFromFootnote(boolean fromFootnote) {
+        this.fromFootnote = fromFootnote;
     }
 }

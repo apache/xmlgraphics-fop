@@ -187,6 +187,8 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
                 if (level >= 0) {
                     ls.setBidiLevel(level);
                 }
+                ls.setFromFootnote(isFromFootnote());
+
                 parentArea.addChildArea(ls);
             }
         }

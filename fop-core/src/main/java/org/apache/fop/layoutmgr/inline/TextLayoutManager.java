@@ -333,6 +333,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         textArea.setTextLetterSpaceAdjust(letterSpaceDim);
         textArea.setTextWordSpaceAdjust(wordSpaceDim - spaceCharIPD
                 - 2 * textArea.getTextLetterSpaceAdjust());
+        textArea.setFromFootnote(isFromFootnote());
         if (context.getIPDAdjust() != 0) {
             // add information about space width
             textArea.setSpaceDifference(wordSpaceIPD.getOpt() - spaceCharIPD

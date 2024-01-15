@@ -135,6 +135,8 @@ public class Area extends AreaTreeObject implements Serializable {
      */
     private List<ChangeBar> changeBarList;
 
+    private boolean fromFootnote;
+
     /**
      * Returns the active change bar list.
      *
@@ -539,5 +541,13 @@ public class Area extends AreaTreeObject implements Serializable {
         if (effectiveIPD != -1) {
             ipd = effectiveIPD;
         }
+    }
+
+    public boolean isFromFootnote() {
+        return fromFootnote;
+    }
+
+    public void setFromFootnote(boolean fromFootnote) {
+        this.fromFootnote = fromFootnote;
     }
 }

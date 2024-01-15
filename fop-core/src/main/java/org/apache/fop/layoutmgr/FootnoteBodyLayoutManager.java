@@ -85,6 +85,7 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
             lc.setFlags(LayoutContext.LAST_AREA,
                     (layoutContext.isLastArea() && childLM == lastLM));
             // Add the line areas to Area
+            childLM.setFromFootnote(true);
             childLM.addAreas(childPosIter, lc);
         }
     }
@@ -93,6 +94,7 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
     @Override
     public void addChildArea(Area childArea) {
         childArea.setAreaClass(Area.CLASS_FOOTNOTE);
+        childArea.setFromFootnote(true);
         parentLayoutManager.addChildArea(childArea);
     }
 

@@ -71,8 +71,16 @@ public class InlineParent extends InlineArea {
         }
         updateLevel(childArea.getBidiLevel());
         int childOffset = childArea.getVirtualOffset();
-        minChildOffset = Math.min(minChildOffset, childOffset);
-        maxAfterEdge = Math.max(maxAfterEdge, childOffset + childArea.getVirtualBPD());
+
+        // do not offset if the childArea comes from a footnote
+        // or if the parent itself comes from a footnote
+        if (!(childArea.isFromFootnote() || isFromFootnote())) {
+            minChildOffset = Math.min(minChildOffset, childOffset);
+            maxAfterEdge = Math.max(maxAfterEdge, childOffset + childArea.getVirtualBPD());
+        } else {
+            minChildOffset = Math.min(minChildOffset, childArea.getBlockProgressionOffset());
+            maxAfterEdge = minChildOffset + childArea.getVirtualBPD();
+        }
     }
 
     @Override
@@ -148,5 +156,14 @@ public class InlineParent extends InlineArea {
         }
     }
 
+    @Override
+    public void setFromFootnote(boolean fromFootnote) {
+        super.setFromFootnote(fromFootnote);
 
+        // set all the children to avoid offsetting any of them
+        // otherwise we would offset the parent by offsetting the child
+        for (InlineArea area : inlines) {
+            area.setFromFootnote(fromFootnote);
+        }
+    }
 }

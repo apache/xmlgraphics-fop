@@ -155,6 +155,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
         PositionIterator childPosIter = new PositionIterator(positionList.listIterator());
         LayoutManager childLM;
         while ((childLM = childPosIter.getNextChildLM()) != null) {
+            childLM.setFromFootnote(true);
             childLM.addAreas(childPosIter, childContext);
             childContext.setLeadingSpace(childContext.getTrailingSpace());
             childContext.setFlags(LayoutContext.RESOLVE_LEADING_SPACE, true);
