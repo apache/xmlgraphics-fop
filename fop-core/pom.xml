@@ -345,9 +345,12 @@
             <manifest>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
+            <manifestEntries>
+              <Automatic-Module-Name>org.apache.xmlgraphics.fop.core</Automatic-Module-Name>
+            </manifestEntries>
           </archive>
         </configuration>
-      </plugin>      
+      </plugin>
     </plugins>
     <resources>
       <resource>
