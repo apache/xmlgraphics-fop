@@ -105,8 +105,8 @@
       </plugin>
       <!-- code analysis - findbugs -->
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
         <version>${findbugs.plugin.version}</version>
         <configuration>
           <excludeFilterFile>src/tools/resources/findbugs/exclusions.xml</excludeFilterFile>
