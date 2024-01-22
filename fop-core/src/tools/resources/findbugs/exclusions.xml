@@ -413,6 +413,15 @@
       <Class name="org.apache.fop.servlet.FopServlet"/>
     </And>    
   </Match>
+  <Match>
+    <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
+    <Or>
+      <Class name="org.apache.fop.layoutmgr.inline.LineLayoutManager$Paragraph"/>
+      <Class name="org.apache.fop.layoutmgr.InlineKnuthSequence"/>
+      <Class name="org.apache.fop.layoutmgr.BlockKnuthSequence"/>
+      <Class name="org.apache.fop.layoutmgr.AbstractBreaker$BlockSequence"/>
+    </Or>
+  </Match>  
   
   <Match>
     <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE"/>

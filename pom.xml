@@ -20,7 +20,7 @@
     <commons.logging.version>1.0.4</commons.logging.version>
     <compiler.plugin.version>3.11.0</compiler.plugin.version>
     <exec.plugin.version>1.4.0</exec.plugin.version>
-    <findbugs.plugin.version>3.1.12.2</findbugs.plugin.version>
+    <findbugs.plugin.version>4.2.3</findbugs.plugin.version>
     <jar.plugin.version>3.1.1</jar.plugin.version>
     <java.version>8</java.version>
     <junit.version>4.11</junit.version>
