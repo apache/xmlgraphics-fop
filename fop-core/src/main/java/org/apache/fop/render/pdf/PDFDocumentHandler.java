@@ -24,14 +24,19 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.xmlgraphics.io.TempResourceURIGenerator;
 import org.apache.xmlgraphics.xmp.Metadata;
 
 import org.apache.fop.accessibility.StructureTreeEventHandler;
@@ -43,6 +48,7 @@ import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFResources;
+import org.apache.fop.pdf.PDFSignature;
 import org.apache.fop.pdf.PDFStream;
 import org.apache.fop.render.extensions.prepress.PageBoundaries;
 import org.apache.fop.render.extensions.prepress.PageScale;
@@ -63,6 +69,7 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
 
     /** logging instance */
     private static Log log = LogFactory.getLog(PDFDocumentHandler.class);
+    private static final TempResourceURIGenerator SIGN_TEMP_URI_GENERATOR = new TempResourceURIGenerator("pdfsign");
 
     private boolean accessEnabled;
 
@@ -100,6 +107,9 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     private Map<String, Object> usedFieldNames = new HashMap<>();
     private Map<Integer, PDFArray> pageNumbers = new HashMap<Integer, PDFArray>();
     private Map<String, PDFReference> contents = new HashMap<String, PDFReference>();
+    private PDFSignature pdfSignature;
+    private URI signTempURI;
+    private OutputStream orgOutputStream;
 
     /**
      * Default constructor.
@@ -157,13 +167,23 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     public void startDocument() throws IFException {
         super.startDocument();
         try {
-            this.pdfDoc = pdfUtil.setupPDFDocument(this.outputStream);
+            setupPDFSigning();
+            this.pdfDoc = pdfUtil.setupPDFDocument(outputStream);
             this.accessEnabled = getUserAgent().isAccessibilityEnabled();
             if (accessEnabled) {
                 setupAccessibility();
             }
         } catch (IOException e) {
             throw new IFException("I/O error in startDocument()", e);
+        }
+    }
+
+    private void setupPDFSigning() throws IOException {
+        if (pdfUtil.getSignParams() != null) {
+            orgOutputStream = outputStream;
+            signTempURI = SIGN_TEMP_URI_GENERATOR.generate();
+            outputStream = new BufferedOutputStream(getUserAgent().getResourceResolver().getOutputStream(signTempURI));
+            outputStream = new CountingOutputStream(outputStream);
         }
     }
 
@@ -201,6 +221,18 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
             throw new IFException("I/O error in endDocument()", ioe);
         }
         super.endDocument();
+        signPDF();
+    }
+
+    private void signPDF() {
+        if (signTempURI != null) {
+            try {
+                outputStream.close();
+                pdfSignature.signPDF(signTempURI, orgOutputStream);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     /** {@inheritDoc} */
@@ -266,6 +298,11 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
         basicPageTransform.scale(scaleX, scaleY);
         generator.saveGraphicsState();
         generator.concatenate(basicPageTransform);
+
+        if (signTempURI != null && pdfSignature == null) {
+            pdfSignature = new PDFSignature(pdfDoc.getRoot(), getUserAgent(), pdfUtil.getSignParams());
+            pdfSignature.add(currentPage);
+        }
     }
 
     private Rectangle2D toPDFCoordSystem(Rectangle box, AffineTransform transform) {

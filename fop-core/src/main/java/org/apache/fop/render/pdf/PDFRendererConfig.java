@@ -38,6 +38,7 @@ import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.pdf.PDFEncryptionParams;
 import org.apache.fop.pdf.PDFFilterList;
+import org.apache.fop.pdf.PDFSignParams;
 import org.apache.fop.render.RendererConfig;
 import org.apache.fop.render.RendererConfigOption;
 import org.apache.fop.util.LogUtil;
@@ -155,8 +156,25 @@ public final class PDFRendererConfig implements RendererConfig {
                 parseAndPut(LINEARIZATION, cfg);
                 parseAndPut(FORM_XOBJECT, cfg);
                 parseAndPut(VERSION, cfg);
+                configureSignParams(cfg);
             } catch (ConfigurationException e) {
                 LogUtil.handleException(LOG, e, strict);
+            }
+        }
+
+        private void configureSignParams(Configuration cfg) throws FOPException {
+            Configuration signCfd = cfg.getChild(PDFSignOption.SIGN_PARAMS, false);
+            if (signCfd != null) {
+                String keystore = parseConfig(signCfd, PDFSignOption.KEYSTORE);
+                if (keystore == null) {
+                    throw new FOPException("No keystore file defined inside sign-params");
+                }
+                String name = parseConfig(signCfd, PDFSignOption.NAME);
+                String location = parseConfig(signCfd, PDFSignOption.LOCATION);
+                String reason = parseConfig(signCfd, PDFSignOption.REASON);
+                String password = parseConfig(signCfd, PDFSignOption.PASSWORD);
+                PDFSignParams signParams = new PDFSignParams(keystore, name, location, reason, password);
+                configOptions.put(PDFRendererOption.SIGN_PARAMS, signParams);
             }
         }
 

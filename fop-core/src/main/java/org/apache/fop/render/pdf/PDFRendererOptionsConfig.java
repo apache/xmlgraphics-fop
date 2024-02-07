@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionParams;
+import org.apache.fop.pdf.PDFSignParams;
 import org.apache.fop.pdf.PDFUAMode;
 import org.apache.fop.pdf.PDFVTMode;
 import org.apache.fop.pdf.PDFXMode;
@@ -123,6 +124,10 @@ public final class PDFRendererOptionsConfig {
 
     public PDFEncryptionParams getEncryptionParameters() {
         return encryptionConfig;
+    }
+
+    public PDFSignParams getSignParams() {
+        return (PDFSignParams) properties.get(PDFRendererOption.SIGN_PARAMS);
     }
 
     public URI getOutputProfileURI() {

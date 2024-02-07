@@ -115,6 +115,12 @@ public enum PDFRendererOption implements RendererConfigOption {
                 throw new RuntimeException(e);
             }
         }
+    },
+    SIGN_PARAMS(PDFSignOption.SIGN_PARAMS, null) {
+        @Override
+        Object deserialize(String value) {
+            throw new UnsupportedOperationException();
+        }
     };
 
     private final String name;

@@ -74,6 +74,7 @@ import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFPageLabels;
 import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFSetOCGStateAction;
+import org.apache.fop.pdf.PDFSignParams;
 import org.apache.fop.pdf.PDFTransitionAction;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.Version;
@@ -636,6 +637,10 @@ class PDFRenderingUtil {
         pdfDoc.setFormXObjectEnabled(rendererConfig.getFormXObjectEnabled());
 
         return this.pdfDoc;
+    }
+
+    public PDFSignParams getSignParams() {
+        return rendererConfig.getSignParams();
     }
 
     /**
