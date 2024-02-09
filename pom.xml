@@ -24,11 +24,11 @@
     <jar.plugin.version>3.1.1</jar.plugin.version>
     <java.version>8</java.version>
     <junit4.version>4.13.2</junit4.version>
-    <junit.version>5.10.1</junit.version>
+    <junit.version>5.10.2</junit.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.info.reports.plugin.version>2.8</project.info.reports.plugin.version>
     <release.plugin.version>2.5.2</release.plugin.version>
-    <surefire.plugin.version>3.2.2</surefire.plugin.version>
+    <surefire.plugin.version>3.2.5</surefire.plugin.version>
     <war.plugin.version>3.3.2</war.plugin.version>
     <xml.plugin.version>1.0.1</xml.plugin.version>
     <xmlgraphics.commons.version>2.9.0-SNAPSHOT</xmlgraphics.commons.version>
