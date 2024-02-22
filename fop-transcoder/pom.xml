@@ -58,6 +58,9 @@
                 <manifest>
                   <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                 </manifest>
+                <manifestEntries>
+                  <Automatic-Module-Name>org.apache.xmlgraphics.fop.transcoder</Automatic-Module-Name>
+                </manifestEntries>
               </archive>
               <descriptors>
                 <descriptor>src/tools/resources/assembly/assembly.xml</descriptor>

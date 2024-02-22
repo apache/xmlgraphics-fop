@@ -81,6 +81,7 @@
               <mainClass>org.apache.fop.cli.Main</mainClass>
             </manifest>
             <manifestEntries>
+              <Automatic-Module-Name>org.apache.xmlgraphics.fop.sandbox</Automatic-Module-Name>
               <SpecificationTitle>XSL-FO - Extensible Stylesheet Language</SpecificationTitle>
               <SpecificationVersion>1.1</SpecificationVersion>
               <SpecificationVendor>World Wide Web Consortium</SpecificationVendor>
