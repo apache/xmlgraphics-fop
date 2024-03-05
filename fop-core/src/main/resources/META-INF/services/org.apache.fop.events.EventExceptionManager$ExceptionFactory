@@ -1,5 +1,5 @@
-org.apache.fop.events.ValidationExceptionFactory
-org.apache.fop.events.PropertyExceptionFactory
-org.apache.fop.events.UnsupportedOperationExceptionFactory
+org.apache.fop.event.ValidationExceptionFactory
+org.apache.fop.event.PropertyExceptionFactory
+org.apache.fop.event.UnsupportedOperationExceptionFactory
 org.apache.fop.layoutmgr.LayoutException$LayoutExceptionFactory
 org.apache.fop.fo.pagination.PageProductionException$PageProductionExceptionFactory

@@ -17,9 +17,11 @@
 
 /* $Id$ */
 
-package org.apache.fop.events;
+package org.apache.fop.event;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.events.Event;
+import org.apache.fop.events.EventListener;
 import org.apache.fop.events.model.EventSeverity;
 import org.apache.fop.fo.FOValidationEventProducer;
 import org.apache.fop.layoutmgr.BlockLevelEventProducer;

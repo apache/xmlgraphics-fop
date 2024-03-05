@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.events;
+package org.apache.fop.event;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,6 +25,9 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.events.Event;
+import org.apache.fop.events.EventFormatter;
+import org.apache.fop.events.EventListener;
 import org.apache.fop.events.model.EventSeverity;
 
 /**

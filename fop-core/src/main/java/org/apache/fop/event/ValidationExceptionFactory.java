@@ -17,13 +17,15 @@
 
 /* $Id$ */
 
-package org.apache.fop.events;
+package org.apache.fop.event;
 
 import java.util.Locale;
 
 import org.xml.sax.Locator;
 
+import org.apache.fop.events.Event;
 import org.apache.fop.events.EventExceptionManager.ExceptionFactory;
+import org.apache.fop.events.EventFormatter;
 import org.apache.fop.fo.ValidationException;
 
 /**
