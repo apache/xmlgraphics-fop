@@ -21,7 +21,7 @@ package org.apache.fop.util.text;
 
 import org.xml.sax.Locator;
 
-import org.apache.fop.util.text.AdvancedMessageFormat.ObjectFormatter;
+import org.apache.fop.utils.text.AdvancedMessageFormat.ObjectFormatter;
 
 /**
  * Object formatter for the SAX Locator object.

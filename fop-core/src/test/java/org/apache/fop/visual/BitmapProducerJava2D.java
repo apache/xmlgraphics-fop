@@ -39,7 +39,7 @@ import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.configuration.Configurable;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationException;
-import org.apache.fop.util.DefaultErrorListener;
+import org.apache.fop.utils.DefaultErrorListener;
 
 /**
  * BitmapProducer implementation that uses the Java2DRenderer to create bitmaps.

@@ -29,10 +29,10 @@ import java.util.regex.Pattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.util.XMLResourceBundle;
-import org.apache.fop.util.text.AdvancedMessageFormat;
-import org.apache.fop.util.text.AdvancedMessageFormat.Part;
-import org.apache.fop.util.text.AdvancedMessageFormat.PartFactory;
+import org.apache.fop.utils.XMLResourceBundle;
+import org.apache.fop.utils.text.AdvancedMessageFormat;
+import org.apache.fop.utils.text.AdvancedMessageFormat.Part;
+import org.apache.fop.utils.text.AdvancedMessageFormat.PartFactory;
 
 /**
  * Converts events into human-readable, localized messages.

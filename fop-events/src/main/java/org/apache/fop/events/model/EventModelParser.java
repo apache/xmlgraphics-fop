@@ -35,7 +35,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.apache.fop.util.DefaultErrorListener;
+import org.apache.fop.utils.DefaultErrorListener;
 
 /**
  * This is a parser for the event model XML.

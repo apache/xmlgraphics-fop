@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.util.text;
+package org.apache.fop.utils.text;
 
 import java.util.Iterator;
 import java.util.List;
@@ -44,7 +44,7 @@ import org.apache.xmlgraphics.util.Service;
 public class AdvancedMessageFormat {
 
     /** Regex that matches "," but not "\," (escaped comma) */
-    static final Pattern COMMA_SEPARATOR_REGEX = Pattern.compile("(?<!\\\\),");
+    public static final Pattern COMMA_SEPARATOR_REGEX = Pattern.compile("(?<!\\\\),");
 
     private static final Map<String, PartFactory> PART_FACTORIES
         = new java.util.HashMap<String, PartFactory>();
@@ -477,7 +477,7 @@ public class AdvancedMessageFormat {
     }
 
 
-    static String unescapeComma(String string) {
+    public static String unescapeComma(String string) {
         return string.replaceAll("\\\\,", ",");
     }
 }

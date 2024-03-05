@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.util;
+package org.apache.fop.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

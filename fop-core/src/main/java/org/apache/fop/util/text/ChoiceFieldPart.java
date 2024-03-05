@@ -24,8 +24,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.fop.util.text.AdvancedMessageFormat.Part;
-import org.apache.fop.util.text.AdvancedMessageFormat.PartFactory;
+import org.apache.fop.utils.text.AdvancedMessageFormat;
+import org.apache.fop.utils.text.AdvancedMessageFormat.Part;
+import org.apache.fop.utils.text.AdvancedMessageFormat.PartFactory;
 
 /**
  * Defines a "choice" field part that works like {@link ChoiceFormat}.

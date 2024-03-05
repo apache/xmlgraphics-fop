@@ -27,7 +27,7 @@ import org.xml.sax.helpers.LocatorImpl;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.events.model.EventSeverity;
-import org.apache.fop.util.text.AdvancedMessageFormat;
+import org.apache.fop.utils.text.AdvancedMessageFormat;
 
 /**
  * Tests for EventFormatter.

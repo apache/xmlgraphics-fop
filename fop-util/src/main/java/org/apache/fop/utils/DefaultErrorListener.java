@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.util;
+package org.apache.fop.utils;
 
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;

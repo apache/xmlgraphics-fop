@@ -23,8 +23,8 @@ import java.util.Map;
 
 import org.apache.xmlgraphics.fonts.Glyphs;
 
-import org.apache.fop.util.text.AdvancedMessageFormat.Part;
-import org.apache.fop.util.text.AdvancedMessageFormat.PartFactory;
+import org.apache.fop.utils.text.AdvancedMessageFormat.Part;
+import org.apache.fop.utils.text.AdvancedMessageFormat.PartFactory;
 
 /**
  * Function formatting a character to a glyph name.

@@ -47,7 +47,7 @@ import org.apache.fop.fo.flow.ChangeBar;
 import org.apache.fop.fo.pagination.Root;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ContentHandlerFactory;
-import org.apache.fop.util.text.AdvancedMessageFormat.Function;
+import org.apache.fop.utils.text.AdvancedMessageFormat.Function;
 
 /**
  * Base class for nodes in the XML tree

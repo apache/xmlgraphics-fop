@@ -65,9 +65,9 @@ import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.DOMBuilderContentHandlerFactory;
-import org.apache.fop.util.DefaultErrorListener;
 import org.apache.fop.util.LanguageTags;
 import org.apache.fop.util.XMLUtil;
+import org.apache.fop.utils.DefaultErrorListener;
 
 /**
  * This is a parser for the intermediate format XML which converts the intermediate file into

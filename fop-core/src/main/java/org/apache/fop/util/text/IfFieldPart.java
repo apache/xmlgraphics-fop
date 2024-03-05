@@ -21,8 +21,9 @@ package org.apache.fop.util.text;
 
 import java.util.Map;
 
-import org.apache.fop.util.text.AdvancedMessageFormat.Part;
-import org.apache.fop.util.text.AdvancedMessageFormat.PartFactory;
+import org.apache.fop.utils.text.AdvancedMessageFormat;
+import org.apache.fop.utils.text.AdvancedMessageFormat.Part;
+import org.apache.fop.utils.text.AdvancedMessageFormat.PartFactory;
 
 /**
  * Defines an "if" field part that checks if field's value is true or false.
