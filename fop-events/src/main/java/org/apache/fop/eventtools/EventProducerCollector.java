@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.tools;
+package org.apache.fop.eventtools;
 
 import java.io.File;
 import java.io.IOException;

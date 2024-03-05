@@ -325,7 +325,7 @@ list of possible build targets.
         <include name="**/tools/*.xsl"/>
       </fileset>
     </copy>
-    <taskdef name="eventResourceGenerator" classname="org.apache.fop.tools.EventProducerCollectorTask">
+    <taskdef name="eventResourceGenerator" classname="org.apache.fop.eventtools.EventProducerCollectorTask">
       <classpath>
         <path refid="libs-tools-build-classpath"/>
         <pathelement location="${build.classes.dir}"/>

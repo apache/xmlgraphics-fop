@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop.tools;
+package org.apache.fop.eventtools;
 
 /**
  * This exception is used to indicate a violation of the conventions for event producers.

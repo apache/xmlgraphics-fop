@@ -283,7 +283,7 @@
             </goals>
             <configuration>
               <target>
-                <taskdef name="collectEvents" classname="org.apache.fop.tools.EventProducerCollectorTask" classpathref="maven.compile.classpath"/>
+                <taskdef name="collectEvents" classname="org.apache.fop.eventtools.EventProducerCollectorTask" classpathref="maven.compile.classpath"/>
                 <collectEvents destdir="${project.build.outputDirectory}">
                   <fileset dir="${project.basedir}/src/main/java">
                     <include name="**/accessibility/AccessibilityEventProducer.java"/>

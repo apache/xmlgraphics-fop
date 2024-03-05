@@ -78,7 +78,7 @@
             </goals>
             <configuration>
               <target>
-                <taskdef name="collectEvents" classname="org.apache.fop.tools.EventProducerCollectorTask">
+                <taskdef name="collectEvents" classname="org.apache.fop.eventtools.EventProducerCollectorTask">
                   <classpath>
                     <path refid="maven.compile.classpath"/>
                     <path refid="maven.test.classpath"/>
