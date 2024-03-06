@@ -30,7 +30,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.BorderProps;
@@ -96,7 +96,7 @@ public class BorderPainterTestCase {
         BorderProps nullBorderProps = null;
         new BorderPainter(graphicsPainter).drawRectangularBorders(new Rectangle(0, 0, 1000, 1000),
                 nullBorderProps, nullBorderProps, nullBorderProps, nullBorderProps);
-        verifyZeroInteractions(graphicsPainter);
+        verifyNoInteractions(graphicsPainter);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class BorderPainterTestCase {
         BorderProps nullBorderProps = null;
         new BorderPainter(graphicsPainter).drawRoundedBorders(new Rectangle(0, 0, 1000, 1000),
                 nullBorderProps, nullBorderProps, nullBorderProps, nullBorderProps);
-        verifyZeroInteractions(graphicsPainter);
+        verifyNoInteractions(graphicsPainter);
     }
 
     @Test
