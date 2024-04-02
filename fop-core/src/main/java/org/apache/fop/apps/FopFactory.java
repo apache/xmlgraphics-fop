@@ -164,9 +164,26 @@ public final class FopFactory implements ImageContext {
      * @throws SAXException
      * @throws IOException
      */
-    public static FopFactory newInstance(URI baseURI, InputStream confStream) throws SAXException,
+    public static FopFactory newInstance(final URI baseURI, final InputStream confStream) throws SAXException,
             IOException {
-        return new FopConfParser(confStream, baseURI).getFopFactoryBuilder().build();
+        Object action = AccessController.doPrivileged(
+            new PrivilegedAction<Object>() {
+                public Object run() {
+                    try {
+                        return new FopConfParser(confStream, baseURI).getFopFactoryBuilder().build();
+                    } catch (SAXException | IOException e) {
+                        return e;
+                    }
+                }
+            }
+        );
+        if (action instanceof SAXException) {
+            throw (SAXException) action;
+        }
+        if (action instanceof IOException) {
+            throw (IOException) action;
+        }
+        return (FopFactory) action;
     }
 
     /**
