@@ -54,7 +54,7 @@
     <Bug pattern="DM_DEFAULT_ENCODING"/>
   </Match>
   <Match>
-    <Bug pattern="EI_EXPOSE_REP"/>
+    <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2,MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR"/>
   </Match>
   <Match>
     <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
