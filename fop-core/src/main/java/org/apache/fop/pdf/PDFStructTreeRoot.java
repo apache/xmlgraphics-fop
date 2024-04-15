@@ -19,10 +19,14 @@
 
 package org.apache.fop.pdf;
 
+import java.io.Serializable;
+
 /**
  * Class representing a PDF /StructTreeRoot dictionary.
  */
-public class PDFStructTreeRoot extends StructureHierarchyMember {
+public class PDFStructTreeRoot extends StructureHierarchyMember implements Serializable {
+
+    private static final long serialVersionUID = -4102820991473046724L;
 
     /**
      * Creates a new /StructTreeRoot dictionary.

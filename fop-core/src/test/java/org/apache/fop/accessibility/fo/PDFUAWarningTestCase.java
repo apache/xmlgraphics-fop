@@ -52,9 +52,12 @@ public class PDFUAWarningTestCase {
     public void nestedTableWarningTestCase() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         PDFStructElem emptyElem = new PDFStructElem();
+        emptyElem.setDocument(pdfFactory.getDocument());
         PDFStructElem block  = PDFStructureTreeBuilder.createStructureElement("block", emptyElem,
                 new AttributesImpl(), pdfFactory, null);
-        PDFStructureTreeBuilder.createStructureElement("table", block, new AttributesImpl(), pdfFactory, null);
+        PDFStructElem table =
+                PDFStructureTreeBuilder.createStructureElement("table", block, new AttributesImpl(), pdfFactory, null);
+        pdfFactory.getDocument().assignObjectNumber(table);
         block.output(bos);
         Assert.assertEquals("Div", block.getStructureType().toString());
     }

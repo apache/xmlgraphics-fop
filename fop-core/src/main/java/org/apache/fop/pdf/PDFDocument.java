@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -389,7 +390,6 @@ public class PDFDocument {
      * Adds the given element to the structure tree.
      */
     public void registerStructureElement(PDFStructElem structElem) {
-        assignObjectNumber(structElem);
         structureTreeElements.add(structElem);
     }
 
@@ -479,6 +479,9 @@ public class PDFDocument {
      * @param obj {@link PDFObject} to add
      */
     public void addObject(PDFObject obj) {
+        if (obj instanceof PDFStructElem) {
+            return;
+        }
         if (obj == null) {
             throw new NullPointerException("obj must not be null");
         }
@@ -1149,6 +1152,14 @@ public class PDFDocument {
                 ? new CompressedTrailerOutputHelper()
                 : new UncompressedTrailerOutputHelper();
         if (structureTreeElements != null) {
+            Iterator<PDFStructElem> structElemIterator = structureTreeElements.iterator();
+            while (structElemIterator.hasNext()) {
+                PDFStructElem structElem = structElemIterator.next();
+                if (!structElem.hasObjectNumber()) {
+                    structElemIterator.remove();
+                    structElem.parentElement.kids.remove(structElem);
+                }
+            }
             trailerOutputHelper.outputStructureTreeElements(stream);
         }
         streamIndirectObjects(trailerObjects, stream);
