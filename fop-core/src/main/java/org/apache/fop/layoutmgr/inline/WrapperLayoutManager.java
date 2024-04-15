@@ -19,6 +19,9 @@
 
 package org.apache.fop.layoutmgr.inline;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.fop.area.Block;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.flow.Wrapper;
@@ -87,4 +90,11 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
         getPSLM().addIDToPage(fobj.getId());
     }
 
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
+        List list = super.getNextKnuthElements(context, alignment);
+        if (parentLayoutManager instanceof LineLayoutManager && !fobj.hasId() && fobj.hasChildren()) {
+            return Collections.emptyList();
+        }
+        return list;
+    }
 }
