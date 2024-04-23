@@ -490,7 +490,6 @@ list of possible build targets.
         <exclude name="zxing*.jar"/>
         <exclude name="avalon*.jar"/>
         <exclude name="barcode4j*.jar"/>
-        <exclude name="bcprov*.jar"/>
         <exclude name="fop-pdf-images*.jar"/>
         <exclude name="jai_imageio*.jar"/>
         <exclude name="levigo*.jar"/>
