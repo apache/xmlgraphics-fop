@@ -113,6 +113,7 @@ public class PrimaryGridUnit extends GridUnit {
      */
     public void setElements(List elements) {
         this.elements = elements;
+        contentLength = -1;
     }
 
     /**
