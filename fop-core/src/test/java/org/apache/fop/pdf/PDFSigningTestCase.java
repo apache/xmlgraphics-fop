@@ -67,6 +67,7 @@ public class PDFSigningTestCase {
                 + "  /Subtype /Widget\n"
                 + "  /F 132\n"
                 + "  /T (Signature1)\n"
+                + "  /TU (Signature1)\n"
                 + "  /Rect [0 0 0 0]"));
     }
 

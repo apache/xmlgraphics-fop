@@ -141,6 +141,7 @@ public class PDFSignature {
             put("Subtype", new PDFName("Widget"));
             put("F", 132);
             put("T", "Signature1");
+            put("TU", "Signature1");
             put("Rect", new PDFRectangle(0, 0, 0, 0));
             put("V", perms.docMDP);
             put("P", new PDFReference(page));
