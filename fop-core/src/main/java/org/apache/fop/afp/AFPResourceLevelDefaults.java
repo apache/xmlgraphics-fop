@@ -30,11 +30,13 @@ import org.apache.fop.afp.modca.ResourceObject;
 public class AFPResourceLevelDefaults {
 
     private static final Map RESOURCE_TYPE_NAMES = new java.util.HashMap();
+    public static final byte TYPE_SVG = Byte.MAX_VALUE;
 
     static {
         //Map to be extended as need arises:
         registerResourceTypeName("goca", ResourceObject.TYPE_GRAPHIC);
         registerResourceTypeName("bitmap", ResourceObject.TYPE_IMAGE);
+        registerResourceTypeName("svg", TYPE_SVG);
     }
 
     private static void registerResourceTypeName(String name, byte type) {
@@ -59,6 +61,7 @@ public class AFPResourceLevelDefaults {
         // (due to a bug in the IBM AFP Workbench Viewer (2.04.01.07), hard copy works just fine)
         setDefaultResourceLevel(ResourceObject.TYPE_GRAPHIC,
                 new AFPResourceLevel(ResourceType.INLINE));
+        setDefaultResourceLevel(TYPE_SVG, new AFPResourceLevel(ResourceType.INLINE));
     }
 
     /**

@@ -41,8 +41,7 @@ import org.apache.fop.afp.AFPGraphicsObjectInfo;
 import org.apache.fop.afp.AFPObjectAreaInfo;
 import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.AFPResourceInfo;
-import org.apache.fop.afp.AFPResourceLevel;
-import org.apache.fop.afp.AFPResourceLevel.ResourceType;
+import org.apache.fop.afp.AFPResourceLevelDefaults;
 import org.apache.fop.afp.AFPResourceManager;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.image.loader.batik.BatikImageFlavors;
@@ -81,8 +80,10 @@ public class AFPImageHandlerSVG implements ImageHandler {
         AFPDataObjectInfo info = createDataObjectInfo();
         assert (info instanceof AFPGraphicsObjectInfo);
         AFPGraphicsObjectInfo graphicsObjectInfo = (AFPGraphicsObjectInfo) info;
+        graphicsObjectInfo.setCreatePageSegment(afpContext.getPaintingState().getWrapGocaPSeg());
         AFPResourceInfo resourceInfo = graphicsObjectInfo.getResourceInfo();
-        setDefaultToInlineResourceLevel(graphicsObjectInfo);
+        resourceInfo.setUri(imageSVG.getInfo().getOriginalURI());
+        setDefaultToInlineResourceLevel(graphicsObjectInfo, afpContext.getResourceManager());
 
         // Create a new AFPGraphics2D
         AFPPaintingState paintingState = afpContext.getPaintingState();
@@ -140,12 +141,12 @@ public class AFPImageHandlerSVG implements ImageHandler {
         paintingState.restore(); // resume
     }
 
-    private void setDefaultToInlineResourceLevel(AFPGraphicsObjectInfo graphicsObjectInfo) {
+    private void setDefaultToInlineResourceLevel(AFPGraphicsObjectInfo graphicsObjectInfo,
+                                                 AFPResourceManager resourceManager) {
         AFPResourceInfo resourceInfo = graphicsObjectInfo.getResourceInfo();
-        //level not explicitly set/changed so default to inline for GOCA graphic objects
-        // (due to a bug in the IBM AFP Workbench Viewer (2.04.01.07), hard copy works just fine)
         if (!resourceInfo.levelChanged()) {
-            resourceInfo.setLevel(new AFPResourceLevel(ResourceType.INLINE));
+            resourceInfo.setLevel(resourceManager.getResourceLevelDefaults()
+                    .getDefaultResourceLevel(AFPResourceLevelDefaults.TYPE_SVG));
         }
     }
 

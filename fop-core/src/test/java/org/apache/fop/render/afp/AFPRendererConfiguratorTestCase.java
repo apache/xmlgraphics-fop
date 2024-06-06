@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -187,6 +188,19 @@ public class AFPRendererConfiguratorTestCase extends
     @Test
     public void testPrintFileResourceDefault() throws Exception {
         testResourceLevelDefault(ResourceType.PRINT_FILE);
+    }
+
+    @Test
+    public void testSVGResourceLevel() throws Exception {
+        Map<String, String> resourceLevels = new HashMap<>();
+        resourceLevels.put("svg", ResourceType.PRINT_FILE.getName());
+        parseConfig(createBuilder().setDefaultResourceLevels(resourceLevels));
+        ArgumentCaptor<AFPResourceLevelDefaults> argument = ArgumentCaptor.forClass(AFPResourceLevelDefaults.class);
+        verify(getDocHandler()).setResourceLevelDefaults(argument.capture());
+        assertEquals(new AFPResourceLevel(ResourceType.PRINT_FILE),
+                argument.getValue().getDefaultResourceLevel(AFPResourceLevelDefaults.TYPE_SVG));
+        Assert.assertTrue(
+                new AFPResourceLevelDefaults().getDefaultResourceLevel(AFPResourceLevelDefaults.TYPE_SVG).isInline());
     }
 
     @Test
