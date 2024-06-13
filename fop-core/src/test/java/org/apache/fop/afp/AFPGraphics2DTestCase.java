@@ -66,7 +66,7 @@ public class AFPGraphics2DTestCase {
     @Test
     public void testDrawGraphicsFillet() throws IOException {
         GraphicContext gc = new GraphicContext();
-        gc.setClip(new Rectangle(0, 0, 2, 2));
+        gc.setClip(new Rectangle(0, 0, 100, 100));
         graphics2D.setGraphicContext(gc);
         GraphicsObject go = new GraphicsObject(new Factory(), "test");
         graphics2D.setGraphicsObject(go);
@@ -79,5 +79,18 @@ public class AFPGraphics2DTestCase {
         Assert.assertEquals(is.read(), graphicsFilletMarker);
         int sizeOfGraphicsFillet = 128;
         Assert.assertEquals(is.read(), sizeOfGraphicsFillet);
+    }
+
+    @Test
+    public void testDrawGraphicsFilletClipped() throws IOException {
+        GraphicContext gc = new GraphicContext();
+        gc.setClip(new Rectangle(50, 50, 100, 100));
+        graphics2D.setGraphicContext(gc);
+        GraphicsObject go = new GraphicsObject(new Factory(), "test");
+        graphics2D.setGraphicsObject(go);
+        graphics2D.draw(new Ellipse2D.Double(0, 0, 50, 50));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        go.writeToStream(bos);
+        Assert.assertEquals(bos.size(), 17 + 17);
     }
 }

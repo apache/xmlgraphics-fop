@@ -33,6 +33,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
@@ -356,6 +357,28 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
      *            true if the shape is to be drawn filled
      */
     private void doDrawing(Shape shape, boolean fill) {
+        Shape clip = getClip();
+        if (clip != null) {
+            if (shape instanceof Line2D
+                    && (((Line2D) shape).getX1() == ((Line2D) shape).getX2()
+                    || ((Line2D) shape).getY1() == ((Line2D) shape).getY2())) {
+                Rectangle2D bounds = shape.getBounds2D();
+                Rectangle2D newShape = bounds.createIntersection(clip.getBounds2D());
+                ((Line2D) shape).setLine(newShape.getX(),
+                        newShape.getY(),
+                        newShape.getX() + newShape.getWidth(),
+                        newShape.getY() + newShape.getHeight());
+            } else if (shape instanceof Rectangle2D) {
+                Area area = new Area(shape);
+                area.intersect(new Area(clip));
+                shape = area.getBounds2D();
+            } else {
+                Area area = new Area(shape);
+                if (!area.isEmpty() && !area.intersects(clip.getBounds2D())) {
+                    return;
+                }
+            }
+        }
         if (!fill) {
             graphicsObj.newSegment();
         }
