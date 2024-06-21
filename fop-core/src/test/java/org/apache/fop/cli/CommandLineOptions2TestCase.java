@@ -18,12 +18,12 @@
 package org.apache.fop.cli;
 
 import java.io.File;
-import java.io.IOException;
 
-import org.junit.Rule;
+import org.junit.Assert;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.function.ThrowingRunnable;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -32,32 +32,28 @@ import org.apache.fop.apps.FOPException;
 
 public class CommandLineOptions2TestCase {
 
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
-
     /**
      * Check that the parser detects the case where the -xsl switch has been omitted.
      * This detection prevents the XSL file being deleted.
-     * @throws FOPException
-     * @throws IOException
      */
     @Test
-    public void testXslSwitchMissing() throws FOPException, IOException {
+    public void testXslSwitchMissing() {
         final String xslFilename = "../fop/examples/embedding/xml/xslt/projectteam2fo.xsl";
         final String outputFilename = "out.pdf";
-        exceptionRule.expect(FOPException.class);
-        exceptionRule.expectMessage("Don't know what to do with " + outputFilename);
         // -xsl switch omitted.
         String cmdLine = "-xml ../fop/examples/embedding/xml/xml/projectteam.xml " + xslFilename + " " + outputFilename;
         String[] args = cmdLine.split(" ");
         CommandLineOptions clo = new CommandLineOptions();
-        clo.parse(args);
+        Exception exception = Assert.assertThrows(FOPException.class, new ThrowingRunnable() {
+            public void run() throws Throwable {
+                clo.parse(args);
+            }
+        });
+        assertEquals(exception.getMessage(), "Don't know what to do with " + outputFilename);
     }
 
     /**
      * Check that the XSL file is not deleted in the case where the -xsl switch has been omitted.
-     * @throws FOPException
-     * @throws IOException
      */
     @Test
     public void testXslFileNotDeleted() {
