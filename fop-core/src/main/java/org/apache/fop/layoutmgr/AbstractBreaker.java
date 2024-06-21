@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.pagination.RegionBody;
 import org.apache.fop.layoutmgr.BreakingAlgorithm.KnuthNode;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.ListUtil;
@@ -415,8 +416,7 @@ public abstract class AbstractBreaker {
                     onLastPageAndIPDChanges = (lastPageHasIPDChange(optimalPageCount) && !thereIsANonRestartableLM(alg)
                             && (shouldRedoLayout() || (wasLayoutRedone() && optimalPageCount > 1)));
                 }
-                if ((ipdChangesOnNextPage || hasMoreContent() || optimalPageCount > 1)
-                        && pslm != null && pslm.getCurrentPage().isPagePositionOnly) {
+                if (shouldRedoLayoutWithoutPagePositionOnly(ipdChangesOnNextPage, optimalPageCount)) {
                     return false;
                 }
                 if (alg.handlingFloat()) {
@@ -463,6 +463,15 @@ public abstract class AbstractBreaker {
         // done
         blockLists = null;
         return true;
+    }
+
+    private boolean shouldRedoLayoutWithoutPagePositionOnly(boolean ipdChangesOnNextPage, int optimalPageCount) {
+        if ((ipdChangesOnNextPage || hasMoreContent() || optimalPageCount > 1)
+                && pslm != null && pslm.getCurrentPage().isPagePositionOnly) {
+            RegionBody rb = (RegionBody)pslm.getCurrentPage().getSimplePageMaster().getRegion(Constants.FO_REGION_BODY);
+            return rb.getColumnCount() == 1;
+        }
+        return false;
     }
 
     /**

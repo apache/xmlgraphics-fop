@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks for the use of an 'only' conditional-page-master-reference (XSL 1.1)
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="PageOnly" page-width="8.5in" page-height="11in" margin-bottom="0.5cm" margin-right="1cm" margin-top="1cm" margin-left="1cm">
+          <fo:region-body margin-bottom="2cm" margin-right="0cm" margin-top="0cm" margin-left="0cm" background-color="red" column-count="2"/>
+          <fo:region-after extent="1cm" region-name="Footer1"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master margin-bottom="0.5cm" master-name="PageFirst" page-width="8.5in" page-height="11in" margin-right="1cm" margin-top="1cm" margin-left="1cm">
+          <fo:region-body margin-bottom="2cm" margin-right="0cm" margin-top="0cm" margin-left="0cm" background-color="yellow" column-count="2"/>
+          <fo:region-after extent="1cm" region-name="Footer2"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="PageLast" page-width="8.5in" page-height="11in" margin-bottom="0.3cm" margin-right="1cm" margin-top="1cm" margin-left="1cm">
+          <fo:region-body margin-bottom="2cm" column-count="2" background-color="green" margin-right="0cm" margin-top="0cm" margin-left="0cm"/>
+          <fo:region-after extent="1cm" region-name="Footer3"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="PageRestEven" page-width="8.5in" page-height="11in" margin-bottom="0.3cm" margin-right="1cm" margin-top="1cm" margin-left="1cm">
+          <fo:region-body margin-bottom="2cm" column-count="2" background-color="aqua" margin-right="0cm" margin-top="0cm" margin-left="0cm"/>
+          <fo:region-after extent="1cm" region-name="Footer4"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="PageRestOdd" page-width="8.5in" page-height="11in" margin-bottom="0.3cm" margin-right="1cm" margin-top="1cm" margin-left="1cm">
+          <fo:region-body margin-bottom="2cm" column-count="2" background-color="fuchsia" margin-right="0cm" margin-top="0cm" margin-left="0cm"/>
+          <fo:region-after extent="1cm" region-name="Footer5"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="LetterPages">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference page-position="only" master-reference="PageOnly"/>
+            <fo:conditional-page-master-reference page-position="first" master-reference="PageFirst"/>
+            <fo:conditional-page-master-reference odd-or-even="even" page-position="rest" master-reference="PageRestEven"/>
+            <fo:conditional-page-master-reference odd-or-even="odd" page-position="rest" master-reference="PageRestOdd"/>
+            <fo:conditional-page-master-reference page-position="last" master-reference="PageLast"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence format="1" id="th_default_sequence1" initial-page-number="1" force-page-count="auto" master-reference="LetterPages">
+        <fo:static-content flow-name="Footer1">
+          <fo:block line-height="16pt" font-size="10pt" space-before="12pt" span="all">Footer 1</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="Footer2">
+          <fo:block line-height="16pt" font-size="10pt" space-before="12pt" span="all">Footer 2</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="Footer3">
+          <fo:block line-height="16pt" font-size="10pt" space-before="12pt" span="all">Footer 3</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="Footer4">
+          <fo:block line-height="16pt" font-size="10pt" space-before="12pt" span="all">Footer 4</fo:block>
+        </fo:static-content>
+        <fo:static-content flow-name="Footer5">
+          <fo:block line-height="16pt" font-size="10pt" space-before="12pt" span="all">Footer 5</fo:block>
+        </fo:static-content>
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block line-height="16pt" font-size="10pt" space-before="12pt" span="all">Page 1 Page 1 Page 1 Page 1 Page 1 Page 1 Page 1 Page 1 Page 1 Page 1</fo:block>
+          <fo:block line-height="16pt" font-size="10pt" space-before="12pt">bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw bgbg gresgfe rwfwr rfrw fwrfrw </fo:block>
+          <fo:block line-height="16pt" font-size="10pt" space-before="12pt" span="all">end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end end </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="1" xpath="count(//page)"/>
+    <eval expected="PageOnly" xpath="//pageViewport/@simple-page-master-name"/>
+  </checks>
+</testcase>
