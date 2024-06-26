@@ -34,6 +34,7 @@ import org.apache.fop.fo.properties.KeepProperty;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
@@ -96,8 +97,8 @@ public class ListBlockLayoutManager extends SpacedBorderedPaddedBlockLayoutManag
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
-            Position restartPosition, LayoutManager restartAtLM) {
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+                                                  Position restartPosition, LayoutManager restartAtLM) {
         resetSpaces();
         List returnList;
         returnList = super.getNextKnuthElements(context, alignment, lmStack, restartPosition, restartAtLM);

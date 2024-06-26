@@ -145,7 +145,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
      * @return          the list of KnuthElements
      * @see org.apache.fop.layoutmgr.LayoutManager#getNextKnuthElements(LayoutContext, int)
      */
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("==> Columns: " + getTableLM().getColumns());
         }

@@ -65,7 +65,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
 
     /** {@inheritDoc} */
     @Override
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
         return getNextKnuthElements(context, alignment, null, null);
     }
 
@@ -79,7 +79,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
      * @return the list of KnuthElements
      * @see LayoutManager#getNextKnuthElements(LayoutContext,int)
      */
-    List getNextKnuthElements(LayoutContext context, int alignment,
+    List<ListElement> getNextKnuthElements(LayoutContext context, int alignment,
             Position restartPosition, LayoutManager restartLM) {
 
         List<ListElement> elements = new LinkedList<ListElement>();
@@ -289,11 +289,11 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
 
     /** {@inheritDoc} */
     @Override
-    public List<KnuthElement> getChangedKnuthElements(List oldList, int alignment) {
+    public List<ListElement> getChangedKnuthElements(List oldList, int alignment) {
         ListIterator<KnuthElement> oldListIterator = oldList.listIterator();
         KnuthElement returnedElement;
         List<KnuthElement> returnedList = new LinkedList<KnuthElement>();
-        List<KnuthElement> returnList = new LinkedList<KnuthElement>();
+        List<ListElement> returnList = new LinkedList<>();
         KnuthElement prevElement = null;
         KnuthElement currElement = null;
         int fromIndex = 0;

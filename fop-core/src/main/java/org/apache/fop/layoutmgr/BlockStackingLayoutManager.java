@@ -237,13 +237,13 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
     /** {@inheritDoc} */
     @Override
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
         return getNextKnuthElements(context, alignment, null, null, null);
     }
 
     /** {@inheritDoc} */
     @Override
-    public List getNextKnuthElements(LayoutContext context, int alignment,
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment,
             Stack lmStack, Position restartPosition, LayoutManager restartAtLM) {
         isRestartAtLM = restartAtLM != null;
         referenceIPD = context.getRefIPD();
@@ -669,12 +669,12 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
 
     /** {@inheritDoc} */
     @Override
-    public List getChangedKnuthElements(List oldList, int alignment) {
+    public List<ListElement> getChangedKnuthElements(List oldList, int alignment) {
         ListIterator<KnuthElement> oldListIterator = oldList.listIterator();
         KnuthElement currElement = null;
         KnuthElement prevElement = null;
         List<KnuthElement> returnedList = new LinkedList<KnuthElement>();
-        List<KnuthElement> returnList = new LinkedList<KnuthElement>();
+        List<ListElement> returnList = new LinkedList<>();
         int fromIndex = 0;
 
         // "unwrap" the Positions stored in the elements

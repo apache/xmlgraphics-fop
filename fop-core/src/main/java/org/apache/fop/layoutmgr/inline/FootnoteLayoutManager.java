@@ -75,7 +75,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
 
     /** {@inheritDoc} */
     @Override
-    public List getNextKnuthElements(LayoutContext context,
+    public List<KnuthSequence> getNextKnuthElements(LayoutContext context,
                                            int alignment) {
         // for the moment, this LM is set as the citationLM's parent
         // later on, when this LM will have nothing more to do, the citationLM's parent
@@ -125,7 +125,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
 
     /** {@inheritDoc} */
     @Override
-    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
+    public List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment, int depth) {
         List returnedList = super.getChangedKnuthElements(oldList, alignment, depth);
         addAnchor(returnedList);
         return returnedList;

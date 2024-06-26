@@ -228,7 +228,7 @@ public class ListItemContentLayoutManager extends BlockStackingLayoutManager imp
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
             Position restartPosition, LayoutManager restartAtLM) {
         List<ListElement> elements = new LinkedList<ListElement>();
         do {

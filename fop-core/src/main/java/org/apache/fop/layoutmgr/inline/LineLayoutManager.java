@@ -649,7 +649,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * @return the list of KnuthElements
      * @see LayoutManager#getNextKnuthElements(LayoutContext,int)
      */
-    public List getNextKnuthElements(LayoutContext context, int alignment,
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment,
             LeafPosition restartPosition) {
         int parIndex = 0;
         int restartPositionIdx = 0;
@@ -1220,14 +1220,14 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     /** {@inheritDoc} */
     @Override
-    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
+    public List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment, int depth) {
         return getChangedKnuthElements(oldList, alignment);
     }
 
     /** {@inheritDoc} */
     @Override
-    public List getChangedKnuthElements(List oldList, int alignment) {
-        List<KnuthElement> returnList = new LinkedList<KnuthElement>();
+    public List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment) {
+        List<ListElement> returnList = new LinkedList<>();
         for (int p = 0; p < knuthParagraphs.size(); p++) {
             LineLayoutPossibilities llPoss = lineLayoutsList[p];
             //log.debug("demerits of the chosen layout: " + llPoss.getChosenDemerits());

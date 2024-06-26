@@ -36,6 +36,7 @@ import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LeafPosition;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.TraitSetter;
 import org.apache.fop.traits.MinOptMax;
@@ -188,12 +189,12 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
 
     /** {@inheritDoc} */
     @Override
-    public List getChangedKnuthElements(List oldList, int alignment) {
+    public List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment) {
         if (isFinished()) {
             return null;
         }
 
-        LinkedList<KnuthElement> returnList = new LinkedList<KnuthElement>();
+        LinkedList<ListElement> returnList = new LinkedList<>();
 
         addKnuthElementsForBorderPaddingStart(returnList);
 

@@ -101,13 +101,13 @@ public class BlockLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
 
     /** {@inheritDoc} */
     @Override
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
         return getNextKnuthElements(context, alignment, null, null, null);
     }
 
     /** {@inheritDoc} */
     @Override
-    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
             Position restartPosition, LayoutManager restartAtLM) {
         resetSpaces();
         return super.getNextKnuthElements(

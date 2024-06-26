@@ -760,7 +760,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(final LayoutContext context, final int alignment) {
+    public List<KnuthSequence> getNextKnuthElements(final LayoutContext context, final int alignment) {
 
         lineStartBAP = context.getLineStartBorderAndPaddingWidth();
         lineEndBAP = context.getLineEndBorderAndPaddingWidth();

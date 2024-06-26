@@ -252,7 +252,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
         List contentList = new LinkedList();
         List returnedList;
 

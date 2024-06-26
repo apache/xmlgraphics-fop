@@ -211,7 +211,7 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
             Position restartPosition, LayoutManager restartAtLM) {
         referenceIPD = context.getRefIPD();
         LayoutContext childLC;
@@ -614,7 +614,7 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
 
     /** {@inheritDoc} */
     @Override
-    public List getChangedKnuthElements(List oldList, int alignment) {
+    public List<ListElement> getChangedKnuthElements(List oldList, int alignment) {
         // label
         labelList = label.getChangedKnuthElements(labelList, alignment);
 
