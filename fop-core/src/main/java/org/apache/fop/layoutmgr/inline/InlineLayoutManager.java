@@ -259,7 +259,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
 
     /** {@inheritDoc} */
     @Override
-    public List getNextKnuthElements(
+    public List<KnuthSequence> getNextKnuthElements(
         LayoutContext context, int alignment) {
         LayoutManager curLM;
 

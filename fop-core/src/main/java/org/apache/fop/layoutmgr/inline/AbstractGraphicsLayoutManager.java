@@ -30,6 +30,7 @@ import org.apache.fop.datatypes.LengthBase;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.AbstractGraphics;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.TraitSetter;
 
@@ -111,8 +112,8 @@ public abstract class AbstractGraphicsLayoutManager extends LeafNodeLayoutManage
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context,
-                                           int alignment) {
+    public List<KnuthSequence> getNextKnuthElements(LayoutContext context,
+                                                    int alignment) {
         InlineViewport areaCurrent = getInlineArea();
         setCurrentArea(areaCurrent);
         return super.getNextKnuthElements(context, alignment);

@@ -319,7 +319,7 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         return false;
     }
 
-    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
+    public List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment, int depth) {
         return oldList;
     }
 

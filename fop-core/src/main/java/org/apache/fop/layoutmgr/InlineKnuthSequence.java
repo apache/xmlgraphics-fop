@@ -30,7 +30,7 @@ import org.apache.fop.layoutmgr.inline.KnuthInlineBox;
  * Represents a list of inline Knuth elements.
  * If closed, it represents all elements of a Knuth paragraph.
  */
-public class InlineKnuthSequence extends KnuthSequence  {
+public class InlineKnuthSequence<T extends ListElement> extends KnuthSequence  {
 
     private static final long serialVersionUID = 1354774188859946549L;
 
@@ -47,7 +47,7 @@ public class InlineKnuthSequence extends KnuthSequence  {
      * Creates a new list from an existing list.
      * @param list The list from which to create the new list.
      */
-    public InlineKnuthSequence(List list) {
+    public InlineKnuthSequence(List<T> list) {
         super(list);
     }
 

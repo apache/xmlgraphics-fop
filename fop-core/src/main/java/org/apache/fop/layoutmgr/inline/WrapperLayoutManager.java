@@ -27,6 +27,7 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
@@ -90,8 +91,8 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
         getPSLM().addIDToPage(fobj.getId());
     }
 
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
-        List list = super.getNextKnuthElements(context, alignment);
+    public List<KnuthSequence> getNextKnuthElements(LayoutContext context, int alignment) {
+        List<KnuthSequence> list = super.getNextKnuthElements(context, alignment);
         if (parentLayoutManager instanceof LineLayoutManager && !fobj.hasId() && fobj.hasChildren()) {
             return Collections.emptyList();
         }

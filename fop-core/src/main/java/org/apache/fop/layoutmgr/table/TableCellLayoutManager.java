@@ -54,6 +54,7 @@ import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.LocalBreaker;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
@@ -168,7 +169,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
     /**
      * {@inheritDoc}
      */
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
         MinOptMax stackLimit = context.getStackLimitBP();
 
         referenceIPD = context.getRefIPD();
@@ -177,7 +178,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
 
         List returnedList;
         List contentList = new LinkedList();
-        List returnList = new LinkedList();
+        List<ListElement> returnList = new LinkedList<>();
 
         LayoutManager curLM; // currently active LM
         LayoutManager prevLM = null; // previously active LM

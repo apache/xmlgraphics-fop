@@ -25,11 +25,11 @@ import java.util.List;
 import org.apache.fop.fo.flow.Float;
 import org.apache.fop.layoutmgr.FloatContentLayoutManager;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
-import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceResolver;
@@ -38,7 +38,7 @@ public class FloatLayoutManager extends InlineStackingLayoutManager {
 
     private FloatContentLayoutManager floatContentLM;
     private KnuthInlineBox anchor;
-    private List<KnuthElement> floatContentKnuthElements;
+    private List<ListElement> floatContentKnuthElements;
     private Float floatContent;
     private boolean floatContentAreaAdded;
 
@@ -51,7 +51,7 @@ public class FloatLayoutManager extends InlineStackingLayoutManager {
         return null;
     }
 
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment) {
+    public LinkedList<KnuthSequence> getNextKnuthElements(LayoutContext context, int alignment) {
 
         if (!floatContentAreaAdded && !floatContent.isDisabled()) {
             floatContentLM = new FloatContentLayoutManager(floatContent);
@@ -62,7 +62,7 @@ public class FloatLayoutManager extends InlineStackingLayoutManager {
         }
 
         // the only knuth element is a zero width and height knuth box
-        LinkedList knuthElements = new LinkedList();
+        LinkedList<KnuthSequence> knuthElements = new LinkedList<>();
         KnuthSequence seq = new InlineKnuthSequence();
         anchor = new KnuthInlineBox(0, null, null, true);
         if (!floatContentAreaAdded) {

@@ -86,7 +86,7 @@ public class FootnoteLayoutManager extends InlineStackingLayoutManager {
         bodyLM.initialize();
 
         // get Knuth elements representing the footnote citation
-        List returnedList = new LinkedList();
+        List<KnuthSequence> returnedList = new LinkedList<>();
         while (!citationLM.isFinished()) {
             List partialList = citationLM.getNextKnuthElements(context, alignment);
             if (partialList != null) {

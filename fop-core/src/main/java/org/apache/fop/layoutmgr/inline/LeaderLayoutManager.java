@@ -41,6 +41,7 @@ import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LeafPosition;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
@@ -256,7 +257,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List<KnuthSequence> getNextKnuthElements(LayoutContext context, int alignment) {
         MinOptMax ipd;
         curArea = get(context);
         KnuthSequence seq = new InlineKnuthSequence();
@@ -319,7 +320,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList, int alignment) {
+    public List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment) {
         if (isFinished()) {
             return null;
         }

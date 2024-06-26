@@ -636,11 +636,11 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
             }
         }
 
-        List returnedList = body.getChangedKnuthElements(oldList, alignment);
+        List<ListElement> returnedList = body.getChangedKnuthElements(oldList, alignment);
         // "wrap" the Position inside each element
-        List tempList = returnedList;
+        List<ListElement> tempList = returnedList;
         KnuthElement tempElement;
-        returnedList = new LinkedList();
+        returnedList = new LinkedList<>();
         for (Object aTempList : tempList) {
             tempElement = (KnuthElement) aTempList;
             tempElement.setPosition(new NonLeafPosition(this, tempElement.getPosition()));

@@ -175,7 +175,7 @@ public interface LayoutManager extends PercentBaseContext {
      * @param alignment      the desired text alignment
      * @return               the updated list of KnuthElements
      */
-    List getChangedKnuthElements(List oldList, int alignment);
+    List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment);
 
     /**
      * Whether the FO handled by this layout manager has a descendant (including itself)
@@ -269,7 +269,7 @@ public interface LayoutManager extends PercentBaseContext {
      * a paragraph
      * @return an updated list of elements, taking the new IPD into account
      */
-    List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+    List<ListElement> getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
             Position positionAtIPDChange, LayoutManager restartAtLM);
 
     boolean isFromFootnote();

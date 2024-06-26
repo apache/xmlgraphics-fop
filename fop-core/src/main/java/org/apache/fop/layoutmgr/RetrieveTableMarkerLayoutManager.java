@@ -39,7 +39,7 @@ public class RetrieveTableMarkerLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List<KnuthSequence> getNextKnuthElements(LayoutContext context, int alignment) {
         setFinished(true);
         FONode foNode = (FONode) getFObj();
         foNode = getTableLayoutManager().resolveRetrieveTableMarker((RetrieveTableMarker) foNode);

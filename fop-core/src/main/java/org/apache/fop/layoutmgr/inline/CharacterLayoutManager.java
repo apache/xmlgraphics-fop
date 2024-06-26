@@ -111,7 +111,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List<KnuthSequence> getNextKnuthElements(LayoutContext context, int alignment) {
         Character fobj = (Character) this.fobj;
 
         // TODO: may need some special handling for fo:character
@@ -152,7 +152,7 @@ public class CharacterLayoutManager extends LeafNodeLayoutManager {
 
         addKnuthElementsForBorderPaddingEnd(seq);
 
-        LinkedList<KnuthSequence> returnList = new LinkedList<KnuthSequence>();
+        LinkedList<KnuthSequence> returnList = new LinkedList<>();
         returnList.add(seq);
         setFinished(true);
         return returnList;

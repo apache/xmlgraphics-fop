@@ -113,7 +113,7 @@ public abstract class BreakingAlgorithm {
     /**
      * The paragraph of KnuthElements.
      */
-    protected KnuthSequence par;
+    protected KnuthSequence<KnuthElement> par;
 
     /**
      * The width of a line (or height of a column in page-breaking mode).
@@ -1313,7 +1313,7 @@ public abstract class BreakingAlgorithm {
      * @return the element at index idx in the paragraph.
      */
     protected KnuthElement getElement(int idx) {
-        return (KnuthElement) par.get(idx);
+        return par.get(idx);
     }
 
     /**

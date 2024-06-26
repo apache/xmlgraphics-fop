@@ -203,9 +203,9 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
 
-        List returnList = new LinkedList();
+        List<ListElement> returnList = new LinkedList<>();
 
         /*
          * Compute the IPD and adjust it if necessary (overconstrained)

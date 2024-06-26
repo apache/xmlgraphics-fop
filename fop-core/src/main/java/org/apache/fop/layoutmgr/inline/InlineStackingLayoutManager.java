@@ -32,6 +32,7 @@ import org.apache.fop.layoutmgr.BreakOpportunity;
 import org.apache.fop.layoutmgr.BreakOpportunityHelper;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.traits.MinOptMax;
@@ -320,12 +321,12 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
     /**
      * {@inheritDoc}
      */
-    public List getChangedKnuthElements(List oldList, int alignment) {
+    public List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment) {
         return getChangedKnuthElements(oldList, alignment, 0);
     }
 
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
+    public List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment, int depth) {
         // "unwrap" the Positions stored in the elements
         ListIterator oldListIterator = oldList.listIterator();
         KnuthElement oldElement;

@@ -607,7 +607,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     /** {@inheritDoc} */
     @Override
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
         if (alignmentContext == null) {
             FontInfo fi = fobj.getFOEventHandler().getFontInfo();
             FontTriplet[] fontkeys = fobj.getCommonFont().getFontState(fi);
@@ -933,7 +933,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      */
     private List<ListElement> postProcessLineBreaks(int alignment, LayoutContext context) {
 
-        List<ListElement> returnList = new LinkedList<ListElement>();
+        List<ListElement> returnList = new LinkedList<>();
 
         int endIndex = -1;
         for (int p = 0; p < knuthParagraphs.size(); p++) {
@@ -1366,7 +1366,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         processUpdates(currPar, updateList);
     }
 
-    private void processUpdates(Paragraph par, List updateList) {
+    private void processUpdates(Paragraph par, List<ListElement> updateList) {
         // create iterator for the updateList
         ListIterator updateListIterator = updateList.listIterator();
         Update currUpdate;
@@ -1394,7 +1394,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 .applyChanges(par.subList(fromIndex + elementsAdded,
                                               toIndex + elementsAdded))) {
                 // insert the new KnuthElements
-                List newElements = currUpdate.inlineLM.getChangedKnuthElements(
+                List<ListElement> newElements = currUpdate.inlineLM.getChangedKnuthElements(
                     par.subList(fromIndex + elementsAdded,
                                      toIndex + elementsAdded),
                      /*flaggedPenalty,*/ effectiveAlignment);

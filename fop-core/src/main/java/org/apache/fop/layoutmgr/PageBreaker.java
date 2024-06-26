@@ -201,9 +201,9 @@ public class PageBreaker extends AbstractBreaker {
         return containsFootnotes;
     }
 
-    public static  List<List<KnuthElement>> getFootnoteKnuthElements(FlowLayoutManager flowLM, LayoutContext context,
+    public static List<List<KnuthElement>> getFootnoteKnuthElements(FlowLayoutManager flowLM, LayoutContext context,
             List<FootnoteBodyLayoutManager> footnoteBodyLMs) {
-        List<List<KnuthElement>> footnotes = new ArrayList<List<KnuthElement>>();
+        List<List<KnuthElement>> footnotes = new ArrayList<>();
         LayoutContext footnoteContext = LayoutContext.copyOf(context);
         footnoteContext.setStackLimitBP(context.getStackLimitBP());
         footnoteContext.setRefIPD(flowLM.getPSLM()
@@ -245,8 +245,8 @@ public class PageBreaker extends AbstractBreaker {
     }
 
     /** {@inheritDoc} */
-    protected List getNextKnuthElements(LayoutContext context, int alignment) {
-        List contentList = null;
+    protected List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
+        List<ListElement> contentList = null;
 
         while (!childFLM.isFinished() && contentList == null) {
             contentList = childFLM.getNextKnuthElements(context, alignment);
@@ -262,9 +262,9 @@ public class PageBreaker extends AbstractBreaker {
     }
 
     /** {@inheritDoc} */
-    protected List getNextKnuthElements(LayoutContext context, int alignment,
+    protected List<ListElement> getNextKnuthElements(LayoutContext context, int alignment,
             Position positionAtIPDChange, LayoutManager restartAtLM) {
-        List contentList = null;
+        List<ListElement> contentList = null;
 
         do {
             contentList = childFLM.getNextKnuthElements(context, alignment, positionAtIPDChange,

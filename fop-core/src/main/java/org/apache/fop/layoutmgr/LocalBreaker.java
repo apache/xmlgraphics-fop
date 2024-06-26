@@ -90,9 +90,9 @@ public abstract class LocalBreaker extends AbstractBreaker {
         return lc;
     }
 
-    protected List getNextKnuthElements(LayoutContext context, int alignment) {
+    protected List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
         LayoutManager curLM; // currently active LM
-        List returnList = new LinkedList();
+        List<ListElement> returnList = new LinkedList<>();
 
         while ((curLM = lm.getChildLM()) != null) {
             LayoutContext childLC = LayoutContext.newInstance();

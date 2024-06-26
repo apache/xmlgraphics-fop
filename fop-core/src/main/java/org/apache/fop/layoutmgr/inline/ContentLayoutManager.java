@@ -38,6 +38,7 @@ import org.apache.fop.layoutmgr.KnuthPossPosIter;
 import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.PageSequenceLayoutManager;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
@@ -129,8 +130,8 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
 
         stackSize = 0;
 
-        List contentList = getNextKnuthElements(childLC, Constants.EN_START);
-        for (Object aContentList : contentList) {
+        List<ListElement> contentList = getNextKnuthElements(childLC, Constants.EN_START);
+        for (ListElement aContentList : contentList) {
             KnuthElement element = (KnuthElement) aContentList;
             if (element instanceof KnuthInlineBox) {
                 KnuthInlineBox box = (KnuthInlineBox) element;
@@ -315,12 +316,12 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     }
 
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList, int alignment) {
+    public List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment) {
         return null;
     }
 
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
+    public List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment, int depth) {
         return getChangedKnuthElements(oldList, alignment);
     }
 

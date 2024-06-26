@@ -170,7 +170,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
     }
 
     /** {@inheritDoc} */
-    public List getChangedKnuthElements(List oldList, int alignment) {
+    public List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment) {
         log.warn("null implementation of getChangeKnuthElement() called!");
         return null;
     }

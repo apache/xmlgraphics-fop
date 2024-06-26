@@ -140,7 +140,7 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
         boolean prevIsBox = false;
         int colNumber = 1;
         for (int i = startIndex; i < par.size(); i++) {
-            KnuthElement element = (KnuthElement) par.get(i);
+            KnuthElement element = par.get(i);
             if (isLegalBreak(i, prevIsBox)) {
                 int breakLength = totalLength
                         + (element instanceof KnuthPenalty ? element.getWidth() : 0);
@@ -225,7 +225,7 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
     }
 
     private boolean isLegalBreak(int index, boolean prevIsBox) {
-        KnuthElement element = (KnuthElement) par.get(index);
+        KnuthElement element = par.get(index);
         return element instanceof KnuthPenalty && element.getPenalty() < KnuthPenalty.INFINITE
                 || prevIsBox && element instanceof KnuthGlue;
     }
@@ -235,7 +235,7 @@ public class BalancingColumnBreakingAlgorithm extends PageBreakingAlgorithm {
     }
 
     private int getPenaltyWidth(int index) {
-        KnuthElement element = (KnuthElement) par.get(index);
+        KnuthElement element = par.get(index);
         return element instanceof KnuthPenalty ? element.getWidth() : 0;
     }
 

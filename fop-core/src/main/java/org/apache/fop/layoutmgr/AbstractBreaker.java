@@ -288,7 +288,7 @@ public abstract class AbstractBreaker {
      * @param alignment the desired text alignment
      * @return          the list of KnuthElements
      */
-    protected abstract List<KnuthElement> getNextKnuthElements(LayoutContext context,
+    protected abstract List<ListElement> getNextKnuthElements(LayoutContext context,
                                                                int alignment);
 
     /**
@@ -302,7 +302,7 @@ public abstract class AbstractBreaker {
      * change occurs between two LMs
      * @return          the list of KnuthElements
      */
-    protected List<KnuthElement> getNextKnuthElements(LayoutContext context, int alignment,
+    protected List<ListElement> getNextKnuthElements(LayoutContext context, int alignment,
             Position positionAtIPDChange, LayoutManager restartAtLM) {
         throw new UnsupportedOperationException("TODO: implement acceptable fallback");
     }
@@ -673,13 +673,13 @@ public abstract class AbstractBreaker {
      */
     protected int getNextBlockList(LayoutContext childLC, int nextSequenceStartsOn,
             Position positionAtIPDChange, LayoutManager restartAtLM,
-            List<KnuthElement> firstElements) {
+            List<ListElement> firstElements) {
         updateLayoutContext(childLC);
         //Make sure the span change signal is reset
         childLC.signalSpanChange(Constants.NOT_SET);
 
         BlockSequence blockList;
-        List<KnuthElement> returnedList;
+        List<ListElement> returnedList;
         if (firstElements == null) {
             returnedList = getNextKnuthElements(childLC, alignment);
         } else if (positionAtIPDChange == null) {

@@ -30,7 +30,7 @@ import org.apache.fop.fo.flow.FootnoteBody;
  */
 public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
 
-    private List<KnuthElement> knuthElements;
+    private List<ListElement> knuthElements;
 
     /**
      * Creates a new FootnoteBodyLayoutManager.
@@ -41,7 +41,7 @@ public class FootnoteBodyLayoutManager extends BlockStackingLayoutManager {
     }
 
     @Override
-    public List<KnuthElement> getNextKnuthElements(LayoutContext context, int alignment) {
+    public List getNextKnuthElements(LayoutContext context, int alignment) {
         if (knuthElements == null) {
             knuthElements = super.getNextKnuthElements(context, alignment);
         }

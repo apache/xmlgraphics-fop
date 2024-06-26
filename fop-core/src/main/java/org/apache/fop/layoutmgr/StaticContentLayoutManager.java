@@ -72,7 +72,7 @@ public class StaticContentLayoutManager extends BlockStackingLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
         throw new IllegalStateException();
     }
 

@@ -37,6 +37,7 @@ import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LeafPosition;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
@@ -261,7 +262,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
 
     /** {@inheritDoc} */
     @Override
-    public List getNextKnuthElements(LayoutContext context, int alignment) {
+    public List<KnuthSequence> getNextKnuthElements(LayoutContext context, int alignment) {
         curArea = get(context);
 
         alignmentContext = makeAlignmentContext(context);
@@ -327,18 +328,18 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * {@inheritDoc}
      * No subclass has a meaningful implementation of this method
      */
-    public List getChangedKnuthElements(List oldList, int alignment, int depth) {
+    public List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment, int depth) {
         return getChangedKnuthElements(oldList, alignment);
     }
 
     /** {@inheritDoc} */
     @Override
-    public List getChangedKnuthElements(List oldList, int alignment) {
+    public List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment) {
         if (isFinished()) {
             return null;
         }
 
-        LinkedList returnList = new LinkedList();
+        LinkedList<ListElement> returnList = new LinkedList<>();
 
         addKnuthElementsForBorderPaddingStart(returnList);
 

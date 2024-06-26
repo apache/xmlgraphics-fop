@@ -152,7 +152,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         KnuthBox headerAsFirst = null;
         KnuthBox headerAsSecondToLast = null;
         KnuthBox footerAsLast = null;
-        LinkedList returnList = new LinkedList();
+        LinkedList<ListElement> returnList = new LinkedList<>();
         int headerFootnoteBPD = 0;
         if (headerIter != null && headerList == null) {
             this.headerList = getKnuthElementsForRowIterator(
@@ -213,20 +213,20 @@ public class TableContentLayoutManager implements PercentBaseContext {
                 bodyIter, context, alignment, TableRowIterator.BODY));
         if (headerAsFirst != null) {
             int insertionPoint = 0;
-            if (returnList.size() > 0 && ((ListElement)returnList.getFirst()).isForcedBreak()) {
+            if (returnList.size() > 0 && returnList.getFirst().isForcedBreak()) {
                 insertionPoint++;
             }
             returnList.add(insertionPoint, headerAsFirst);
         } else if (headerAsSecondToLast != null) {
             int insertionPoint = returnList.size();
-            if (returnList.size() > 0 && ((ListElement)returnList.getLast()).isForcedBreak()) {
+            if (returnList.size() > 0 && returnList.getLast().isForcedBreak()) {
                 insertionPoint--;
             }
             returnList.add(insertionPoint, headerAsSecondToLast);
         }
         if (footerAsLast != null) {
             int insertionPoint = returnList.size();
-            if (returnList.size() > 0 && ((ListElement)returnList.getLast()).isForcedBreak()) {
+            if (returnList.size() > 0 && returnList.getLast().isForcedBreak()) {
                 insertionPoint--;
             }
             returnList.add(insertionPoint, footerAsLast);

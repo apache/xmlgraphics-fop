@@ -36,6 +36,7 @@ import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.BreakUtil;
 
@@ -58,8 +59,8 @@ class RowGroupLayoutManager {
         this.tableStepper = tableStepper;
     }
 
-    public LinkedList getNextKnuthElements(LayoutContext context, int alignment, int bodyType) {
-        LinkedList returnList = new LinkedList();
+    public LinkedList<ListElement> getNextKnuthElements(LayoutContext context, int alignment, int bodyType) {
+        LinkedList<ListElement> returnList = new LinkedList<>();
         createElementsForRowGroup(context, alignment, bodyType, returnList);
 
         context.updateKeepWithPreviousPending(rowGroup[0].getKeepWithPrevious());

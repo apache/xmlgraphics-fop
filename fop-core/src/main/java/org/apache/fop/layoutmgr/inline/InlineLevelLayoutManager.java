@@ -22,6 +22,7 @@ package org.apache.fop.layoutmgr.inline;
 import java.util.List;
 
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 
 /**
@@ -91,6 +92,6 @@ List addALetterSpaceTo(List oldList, int depth);
      * @param depth the depth at which the Positions for this LM in oldList are found
      * @return               the updated list of KnuthElements
      **/
-    List getChangedKnuthElements(List oldList, int alignment, int depth);
+    List<ListElement> getChangedKnuthElements(List<ListElement> oldList, int alignment, int depth);
 
 }

@@ -284,7 +284,7 @@ public abstract class AbstractBaseLayoutManager
     }
 
     /** {@inheritDoc} */
-    public List getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
             Position positionAtIPDChange, LayoutManager restartAtLM) {
         throw new UnsupportedOperationException("Not implemented");
     }

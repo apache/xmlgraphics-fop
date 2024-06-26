@@ -29,7 +29,7 @@ import org.apache.fop.util.ListUtil;
 /**
  * Represents a list of {@link KnuthElement Knuth elements}.
  */
-public abstract class KnuthSequence extends ArrayList {
+public abstract class KnuthSequence<T extends ListElement> extends ArrayList<T> {
 
     //TODO: do not extend ArrayList
 
@@ -44,7 +44,7 @@ public abstract class KnuthSequence extends ArrayList {
      * Creates a new list from an existing list.
      * @param list The list from which to create the new list.
      */
-    public KnuthSequence(List list) {
+    public KnuthSequence(List<T> list) {
         super(list);
     }
 
@@ -157,7 +157,7 @@ public abstract class KnuthSequence extends ArrayList {
     public ListElement getElement(int index) {
         return (index >= size() || index < 0)
                 ? null
-                : (ListElement) get(index);
+                : get(index);
     }
 
     /**
@@ -175,7 +175,7 @@ public abstract class KnuthSequence extends ArrayList {
         } else {
             int boxIndex = startIndex;
             @SuppressWarnings("unchecked")
-            Iterator<ListElement> iter = listIterator(startIndex);
+            Iterator<T> iter = listIterator(startIndex);
             while (iter.hasNext() && !iter.next().isBox()) {
                 boxIndex++;
             }
