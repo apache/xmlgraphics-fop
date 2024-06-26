@@ -990,12 +990,12 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public List addALetterSpaceTo(List oldList) {
+    public List<ListElement> addALetterSpaceTo(List<ListElement> oldList) {
         return addALetterSpaceTo(oldList, 0);
     }
 
     /** {@inheritDoc} */
-    public List addALetterSpaceTo(final List oldList, int depth) {
+    public List<ListElement> addALetterSpaceTo(final List<ListElement> oldList, int depth) {
         // old list contains only a box, or the sequence: box penalty glue box;
         // look at the Position stored in the first element in oldList
         // which is always a box
@@ -1113,12 +1113,12 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public boolean applyChanges(final List oldList) {
+    public boolean applyChanges(final List<ListElement> oldList) {
         return applyChanges(oldList, 0);
     }
 
     /** {@inheritDoc} */
-    public boolean applyChanges(final List oldList, int depth) {
+    public boolean applyChanges(final List<ListElement> oldList, int depth) {
 
         // make sure the LM appears unfinished in between this call
         // and the next call to getChangedKnuthElements()
@@ -1195,7 +1195,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             return null;
         }
 
-        final LinkedList returnList = new LinkedList();
+        final LinkedList<ListElement> returnList = new LinkedList<>();
 
         for (; returnedIndices[0] <= returnedIndices[1]; returnedIndices[0]++) {
             GlyphMapping mapping = getGlyphMapping(returnedIndices[0]);

@@ -39,6 +39,7 @@ import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.LayoutContext;
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.util.BreakUtil;
 
@@ -182,7 +183,7 @@ public class TableStepper {
 
         int cumulateLength = 0; // Length of the content accumulated before the break
         TableContentPosition lastTCPos = null;
-        LinkedList returnList = new LinkedList();
+        LinkedList<ListElement> returnList = new LinkedList<>();
         int laststep = 0;
         int step = getFirstStep();
         do {

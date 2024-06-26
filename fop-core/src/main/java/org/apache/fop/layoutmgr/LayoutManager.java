@@ -114,7 +114,7 @@ public interface LayoutManager extends PercentBaseContext {
     /**
      * @return the list of child LMs
      */
-    List getChildLMs();
+    List<LayoutManager> getChildLMs();
 
     /**
      * Add the LM in the argument to the list of child LMs;
@@ -128,7 +128,7 @@ public interface LayoutManager extends PercentBaseContext {
      * Add the LMs in the argument to the list of child LMs;
      * @param newLMs the list of LMs to be added
      */
-    void addChildLMs(List newLMs);
+    void addChildLMs(List<LayoutManager> newLMs);
 
     /**
      * Get a sequence of KnuthElements representing the content

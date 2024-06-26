@@ -991,7 +991,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param isFirst true if this is the first time a layout manager instance needs to generate
      *                border and padding
      */
-    protected void addKnuthElementsForBorderPaddingBefore(List returnList, boolean isFirst) {
+    protected void addKnuthElementsForBorderPaddingBefore(List<ListElement> returnList, boolean isFirst) {
         //Border and Padding (before)
         CommonBorderPaddingBackground borderAndPadding = getBorderPaddingBackground();
         if (borderAndPadding != null) {
@@ -1018,7 +1018,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param isLast true if this is the last time a layout manager instance needs to generate
      *               border and padding
      */
-    protected void addKnuthElementsForBorderPaddingAfter(List returnList, boolean isLast) {
+    protected void addKnuthElementsForBorderPaddingAfter(List<ListElement> returnList, boolean isLast) {
         //Border and Padding (after)
         CommonBorderPaddingBackground borderAndPadding = getBorderPaddingBackground();
         if (borderAndPadding != null) {

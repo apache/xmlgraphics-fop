@@ -42,7 +42,7 @@ public final class ElementListUtils {
      * @param constraint min/opt/max value to restrict the range in which the breaks are removed.
      * @return true if the opt constraint is bigger than the list contents
      */
-    public static boolean removeLegalBreaks(List elements, MinOptMax constraint) {
+    public static boolean removeLegalBreaks(List<ListElement> elements, MinOptMax constraint) {
         return removeLegalBreaks(elements, constraint.getOpt());
     }
 
@@ -140,7 +140,7 @@ public final class ElementListUtils {
      * @param end element at which to stop
      * @return the content length
      */
-    public static int calcContentLength(List elems, int start, int end) {
+    public static int calcContentLength(List<ListElement> elems, int start, int end) {
         ListIterator iter = elems.listIterator(start);
         int count = end - start + 1;
         int len = 0;
@@ -177,7 +177,7 @@ public final class ElementListUtils {
      * @param elems the element list
      * @return true if the list ends with a forced break
      */
-    public static boolean endsWithForcedBreak(List elems) {
+    public static boolean endsWithForcedBreak(List<ListElement> elems) {
         ListElement last = ListUtil.getLastListElement(elems);
         return last == null || last.isForcedBreak();
     }
@@ -187,8 +187,8 @@ public final class ElementListUtils {
      * @param elems the element list
      * @return true if the list starts with a forced break
      */
-    public static boolean startsWithForcedBreak(List elems) {
-        return !elems.isEmpty() && ((ListElement) elems.get(0)).isForcedBreak();
+    public static boolean startsWithForcedBreak(List<ListElement> elems) {
+        return !elems.isEmpty() && elems.get(0).isForcedBreak();
     }
 
     /**
@@ -197,8 +197,8 @@ public final class ElementListUtils {
      * @param elems the element list
      * @return true if the list ends with a non-infinite penalty
      */
-    public static boolean endsWithNonInfinitePenalty(List elems) {
-        ListElement last = (ListElement) ListUtil.getLast(elems);
+    public static boolean endsWithNonInfinitePenalty(List<ListElement> elems) {
+        ListElement last = ListUtil.getLast(elems);
         if (last.isPenalty() && ((KnuthPenalty)last).getPenalty() < KnuthElement.INFINITE) {
             return true;
         } else if (last instanceof BreakElement
@@ -215,7 +215,7 @@ public final class ElementListUtils {
      * @param startIndex the start index
      * @return the position of the previous break, or -1 if there was no previous break
      */
-    public static int determinePreviousBreak(List elems, int startIndex) {
+    public static int determinePreviousBreak(List<ListElement> elems, int startIndex) {
         int prevBreak = startIndex - 1;
         while (prevBreak >= 0) {
             KnuthElement el = (KnuthElement)elems.get(prevBreak);

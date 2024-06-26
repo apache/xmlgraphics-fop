@@ -288,7 +288,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     }
 
     /** {@inheritDoc} */
-    public List addALetterSpaceTo(List oldList) {
+    public List<ListElement> addALetterSpaceTo(List<ListElement> oldList) {
         // return the unchanged elements
         return oldList;
     }
@@ -297,7 +297,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * {@inheritDoc}
      * Only TextLM has a meaningful implementation of this method
      */
-    public List addALetterSpaceTo(List oldList, int depth) {
+    public List<ListElement> addALetterSpaceTo(List<ListElement> oldList, int depth) {
         return addALetterSpaceTo(oldList);
     }
 
@@ -311,7 +311,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     }
 
     /** {@inheritDoc} */
-    public boolean applyChanges(List oldList) {
+    public boolean applyChanges(List<ListElement> oldList) {
         setFinished(false);
         return false;
     }
@@ -320,7 +320,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * {@inheritDoc}
      * Only TextLM has a meaningful implementation of this method
      */
-    public boolean applyChanges(List oldList, int depth) {
+    public boolean applyChanges(List<ListElement> oldList, int depth) {
         return applyChanges(oldList);
     }
 
@@ -358,7 +358,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * Creates Knuth elements for start border padding and adds them to the return list.
      * @param returnList return list to add the additional elements to
      */
-    protected void addKnuthElementsForBorderPaddingStart(List returnList) {
+    protected void addKnuthElementsForBorderPaddingStart(List<ListElement> returnList) {
         //Border and Padding (start)
         if (commonBorderPaddingBackground != null) {
             int ipStart = commonBorderPaddingBackground.getBorderStartWidth(false)
@@ -376,7 +376,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
      * Creates Knuth elements for end border padding and adds them to the return list.
      * @param returnList return list to add the additional elements to
      */
-    protected void addKnuthElementsForBorderPaddingEnd(List returnList) {
+    protected void addKnuthElementsForBorderPaddingEnd(List<ListElement> returnList) {
         //Border and Padding (after)
         if (commonBorderPaddingBackground != null) {
             int ipEnd = commonBorderPaddingBackground.getBorderEndWidth(false)

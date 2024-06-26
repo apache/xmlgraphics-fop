@@ -196,12 +196,12 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
     }
 
     /** {@inheritDoc} */
-    public List addALetterSpaceTo(List oldList) {
+    public List<ListElement> addALetterSpaceTo(List<ListElement> oldList) {
         return addALetterSpaceTo(oldList, 0);
     }
 
     /** {@inheritDoc} */
-    public List addALetterSpaceTo(List oldList, int thisDepth) {
+    public List<ListElement> addALetterSpaceTo(List<ListElement> oldList, int thisDepth) {
         // old list contains only a box, or the sequence: box penalty glue box
 
         ListIterator oldListIterator = oldList.listIterator(oldList.size());
@@ -253,12 +253,12 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
     }
 
     /** {@inheritDoc} */
-    public boolean applyChanges(List oldList) {
+    public boolean applyChanges(List<ListElement> oldList) {
         return applyChanges(oldList, 0);
     }
 
     /** {@inheritDoc} */
-    public boolean applyChanges(List oldList, int depth) {
+    public boolean applyChanges(List<ListElement> oldList, int depth) {
         ListIterator oldListIterator = oldList.listIterator();
         KnuthElement oldElement;
         depth += 1;
@@ -334,7 +334,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
 
         KnuthElement returnedElement;
         LinkedList returnedList = new LinkedList();
-        LinkedList returnList = new LinkedList();
+        LinkedList<ListElement> returnList = new LinkedList<>();
         InlineLevelLayoutManager prevLM = null;
         InlineLevelLayoutManager currLM;
         int fromIndex = 0;

@@ -579,7 +579,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      * Creates Knuth elements for start border padding and adds them to the return list.
      * @param returnList return list to add the additional elements to
      */
-    protected void addKnuthElementsForBorderPaddingStart(List returnList) {
+    protected void addKnuthElementsForBorderPaddingStart(List<ListElement> returnList) {
         //Border and Padding (start)
         /*
          * If the returnlist is a BlockKnuthSequence, the border and padding should be added
@@ -604,7 +604,7 @@ public class InlineLayoutManager extends InlineStackingLayoutManager {
      * Creates Knuth elements for end border padding and adds them to the return list.
      * @param returnList return list to add the additional elements to
      */
-    protected void addKnuthElementsForBorderPaddingEnd(List returnList) {
+    protected void addKnuthElementsForBorderPaddingEnd(List<ListElement> returnList) {
         //Border and Padding (after)
         /*
          * If the returnlist is a BlockKnuthSequence, the border and padding should be added

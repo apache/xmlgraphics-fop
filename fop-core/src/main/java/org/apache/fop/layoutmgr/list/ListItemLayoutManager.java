@@ -508,7 +508,7 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
         return retval;
     }
 
-    private boolean shouldWeAvoidBreak(List returnList, LayoutManager lm) {
+    private boolean shouldWeAvoidBreak(List<ListElement> returnList, LayoutManager lm) {
         if (isChangingIPD(lm)) {
             if (lm instanceof BlockLayoutManager) {
                 return true;

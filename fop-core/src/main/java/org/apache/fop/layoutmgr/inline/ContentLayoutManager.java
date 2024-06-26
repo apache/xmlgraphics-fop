@@ -219,7 +219,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     /**
      * {@inheritDoc}
      */
-    public List getChildLMs() {
+    public List<LayoutManager> getChildLMs() {
         List childLMs = new ArrayList(1);
         childLMs.add(childLM);
         return childLMs;
@@ -241,7 +241,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
     /**
      * {@inheritDoc}
      */
-    public void addChildLMs(List newLMs) {
+    public void addChildLMs(List<LayoutManager> newLMs) {
         if (newLMs == null || newLMs.size() == 0) {
             return;
         }

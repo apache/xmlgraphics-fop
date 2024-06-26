@@ -256,7 +256,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
      */
     private LinkedList getKnuthElementsForRowIterator(TableRowIterator iter,
             LayoutContext context, int alignment, int bodyType) {
-        LinkedList returnList = new LinkedList();
+        LinkedList<ListElement> returnList = new LinkedList<>();
         EffRow[] rowGroup = iter.getNextRowGroup();
         // TODO homogenize the handling of keeps and breaks
         context.clearKeepsPending();

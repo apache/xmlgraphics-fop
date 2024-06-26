@@ -177,7 +177,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
         cellIPD -= getIPIndents();
 
         List returnedList;
-        List contentList = new LinkedList();
+        List<ListElement> contentList = new LinkedList<>();
         List<ListElement> returnList = new LinkedList<>();
 
         LayoutManager curLM; // currently active LM

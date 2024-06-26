@@ -114,7 +114,7 @@ public class InlineKnuthSequence<T extends ListElement> extends KnuthSequence  {
             return;
         }
         removeLast();
-        LinkedList oldList = new LinkedList();
+        LinkedList<ListElement> oldList = new LinkedList<>();
         // if there are two consecutive KnuthBoxes the
         // first one does not represent a whole word,
         // so it must be given one more letter space

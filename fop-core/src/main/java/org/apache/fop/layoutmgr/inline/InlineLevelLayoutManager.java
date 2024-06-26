@@ -38,7 +38,7 @@ public interface InlineLevelLayoutManager extends LayoutManager {
      * @param oldList the elements which must be given one more letter space
      * @return        the new elements replacing the old ones
      */
-    List addALetterSpaceTo(List oldList);
+    List<ListElement> addALetterSpaceTo(List<ListElement> oldList);
 
     /**
      * Tell the LM to modify its data, adding a letter space
@@ -49,7 +49,7 @@ public interface InlineLevelLayoutManager extends LayoutManager {
      * @param depth the depth at which the Positions for this LM in oldList are found
      * @return        the new elements replacing the old ones
      */
-List addALetterSpaceTo(List oldList, int depth);
+    List<ListElement> addALetterSpaceTo(List<ListElement> oldList, int depth);
 
     /**
      * Get the word chars corresponding to the given position.
@@ -73,7 +73,7 @@ List addALetterSpaceTo(List oldList, int depth);
      * @param oldList the list of the old elements the changes refer to
      * @return        true if the LM had to change its data, false otherwise
      */
-    boolean applyChanges(List oldList);
+    boolean applyChanges(List<ListElement> oldList);
 
     /**
      * Tell the LM to apply the changes due to hyphenation
@@ -82,7 +82,7 @@ List addALetterSpaceTo(List oldList, int depth);
      * @param depth the depth at which the Positions for this LM in oldList are found
      * @return        true if the LM had to change its data, false otherwise
      */
-    boolean applyChanges(List oldList, int depth);
+    boolean applyChanges(List<ListElement> oldList, int depth);
 
     /**
      * Get a sequence of KnuthElements representing the content

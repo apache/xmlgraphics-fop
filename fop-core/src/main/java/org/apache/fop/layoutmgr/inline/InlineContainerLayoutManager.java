@@ -296,11 +296,11 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
         return true;
     }
 
-    public List addALetterSpaceTo(List oldList) {
+    public List<ListElement> addALetterSpaceTo(List<ListElement> oldList) {
         return oldList;
     }
 
-    public List addALetterSpaceTo(List oldList, int depth) {
+    public List<ListElement> addALetterSpaceTo(List<ListElement> oldList, int depth) {
         return oldList;
     }
 
@@ -311,11 +311,11 @@ public class InlineContainerLayoutManager extends AbstractLayoutManager implemen
     public void hyphenate(Position pos, HyphContext hyphContext) {
     }
 
-    public boolean applyChanges(List oldList) {
+    public boolean applyChanges(List<ListElement> oldList) {
         return false;
     }
 
-    public boolean applyChanges(List oldList, int depth) {
+    public boolean applyChanges(List<ListElement> oldList, int depth) {
         return false;
     }
 

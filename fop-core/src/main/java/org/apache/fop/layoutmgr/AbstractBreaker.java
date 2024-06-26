@@ -41,7 +41,7 @@ public abstract class AbstractBreaker {
 
     protected LayoutManager originalRestartAtLM;
     protected Position positionAtBreak;
-    protected List firstElementsForRestart;
+    protected List<ListElement> firstElementsForRestart;
     protected PageSequenceLayoutManager pslm;
 
     /**

@@ -161,7 +161,7 @@ public class PageBreaker extends AbstractBreaker {
 
     /** {@inheritDoc} */
     protected int getNextBlockList(LayoutContext childLC, int nextSequenceStartsOn,
-            Position positionAtIPDChange, LayoutManager restartLM, List firstElements) {
+            Position positionAtIPDChange, LayoutManager restartLM, List<ListElement> firstElements) {
         if (!layoutRedone && !handlingFloat()) {
             if (!firstPart) {
                 // if this is the first page that will be created by
@@ -180,7 +180,7 @@ public class PageBreaker extends AbstractBreaker {
                 restartLM, firstElements);
     }
 
-    private boolean containsFootnotes(List contentList, LayoutContext context) {
+    private boolean containsFootnotes(List<ListElement> contentList, LayoutContext context) {
         boolean containsFootnotes = false;
         if (contentList != null) {
             for (Object aContentList : contentList) {

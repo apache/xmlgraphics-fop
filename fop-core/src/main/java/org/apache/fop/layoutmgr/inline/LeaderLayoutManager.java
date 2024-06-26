@@ -54,7 +54,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     private Leader fobj;
     private Font font;
 
-    private List contentList;
+    private List<ListElement> contentList;
     private ContentLayoutManager clm;
 
     private int contentAreaIPD;
@@ -314,7 +314,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
     }
 
     /** {@inheritDoc} */
-    public boolean applyChanges(List oldList) {
+    public boolean applyChanges(List<ListElement> oldList) {
         setFinished(false);
         return false;
     }
@@ -325,7 +325,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             return null;
         }
 
-        List returnList = new LinkedList();
+        List<ListElement> returnList = new LinkedList<>();
 
         addKnuthElementsForBorderPaddingStart(returnList);
 
