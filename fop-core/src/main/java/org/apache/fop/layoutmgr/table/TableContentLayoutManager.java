@@ -267,7 +267,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (rowGroup != null) {
             RowGroupLayoutManager rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup,
                     stepper);
-            List nextRowGroupElems = rowGroupLM.getNextKnuthElements(context, alignment, bodyType);
+            List<ListElement> nextRowGroupElems = rowGroupLM.getNextKnuthElements(context, alignment, bodyType);
             keepWithPrevious = keepWithPrevious.compare(context.getKeepWithPreviousPending());
             breakBefore = context.getBreakBefore();
             int breakBetween = context.getBreakAfter();
@@ -383,9 +383,9 @@ public class TableContentLayoutManager implements PercentBaseContext {
         this.usedBPD = 0;
         RowPainter painter = new RowPainter(this, layoutContext);
 
-        List tablePositions = new java.util.ArrayList();
-        List headerElements = null;
-        List footerElements = null;
+        List<Position> tablePositions = new java.util.ArrayList<>();
+        List<ListElement> headerElements = null;
+        List<ListElement> footerElements = null;
         Position firstPos = null;
         Position lastPos = null;
         Position lastCheckPos = null;
@@ -506,7 +506,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
 
     private void addHeaderFooterAreas(List elements, TablePart part, RowPainter painter,
             boolean lastOnPage) {
-        List lst = new java.util.ArrayList(elements.size());
+        List<Position> lst = new java.util.ArrayList<>(elements.size());
         for (Iterator iter = new KnuthPossPosIter(elements); iter.hasNext();) {
             Position pos = (Position) iter.next();
             /*
@@ -533,7 +533,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private void addBodyAreas(Iterator iterator, RowPainter painter,
             boolean lastOnPage) {
         painter.startBody();
-        List lst = new java.util.ArrayList();
+        List<TableContentPosition> lst = new java.util.ArrayList<>();
         TableContentPosition pos = (TableContentPosition) iterator.next();
         boolean isFirstPos = pos.getFlag(TableContentPosition.FIRST_IN_ROWGROUP)
                 && pos.getRow().getFlag(EffRow.FIRST_IN_PART);

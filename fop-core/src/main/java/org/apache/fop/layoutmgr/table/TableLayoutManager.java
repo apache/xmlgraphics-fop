@@ -87,7 +87,7 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
     private int halfBorderSeparationIPD;
 
     /** See {@link TableLayoutManager#registerColumnBackgroundArea(TableColumn, Block, int)}. */
-    private List columnBackgroundAreas;
+    private List<ColumnBackgroundInfo> columnBackgroundAreas;
 
     private Position auxiliaryPosition;
 
@@ -363,7 +363,7 @@ public class TableLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
     void registerColumnBackgroundArea(TableColumn column, Block backgroundArea, int xShift) {
         addBackgroundArea(backgroundArea);
         if (columnBackgroundAreas == null) {
-            columnBackgroundAreas = new ArrayList();
+            columnBackgroundAreas = new ArrayList<>();
         }
         columnBackgroundAreas.add(new ColumnBackgroundInfo(column, backgroundArea, xShift));
     }

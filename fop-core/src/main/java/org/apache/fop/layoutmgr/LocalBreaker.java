@@ -100,7 +100,7 @@ public abstract class LocalBreaker extends AbstractBreaker {
             childLC.setRefIPD(context.getRefIPD());
             childLC.setWritingMode(context.getWritingMode());
 
-            List returnedList = null;
+            List<ListElement> returnedList = null;
             // The following is a HACK! Ignore leading and trailing white space
             boolean ignore = curLM instanceof TextLayoutManager;
             if (!curLM.isFinished()) {

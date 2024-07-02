@@ -56,8 +56,8 @@ public class PageBreaker extends AbstractBreaker {
     private int floatHeight;
     private int floatYOffset;
 
-    private List relayedFootnotesList;
-    private List relayedLengthList;
+    private List<ListElement> relayedFootnotesList;
+    private List<Integer> relayedLengthList;
     private int relayedTotalFootnotesLength;
     private int relayedInsertedFootnotesLength;
     private boolean relayedFootnotesPending;
@@ -926,8 +926,8 @@ public class PageBreaker extends AbstractBreaker {
         pageBreakHandled = true;
     }
 
-    public void holdFootnotes(List fl, List ll, int tfl, int ifl, boolean fp, boolean nf, int fnfi, int fli,
-            int fei, MinOptMax fsl, int pfli, int pfei) {
+    public void holdFootnotes(List fl, List<Integer> ll, int tfl, int ifl, boolean fp, boolean nf, int fnfi, int fli,
+                              int fei, MinOptMax fsl, int pfli, int pfei) {
         relayedFootnotesList = fl;
         relayedLengthList = ll;
         relayedTotalFootnotesLength = tfl;

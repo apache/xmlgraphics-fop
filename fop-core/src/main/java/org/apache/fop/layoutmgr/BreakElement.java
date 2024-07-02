@@ -31,8 +31,8 @@ public class BreakElement extends UnresolvedListElement {
     private int penaltyWidth;
     private int penaltyValue;
     private int breakClass;
-    private List pendingBeforeMarks;
-    private List pendingAfterMarks;
+    private List<ListElement> pendingBeforeMarks;
+    private List<ListElement> pendingAfterMarks;
 
     /**
      * Main constructor
@@ -165,12 +165,12 @@ public class BreakElement extends UnresolvedListElement {
     }
 
     /** @return the pending border and padding elements at the before edge */
-    public List getPendingBeforeMarks() {
+    public List<ListElement> getPendingBeforeMarks() {
         return this.pendingBeforeMarks;
     }
 
     /** @return the pending border and padding elements at the after edge */
-    public List getPendingAfterMarks() {
+    public List<ListElement> getPendingAfterMarks() {
         return this.pendingAfterMarks;
     }
 

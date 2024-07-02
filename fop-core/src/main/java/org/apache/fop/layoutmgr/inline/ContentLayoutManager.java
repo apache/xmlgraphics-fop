@@ -220,7 +220,7 @@ public class ContentLayoutManager extends AbstractBaseLayoutManager
      * {@inheritDoc}
      */
     public List<LayoutManager> getChildLMs() {
-        List childLMs = new ArrayList(1);
+        List<LayoutManager> childLMs = new ArrayList<>(1);
         childLMs.add(childLM);
         return childLMs;
     }

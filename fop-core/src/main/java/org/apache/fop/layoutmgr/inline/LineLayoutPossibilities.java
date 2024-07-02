@@ -73,8 +73,8 @@ public class LineLayoutPossibilities {
 
     /** default constructor */
     public LineLayoutPossibilities() {
-        possibilitiesList = new java.util.ArrayList();
-        savedPossibilities = new java.util.ArrayList();
+        possibilitiesList = new java.util.ArrayList<>();
+        savedPossibilities = new java.util.ArrayList<>();
         optimumIndex = -1;
     }
 
@@ -117,7 +117,7 @@ public class LineLayoutPossibilities {
             savedOptLineCount = 0;
         }
         savedPossibilities = possibilitiesList;
-        possibilitiesList = new java.util.ArrayList();
+        possibilitiesList = new java.util.ArrayList<>();
     }
 
     /**

@@ -1344,7 +1344,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         handlingStartOfFloat = false;
     }
 
-    public void loadFootnotes(List fl, List ll, int tfl, int ifl, boolean fp, boolean nf, int fnfi, int fli,
+    public void loadFootnotes(List fl, List<Integer> ll, int tfl, int ifl, boolean fp, boolean nf, int fnfi, int fli,
             int fei, MinOptMax fsl, int pfli, int pfei) {
         footnotesList = fl;
         lengthList = ll;

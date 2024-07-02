@@ -666,7 +666,7 @@ public class BlockContainerLayoutManager extends SpacedBorderedPaddedBlockLayout
             while ((curLM = getChildLM()) != null) {
                 LayoutContext childLC = makeChildLayoutContext(context);
 
-                List returnedList = null;
+                List<ListElement> returnedList = null;
                 if (!curLM.isFinished()) {
                     returnedList = curLM.getNextKnuthElements(childLC, alignment);
                 }

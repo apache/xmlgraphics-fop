@@ -44,6 +44,7 @@ import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.FloatContentLayoutManager;
 import org.apache.fop.layoutmgr.FootenoteUtil;
+import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
 import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthElement;
@@ -422,7 +423,7 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
             // collect footnote information
             // TODO this should really not be done like this. ListItemLM should remain as
             // footnote-agnostic as possible
-            LinkedList<LayoutManager> footnoteList = new LinkedList<LayoutManager>();
+            LinkedList<FootnoteBodyLayoutManager> footnoteList = new LinkedList<>();
             for (int i = 0; i < elementLists.length; i++) {
                 footnoteList.addAll(FootenoteUtil.getFootnotes(elementLists[i], start[i], end[i]));
             }

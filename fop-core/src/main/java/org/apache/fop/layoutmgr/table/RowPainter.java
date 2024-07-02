@@ -70,7 +70,7 @@ class RowPainter {
      * This is particularly needed for spanned cells where you need to know the y-offset
      * of the starting row when the area is generated at the time the cell is closed.
      */
-    private List rowOffsets = new ArrayList();
+    private List<Integer> rowOffsets = new ArrayList<>();
 
     private int[] cellHeights;
     private boolean[] firstCellOnPage;
@@ -82,7 +82,7 @@ class RowPainter {
     /** See {@link RowPainter#registerPartBackgroundArea(Block)}. */
     private CommonBorderPaddingBackground tablePartBackground;
     /** See {@link RowPainter#registerPartBackgroundArea(Block)}. */
-    private List tablePartBackgroundAreas;
+    private List<Block> tablePartBackgroundAreas;
 
     private TableContentLayoutManager tclm;
 
@@ -103,7 +103,7 @@ class RowPainter {
         if (background.hasBackground()) {
             tablePartBackground = background;
             if (tablePartBackgroundAreas == null) {
-                tablePartBackgroundAreas = new ArrayList();
+                tablePartBackgroundAreas = new ArrayList<Block>();
             }
         }
         tablePartOffset = currentRowOffset;
@@ -538,7 +538,7 @@ class RowPainter {
      * @return its y-offset on the page
      */
     private int getRowOffset(int rowIndex) {
-        return (Integer) rowOffsets.get(rowIndex - firstRowIndex);
+        return rowOffsets.get(rowIndex - firstRowIndex);
     }
 
     // TODO get rid of that

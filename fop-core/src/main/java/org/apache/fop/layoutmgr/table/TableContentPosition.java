@@ -38,7 +38,7 @@ class TableContentPosition extends Position {
     public static final int LAST_IN_ROWGROUP = 2;
 
     /** the list of CellParts making up this position */
-    protected List cellParts;
+    protected List<CellPart> cellParts;
     /** effective row this position belongs to */
     private EffRow row;
     /** flags for the position */
@@ -52,8 +52,8 @@ class TableContentPosition extends Position {
      * @param cellParts the list of CellPart instances
      * @param row effective row this position belongs to
      */
-    protected TableContentPosition(LayoutManager lm, List cellParts,
-            EffRow row) {
+    protected TableContentPosition(LayoutManager lm, List<CellPart> cellParts,
+                                   EffRow row) {
         super(lm);
         this.cellParts = cellParts;
         this.row = row;
@@ -81,7 +81,7 @@ class TableContentPosition extends Position {
     }
 
     TablePart getTablePart() {
-        return ((CellPart) cellParts.get(0)).pgu.getTablePart();
+        return cellParts.get(0).pgu.getTablePart();
     }
 
     /**

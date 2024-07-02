@@ -116,7 +116,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
     private int changeOffset;
     private int thisStart;
     private int tempStart;
-    private List changeList = new LinkedList();
+    private List<PendingChange> changeList = new LinkedList<>();
 
     private AlignmentContext alignmentContext;
 

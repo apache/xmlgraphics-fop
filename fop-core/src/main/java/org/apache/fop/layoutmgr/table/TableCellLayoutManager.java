@@ -176,7 +176,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
         cellIPD = referenceIPD;
         cellIPD -= getIPIndents();
 
-        List returnedList;
+        List<ListElement> returnedList;
         List<ListElement> contentList = new LinkedList<>();
         List<ListElement> returnList = new LinkedList<>();
 
@@ -218,7 +218,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
         }
         primaryGridUnit.setKeepWithNext(context.getKeepWithNextPending());
 
-        returnedList = new LinkedList();
+        returnedList = new LinkedList<>();
         if (!contentList.isEmpty()) {
             wrapPositionElements(contentList, returnList);
         } else {
@@ -230,7 +230,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
         }
         //Space resolution
         SpaceResolver.resolveElementList(returnList);
-        if (((KnuthElement) returnList.get(0)).isForcedBreak()) {
+        if (returnList.get(0).isForcedBreak()) {
             primaryGridUnit.setBreakBefore(((KnuthPenalty) returnList.get(0)).getBreakClass());
             returnList.remove(0);
             assert !returnList.isEmpty();

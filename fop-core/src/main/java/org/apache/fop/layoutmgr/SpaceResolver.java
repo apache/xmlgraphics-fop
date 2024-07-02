@@ -57,7 +57,7 @@ public final class SpaceResolver {
      * @param isFirst Resolution at the beginning of a (full) element list
      * @param isLast Resolution at the end of a (full) element list
      */
-    private SpaceResolver(List first, BreakElement breakPoss, List second,
+    private SpaceResolver(List first, BreakElement breakPoss, List<ListElement> second,
             boolean isFirst, boolean isLast) {
         this.isFirst = isFirst;
         this.isLast = isLast;
@@ -603,9 +603,9 @@ public final class SpaceResolver {
         boolean first = true;
         boolean last = false;
         boolean skipNextElement = false;
-        List unresolvedFirst = new java.util.ArrayList();
-        List unresolvedSecond = new java.util.ArrayList();
-        List currentGroup;
+        List<ListElement> unresolvedFirst = new java.util.ArrayList<>();
+        List<ListElement> unresolvedSecond = new java.util.ArrayList<>();
+        List<ListElement> currentGroup;
         ListIterator iter = elems.listIterator();
         while (iter.hasNext()) {
             ListElement el = (ListElement)iter.next();
@@ -651,7 +651,7 @@ public final class SpaceResolver {
                     LOG.trace("Swap first and second parts in no-break condition,"
                             + " second part is empty.");
                     //The first list is reversed, so swap if this shouldn't happen
-                    List swapList = unresolvedSecond;
+                    List<ListElement> swapList = unresolvedSecond;
                     unresolvedSecond = unresolvedFirst;
                     unresolvedFirst = swapList;
                 }

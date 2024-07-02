@@ -42,7 +42,7 @@ public interface LayoutManagerMaker {
      * @param node the FO node for which the LayoutManagers are made
      * @param lms the list to which the LayoutManagers are added
      */
-    void makeLayoutManagers(FONode node, List lms);
+    void makeLayoutManagers(FONode node, List<LayoutManager> lms);
 
     /**
      * Make a specific LayoutManager for the node.

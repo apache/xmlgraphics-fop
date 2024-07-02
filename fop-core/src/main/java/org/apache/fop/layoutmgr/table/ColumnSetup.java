@@ -46,8 +46,8 @@ public class ColumnSetup {
 
     private Table table;
     private WritingModeTraitsGetter wmTraits;
-    private List columns = new java.util.ArrayList();
-    private List colWidths = new java.util.ArrayList();
+    private List<TableColumn> columns = new java.util.ArrayList<TableColumn>();
+    private List<Length> colWidths = new java.util.ArrayList<Length>();
 
     private int maxColIndexReferenced;
 
@@ -64,7 +64,7 @@ public class ColumnSetup {
     }
 
     private void prepareColumns() {
-        List rawCols = table.getColumns();
+        List<FONode> rawCols = table.getColumns();
         if (rawCols != null) {
             int colnum = 1;
             for (Object rawCol : rawCols) {
@@ -122,9 +122,9 @@ public class ColumnSetup {
                     }
                 }
             }
-            return (TableColumn) columns.get(size - 1);
+            return columns.get(size - 1);
         } else {
-            return (TableColumn) columns.get(index - 1);
+            return columns.get(index - 1);
         }
     }
 
@@ -171,7 +171,7 @@ public class ColumnSetup {
 
         for (int i = columns.size(); --i >= 0;) {
             if (columns.get(i) != null) {
-                col = (TableColumn) columns.get(i);
+                col = columns.get(i);
                 colWidth = col.getColumnWidth();
                 colWidths.add(0, colWidth);
             }
@@ -265,7 +265,7 @@ public class ColumnSetup {
         for (int i = (col + nrColSpan - 1), nc = colWidths.size(); ++i < nc;) {
             int effCol = i;
             if (colWidths.get(effCol) != null) {
-                xoffset += ((Length) colWidths.get(effCol)).getValue(context);
+                xoffset += colWidths.get(effCol).getValue(context);
             }
         }
         return xoffset;
@@ -286,7 +286,7 @@ public class ColumnSetup {
                 effCol = colWidths.size() - 1;
             }
             if (colWidths.get(effCol) != null) {
-                xoffset += ((Length) colWidths.get(effCol)).getValue(context);
+                xoffset += colWidths.get(effCol).getValue(context);
             }
         }
         return xoffset;
@@ -305,7 +305,7 @@ public class ColumnSetup {
                 effIndex = colWidths.size() - 1;
             }
             if (colWidths.get(effIndex) != null) {
-                sum += ((Length) colWidths.get(effIndex)).getValue(context);
+                sum += colWidths.get(effIndex).getValue(context);
             }
         }
         return sum;

@@ -333,7 +333,7 @@ public abstract class InlineStackingLayoutManager extends AbstractLayoutManager 
         depth += 1;
 
         KnuthElement returnedElement;
-        LinkedList returnedList = new LinkedList();
+        LinkedList returnedList = new LinkedList<>();
         LinkedList<ListElement> returnList = new LinkedList<>();
         InlineLevelLayoutManager prevLM = null;
         InlineLevelLayoutManager currLM;

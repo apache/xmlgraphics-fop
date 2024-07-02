@@ -122,9 +122,9 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
      * @return the first PageViewport that contains the ID trait
      */
     public PageViewport getFirstPVWithID(String idref) {
-        List list = idTracker.getPageViewportsContainingID(idref);
+        List<PageViewport> list = idTracker.getPageViewportsContainingID(idref);
         if (list != null && list.size() > 0) {
-            return (PageViewport) list.get(0);
+            return list.get(0);
         }
         return null;
     }
@@ -137,9 +137,9 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
      * @return the last PageViewport that contains the ID trait
      */
     public PageViewport getLastPVWithID(String idref) {
-        List list = idTracker.getPageViewportsContainingID(idref);
+        List<PageViewport> list = idTracker.getPageViewportsContainingID(idref);
         if (list != null && list.size() > 0) {
-            return (PageViewport) list.get(list.size() - 1);
+            return list.get(list.size() - 1);
         }
         return null;
     }

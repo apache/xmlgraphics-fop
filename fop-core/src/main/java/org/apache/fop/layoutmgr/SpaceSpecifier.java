@@ -34,7 +34,7 @@ public class SpaceSpecifier implements Cloneable {
 
     private boolean startsReferenceArea;
     private boolean hasForcing;
-    private List spaceVals = new ArrayList();
+    private List<SpaceVal> spaceVals = new ArrayList<SpaceVal>();
 
     /**
      * Creates a new SpaceSpecifier.
@@ -53,7 +53,7 @@ public class SpaceSpecifier implements Cloneable {
             ss.startsReferenceArea = startsReferenceArea;
             ss.hasForcing = hasForcing;
             // Clone the vector, but share the objects in it!
-            ss.spaceVals = new ArrayList();
+            ss.spaceVals = new ArrayList<SpaceVal>();
             ss.spaceVals.addAll(spaceVals);
             return ss;
         } catch (CloneNotSupportedException cnse) {
@@ -118,7 +118,7 @@ public class SpaceSpecifier implements Cloneable {
             // Start from the end and count conditional specifiers
             // Stop at first non-conditional
             for (; lastIndex > 0; --lastIndex) {
-                SpaceVal spaceVal = (SpaceVal) spaceVals.get(lastIndex - 1);
+                SpaceVal spaceVal = spaceVals.get(lastIndex - 1);
                 if (!spaceVal.isConditional()) {
                     break;
                 }
@@ -127,7 +127,7 @@ public class SpaceSpecifier implements Cloneable {
         MinOptMax resolvedSpace = MinOptMax.ZERO;
         int maxPrecedence = -1;
         for (int index = 0; index < lastIndex; index++) {
-            SpaceVal spaceVal = (SpaceVal) spaceVals.get(index);
+            SpaceVal spaceVal = spaceVals.get(index);
             MinOptMax space = spaceVal.getSpace();
             if (hasForcing) {
                 resolvedSpace = resolvedSpace.plus(space);

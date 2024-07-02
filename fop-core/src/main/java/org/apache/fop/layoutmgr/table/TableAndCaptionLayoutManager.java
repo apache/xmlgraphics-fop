@@ -39,8 +39,6 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
 
     private Block curBlockArea;
 
-    //private List childBreaks = new java.util.ArrayList();
-
     /**
      * Create a new table and caption layout manager.
      * @param node table-and-caption FO

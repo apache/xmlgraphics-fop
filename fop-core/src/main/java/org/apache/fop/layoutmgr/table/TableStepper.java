@@ -63,10 +63,10 @@ public class TableStepper {
     private boolean rowFinished;
 
     /** Cells spanning the current row. */
-    private List activeCells = new LinkedList();
+    private List<ActiveCell> activeCells = new LinkedList<>();
 
     /** Cells that will start the next row. */
-    private List nextActiveCells = new LinkedList();
+    private List<ActiveCell> nextActiveCells = new LinkedList<>();
 
     /**
      * True if the next row is being delayed, that is, if cells spanning the current and

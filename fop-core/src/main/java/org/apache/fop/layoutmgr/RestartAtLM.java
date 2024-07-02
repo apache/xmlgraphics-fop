@@ -50,7 +50,7 @@ class RestartAtLM {
                                 .get(eventBroadcaster);
                         eventProducer.nonRestartableContentFlowingToNarrowerPage(this);
                     }
-                    breaker.firstElementsForRestart = new LinkedList();
+                    breaker.firstElementsForRestart = new LinkedList<>();
                     boolean boxFound = false;
                     Iterator iter = blockList.listIterator(positionIndex + 1);
                     Position position = null;

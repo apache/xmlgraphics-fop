@@ -1164,7 +1164,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param sourceList source list
      * @param targetList target list receiving the wrapped position elements
      */
-    protected void wrapPositionElements(List sourceList, List targetList) {
+    protected void wrapPositionElements(List sourceList, List<ListElement> targetList) {
         wrapPositionElements(sourceList, targetList, false);
     }
 
@@ -1175,7 +1175,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param targetList target list receiving the wrapped position elements
      * @param force if true, every Position is wrapped regardless of its LM of origin
      */
-    protected void wrapPositionElements(List sourceList, List targetList, boolean force) {
+    protected void wrapPositionElements(List sourceList, List<ListElement> targetList, boolean force) {
 
         ListIterator listIter = sourceList.listIterator();
         Object tempElement;
@@ -1201,7 +1201,7 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
      * @param targetList target list receiving the wrapped position elements
      * @param force if true, every Position is wrapped regardless of its LM of origin
      */
-    protected void wrapPositionElement(ListElement el, List targetList, boolean force) {
+    protected void wrapPositionElement(ListElement el, List<ListElement> targetList, boolean force) {
         if (force || el.getLayoutManager() != this) {
             el.setPosition(notifyPos(new NonLeafPosition(this, el.getPosition())));
         }

@@ -706,7 +706,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
         InlineLevelLayoutManager curLM;
         while ((curLM = (InlineLevelLayoutManager) getChildLM()) != null) {
-            List inlineElements = curLM.getNextKnuthElements(inlineLC, effectiveAlignment);
+            List<KnuthSequence> inlineElements = curLM.getNextKnuthElements(inlineLC, effectiveAlignment);
             if (inlineElements == null || inlineElements.size() == 0) {
                 /* curLM.getNextKnuthElements() returned null or an empty list;
                  * this can happen if there is nothing more to layout,
@@ -715,7 +715,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             }
 
             if (lastPar != null) {
-                KnuthSequence firstSeq = (KnuthSequence) inlineElements.get(0);
+                KnuthSequence firstSeq = inlineElements.get(0);
 
                 // finish last paragraph before a new block sequence
                 if (!firstSeq.isInlineSequence()) {
@@ -1281,7 +1281,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         // hyphenate every word
         ListIterator currParIterator = currPar.listIterator(currPar.ignoreAtStart);
         // list of TLM involved in hyphenation
-        List updateList = new LinkedList();
+        List<Update> updateList = new LinkedList<>();
         KnuthElement firstElement;
         KnuthElement nextElement;
         // current InlineLevelLayoutManager
@@ -1366,7 +1366,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         processUpdates(currPar, updateList);
     }
 
-    private void processUpdates(Paragraph par, List<ListElement> updateList) {
+    private void processUpdates(Paragraph par, List<Update> updateList) {
         // create iterator for the updateList
         ListIterator updateListIterator = updateList.listIterator();
         Update currUpdate;
@@ -1625,7 +1625,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
          * The positionList must contain one area-generating position,
          * which creates one line area.
          */
-        List positionList = new ArrayList(1);
+        List<Position> positionList = new ArrayList<>(1);
         Position innerPosition = pos.getPosition();
         positionList.add(innerPosition);
 

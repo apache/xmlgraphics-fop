@@ -38,7 +38,7 @@ public class KnuthBlockBox extends KnuthBox {
     private List<FootnoteBodyLayoutManager> footnoteList;
     private List<FloatContentLayoutManager> floatContentLMs;
     /** List of Knuth elements. This is a list of LinkedList elements. */
-    private List elementLists;
+    private List<List<KnuthElement>> elementLists;
 
     /**
      * Creates a new box.
@@ -104,7 +104,7 @@ public class KnuthBlockBox extends KnuthBox {
      */
     public void addElementList(List list) {
         if (elementLists == null) {
-            elementLists = new LinkedList();
+            elementLists = new LinkedList<>();
         }
         elementLists.add(list);
     }
@@ -114,7 +114,7 @@ public class KnuthBlockBox extends KnuthBox {
      *
      * @return a list of KnuthElement sequences corresponding to footnotes cited in this box
      */
-    public List getElementLists() {
+    public List<List<KnuthElement>> getElementLists() {
         return elementLists;
     }
 

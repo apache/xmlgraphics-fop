@@ -186,7 +186,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
 
     /** {@inheritDoc} */
     public LayoutManager makeLayoutManager(FONode node) {
-        List lms = new ArrayList();
+        List<LayoutManager> lms = new ArrayList<>();
         makeLayoutManagers(node, lms);
         if (lms.size() == 0) {
             throw new IllegalStateException("LayoutManager for class "
@@ -197,7 +197,7 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                                    + node.getClass()
                                    + " found, only one may be declared.");
         }
-        return (LayoutManager) lms.get(0);
+        return lms.get(0);
     }
 
     /** {@inheritDoc} */

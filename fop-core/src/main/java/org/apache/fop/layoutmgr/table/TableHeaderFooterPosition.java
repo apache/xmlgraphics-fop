@@ -22,6 +22,7 @@ package org.apache.fop.layoutmgr.table;
 import java.util.List;
 
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 
 /**
@@ -33,7 +34,7 @@ class TableHeaderFooterPosition extends Position {
     /** True indicates a position for a header, false for a footer. */
     protected boolean header;
     /** Element list representing the header/footer */
-    protected List nestedElements;
+    protected List<ListElement> nestedElements;
 
     /**
      * Creates a new TableHeaderFooterPosition.
@@ -42,7 +43,7 @@ class TableHeaderFooterPosition extends Position {
      * @param nestedElements Element list representing the header/footer
      */
     protected TableHeaderFooterPosition(LayoutManager lm,
-            boolean header, List nestedElements) {
+            boolean header, List<ListElement> nestedElements) {
         super(lm);
         this.header = header;
         this.nestedElements = nestedElements;

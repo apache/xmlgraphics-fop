@@ -33,11 +33,13 @@ import org.apache.fop.fo.flow.table.EffRow;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.ElementListUtils;
+import org.apache.fop.layoutmgr.FootnoteBodyLayoutManager;
 import org.apache.fop.layoutmgr.Keep;
 import org.apache.fop.layoutmgr.KnuthBlockBox;
 import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthElement;
 import org.apache.fop.layoutmgr.KnuthPenalty;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -49,7 +51,7 @@ class ActiveCell {
 
     private PrimaryGridUnit pgu;
     /** Knuth elements for this active cell. */
-    private List elementList;
+    private List<ListElement> elementList;
     /** Iterator over the Knuth element list. */
     private ListIterator knuthIter;
     /** Number of the row where the row-span ends, zero-based. */
@@ -104,7 +106,7 @@ class ActiveCell {
         /** Value of the penalty ending this step, 0 if the step does not end on a penalty. */
         private int penaltyValue;
         /** List of footnotes for this step. */
-        private List footnoteList;
+        private List<FootnoteBodyLayoutManager> footnoteList;
         /**
          * One of {@link Constants#EN_AUTO}, {@link Constants#EN_COLUMN},
          * {@link Constants#EN_PAGE}, {@link Constants#EN_EVEN_PAGE},
@@ -136,7 +138,7 @@ class ActiveCell {
             this.penaltyValue  = other.penaltyValue;
             if (other.footnoteList != null) {
                 if (this.footnoteList == null) {
-                    this.footnoteList = new ArrayList();
+                    this.footnoteList = new ArrayList<>();
                 }
                 this.footnoteList.addAll(other.footnoteList);
             }
@@ -338,7 +340,7 @@ class ActiveCell {
             } else {
                 if (el instanceof KnuthBlockBox && ((KnuthBlockBox) el).hasAnchors()) {
                     if (afterNextStep.footnoteList == null) {
-                        afterNextStep.footnoteList = new LinkedList();
+                        afterNextStep.footnoteList = new LinkedList<>();
                     }
                     afterNextStep.footnoteList.addAll(((KnuthBlockBox) el).getFootnoteBodyLMs());
                 }

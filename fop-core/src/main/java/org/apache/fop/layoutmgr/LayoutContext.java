@@ -85,13 +85,13 @@ public final class LayoutContext {
      * A list of pending marks (border and padding) on the after edge when a page break occurs.
      * May be null.
      */
-    private List pendingAfterMarks;
+    private List<ListElement> pendingAfterMarks;
 
     /**
      * A list of pending marks (border and padding) on the before edge when a page break occurs.
      * May be null.
      */
-    private List pendingBeforeMarks;
+    private List<ListElement> pendingBeforeMarks;
 
     /** Current hyphenation context. May be null. */
     private HyphContext hyphContext;
@@ -177,10 +177,10 @@ public final class LayoutContext {
     /** @param source from which pending marks are copied */
     public void copyPendingMarksFrom(LayoutContext source) {
         if (source.pendingAfterMarks != null) {
-            this.pendingAfterMarks = new java.util.ArrayList(source.pendingAfterMarks);
+            this.pendingAfterMarks = new java.util.ArrayList<>(source.pendingAfterMarks);
         }
         if (source.pendingBeforeMarks != null) {
-            this.pendingBeforeMarks = new java.util.ArrayList(source.pendingBeforeMarks);
+            this.pendingBeforeMarks = new java.util.ArrayList<>(source.pendingBeforeMarks);
         }
     }
 
@@ -334,7 +334,7 @@ public final class LayoutContext {
      */
     public void addPendingAfterMark(UnresolvedListElementWithLength element) {
         if (this.pendingAfterMarks == null) {
-            this.pendingAfterMarks = new java.util.ArrayList();
+            this.pendingAfterMarks = new java.util.ArrayList<>();
         }
         this.pendingAfterMarks.add(element);
     }
@@ -343,7 +343,7 @@ public final class LayoutContext {
      * @return the pending border and padding elements at the after edge
      * @see #addPendingAfterMark(UnresolvedListElementWithLength)
      */
-    public List getPendingAfterMarks() {
+    public List<ListElement> getPendingAfterMarks() {
         if (this.pendingAfterMarks != null) {
             return Collections.unmodifiableList(this.pendingAfterMarks);
         } else {
@@ -367,7 +367,7 @@ public final class LayoutContext {
      */
     public void addPendingBeforeMark(UnresolvedListElementWithLength element) {
         if (this.pendingBeforeMarks == null) {
-            this.pendingBeforeMarks = new java.util.ArrayList();
+            this.pendingBeforeMarks = new java.util.ArrayList<>();
         }
         this.pendingBeforeMarks.add(element);
     }
@@ -376,7 +376,7 @@ public final class LayoutContext {
      * @return the pending border and padding elements at the before edge
      * @see #addPendingBeforeMark(UnresolvedListElementWithLength)
      */
-    public List getPendingBeforeMarks() {
+    public List<ListElement> getPendingBeforeMarks() {
         if (this.pendingBeforeMarks != null) {
             return Collections.unmodifiableList(this.pendingBeforeMarks);
         } else {

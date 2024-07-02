@@ -118,7 +118,7 @@ class RowGroupLayoutManager {
                     childLC.setRefIPD(spanWidth);
 
                     //Get the element list for the cell contents
-                    List elems = primary.getCellLM().getNextKnuthElements(
+                    List<ListElement> elems = primary.getCellLM().getNextKnuthElements(
                             childLC, alignment);
                     ElementListObserver.observe(elems, "table-cell", primary.getCell().getId());
                     primary.setElements(elems);
@@ -126,7 +126,7 @@ class RowGroupLayoutManager {
             }
         }
         computeRowHeights();
-        List elements = tableStepper.getCombinedKnuthElementsForRowGroup(context,
+        List<ListElement> elements = tableStepper.getCombinedKnuthElementsForRowGroup(context,
                 rowGroup, bodyType);
         returnList.addAll(elements);
     }

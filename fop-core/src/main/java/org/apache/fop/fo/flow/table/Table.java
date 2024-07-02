@@ -83,7 +83,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
     private Length orphanContentLimit;
 
     /** collection of columns in this table */
-    private List columns = new ArrayList();
+    private List<FONode> columns = new ArrayList<FONode>();
 
     private ColumnNumberManager columnNumberManager = new ColumnNumberManager();
 
@@ -405,7 +405,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
      *
      * @return a list of {@link TableColumn} elements, may contain null elements
      */
-    public List getColumns() {
+    public List<FONode> getColumns() {
         return columns;
     }
 

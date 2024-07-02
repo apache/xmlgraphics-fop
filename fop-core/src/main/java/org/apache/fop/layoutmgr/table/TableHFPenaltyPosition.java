@@ -22,6 +22,7 @@ package org.apache.fop.layoutmgr.table;
 import java.util.List;
 
 import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 
 /**
@@ -31,9 +32,9 @@ import org.apache.fop.layoutmgr.Position;
 class TableHFPenaltyPosition extends Position {
 
     /** Element list for the header */
-    protected List headerElements;
+    protected List<ListElement> headerElements;
     /** Element list for the footer */
-    protected List footerElements;
+    protected List<ListElement> footerElements;
 
     /**
      * Creates a new TableHFPenaltyPosition

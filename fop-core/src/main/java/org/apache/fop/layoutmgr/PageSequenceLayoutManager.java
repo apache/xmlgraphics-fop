@@ -395,8 +395,8 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
         return flowIPD;
     }
 
-    public void holdFootnotes(List fl, List ll, int tfl, int ifl, boolean fp, boolean nf, int fnfi, int fli,
-            int fei, MinOptMax fsl, int pfli, int pfei) {
+    public void holdFootnotes(List fl, List<Integer> ll, int tfl, int ifl, boolean fp, boolean nf, int fnfi, int fli,
+                              int fei, MinOptMax fsl, int pfli, int pfei) {
         if (fl != null && fl.size() > 0) {
             pageBreaker.holdFootnotes(fl, ll, tfl, ifl, fp, nf, fnfi, fli, fei, fsl, pfli, pfei);
         }

@@ -509,7 +509,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
     }
 
     public void recreateChildrenLMs() {
-        childLMs = new ArrayList();
+        childLMs = new ArrayList<>();
         isFinished = false;
         if (fobj == null) {
             return;

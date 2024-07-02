@@ -31,7 +31,7 @@ public final class ElementListObserver {
     private ElementListObserver() {
     }
 
-    private static List activeObservers;
+    private static List<Observer> activeObservers;
 
     /**
      * Adds a new Observer to the list.
@@ -39,7 +39,7 @@ public final class ElementListObserver {
      */
     public static void addObserver(Observer observer) {
         if (!isObservationActive()) {
-            activeObservers = new java.util.ArrayList();
+            activeObservers = new java.util.ArrayList<>();
         }
         activeObservers.add(observer);
     }
