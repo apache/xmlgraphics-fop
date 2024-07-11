@@ -22,7 +22,6 @@ package org.apache.fop.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -34,6 +33,7 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.MimeConstants;
 
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Example servlet to generate a fop printout from a servlet.

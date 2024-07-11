@@ -23,11 +23,12 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.servlet.ServletContext;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
+
+import jakarta.servlet.ServletContext;
 
 /**
  * This class is a URIResolver implementation that provides access to resources in the WEB-INF
