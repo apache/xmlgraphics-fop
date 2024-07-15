@@ -40,7 +40,7 @@ public class SVGUserAgent extends SimpleSVGUserAgent {
      * @param at the current transform
      */
     public SVGUserAgent(FOUserAgent foUserAgent, FontFamilyResolver fontFamilyResolver, AffineTransform at) {
-        super(foUserAgent.getSourcePixelUnitToMillimeter(), at, fontFamilyResolver);
+        super(at, fontFamilyResolver, foUserAgent.getSourceResolution());
         this.eventProducer = SVGEventProducer.Provider.get(foUserAgent.getEventBroadcaster());
     }
 

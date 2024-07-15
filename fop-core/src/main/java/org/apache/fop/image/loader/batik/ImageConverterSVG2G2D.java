@@ -35,7 +35,6 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.UserAgent;
 import org.apache.batik.gvt.GraphicsNode;
 
-import org.apache.xmlgraphics.image.GraphicsConstants;
 import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageFlavor;
@@ -74,13 +73,7 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
                     + svg.getRootNamespace());
         }
 
-        //Prepare
-        float pxToMillimeter = UnitConv.IN2MM / GraphicsConstants.DEFAULT_DPI;
-        Number ptm = (Number)hints.get(ImageProcessingHints.SOURCE_RESOLUTION);
-        if (ptm != null) {
-            pxToMillimeter = (float)(UnitConv.IN2MM / ptm.doubleValue());
-        }
-        UserAgent ua = createBatikUserAgent(pxToMillimeter);
+        UserAgent ua = createBatikUserAgent(hints);
         GVTBuilder builder = new GVTBuilder();
 
         final ImageManager imageManager = (ImageManager)hints.get(
@@ -118,14 +111,23 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
         return g2dImage;
     }
 
+    private float getResolution(Map hints, Object key) {
+        Number res = (Number) hints.get(key);
+
+        if (res != null) {
+            return res.floatValue();
+        }
+        return UnitConv.IN2PT;
+    }
+
     /**
      * Creates a user agent for Batik. Override to provide your own user agent.
-     * @param pxToMillimeter the source resolution (in px per millimeter)
      * @return the newly created user agent
      */
-    protected SimpleSVGUserAgent createBatikUserAgent(float pxToMillimeter) {
-        return new SimpleSVGUserAgent(pxToMillimeter, new AffineTransform(),
-                DefaultFontFamilyResolver.SINGLETON) {
+    protected SimpleSVGUserAgent createBatikUserAgent(Map hints) {
+        return new SimpleSVGUserAgent(new AffineTransform(),
+                DefaultFontFamilyResolver.SINGLETON,
+                getResolution(hints, ImageProcessingHints.SOURCE_RESOLUTION)) {
             /** {@inheritDoc} */
             public void displayMessage(String message) {
                 //TODO Refine and pipe through to caller

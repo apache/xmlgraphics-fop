@@ -31,6 +31,8 @@ import org.xml.sax.SAXException;
 import org.apache.batik.bridge.FontFamilyResolver;
 import org.apache.batik.bridge.UserAgentAdapter;
 
+import org.apache.xmlgraphics.util.UnitConv;
+
 /**
  * A simple SVG user agent.
  * This is an implementation of the Batik SVG user agent. It ignores any message output sent
@@ -40,19 +42,17 @@ public class SimpleSVGUserAgent extends UserAgentAdapter {
 
     private AffineTransform currentTransform;
 
-    private float pixelUnitToMillimeter;
-
     private final FontFamilyResolver fontFamilyResolver;
 
     /**
      * Creates a new user agent.
-     * @param pixelUnitToMM the pixel to millimeter conversion factor currently in effect
      * @param at the current transform
      */
-    public SimpleSVGUserAgent(float pixelUnitToMM, AffineTransform at, FontFamilyResolver fontFamilyResolver) {
+    public SimpleSVGUserAgent(AffineTransform at, FontFamilyResolver fontFamilyResolver,
+                              float sourceResolution) {
         this.fontFamilyResolver = fontFamilyResolver;
-        pixelUnitToMillimeter = pixelUnitToMM;
         currentTransform = at;
+        setSourceResolution(sourceResolution);
     }
 
     /**
@@ -60,7 +60,14 @@ public class SimpleSVGUserAgent extends UserAgentAdapter {
      * @return the pixel unit to millimeter conversion factor
      */
     public float getPixelUnitToMillimeter() {
-        return pixelUnitToMillimeter;
+        return UnitConv.IN2MM / getSourceResolution();
+    }
+
+    /**
+     * @return medium font size adapted to the resolution
+     */
+    public float getMediumFontSize() {
+        return 12f * UnitConv.IN2MM / (UnitConv.IN2PT * getPixelUnitToMillimeter());
     }
 
     /**

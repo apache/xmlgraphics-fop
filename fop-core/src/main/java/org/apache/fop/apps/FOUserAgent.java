@@ -160,6 +160,10 @@ public class FOUserAgent {
                 return FOUserAgent.this.getTargetResolution();
             }
 
+            public float getSourceResolution() {
+                return FOUserAgent.this.getSourceResolution();
+            }
+
             public Source resolveURI(String uri) {
                 return FOUserAgent.this.resolveURI(uri);
             }

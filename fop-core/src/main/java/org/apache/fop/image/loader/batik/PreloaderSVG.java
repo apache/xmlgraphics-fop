@@ -161,9 +161,9 @@ public class PreloaderSVG extends AbstractImagePreloader {
 
         private ImageInfo createImageInfo(String uri, ImageContext context, SVGDocument doc) {
             Element e = doc.getRootElement();
-            float pxUnitToMillimeter = UnitConv.IN2MM / context.getSourceResolution();
-            UserAgent userAg = new SimpleSVGUserAgent(pxUnitToMillimeter,
-                        new AffineTransform(), DefaultFontFamilyResolver.SINGLETON) {
+            UserAgent userAg = new SimpleSVGUserAgent(
+                    new AffineTransform(), DefaultFontFamilyResolver.SINGLETON,
+                    context.getSourceResolution()) {
 
                 /** {@inheritDoc} */
                 public void displayMessage(String message) {

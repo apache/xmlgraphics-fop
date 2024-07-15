@@ -32,6 +32,8 @@ import org.apache.batik.bridge.GVTBuilder;
 import org.apache.batik.bridge.TextPainter;
 import org.apache.batik.gvt.GraphicsNode;
 
+import org.apache.xmlgraphics.util.UnitConv;
+
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fonts.FontInfo;
@@ -41,8 +43,12 @@ import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 abstract class NativeTextPainterTest {
 
     protected final Graphics2D runTest(String testcase, OperatorValidator validator) throws Exception {
-        FontInfo fontInfo = createFontInfo();
-        BridgeContext bridgeContext = createBridgeContext(fontInfo);
+        return runTest(testcase, createFontInfo(), validator, UnitConv.IN2PT);
+    }
+
+    protected final Graphics2D runTest(String testcase, FontInfo fontInfo, OperatorValidator validator,
+                                       int sourceRes) throws Exception {
+        BridgeContext bridgeContext = createBridgeContext(fontInfo, sourceRes);
         GraphicsNode svg = loadSVG(bridgeContext, testcase);
         Graphics2D g2d = createGraphics2D(fontInfo, validator);
         svg.paint(g2d);
@@ -56,10 +62,12 @@ abstract class NativeTextPainterTest {
         return fontInfo;
     }
 
-    private BridgeContext createBridgeContext(FontInfo fontInfo) {
+    private BridgeContext createBridgeContext(FontInfo fontInfo, int sourceResolution) {
         FOUserAgent userAgent = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
         SVGUserAgent svgUserAgent = new SVGUserAgent(userAgent, new FOPFontFamilyResolverImpl(fontInfo),
                 new AffineTransform());
+        svgUserAgent.setSourceResolution(sourceResolution);
+
         BridgeContext bridgeContext = new BridgeContext(svgUserAgent);
         bridgeContext.setTextPainter(createTextPainter(fontInfo));
         return bridgeContext;

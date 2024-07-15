@@ -251,7 +251,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
     protected void setupImageInfrastructure(final String baseURI) {
         final ImageContext imageContext = new ImageContext() {
             public float getSourceResolution() {
-                return UnitConv.IN2MM / userAgent.getPixelUnitToMillimeter();
+                return userAgent.getSourceResolution();
             }
         };
         this.imageManager = new ImageManager(imageContext);
@@ -262,6 +262,10 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
             }
 
             public float getTargetResolution() {
+                return getDeviceResolution();
+            }
+
+            public float getSourceResolution() {
                 return getDeviceResolution();
             }
 
@@ -371,7 +375,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
                 return (Float) getTranscodingHints().get(key);
             } else {
                 // return 0.3528f; // 72 dpi
-                return UnitConv.IN2MM / 96; //96dpi = 0.2645833333333333333f;
+                return UnitConv.IN2MM / getSourceResolution(); //96dpi = 0.2645833333333333333f;
             }
         }
 
