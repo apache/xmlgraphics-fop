@@ -437,7 +437,7 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
             addedBoxHeight += boxHeight;
             ListItemPosition stepPosition = new ListItemPosition(this, start[0], end[0], start[1], end[1]);
             stepPosition.setOriginalLabelPosition(originalLabelPosition);
-            if (originalBodyPosition != null && originalBodyPosition.getLM() instanceof ListItemContentLayoutManager) {
+            if (originalBodyPosition == null || originalBodyPosition.getLM() instanceof ListItemContentLayoutManager) {
                 // Happens when ListItem has multiple blocks and a block (that's not the last block) ends at the same
                 // page height as a IPD change (e.g. FOP-3098). originalBodyPosition (reset) position needs to be a
                 // Block so that BlockStackingLayoutManager can stack it. Lookahead to find next Block.
