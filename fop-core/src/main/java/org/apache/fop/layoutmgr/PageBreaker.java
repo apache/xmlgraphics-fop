@@ -632,6 +632,10 @@ public class PageBreaker extends AbstractBreaker {
                         log.trace("Moving to next flow");
                         pv.getCurrentSpan().moveToNextFlow();
                     } else {
+                        if (pslm.getCurrentPage().isPagePositionOnly
+                                && !pslm.fobj.getUserAgent().isLegacySkipPagePositionOnly()) {
+                            throw new PagePositionOnlyException();
+                        }
                         log.trace("Making new page");
                         pslm.makeNewPage(false, emptyContent);
                     }

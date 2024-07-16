@@ -169,6 +169,8 @@ public interface FopFactoryConfig {
 
     boolean isSkipPagePositionOnlyAllowed();
 
+    boolean isLegacySkipPagePositionOnly();
+
     /** @return the hyphenation pattern names */
     Map<String, String> getHyphenationPatternNames();
 

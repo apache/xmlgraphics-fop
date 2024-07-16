@@ -22,6 +22,9 @@
       This test checks for the use of an 'only' conditional-page-master-reference (XSL 1.1)
     </p>
   </info>
+  <cfg>
+    <legacy-skip-page-position-only>true</legacy-skip-page-position-only>
+  </cfg>
   <fo>
     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
       <fo:layout-master-set>
@@ -82,6 +85,6 @@
   <checks>
     <eval expected="236" xpath="count(//word)"/>
     <eval expected="1" xpath="count(//page)"/>
-    <eval expected="PageOnly" xpath="//pageViewport/@simple-page-master-name"/>
+    <eval expected="PageFirst" xpath="//pageViewport/@simple-page-master-name"/>
   </checks>
 </testcase>

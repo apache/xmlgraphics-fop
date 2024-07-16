@@ -847,4 +847,8 @@ public class FOUserAgent {
     public boolean isSkipPagePositionOnlyAllowed() {
         return factory.isSkipPagePositionOnlyAllowed();
     }
+
+    public boolean isLegacySkipPagePositionOnly() {
+        return factory.isLegacySkipPagePositionOnly();
+    }
 }

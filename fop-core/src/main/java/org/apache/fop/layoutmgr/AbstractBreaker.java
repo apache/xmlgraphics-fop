@@ -382,81 +382,86 @@ public abstract class AbstractBreaker {
         while (hasMoreContent()) {
             blockLists.clear();
 
-            //*** Phase 1: Get Knuth elements ***
-            nextSequenceStartsOn = getNextBlockList(childLC, nextSequenceStartsOn);
-            empty = empty && blockLists.size() == 0;
+            try {
+                //*** Phase 1: Get Knuth elements ***
+                nextSequenceStartsOn = getNextBlockList(childLC, nextSequenceStartsOn);
+                empty = empty && blockLists.size() == 0;
 
-            //*** Phases 2 and 3 ***
-            log.debug("PLM> blockLists.size() = " + blockLists.size());
-            for (blockListIndex = 0; blockListIndex < blockLists.size(); blockListIndex++) {
-                blockList = blockLists.get(blockListIndex);
+                //*** Phases 2 and 3 ***
+                log.debug("PLM> blockLists.size() = " + blockLists.size());
+                for (blockListIndex = 0; blockListIndex < blockLists.size(); blockListIndex++) {
+                    blockList = blockLists.get(blockListIndex);
 
-                //debug code start
-                if (log.isDebugEnabled()) {
-                    log.debug("  blockListIndex = " + blockListIndex);
-                    log.debug("  sequence starts on " + getBreakClassName(blockList.startOn));
-                }
-                observeElementList(blockList);
-                //debug code end
-
-                //*** Phase 2: Alignment and breaking ***
-                log.debug("PLM> start of algorithm (" + this.getClass().getName()
-                        + "), flow BPD =" + flowBPD);
-                PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
-                         getPageProvider(), createLayoutListener(),
-                         alignment, alignmentLast, footnoteSeparatorLength,
-                         isPartOverflowRecoveryActivated(), autoHeight, isSinglePartFavored());
-
-                alg.setConstantLineWidth(flowBPD);
-                int optimalPageCount = alg.findBreakingPoints(blockList, 1, true,
-                        BreakingAlgorithm.ALL_BREAKS);
-                boolean ipdChangesOnNextPage = (alg.getIPDdifference() != 0);
-                boolean onLastPageAndIPDChanges = false;
-                if (!ipdChangesOnNextPage) {
-                    onLastPageAndIPDChanges = (lastPageHasIPDChange(optimalPageCount) && !thereIsANonRestartableLM(alg)
-                            && (shouldRedoLayout() || (wasLayoutRedone() && optimalPageCount > 1)));
-                }
-                if (shouldRedoLayoutWithoutPagePositionOnly(ipdChangesOnNextPage, optimalPageCount)) {
-                    return false;
-                }
-                if (alg.handlingFloat()) {
-                    nextSequenceStartsOn = handleFloatLayout(alg, optimalPageCount, blockList, childLC);
-                } else if (ipdChangesOnNextPage || onLastPageAndIPDChanges) {
-                    boolean visitedBefore = false;
-                    if (onLastPageAndIPDChanges) {
-                        visitedBefore = wasLayoutRedone();
-                        prepareToRedoLayout(alg, optimalPageCount, blockList, blockList);
+                    //debug code start
+                    if (log.isDebugEnabled()) {
+                        log.debug("  blockListIndex = " + blockListIndex);
+                        log.debug("  sequence starts on " + getBreakClassName(blockList.startOn));
                     }
+                    observeElementList(blockList);
+                    //debug code end
 
-                    firstElementsForRestart = null;
-                    RestartAtLM restartAtLMClass = new RestartAtLM();
-                    LayoutManager restartAtLM = restartAtLMClass.getRestartAtLM(this, alg, ipdChangesOnNextPage,
-                            onLastPageAndIPDChanges, visitedBefore, blockList, 1);
-                    if (restartAtLMClass.invalidPosition) {
+                    //*** Phase 2: Alignment and breaking ***
+                    log.debug("PLM> start of algorithm (" + this.getClass().getName()
+                            + "), flow BPD =" + flowBPD);
+                    PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
+                             getPageProvider(), createLayoutListener(),
+                             alignment, alignmentLast, footnoteSeparatorLength,
+                             isPartOverflowRecoveryActivated(), autoHeight, isSinglePartFavored());
+
+                    alg.setConstantLineWidth(flowBPD);
+                    int optimalPageCount = alg.findBreakingPoints(blockList, 1, true,
+                            BreakingAlgorithm.ALL_BREAKS);
+                    boolean ipdChangesOnNextPage = (alg.getIPDdifference() != 0);
+                    boolean onLastPageAndIPDChanges = false;
+                    if (!ipdChangesOnNextPage) {
+                        onLastPageAndIPDChanges = (lastPageHasIPDChange(optimalPageCount)
+                                && !thereIsANonRestartableLM(alg)
+                                && (shouldRedoLayout() || (wasLayoutRedone() && optimalPageCount > 1)));
+                    }
+                    if (shouldRedoLayoutWithoutPagePositionOnly(ipdChangesOnNextPage, optimalPageCount, alg)) {
                         return false;
                     }
-                    if (restartAtLM == null || restartAtLM.getChildLMs().isEmpty()) {
-                        firstElementsForRestart = null;
-                        LayoutManager restartAtLM2 = new RestartAtLM().getRestartAtLM(this, alg, ipdChangesOnNextPage,
-                                onLastPageAndIPDChanges, visitedBefore, blockList, 0);
-                        if (restartAtLM2 != null) {
-                            restartAtLM = restartAtLM2;
+                    if (alg.handlingFloat()) {
+                        nextSequenceStartsOn = handleFloatLayout(alg, optimalPageCount, blockList, childLC);
+                    } else if (ipdChangesOnNextPage || onLastPageAndIPDChanges) {
+                        boolean visitedBefore = false;
+                        if (onLastPageAndIPDChanges) {
+                            visitedBefore = wasLayoutRedone();
+                            prepareToRedoLayout(alg, optimalPageCount, blockList, blockList);
                         }
-                    }
-                    if (ipdChangesOnNextPage) {
-                        addAreas(alg, optimalPageCount, blockList, blockList);
-                    }
-                    blockLists.clear();
-                    blockListIndex = -1;
-                    nextSequenceStartsOn = getNextBlockList(childLC, Constants.EN_COLUMN, positionAtBreak,
-                            restartAtLM, firstElementsForRestart);
-                } else {
-                    log.debug("PLM> optimalPageCount= " + optimalPageCount
-                            + " pageBreaks.size()= " + alg.getPageBreaks().size());
 
-                    //*** Phase 3: Add areas ***
-                    doPhase3(alg, optimalPageCount, blockList, blockList);
+                        firstElementsForRestart = null;
+                        RestartAtLM restartAtLMClass = new RestartAtLM();
+                        LayoutManager restartAtLM = restartAtLMClass.getRestartAtLM(this, alg, ipdChangesOnNextPage,
+                                onLastPageAndIPDChanges, visitedBefore, blockList, 1);
+                        if (restartAtLMClass.invalidPosition) {
+                            return false;
+                        }
+                        if (restartAtLM == null || restartAtLM.getChildLMs().isEmpty()) {
+                            firstElementsForRestart = null;
+                            LayoutManager restartAtLM2 = new RestartAtLM().getRestartAtLM(this, alg,
+                                    ipdChangesOnNextPage, onLastPageAndIPDChanges, visitedBefore, blockList, 0);
+                            if (restartAtLM2 != null) {
+                                restartAtLM = restartAtLM2;
+                            }
+                        }
+                        if (ipdChangesOnNextPage) {
+                            addAreas(alg, optimalPageCount, blockList, blockList);
+                        }
+                        blockLists.clear();
+                        blockListIndex = -1;
+                        nextSequenceStartsOn = getNextBlockList(childLC, Constants.EN_COLUMN, positionAtBreak,
+                                restartAtLM, firstElementsForRestart);
+                    } else {
+                        log.debug("PLM> optimalPageCount= " + optimalPageCount
+                                + " pageBreaks.size()= " + alg.getPageBreaks().size());
+
+                        //*** Phase 3: Add areas ***
+                        doPhase3(alg, optimalPageCount, blockList, blockList);
+                    }
                 }
+            } catch (PagePositionOnlyException e) {
+                return false;
             }
         }
 
@@ -465,11 +470,26 @@ public abstract class AbstractBreaker {
         return true;
     }
 
-    private boolean shouldRedoLayoutWithoutPagePositionOnly(boolean ipdChangesOnNextPage, int optimalPageCount) {
+    static class PagePositionOnlyException extends RuntimeException {
+    }
+
+    private boolean shouldRedoLayoutWithoutPagePositionOnly(boolean ipdChangesOnNextPage, int optimalPageCount,
+                                                            PageBreakingAlgorithm alg) {
         if ((ipdChangesOnNextPage || hasMoreContent() || optimalPageCount > 1)
                 && pslm != null && pslm.getCurrentPage().isPagePositionOnly) {
+            if (getPageProvider().foUserAgent.isLegacySkipPagePositionOnly()) {
+                return true;
+            }
             RegionBody rb = (RegionBody)pslm.getCurrentPage().getSimplePageMaster().getRegion(Constants.FO_REGION_BODY);
-            return rb.getColumnCount() == 1;
+            if (rb.getColumnCount() == 1) {
+                return true;
+            }
+            int restartPoint = getPageProvider().getStartingPartIndexForLastPage(optimalPageCount);
+            if (restartPoint > 0) {
+                PageBreakPosition pbp = (PageBreakPosition) alg.getPageBreaks().get(restartPoint - 1);
+                int newStartPos = alg.par.getFirstBoxIndex(pbp.getLeafPos() + 1);
+                return newStartPos > 0;
+            }
         }
         return false;
     }

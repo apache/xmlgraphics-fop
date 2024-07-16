@@ -126,6 +126,7 @@ public class TestAssistant {
         builder.setTableBorderOverpaint(isTableBorderOverpaint(testDoc));
         builder.setSimpleLineBreaking(isSimpleLineBreaking(testDoc));
         builder.setSkipPagePositionOnlyAllowed(isSkipPagePositionOnlyAllowed(testDoc));
+        builder.setLegacySkipPagePositionOnly(isLegacySkipPagePositionOnly(testDoc));
         return builder.build();
     }
 
@@ -176,6 +177,15 @@ public class TestAssistant {
             return !"false".equalsIgnoreCase(s);
         } catch (XPathExpressionException e) {
             throw new RuntimeException("Error while evaluating XPath expression", e);
+        }
+    }
+
+    private boolean isLegacySkipPagePositionOnly(Document testDoc) {
+        try {
+            String s = eval(testDoc, "/testcase/cfg/legacy-skip-page-position-only");
+            return "true".equalsIgnoreCase(s);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException(e);
         }
     }
 

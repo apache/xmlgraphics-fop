@@ -67,7 +67,7 @@ public abstract class AbstractLayoutManager extends AbstractBaseLayoutManager im
     private int lastGeneratedPosition = -1;
     private int smallestPosNumberChecked = Integer.MAX_VALUE;
 
-    private boolean preserveChildrenAtEndOfLayout;
+    private boolean preserveChildrenAtEndOfLayout = true;
 
     /**
      * Abstract layout manager.
