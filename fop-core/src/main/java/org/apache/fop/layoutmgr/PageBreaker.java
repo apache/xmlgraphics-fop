@@ -621,6 +621,7 @@ public class PageBreaker extends AbstractBreaker {
                         && pv.getCurrentSpan().getColumnCount() == 1);
 
             if (forceNewPageWithSpan) {
+                checkPagePositionOnly();
                 log.trace("Forcing new page with span");
                 curPage = pslm.makeNewPage(false);
                 curPage.getPageViewport().createSpan(true);
@@ -632,10 +633,7 @@ public class PageBreaker extends AbstractBreaker {
                         log.trace("Moving to next flow");
                         pv.getCurrentSpan().moveToNextFlow();
                     } else {
-                        if (pslm.getCurrentPage().isPagePositionOnly
-                                && !pslm.fobj.getUserAgent().isLegacySkipPagePositionOnly()) {
-                            throw new PagePositionOnlyException();
-                        }
+                        checkPagePositionOnly();
                         log.trace("Making new page");
                         pslm.makeNewPage(false, emptyContent);
                     }
@@ -647,14 +645,22 @@ public class PageBreaker extends AbstractBreaker {
         }
     }
 
+    private void checkPagePositionOnly() {
+        if (pslm.getCurrentPage().isPagePositionOnly && !pslm.fobj.getUserAgent().isLegacySkipPagePositionOnly()) {
+            throw new PagePositionOnlyException();
+        }
+    }
+
     private void handleBreakBeforeFollowingPage(int breakVal) {
         log.debug("handling break-before after page " + pslm.getCurrentPageNum() + " breakVal="
                 + getBreakClassName(breakVal));
         if (needBlankPageBeforeNew(breakVal)) {
+            checkPagePositionOnly();
             log.trace("Inserting blank page");
             /* curPage = */pslm.makeNewPage(true);
         }
         if (needNewPage(breakVal)) {
+            checkPagePositionOnly();
             log.trace("Making new page");
             /* curPage = */pslm.makeNewPage(false);
         }
