@@ -99,6 +99,7 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
 
     /** use FS45 images*/
     private boolean fs45;
+    private boolean maskEnabled;
 
     /** the current page */
     private transient AFPPagePaintingState pagePaintingState;
@@ -443,6 +444,13 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     }
 
 
+    public boolean isMaskEnabled() {
+        return maskEnabled;
+    }
+
+    public void setMaskEnabled(boolean maskEnabled) {
+        this.maskEnabled = maskEnabled;
+    }
 
     /** {@inheritDoc} */
     @Override

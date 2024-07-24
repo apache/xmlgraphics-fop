@@ -545,6 +545,10 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         paintingState.setFS45(fs45);
     }
 
+    public void setMaskEnabled(boolean maskEnabled) {
+        paintingState.setMaskEnabled(maskEnabled);
+    }
+
     /** {@inheritDoc} */
     public boolean getWrapPSeg() {
         return  paintingState.getWrapPSeg();

@@ -79,9 +79,13 @@ public class ImageObject extends AbstractDataObject {
         ImageDataDescriptor imageDataDescriptor
             = factory.createImageDataDescriptor(dataWidth, dataHeight, dataWidthRes, dataHeightRes);
 
-        if (MimeConstants.MIME_AFP_IOCA_FS45.equals(imageObjectInfo.getMimeType())) {
-            imageDataDescriptor.setFunctionSet(ImageDataDescriptor.FUNCTION_SET_FS45);
-            if (imageObjectInfo.getBitsPerPixel() == 32) {
+        boolean hasTransparencyMask = imageObjectInfo.getTransparencyMask() != null;
+        boolean fs45 = MimeConstants.MIME_AFP_IOCA_FS45.equals(imageObjectInfo.getMimeType());
+        if (hasTransparencyMask || fs45) {
+            if (fs45) {
+                imageDataDescriptor.setFunctionSet(ImageDataDescriptor.FUNCTION_SET_FS45);
+            }
+            if (hasTransparencyMask || imageObjectInfo.getBitsPerPixel() == 32) {
                  Tile tile = factory.createTile();
                  TilePosition tilePosition = factory.createTilePosition();
                  TileSize tileSize = factory.createTileSize(dataWidth, dataHeight, dataWidthRes, dataHeightRes);

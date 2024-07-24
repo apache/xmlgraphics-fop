@@ -54,6 +54,7 @@ import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_DITHERING_QUALI
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_FS45;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_JPEG;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MAPPING_OPTION;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MASK_ENABLED;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MODE;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_NATIVE;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_WRAP_PSEG;
@@ -173,6 +174,10 @@ public final class AFPRendererConfig implements RendererConfig {
 
     public Boolean isFs45() {
         return getParam(IMAGES_FS45, Boolean.class);
+    }
+
+    public Boolean isMaskEnabled() {
+        return getParam(IMAGES_MASK_ENABLED, Boolean.class);
     }
 
     public Boolean allowJpegEmbedding() {
@@ -315,6 +320,7 @@ public final class AFPRendererConfig implements RendererConfig {
             setParam(IMAGES_WRAP_PSEG,
                     imagesCfg.getAttributeAsBoolean(IMAGES_WRAP_PSEG.getName(), false));
             setParam(IMAGES_FS45, imagesCfg.getAttributeAsBoolean(IMAGES_FS45.getName(), false));
+            setParam(IMAGES_MASK_ENABLED, imagesCfg.getAttributeAsBoolean(IMAGES_MASK_ENABLED.getName(), false));
             if ("scale-to-fit".equals(imagesCfg.getAttribute(IMAGES_MAPPING_OPTION.getName(), null))) {
                 setParam(IMAGES_MAPPING_OPTION, MappingOptionTriplet.SCALE_TO_FILL);
             } else {

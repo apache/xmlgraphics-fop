@@ -179,6 +179,14 @@ public class AFPRendererConfigParserTestCase
     }
 
     @Test
+    public void testMaskEnabled() throws Exception {
+        parseConfig();
+        assertEquals(false, conf.isMaskEnabled());
+        parseConfig(createRenderer().startImages().setMaskEnabled(true).endImages());
+        assertEquals(true, conf.isMaskEnabled());
+    }
+
+    @Test
     public void tesPseg() throws Exception {
         parseConfig();
         assertEquals(false, conf.isWrapPseg());

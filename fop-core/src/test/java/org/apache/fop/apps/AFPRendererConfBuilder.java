@@ -37,6 +37,7 @@ import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_DITHERING_QUALI
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_FS45;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_JPEG;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MAPPING_OPTION;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MASK_ENABLED;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MODE;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_NATIVE;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_WRAP_PSEG;
@@ -149,6 +150,10 @@ public final class AFPRendererConfBuilder extends RendererConfBuilder {
 
         public ImagesBuilder setFs45(boolean value) {
             return setAttribute(IMAGES_FS45, value);
+        }
+
+        public ImagesBuilder setMaskEnabled(boolean value) {
+            return setAttribute(IMAGES_MASK_ENABLED, value);
         }
 
         public ImagesBuilder setMappingOption(String value) {

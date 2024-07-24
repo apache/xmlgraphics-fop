@@ -19,8 +19,10 @@
 
 package org.apache.fop.render.afp;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
@@ -131,6 +133,12 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
         boolean included = afpContext.getResourceManager().tryIncludeObject(imageObjectInfo);
         if (!included) {
             long start = System.currentTimeMillis();
+            RenderedImage ri = imageRend.getRenderedImage();
+            if (ri.getColorModel().hasAlpha()) {
+                byte[] maskImage = buildMaskImage((BufferedImage) ri, afpContext.getPaintingState());
+                imageObjectInfo.setTransparencyMask(maskImage);
+            }
+
             //encode only if the same image has not been encoded, yet
             encoder.encodeImage(imageObjectInfo, paintingState);
             if (log.isDebugEnabled()) {
@@ -141,6 +149,32 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
             // Create image
             afpContext.getResourceManager().createObject(imageObjectInfo);
         }
+    }
+
+    private byte[] buildMaskImage(BufferedImage image, AFPPaintingState paintingState) {
+        if (!paintingState.isMaskEnabled()) {
+            return null;
+        }
+        BufferedImage mask = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        int white = Color.WHITE.getRGB();
+        boolean noalpha = true;
+        for (int i = 0; i < image.getWidth(); i++) {
+            for (int j = 0; j < image.getHeight(); j++) {
+                int alpha = (image.getRGB(i, j) >> 24) & 0xff;
+                if (alpha != 0) {
+                    mask.setRGB(i, j, white);
+                } else {
+                    noalpha = false;
+                }
+            }
+        }
+        if (noalpha) {
+            return null;
+        }
+        RenderedImage renderedImage =
+                BitmapImageUtil.convertToMonochrome(mask, new Dimension(mask.getWidth(), mask.getHeight()), 1);
+        DataBufferByte bufferByte = (DataBufferByte) renderedImage.getData().getDataBuffer();
+        return bufferByte.getData();
     }
 
     /** {@inheritDoc} */

@@ -69,7 +69,10 @@ public class Tile extends AbstractStructuredObject {
                 0x00 // reserved
         };
         final int lengthOffset = 2;
-        if (ideSize == 24) {
+        if (ideSize <= 8) {
+            dataHeader[4] = (byte) 0x01;
+            writeChunksToStream(data, dataHeader, lengthOffset, MAX_DATA_LEN, os);
+        } else if (ideSize == 24) {
             byte[] red = new byte[data.length / 3];
             byte[] green = new byte[data.length / 3];
             byte[] blue = new byte[data.length / 3];

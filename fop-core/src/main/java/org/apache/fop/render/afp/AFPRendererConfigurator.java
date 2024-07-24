@@ -99,6 +99,9 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
         if (config.isFs45() != null) {
             documentHandler.setFS45(config.isFs45());
         }
+        if (config.isMaskEnabled() != null) {
+            documentHandler.setMaskEnabled(config.isMaskEnabled());
+        }
         if (config.allowJpegEmbedding() != null) {
             documentHandler.canEmbedJpeg(config.allowJpegEmbedding());
         }

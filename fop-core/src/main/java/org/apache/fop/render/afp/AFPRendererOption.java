@@ -31,6 +31,7 @@ public enum AFPRendererOption implements RendererConfigOption {
     IMAGES_JPEG("jpeg", null),
     IMAGES_DITHERING_QUALITY("dithering-quality", Float.class),
     IMAGES_FS45("fs45", Boolean.class),
+    IMAGES_MASK_ENABLED("mask-enabled", Boolean.class),
     IMAGES_MAPPING_OPTION("mapping_option", Byte.class),
     IMAGES_MODE("mode", Boolean.class),
     IMAGES_NATIVE("native", Boolean.class),
