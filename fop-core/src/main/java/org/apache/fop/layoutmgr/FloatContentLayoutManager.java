@@ -113,7 +113,7 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
         for (LayoutManager childLM : childLMs) {
             if (childLM instanceof TableLayoutManager) {
                 ipd += childLM.getContentAreaIPD();
-            } else {
+            } else if (childLM.getContentAreaBPD() != -1) {
                 ipd += getContentAreaIPD(childLM.getChildLMs());
             }
         }

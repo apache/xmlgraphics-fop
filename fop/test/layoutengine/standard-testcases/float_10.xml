@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testcase>
+  <info>
+    <p>
+      Test position of float containing tables
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+      <fo:layout-master-set>
+        <fo:simple-page-master margin-top="0.5in" margin-bottom="0.5in" master-name="LetterPage" margin-right="0.5in" margin-left="0.5in" page-width="8.5in" page-height="11in">
+          <fo:region-body margin-top="3.3in" region-name="LetterPageBody" margin-bottom="2in" />
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence format="1" master-reference="LetterPage">
+        <fo:flow flow-name="LetterPageBody">
+          <fo:block>
+            <fo:float space-before="2in" float="right">
+              <fo:block>
+                <fo:block-container height="1.85in" width="2.5in">
+                  <fo:block>
+                    <fo:table table-layout="fixed" width="100%">
+                      <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+                      <fo:table-body>
+                        <fo:table-row>
+                          <fo:table-cell>
+                            <fo:block>Visit My Account</fo:block>
+                          </fo:table-cell>
+                        </fo:table-row>
+                      </fo:table-body>
+                    </fo:table>
+                    <fo:table table-layout="fixed" width="100%">
+                      <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+                      <fo:table-body>
+                        <fo:table-row>
+                          <fo:table-cell>
+                            <fo:block>
+                              <fo:leader/>
+                            </fo:block>
+                          </fo:table-cell>
+                        </fo:table-row>
+                      </fo:table-body>
+                    </fo:table>
+                  </fo:block>
+                </fo:block-container>
+              </fo:block>
+            </fo:float>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="180000" xpath="//block[2]/@ipd" />
+    <eval expected="Visit" xpath="//block[2]//word" />
+  </checks>
+</testcase>

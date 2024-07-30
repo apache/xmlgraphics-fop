@@ -209,14 +209,8 @@ public abstract class AbstractBaseLayoutManager
                 "getContentAreaIPD() called when it should have been overridden");
     }
 
-    /**
-     * {@inheritDoc}
-     * <i>NOTE: Should be overridden by subclasses.
-     * Default implementation throws an <code>UnsupportedOperationException</code>.</i>
-     */
     public int getContentAreaBPD() {
-        throw new UnsupportedOperationException(
-                "getContentAreaBPD() called when it should have been overridden");
+        return 0;
     }
 
     /** {@inheritDoc} */
