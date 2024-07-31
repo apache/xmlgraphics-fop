@@ -486,7 +486,7 @@ public abstract class AbstractBreaker {
             }
             int restartPoint = getPageProvider().getStartingPartIndexForLastPage(optimalPageCount);
             if (restartPoint > 0) {
-                PageBreakPosition pbp = (PageBreakPosition) alg.getPageBreaks().get(restartPoint - 1);
+                PageBreakPosition pbp = alg.getPageBreaks().get(restartPoint - 1);
                 int newStartPos = alg.par.getFirstBoxIndex(pbp.getLeafPos() + 1);
                 return newStartPos > 0;
             }
