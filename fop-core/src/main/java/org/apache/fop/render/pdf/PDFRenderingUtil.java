@@ -261,7 +261,10 @@ class PDFRenderingUtil {
         fopXMP.mergeInto(docXMP, exclude);
         XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(docXMP);
         //Metadata was changed so update metadata date
-        xmpBasic.setMetadataDate(new java.util.Date());
+        java.util.Date d = System.getenv("SOURCE_DATE_EPOCH") == null ?
+                new java.util.Date() :
+                new java.util.Date(1000 * Long.parseLong(System.getenv("SOURCE_DATE_EPOCH")));
+        xmpBasic.setMetadataDate(d);
         PDFMetadata.updateInfoFromMetadata(docXMP, pdfDoc.getInfo());
 
         PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(
