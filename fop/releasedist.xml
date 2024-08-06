@@ -95,7 +95,7 @@
     <include name="fop/hyph/readme"/>
     <include name="fop/jacoco*"/>
     <include name="fop/known-issues.xml"/>
-    <include name="fop/lib/servlet*"/>
+    <include name="fop/lib/*servlet*"/>
     <include name="fop/status.xml"/>
     <include name="fop*/pom.xml"/>
     <include name="pom.xml"/>
