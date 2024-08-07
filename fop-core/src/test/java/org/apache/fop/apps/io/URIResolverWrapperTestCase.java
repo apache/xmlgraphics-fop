@@ -120,6 +120,11 @@ public class URIResolverWrapperTestCase {
         assertNull(InternalResourceResolver.cleanURI(null));
     }
 
+    @Test
+    public void testCurlyBrackets() throws Exception {
+        assertEquals(InternalResourceResolver.cleanURI("{test}.jpg"), new URI("%7Btest%7D.jpg"));
+    }
+
     private void test(String uriStr, URI uri, URI expected) throws IOException, URISyntaxException {
         ResourceResolver resolver = mock(ResourceResolver.class);
         InternalResourceResolver sut = new InternalResourceResolver(base, resolver);
