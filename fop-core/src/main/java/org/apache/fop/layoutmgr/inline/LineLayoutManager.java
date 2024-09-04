@@ -660,7 +660,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         }
 
         for (int i = 0; i < parIndex; i++) {
-            knuthParagraphs.remove(0);
+            if (knuthParagraphs.size() > 1) {
+                knuthParagraphs.remove(0);
+            }
         }
         parIndex = 0;
 

@@ -30,7 +30,7 @@ import org.apache.fop.layoutmgr.Position;
  * This class represents a Position specific to TableContentLayoutManager. Used for normal
  * content cases.
  */
-class TableContentPosition extends Position {
+public class TableContentPosition extends Position {
 
     /** The position is the first of the row group. */
     public static final int FIRST_IN_ROWGROUP = 1;

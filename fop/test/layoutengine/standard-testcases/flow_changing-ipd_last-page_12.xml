@@ -60,5 +60,6 @@
 </fo>
   <checks>
     <eval expected="url(a.TIFF)" xpath="//pageViewport[2]//image/@url"/>
+    <eval expected="2" xpath="count(//pageViewport)"/>
   </checks>
 </testcase>

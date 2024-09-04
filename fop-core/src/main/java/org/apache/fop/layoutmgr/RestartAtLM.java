@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.apache.fop.events.EventBroadcaster;
+import org.apache.fop.layoutmgr.table.TableContentPosition;
 
 /**
  * Class to find the restart layoutmanager for changing IPD
@@ -39,6 +40,9 @@ class RestartAtLM {
             optimalBreak = null;
         }
         int positionIndex = findPositionIndex(breaker, optimalBreak, alg, start);
+        if (breaker.positionAtBreak.getLM() instanceof BlockLayoutManager) {
+            positionIndex = findPositionIndex(breaker, optimalBreak, alg, 0);
+        }
         if (ipdChangesOnNextPage || (breaker.positionAtBreak != null && breaker.positionAtBreak.getIndex() > -1)) {
             breaker.firstElementsForRestart = Collections.EMPTY_LIST;
             if (ipdChangesOnNextPage) {
@@ -112,7 +116,18 @@ class RestartAtLM {
         if (onLastPageAndIPDChanges && !visitedBefore && breaker.positionAtBreak.getPosition() != null) {
             restartAtLM = breaker.positionAtBreak.getPosition().getLM();
         }
+        findLeafPosition(breaker);
         return restartAtLM;
+    }
+
+    private void findLeafPosition(AbstractBreaker breaker) {
+        while (breaker.positionAtBreak instanceof NonLeafPosition) {
+            Position pos = breaker.positionAtBreak.getPosition();
+            if (pos instanceof TableContentPosition) {
+                break;
+            }
+            breaker.positionAtBreak = pos;
+        }
     }
 
     private int findPositionIndex(AbstractBreaker breaker, BreakingAlgorithm.KnuthNode optimalBreak,
