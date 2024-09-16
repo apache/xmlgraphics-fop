@@ -161,7 +161,7 @@ public class AFPPainterTestCase {
     public void testPresentationText() throws Exception {
         List<String> strings = new ArrayList<String>();
         strings.add("test");
-        Assert.assertEquals(writeText(strings), "BEGIN DOCUMENT DOC00001\n"
+        Assert.assertEquals(writeText(strings), "BEGIN DOCUMENT DOC00001 Triplets: 0x01,\n"
                 + "BEGIN PAGE PGN00001\n"
                 + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
                 + "DESCRIPTOR PAGE\n"
@@ -176,7 +176,7 @@ public class AFPPainterTestCase {
         for (int i = 0; i < 5000; i++) {
             strings.add("test");
         }
-        Assert.assertEquals(writeText(strings), "BEGIN DOCUMENT DOC00001\n"
+        Assert.assertEquals(writeText(strings), "BEGIN DOCUMENT DOC00001 Triplets: 0x01,\n"
                 + "BEGIN PAGE PGN00001\n"
                 + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
                 + "DESCRIPTOR PAGE\n"
@@ -198,7 +198,7 @@ public class AFPPainterTestCase {
         for (int i = 0; i < 5000; i++) {
             strings.add("tes");
         }
-        Assert.assertEquals(writeText(strings), "BEGIN DOCUMENT DOC00001\n"
+        Assert.assertEquals(writeText(strings), "BEGIN DOCUMENT DOC00001 Triplets: 0x01,\n"
                 + "BEGIN PAGE PGN00001\n"
                 + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
                 + "DESCRIPTOR PAGE\n"
@@ -287,7 +287,7 @@ public class AFPPainterTestCase {
         InputStream bis = new ByteArrayInputStream(os.toByteArray());
         StringBuilder sb = new StringBuilder();
         new AFPParser(false).read(bis, sb);
-        Assert.assertEquals(sb.toString(), "BEGIN DOCUMENT DOC00001\n"
+        Assert.assertEquals(sb.toString(), "BEGIN DOCUMENT DOC00001 Triplets: 0x01,\n"
                 + "BEGIN PAGE PGN00001\n"
                 + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
                 + "DESCRIPTOR PAGE\n"
@@ -325,7 +325,7 @@ public class AFPPainterTestCase {
         InputStream bis = new ByteArrayInputStream(os.toByteArray());
         StringBuilder sb = new StringBuilder();
         new AFPParser(false).read(bis, sb);
-        Assert.assertEquals(sb.toString(), "BEGIN DOCUMENT DOC00001\n"
+        Assert.assertEquals(sb.toString(), "BEGIN DOCUMENT DOC00001 Triplets: 0x01,\n"
                 + "BEGIN PAGE PGN00001\n"
                 + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
                 + "DESCRIPTOR PAGE\n"
@@ -392,7 +392,7 @@ public class AFPPainterTestCase {
         InputStream bis = new ByteArrayInputStream(os.toByteArray());
         StringBuilder sb = new StringBuilder();
         new AFPParser(false).read(bis, sb);
-        Assert.assertEquals(sb.toString(), "BEGIN DOCUMENT DOC00001\n"
+        Assert.assertEquals(sb.toString(), "BEGIN DOCUMENT DOC00001 Triplets: 0x01,\n"
                 + "BEGIN PAGE PGN00001\n"
                 + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
                 + "MAP CODED_FONT Triplets: "

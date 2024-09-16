@@ -40,7 +40,7 @@ import org.apache.fop.render.intermediate.IFContext;
 public class PageOverlayTestCase {
     @Test
     public void testPageOverlay() throws Exception {
-        Assert.assertEquals(getPageOverlay(), "BEGIN DOCUMENT DOC00001\n"
+        Assert.assertEquals(getPageOverlay(), "BEGIN DOCUMENT DOC00001 Triplets: 0x01,\n"
                 + "BEGIN PAGE_GROUP PGP00001\n"
                 + "END PAGE_GROUP PGP00001\n"
                 + "BEGIN PAGE PGN00001\n"

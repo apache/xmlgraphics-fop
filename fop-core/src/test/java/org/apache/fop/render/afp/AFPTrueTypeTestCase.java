@@ -111,7 +111,7 @@ public class AFPTrueTypeTestCase {
         format += "END OBJECT_CONTAINER OC000001\n"
                 + "END NAME_RESOURCE RES00001\n"
                 + "END RESOURCE_GROUP RG000001\n"
-                + "BEGIN DOCUMENT DOC00001\n"
+                + "BEGIN DOCUMENT DOC00001 Triplets: 0x01,\n"
                 + "BEGIN PAGE_GROUP PGP00001\n"
                 + "BEGIN PAGE PGN00001\n"
                 + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"

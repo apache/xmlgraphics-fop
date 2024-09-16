@@ -19,10 +19,13 @@
 
 package org.apache.fop.afp.modca;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.fop.afp.Factory;
+import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
+import org.apache.fop.afp.util.BinaryUtils;
 
 /**
  * The document is the highest level of the MO:DCA data-stream document
@@ -50,6 +53,8 @@ import org.apache.fop.afp.Factory;
  */
 public final class Document extends AbstractResourceEnvironmentGroupContainer {
 
+    private static final int CODE_PAGE = 500;
+
     /**
      * Constructor for the document object.
      *
@@ -76,8 +81,29 @@ public final class Document extends AbstractResourceEnvironmentGroupContainer {
 
     /** {@inheritDoc} */
     protected void writeStart(OutputStream os) throws IOException {
-        byte[] data = new byte[17];
-        copySF(data, Type.BEGIN, Category.DOCUMENT);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] startData = new byte[17];
+        copySF(startData, Type.BEGIN, Category.DOCUMENT);
+        baos.write(startData);
+        baos.write(0x00);
+        baos.write(0x06); // Total length of triplets (6)
+        /*
+         The triplet below was created following the
+         Mixed Object Document Content Architecture (MO:DCA) Reference
+         */
+        // X'01 triplet
+        baos.write(0x06); //triplet length
+        baos.write(FullyQualifiedNameTriplet.CODED_GRAPHIC_CHARACTER_SET_GLOBAL_IDENTIFIER);
+        baos.write(0xFF); //part 1 of GCSGID
+        baos.write(0xFF); //part 2 of GCSGID
+        baos.write(BinaryUtils.convert(CODE_PAGE, 2)); //CPGID
+
+        byte[] data = baos.toByteArray();
+        // Set the total record length
+        byte[] rl1 = BinaryUtils.convert(data.length - 1, 2);
+        data[1] = rl1[0];
+        data[2] = rl1[1];
+
         os.write(data);
     }
 

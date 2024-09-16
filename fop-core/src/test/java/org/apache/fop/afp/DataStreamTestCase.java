@@ -31,11 +31,14 @@ import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.fonts.CharacterSetBuilder;
 import org.apache.fop.afp.modca.InterchangeSet;
 import org.apache.fop.afp.modca.InvokeMediumMap;
 import org.apache.fop.afp.modca.PageGroup;
+import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
+import org.apache.fop.afp.util.BinaryUtils;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.util.CharUtilities;
@@ -105,6 +108,7 @@ public class DataStreamTestCase {
         ds.endDocument();
         ByteArrayInputStream data = new ByteArrayInputStream(outStream.toByteArray());
         data.skip(21);
+        data.skip(8);
         Assert.assertEquals((byte)data.read(), InvokeMediumMap.Type.MAP);
         Assert.assertEquals((byte)data.read(), InvokeMediumMap.Category.MEDIUM_MAP);
     }
@@ -121,7 +125,35 @@ public class DataStreamTestCase {
         ds.endDocument();
         ByteArrayInputStream data = new ByteArrayInputStream(outStream.toByteArray());
         data.skip(21);
+        data.skip(8);
         Assert.assertEquals((byte)data.read(), InvokeMediumMap.Type.MAP);
         Assert.assertEquals((byte)data.read(), InvokeMediumMap.Category.MEDIUM_MAP);
+    }
+
+    @Test
+    public void testMandatoryTripletIsAddedToAFP() throws Exception {
+        ds = new DataStream(new Factory(), paintState, outStream);
+        ds.startDocument();
+        ds.startPageGroup();
+        ds.startPage(1, 1, 0, 1, 1);
+        ds.endPage();
+        ds.endPageGroup();
+        ds.endDocument();
+        ByteArrayInputStream data = new ByteArrayInputStream(outStream.toByteArray());
+        data.skip(17); //skipping the begin document data
+        Assert.assertEquals("Separation byte", 0x00, (byte) data.read());
+        Assert.assertEquals("Sum of the length of triplets", 0x06, (byte) data.read());
+        Assert.assertEquals("Length of the current triplet", 0x06, (byte) data.read());
+        Assert.assertEquals("Byte code of the mandatory triplet",
+                FullyQualifiedNameTriplet.CODED_GRAPHIC_CHARACTER_SET_GLOBAL_IDENTIFIER,
+                (byte) data.read());
+        Assert.assertEquals("Part 1 of the 0xFFFF byte. Sets the character set to All",
+                -1, (byte) data.read());
+        Assert.assertEquals("Part 2 of the 0xFFFF byte. Sets the character set to All",
+                -1, (byte) data.read()); //the 0xFF byte is converted to -1
+        Assert.assertEquals("Part 1 of the default code page id",
+                BinaryUtils.convert(500, 2)[0], (byte) data.read());
+        Assert.assertEquals("Part 2 of the default code page id",
+                BinaryUtils.convert(500, 2)[1], (byte) data.read());
     }
 }
