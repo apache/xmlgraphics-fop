@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
 
+import org.apache.fop.render.pdf.PDFEventProducer;
 import org.apache.fop.util.LanguageTags;
 
 /**
@@ -287,6 +288,11 @@ public class PDFRoot extends PDFDictionary {
     }
 
     private void setLanguage(String lang) {
+        Object oldLang = get("Lang");
+        if (oldLang != null && !"x-unknown".equals(oldLang) && !lang.equals(oldLang)) {
+            PDFEventProducer eventProducer = PDFEventProducer.Provider.get(document.getFactory().getEventBroadcaster());
+            eventProducer.languageChanged(this, oldLang, lang);
+        }
         put("Lang", lang);
     }
 

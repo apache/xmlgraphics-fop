@@ -5,4 +5,5 @@
   <message key="incorrectEncryptionLength">Encryption length must be a multiple of 8 between 40 and 128. Setting encryption length to {correctedValue} instead of {originalValue}.</message>
   <message key="unknownLanguage">A piece of text or an image’s alternate text is missing language information [(See position {location})|(No context info available)]</message>
   <message key="unpairedSurrogate">A unicode char map was found to end with an unpaired surrogate.</message>
+  <message key="languageChanged">Input has xml:lang {oldLang} and {newLang}, PDF will only use {newLang}</message>
 </catalogue>

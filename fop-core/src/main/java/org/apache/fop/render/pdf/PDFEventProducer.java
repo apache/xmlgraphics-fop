@@ -90,4 +90,14 @@ public interface PDFEventProducer extends EventProducer {
      * @event.severity ERROR
      */
     void unpairedSurrogate(Object source);
+
+    /**
+     * The language was changed between pages
+     *
+     * @param source the event source
+     * @param oldLang current language
+     * @param newLang new language
+     * @event.severity WARN
+     */
+    void languageChanged(Object source, Object oldLang, String newLang);
 }

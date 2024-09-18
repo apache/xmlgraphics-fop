@@ -15,13 +15,22 @@
  * limitations under the License.
  */
 
-/* $Id: PDFFactoryTestCase.java 1823552 2018-02-08 12:26:33Z ssteiner $ */
-
+/* $Id$ */
 package org.apache.fop.pdf;
 
-import org.junit.Test;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
+import org.junit.Assert;
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.events.Event;
+import org.apache.fop.events.EventListener;
 
 public class PDFRootTestCase {
 
@@ -38,5 +47,23 @@ public class PDFRootTestCase {
 
         assertEquals(filename, fileSpec.getFilename());
         assertEquals(unicodeFilename, fileSpec.getUnicodeFilename());
+    }
+
+    @Test
+    public void testLanguage() {
+        PDFDocument document = new PDFDocument("");
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        final List<Event> events = new ArrayList<>();
+        ua.getEventBroadcaster().addEventListener(new EventListener() {
+            public void processEvent(Event event) {
+                events.add(event);
+            }
+        });
+        document.getFactory().setEventBroadcaster(ua.getEventBroadcaster());
+        PDFRoot root = new PDFRoot(document, new PDFPages(document));
+        root.setLanguage(Locale.US);
+        Assert.assertTrue(events.isEmpty());
+        root.setLanguage(Locale.UK);
+        assertEquals(events.get(0).getEventKey(), "languageChanged");
     }
 }
