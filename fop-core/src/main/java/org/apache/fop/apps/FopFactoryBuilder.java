@@ -360,6 +360,11 @@ public final class FopFactoryBuilder {
         return this;
     }
 
+    public FopFactoryBuilder setLegacyLastPageChangeIPD(boolean b) {
+        fopFactoryConfigBuilder.setLegacyLastPageChangeIPD(b);
+        return this;
+    }
+
     public static class FopFactoryConfigImpl implements FopFactoryConfig {
 
         private final EnvironmentProfile enviro;
@@ -407,6 +412,8 @@ public final class FopFactoryBuilder {
         private boolean skipPagePositionOnlyAllowed = true;
 
         private boolean legacySkipPagePositionOnly;
+
+        private boolean legacyLastPageChangeIPD;
 
         private static final class ImageContextImpl implements ImageContext {
 
@@ -540,6 +547,10 @@ public final class FopFactoryBuilder {
             return legacySkipPagePositionOnly;
         }
 
+        public boolean isLegacyLastPageChangeIPD() {
+            return legacyLastPageChangeIPD;
+        }
+
         public Map<String, String> getHyphenationPatternNames() {
             return hyphPatNames;
         }
@@ -593,6 +604,8 @@ public final class FopFactoryBuilder {
         void setSkipPagePositionOnlyAllowed(boolean b);
 
         void setLegacySkipPagePositionOnly(boolean b);
+
+        void setLegacyLastPageChangeIPD(boolean b);
     }
 
     private static final class CompletedFopFactoryConfigBuilder implements FopFactoryConfigBuilder {
@@ -690,6 +703,10 @@ public final class FopFactoryBuilder {
         }
 
         public void setLegacySkipPagePositionOnly(boolean b) {
+            throwIllegalStateException();
+        }
+
+        public void setLegacyLastPageChangeIPD(boolean b) {
             throwIllegalStateException();
         }
     }
@@ -791,6 +808,10 @@ public final class FopFactoryBuilder {
 
         public void setLegacySkipPagePositionOnly(boolean b) {
             config.legacySkipPagePositionOnly = b;
+        }
+
+        public void setLegacyLastPageChangeIPD(boolean b) {
+            config.legacyLastPageChangeIPD = b;
         }
     }
 

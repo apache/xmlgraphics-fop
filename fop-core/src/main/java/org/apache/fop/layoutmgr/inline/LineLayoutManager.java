@@ -108,7 +108,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * Each value holds the start and end indexes into a List of
      * inline break positions.
      */
-    static class LineBreakPosition extends LeafPosition {
+    public static class LineBreakPosition extends LeafPosition {
         private final int parIndex; // index of the Paragraph this Position refers to
         private final int startIndex; //index of the first element this Position refers to
         private final int availableShrink;

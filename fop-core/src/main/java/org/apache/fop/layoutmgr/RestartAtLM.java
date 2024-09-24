@@ -23,25 +23,29 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.apache.fop.events.EventBroadcaster;
-import org.apache.fop.layoutmgr.table.TableContentPosition;
+import org.apache.fop.layoutmgr.inline.LineLayoutManager;
 
 /**
  * Class to find the restart layoutmanager for changing IPD
  */
 class RestartAtLM {
     protected boolean invalidPosition;
+    private Position lineBreakPosition;
+    private int positionIndex;
 
     protected LayoutManager getRestartAtLM(AbstractBreaker breaker, PageBreakingAlgorithm alg,
                                            boolean ipdChangesOnNextPage, boolean onLastPageAndIPDChanges,
                                            boolean visitedBefore, AbstractBreaker.BlockSequence blockList, int start) {
+        lineBreakPosition = null;
         BreakingAlgorithm.KnuthNode optimalBreak = ipdChangesOnNextPage ? alg.getBestNodeBeforeIPDChange() : alg
                 .getBestNodeForLastPage();
         if (onLastPageAndIPDChanges && visitedBefore && breaker.originalRestartAtLM == null) {
             optimalBreak = null;
         }
-        int positionIndex = findPositionIndex(breaker, optimalBreak, alg, start);
-        if (breaker.positionAtBreak.getLM() instanceof BlockLayoutManager) {
-            positionIndex = findPositionIndex(breaker, optimalBreak, alg, 0);
+        findPositionIndex(breaker, optimalBreak, alg, start);
+        if (!breaker.getPageProvider().foUserAgent.isLegacyLastPageChangeIPD()
+                && breaker.positionAtBreak.getLM() instanceof BlockLayoutManager) {
+            findPositionIndexForBlockLayout(breaker, optimalBreak, alg);
         }
         if (ipdChangesOnNextPage || (breaker.positionAtBreak != null && breaker.positionAtBreak.getIndex() > -1)) {
             breaker.firstElementsForRestart = Collections.EMPTY_LIST;
@@ -116,23 +120,15 @@ class RestartAtLM {
         if (onLastPageAndIPDChanges && !visitedBefore && breaker.positionAtBreak.getPosition() != null) {
             restartAtLM = breaker.positionAtBreak.getPosition().getLM();
         }
-        findLeafPosition(breaker);
+        if (lineBreakPosition != null && restartAtLM instanceof BlockLayoutManager) {
+            breaker.positionAtBreak = lineBreakPosition;
+        }
         return restartAtLM;
     }
 
-    private void findLeafPosition(AbstractBreaker breaker) {
-        while (breaker.positionAtBreak instanceof NonLeafPosition) {
-            Position pos = breaker.positionAtBreak.getPosition();
-            if (pos instanceof TableContentPosition) {
-                break;
-            }
-            breaker.positionAtBreak = pos;
-        }
-    }
-
-    private int findPositionIndex(AbstractBreaker breaker, BreakingAlgorithm.KnuthNode optimalBreak,
+    private void findPositionIndex(AbstractBreaker breaker, BreakingAlgorithm.KnuthNode optimalBreak,
                                   PageBreakingAlgorithm alg, int start) {
-        int positionIndex = (optimalBreak != null) ? optimalBreak.position : start;
+        positionIndex = (optimalBreak != null) ? optimalBreak.position : start;
         for (int i = positionIndex; i < alg.par.size(); i++) {
             KnuthElement elementAtBreak = alg.getElement(i);
             if (elementAtBreak.getPosition() == null) {
@@ -142,9 +138,40 @@ class RestartAtLM {
             /* Retrieve the original position wrapped into this space position */
             breaker.positionAtBreak = breaker.positionAtBreak.getPosition();
             if (breaker.positionAtBreak != null) {
-                return i;
+                this.positionIndex = i;
+                return;
             }
         }
-        return positionIndex;
+    }
+
+    private void findPositionIndexForBlockLayout(AbstractBreaker breaker, BreakingAlgorithm.KnuthNode optimalBreak,
+                                  PageBreakingAlgorithm alg) {
+        int positionIndex = (optimalBreak != null) ? optimalBreak.position : 0;
+        for (int i = positionIndex; i < alg.par.size(); i++) {
+            KnuthElement elementAtBreak = alg.getElement(i);
+            if (elementAtBreak.getPosition() == null) {
+                elementAtBreak = alg.getElement(0);
+            }
+            Position positionAtBreak = elementAtBreak.getPosition();
+            /* Retrieve the original position wrapped into this space position */
+            positionAtBreak = positionAtBreak.getPosition();
+            if (positionAtBreak != null) {
+                findLineBreakPosition(positionAtBreak);
+                if (lineBreakPosition != null) {
+                    breaker.positionAtBreak = positionAtBreak;
+                    this.positionIndex = i;
+                }
+                break;
+            }
+        }
+    }
+
+    private void findLineBreakPosition(Position positionAtBreak) {
+        while (positionAtBreak instanceof NonLeafPosition) {
+            positionAtBreak = positionAtBreak.getPosition();
+            if (positionAtBreak instanceof LineLayoutManager.LineBreakPosition) {
+                lineBreakPosition = positionAtBreak;
+            }
+        }
     }
 }

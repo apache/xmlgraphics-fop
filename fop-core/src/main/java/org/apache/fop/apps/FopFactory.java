@@ -248,6 +248,10 @@ public final class FopFactory implements ImageContext {
         return config.isLegacySkipPagePositionOnly();
     }
 
+    boolean isLegacyLastPageChangeIPD() {
+        return config.isLegacyLastPageChangeIPD();
+    }
+
     /**
      * Returns a new {@link Fop} instance. FOP will be configured with a default user agent
      * instance. Use this factory method if your output type requires an output stream.

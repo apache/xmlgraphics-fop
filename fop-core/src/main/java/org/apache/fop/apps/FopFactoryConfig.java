@@ -171,6 +171,8 @@ public interface FopFactoryConfig {
 
     boolean isLegacySkipPagePositionOnly();
 
+    boolean isLegacyLastPageChangeIPD();
+
     /** @return the hyphenation pattern names */
     Map<String, String> getHyphenationPatternNames();
 
