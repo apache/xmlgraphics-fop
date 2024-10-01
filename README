@@ -107,6 +107,19 @@ under the ./fop sub-directory.
   RELEASE NOTES
 ==============================================================================
 
+Version 2.10
+============
+
+Major Changes in Version 2.10
+-----------------------------
+
+* Add option to sign PDF
+* Add image mask option for AFP
+* Allow change of resource level for SVG in AFP
+* Switch to Jakarta servlet API
+
+This release also contains a number of bug fixes.
+
 Version 2.9
 ===========
 
