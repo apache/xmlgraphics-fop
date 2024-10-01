@@ -152,6 +152,7 @@ public abstract class AbstractGraphics2DAdapter implements Graphics2DAdapter {
      * {@inheritDoc}
      * @deprecated
      */
+    @Deprecated
     public void paintImage(Graphics2DImagePainter painter,
             RendererContext context,
             int x, int y, int width, int height) throws IOException {

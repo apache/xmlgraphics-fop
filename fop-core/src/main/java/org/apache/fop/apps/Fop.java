@@ -86,6 +86,7 @@ public class Fop {
      * an instance of this object, it means they also have the {@link FOUserAgent} since this's
      * constructor is only used in {@link FOUserAgent}
      */
+    @Deprecated
     public FOUserAgent getUserAgent() {
         return foUserAgent;
     }

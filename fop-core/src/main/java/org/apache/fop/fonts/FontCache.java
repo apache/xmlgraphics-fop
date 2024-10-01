@@ -140,6 +140,7 @@ public final class FontCache implements Serializable {
      *         file exists or if it could not be read)
      * @deprecated use {@link #loadFrom(File)} instead
      */
+    @Deprecated
     public static FontCache load() {
         return loadFrom(getDefaultCacheFile(false));
     }
@@ -193,6 +194,7 @@ public final class FontCache implements Serializable {
      * @throws FOPException fop exception
      * @deprecated use {@link #saveTo(File)} instead
      */
+    @Deprecated
     public void save() throws FOPException {
         saveTo(getDefaultCacheFile(true));
     }
