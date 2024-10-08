@@ -17,17 +17,19 @@
 package org.apache.fop.render.ps;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.fontbox.cff.CFFCIDFont;
 import org.apache.fontbox.cff.CFFFont;
 import org.apache.fontbox.cff.CFFType1Font;
-import org.apache.fontbox.cff.DataOutput;
+import org.apache.fontbox.cff.Type1CharString;
 import org.apache.fontbox.cff.Type1FontUtil;
 
 /**
@@ -178,10 +180,10 @@ public final class Type1FontFormatter {
             byte[] type1Bytes;
             if (font instanceof CFFCIDFont) {
                 int cid = font.getCharset().getCIDForGID(gid);
-                type1Bytes = formatter.format(((CFFCIDFont)font).getType2CharString(cid).getType1Sequence());
+                type1Bytes = formatter.format(getType1Sequence(((CFFCIDFont)font).getType2CharString(cid)));
             } else {
                 mapping = font.getCharset().getNameForGID(gid);
-                type1Bytes = formatter.format(((CFFType1Font)font).getType1CharString(mapping).getType1Sequence());
+                type1Bytes = formatter.format(getType1Sequence(((CFFType1Font)font).getType1CharString(mapping)));
             }
             byte[] charstringBytes = Type1FontUtil.charstringEncrypt(type1Bytes, 4);
             output.print("/" + mapping + " " + charstringBytes.length + " RD ");
@@ -197,6 +199,16 @@ public final class Type1FontFormatter {
         output.println("noaccess put");
         output.println("dup /FontName get exch definefont pop");
         output.println("mark currentfile closefile");
+    }
+
+    private List<Object> getType1Sequence(Type1CharString type1CharString) {
+        try {
+            Field f = Type1CharString.class.getDeclaredField("type1Sequence");
+            f.setAccessible(true);
+            return (List<Object>) f.get(type1CharString);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static String formatArray(Object object, boolean executable) {

@@ -56,6 +56,7 @@
     <include name="fop/target/dependency/commons-io*"/>
     <include name="fop/target/dependency/commons-logging*"/>
     <include name="fop/target/dependency/fontbox*"/>
+    <include name="fop/target/dependency/pdfbox-io*"/>
     <include name="fop/target/dependency/serializer*"/>
     <include name="fop/target/dependency/xalan*"/>
     <include name="fop/target/dependency/xerces*"/>

@@ -59,6 +59,7 @@
             WEB-INF/lib/fop-*${project.version}.jar,
             WEB-INF/lib/xmlgraphics-commons-*.jar,
             WEB-INF/lib/fontbox-*.jar,
+            WEB-INF/lib/pdfbox-io-*.jar,
           </packagingIncludes>
           <archive>
             <addMavenDescriptor>false</addMavenDescriptor>

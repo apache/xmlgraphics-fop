@@ -25,8 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.fontbox.cff.CFFDataInput;
 import org.apache.fontbox.cff.CFFOperator;
+import org.apache.fontbox.cff.DataInputByteArray;
 
 import org.apache.fop.fonts.truetype.FontFileReader;
 import org.apache.fop.fonts.truetype.OTFFile;
@@ -35,7 +35,7 @@ import org.apache.fop.fonts.truetype.OTFFile;
  * A class to read the CFF data from an OTF CFF font file.
  */
 public class CFFDataReader {
-    private CFFDataInput cffData;
+    private DataInputByteArray cffData;
 
     private byte[] header;
     private CFFIndexData nameIndex;
@@ -137,14 +137,10 @@ public class CFFDataReader {
                     operator[0] = dictData[i];
                 }
                 String operatorName = "";
-                CFFOperator tempOp = null;
                 if (operator.length > 1) {
-                    tempOp = CFFOperator.getOperator(new CFFOperator.Key(operator[0], operator[1]));
+                    operatorName = CFFOperator.getOperator(operator[0], operator[1]);
                 } else {
-                    tempOp = CFFOperator.getOperator(new CFFOperator.Key(operator[0]));
-                }
-                if (tempOp != null) {
-                    operatorName = tempOp.getName();
+                    operatorName = CFFOperator.getOperator(operator[0]);
                 }
                 DICTEntry newEntry = new DICTEntry();
                 newEntry.setOperator(operator);
@@ -330,7 +326,7 @@ public class CFFDataReader {
      * @return Returns an object representing the index
      * @throws IOException Throws an IO Exception if an error occurs
      */
-    public CFFIndexData readIndex(CFFDataInput input) throws IOException {
+    public CFFIndexData readIndex(DataInputByteArray input) throws IOException {
         CFFIndexData nameIndex = new CFFIndexData();
         if (input != null) {
             int origPos = input.getPosition();
@@ -352,11 +348,11 @@ public class CFFDataReader {
             return 0;
         }
         cffData.setPosition(charsetOffset);
-        int charsetFormat = cffData.readCard8();
+        int charsetFormat = cffData.readUnsignedByte();
         switch (charsetFormat) {
         case 0: //Adjust for .notdef character
                  cffData.setPosition(cffData.getPosition() + (--gid * 2));
-                 return cffData.readSID();
+                 return cffData.readUnsignedShort();
         case 1: return getSIDFromGIDFormat(gid, 1);
         case 2: return getSIDFromGIDFormat(gid, 2);
         default: return 0;
@@ -367,8 +363,8 @@ public class CFFDataReader {
         int glyphCount = 0;
         while (true) {
             int oldGlyphCount = glyphCount;
-            int start = cffData.readSID();
-            glyphCount += ((format == 1) ? cffData.readCard8() : cffData.readCard16()) + 1;
+            int start = cffData.readUnsignedShort();
+            glyphCount += ((format == 1) ? cffData.readUnsignedByte() : cffData.readUnsignedShort()) + 1;
             if (gid <= glyphCount) {
                 return start + (gid - oldGlyphCount) - 1;
             }
@@ -407,7 +403,7 @@ public class CFFDataReader {
         return charStringIndex;
     }
 
-    public CFFDataInput getCFFData() {
+    public DataInputByteArray getCFFData() {
         return cffData;
     }
 
@@ -423,7 +419,7 @@ public class CFFDataReader {
         return fdFonts;
     }
 
-    public CFFDataInput getLocalSubrsForGlyph(int glyph) throws IOException {
+    public DataInputByteArray getLocalSubrsForGlyph(int glyph) throws IOException {
         //Subsets are currently written using a Format0 FDSelect
         FDSelect fontDictionary = getFDSelect();
         if (fontDictionary instanceof Format0FDSelect) {
@@ -432,7 +428,7 @@ public class CFFDataReader {
             FontDict font = getFDFonts().get(found);
             byte[] localSubrData = font.getLocalSubrData().getByteData();
             if (localSubrData != null) {
-                return new CFFDataInput(localSubrData);
+                return new DataInputByteArray(localSubrData);
             } else {
                 return null;
             }
@@ -448,7 +444,7 @@ public class CFFDataReader {
             FontDict font = getFDFonts().get(index);
             byte[] localSubrsData = font.getLocalSubrData().getByteData();
             if (localSubrsData != null) {
-                return new CFFDataInput(localSubrsData);
+                return new DataInputByteArray(localSubrsData);
             } else {
                 return null;
             }
@@ -473,8 +469,8 @@ public class CFFDataReader {
             int offset = topDict.get("Encoding").getOperands().get(0).intValue();
             if (offset != 0 && offset != 1) {
                 //No need to set the offset as we are reading the data sequentially.
-                int format = cffData.readCard8();
-                int numEntries = cffData.readCard8();
+                int format = cffData.readUnsignedByte();
+                int numEntries = cffData.readUnsignedByte();
                 switch (format) {
                 case 0:
                     foundEncoding = readFormat0Encoding(format, numEntries);
@@ -496,7 +492,7 @@ public class CFFDataReader {
         newEncoding.setNumEntries(numEntries);
         int[] codes = new int[numEntries];
         for (int i = 0; i < numEntries; i++) {
-            codes[i] = cffData.readCard8();
+            codes[i] = cffData.readUnsignedByte();
         }
         newEncoding.setCodes(codes);
         return newEncoding;
@@ -509,8 +505,8 @@ public class CFFDataReader {
         newEncoding.setNumEntries(numEntries);
         Map<Integer, Integer> ranges = new LinkedHashMap<Integer, Integer>();
         for (int i = 0; i < numEntries; i++) {
-            int first = cffData.readCard8();
-            int left = cffData.readCard8();
+            int first = cffData.readUnsignedByte();
+            int left = cffData.readUnsignedByte();
             ranges.put(first, left);
         }
         newEncoding.setRanges(ranges);
@@ -523,7 +519,7 @@ public class CFFDataReader {
         if (fdSelectEntry != null) {
             int fdOffset = fdSelectEntry.getOperands().get(0).intValue();
             cffData.setPosition(fdOffset);
-            int format = cffData.readCard8();
+            int format = cffData.readUnsignedByte();
             switch (format) {
             case 0:
                 fdSelect = readFormat0FDSelect();
@@ -543,7 +539,7 @@ public class CFFDataReader {
         int glyphCount = charStringIndex.getNumObjects();
         int[] fds = new int[glyphCount];
         for (int i = 0; i < glyphCount; i++) {
-            fds[i] = cffData.readCard8();
+            fds[i] = cffData.readUnsignedByte();
         }
         newFDs.setFDIndexes(fds);
         return newFDs;
@@ -552,16 +548,16 @@ public class CFFDataReader {
     private Format3FDSelect readFormat3FDSelect() throws IOException {
         Format3FDSelect newFDs = new Format3FDSelect();
         newFDs.setFormat(3);
-        int rangeCount = cffData.readCard16();
+        int rangeCount = cffData.readUnsignedShort();
         newFDs.setRangeCount(rangeCount);
         Map<Integer, Integer> ranges = new LinkedHashMap<Integer, Integer>();
         for (int i = 0; i < rangeCount; i++) {
-            int first = cffData.readCard16();
-            int fd = cffData.readCard8();
+            int first = cffData.readUnsignedShort();
+            int fd = cffData.readUnsignedByte();
             ranges.put(first, fd);
         }
         newFDs.setRanges(ranges);
-        newFDs.setSentinelGID(cffData.readCard16());
+        newFDs.setSentinelGID(cffData.readUnsignedShort());
         return newFDs;
     }
 
@@ -709,19 +705,19 @@ public class CFFDataReader {
          * @param cffData A byte array containing the CFF data
          * @throws IOException Throws an IO Exception if an error occurs
          */
-        public void parseIndexHeader(CFFDataInput cffData) throws IOException {
-            setNumObjects(cffData.readCard16());
-            setOffSize(cffData.readOffSize());
+        public void parseIndexHeader(DataInputByteArray cffData) throws IOException {
+            setNumObjects(cffData.readUnsignedShort());
+            setOffSize(cffData.readUnsignedByte());
             int[] offsets = new int[getNumObjects() + 1];
             byte[] bytes;
             //Fills the offsets array
             for (int i = 0; i <= getNumObjects(); i++) {
                 switch (getOffSize()) {
                 case 1:
-                    offsets[i] = cffData.readCard8();
+                    offsets[i] = cffData.readUnsignedByte();
                     break;
                 case 2:
-                    offsets[i] = cffData.readCard16();
+                    offsets[i] = cffData.readUnsignedShort();
                     break;
                 case 3:
                     bytes = cffData.readBytes(3);

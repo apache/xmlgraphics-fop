@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,6 +40,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fontbox.cff.CFFStandardString;
 import org.apache.fontbox.cff.CFFType1Font;
 import org.apache.fontbox.cff.CharStringCommand;
+import org.apache.fontbox.cff.Type1CharString;
 import org.apache.fontbox.cff.Type2CharString;
 
 import org.apache.fop.fonts.MultiByteFont;
@@ -110,7 +112,7 @@ public class OTFSubSetFile extends OTFSubSetWriter {
     /** The operator used to identify a global subroutine reference */
     private static final int GLOBAL_SUBROUTINE = 29;
 
-    private static final String ACCENT_CMD = "seac";
+    private static final String ACCENT_CMD = "SEAC|";
 
     /** The parser used to parse type2 charstring */
     private Type2Parser type2Parser;
@@ -153,10 +155,10 @@ public class OTFSubSetFile extends OTFSubSetWriter {
             for (int gid : subsetGlyphs.keySet()) {
                 Type2CharString type2CharString = cffType1Font.getType2CharString(gid);
                 List<Number> stack = new ArrayList<Number>();
-                for (Object obj : type2CharString.getType1Sequence()) {
+                List type1Sequence = getType1Sequence(type2CharString);
+                for (Object obj : type1Sequence) {
                     if (obj instanceof CharStringCommand) {
-                        String name = CharStringCommand.TYPE1_VOCABULARY.get(((CharStringCommand) obj).getKey());
-                        if (ACCENT_CMD.equals(name)) {
+                        if (ACCENT_CMD.equals(obj.toString())) {
                             int first = stack.get(3).intValue();
                             int second = stack.get(4).intValue();
                             mbFont.mapChar(AdobeStandardEncoding.getUnicodeFromCodePoint(first));
@@ -168,6 +170,16 @@ public class OTFSubSetFile extends OTFSubSetWriter {
                     }
                 }
             }
+        }
+    }
+
+    private List<Object> getType1Sequence(Type1CharString type1CharString) {
+        try {
+            Field f = Type1CharString.class.getDeclaredField("type1Sequence");
+            f.setAccessible(true);
+            return (List<Object>) f.get(type1CharString);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
         }
     }
 

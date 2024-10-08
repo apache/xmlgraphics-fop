@@ -19,8 +19,6 @@
 
 package org.apache.fop.render.pdf;
 
-
-
 import java.io.File;
 import java.io.IOException;
 
@@ -30,6 +28,7 @@ import org.xml.sax.SAXException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
@@ -167,7 +166,7 @@ public class PDFEncodingTestCase extends BasePDFTest {
 
     private static String extractTextFromPDF(byte[] pdfContent) throws IOException {
         PDFTextStripper pdfStripper = new PDFTextStripper();
-        PDDocument pdDoc =  PDDocument.load(pdfContent);
+        PDDocument pdDoc = Loader.loadPDF(pdfContent);
         return pdfStripper.getText(pdDoc);
     }
 }

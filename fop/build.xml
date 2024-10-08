@@ -578,6 +578,7 @@ list of possible build targets.
         <include name="commons-io*.jar"/>
         <include name="xmlgraphics*.jar"/>
         <include name="fontbox*.jar"/>
+        <include name="pdfbox-io*.jar"/>
       </lib>
       <lib dir="${build.dir}">
         <include name="fop.jar"/>
