@@ -46,6 +46,7 @@ import org.apache.fontbox.cff.CFFParser;
 import org.apache.fontbox.cff.CFFType1Font;
 import org.apache.fontbox.cff.CharStringCommand;
 import org.apache.fontbox.cff.Type2CharString;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.cff.CFFDataReader;
@@ -469,7 +470,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         }
         OTFSubSetFile otfSubSetFile = new OTFSubSetFile();
         otfSubSetFile.readFont(sourceSansReader, sb.toString(), null, glyphs);
-        new CFFParser().parse(otfSubSetFile.getFontSubset());
+        new CFFParser().parse(new RandomAccessReadBuffer(otfSubSetFile.getFontSubset()));
     }
 
     @Test
@@ -711,7 +712,8 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
         OTFSubSetFile sourceSansSubset = new OTFSubSetFile() {
             protected void initializeFont(FontFileReader in) {
                 fileFont = new CFFType1Font() {
-                    List<Object> sequence = Arrays.asList(0, 0, 0, (int)'a', (int)'b', new CharStringCommand(12, 6));
+                    List<Object> sequence = Arrays.asList(0, 0, 0, (int)'a', (int)'b',
+                            CharStringCommand.getInstance(12, 6));
                     public Type2CharString getType2CharString(int gid) {
                         return new Type2CharString(null, null, null, 0, sequence, 0, 0);
                     }

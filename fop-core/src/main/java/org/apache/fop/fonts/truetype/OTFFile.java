@@ -22,10 +22,11 @@ package org.apache.fop.fonts.truetype;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.fontbox.cff.CFFDataInput;
 import org.apache.fontbox.cff.CFFFont;
 import org.apache.fontbox.cff.CFFParser;
 import org.apache.fontbox.cff.CFFType1Font;
+import org.apache.fontbox.cff.DataInputByteArray;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 
 public class OTFFile extends OpenFont {
 
@@ -100,7 +101,7 @@ public class OTFFile extends OpenFont {
         fontFile = in;
         fontFile.seekSet(0);
         CFFParser parser = new CFFParser();
-        fileFont = parser.parse(in.getAllBytes()).get(0);
+        fileFont = parser.parse(new RandomAccessReadBuffer(in.getAllBytes())).get(0);
         embedFontName = fileFont.getName();
     }
 
@@ -122,7 +123,7 @@ public class OTFFile extends OpenFont {
      */
     public static byte[] getCFFData(FontFileReader fontFile) throws IOException {
         byte[] cff = fontFile.getAllBytes();
-        CFFDataInput input = new CFFDataInput(fontFile.getAllBytes());
+        DataInputByteArray input = new DataInputByteArray(fontFile.getAllBytes());
         input.readBytes(4); //OTTO
         short numTables = input.readShort();
         input.readShort(); //searchRange
@@ -143,8 +144,8 @@ public class OTFFile extends OpenFont {
         return cff;
     }
 
-    private static long readLong(CFFDataInput input) throws IOException {
-        return (input.readCard16() << 16) | input.readCard16();
+    private static long readLong(DataInputByteArray input) throws IOException {
+        return (input.readUnsignedShort() << 16) | input.readUnsignedShort();
     }
 
     public boolean isType1() {

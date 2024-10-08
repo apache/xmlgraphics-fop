@@ -28,8 +28,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.fontbox.cff.CFFDataInput;
-
 import org.apache.fop.fonts.cff.CFFDataReader.CFFIndexData;
 import org.apache.fop.fonts.cff.CFFDataReader.DICTEntry;
 import org.apache.fop.fonts.truetype.OTFSubSetFile;
@@ -145,7 +143,7 @@ public class CFFDataReaderTestCase {
             data[i] = (byte)randGen.nextInt(255);
         }
         testIndex = OTFSubSetFile.concatArray(testIndex, data);
-        CFFIndexData indexData = cffReader.readIndex(new CFFDataInput(testIndex));
+        CFFIndexData indexData = cffReader.readIndex(new FOPCFFDataInput(testIndex));
         assertEquals(indexData.getNumObjects(), 5);
         assertEquals(indexData.getOffSize(), 1);
         assertEquals(indexData.getOffsets().length, 6);
