@@ -266,7 +266,7 @@ public class FOPTestbed
                 File outfile = new File(outputDir, df.format(num) + fop.getTargetFileExtension());
                 OutputStream out;
                 if (writeToDevNull) {
-                    out = NullOutputStream.NULL_OUTPUT_STREAM;
+                    out = NullOutputStream.INSTANCE;
                 } else {
                     out = new java.io.FileOutputStream(outfile);
                     out = new java.io.BufferedOutputStream(out);

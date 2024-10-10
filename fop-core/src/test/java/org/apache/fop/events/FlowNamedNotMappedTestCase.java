@@ -64,7 +64,7 @@ public class FlowNamedNotMappedTestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         flowChecker = new FlowNameNotMappedEventChecker();
         userAgent.getEventBroadcaster().addEventListener(flowChecker);
-        fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, NullOutputStream.NULL_OUTPUT_STREAM);
+        fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, NullOutputStream.INSTANCE);
         Source src = new StreamSource(new FileInputStream("test/events/flowNameNotMapped.fo"));
         SAXResult res = new SAXResult(fop.getDefaultHandler());
         Transformer transformer = TransformerFactory.newInstance().newTransformer();

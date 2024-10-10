@@ -77,7 +77,7 @@ public final class MemoryEater {
         Transformer transformer = replicatorTemplates.newTransformer();
         transformer.setParameter("repeats", replicatorRepeats);
 
-        OutputStream out = NullOutputStream.NULL_OUTPUT_STREAM; //write to /dev/nul
+        OutputStream out = NullOutputStream.INSTANCE; //write to /dev/nul
         try {
             FOUserAgent userAgent = fopFactory.newFOUserAgent();
             Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);

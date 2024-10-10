@@ -79,7 +79,7 @@ public class MissingLanguageWarningTestCase {
         userAgent.setAccessibility(true);
         eventChecker = new MissingLanguageEventChecker();
         userAgent.getEventBroadcaster().addEventListener(eventChecker);
-        fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, NullOutputStream.NULL_OUTPUT_STREAM);
+        fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, NullOutputStream.INSTANCE);
     }
 
     @Test

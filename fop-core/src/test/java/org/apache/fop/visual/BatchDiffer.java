@@ -175,7 +175,7 @@ public class BatchDiffer {
                     manualFilter = manualFilter + '*';
                 }
                 filter = new AndFileFilter(
-                        new WildcardFileFilter(manualFilter), filter);
+                        WildcardFileFilter.builder().setWildcards(manualFilter).get(), filter);
             }
 
             int maxfiles = cfg.getChild("max-files").getValueAsInteger(-1);

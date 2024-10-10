@@ -79,7 +79,7 @@ public class EventProcessingTestCase {
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
         userAgent.getEventBroadcaster().addEventListener(eventChecker);
-        Fop fop = fopFactory.newFop(mimeType, userAgent, NullOutputStream.NULL_OUTPUT_STREAM);
+        Fop fop = fopFactory.newFop(mimeType, userAgent, NullOutputStream.INSTANCE);
         Transformer transformer = tFactory.newTransformer();
         Source src = new StreamSource(inStream);
         Result res = new SAXResult(fop.getDefaultHandler());

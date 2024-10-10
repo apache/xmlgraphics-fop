@@ -148,7 +148,7 @@ public class FontSelectorTestCase {
     @Test
     public void testFontCacheWithThreads() throws Exception {
         PrintStream old = System.err;
-        System.setErr(new NullPrintStream());
+        System.setErr(NullPrintStream.INSTANCE);
         ExecutorService executor = Executors.newFixedThreadPool(10);
         for (int i = 0; i < 100000; i++) {
             executor.submit(new FontTask());
