@@ -38,6 +38,7 @@ public enum AFPRendererOption implements RendererConfigOption {
     IMAGES_WRAP_PSEG("pseg", Boolean.class),
     JPEG_ALLOW_JPEG_EMBEDDING("allow-embedding", Boolean.class),
     JPEG_BITMAP_ENCODING_QUALITY("bitmap-encoding-quality", Float.class),
+    JPEG_USE_IOCA_IMAGES("use-ioca-images", Boolean.class),
     RENDERER_RESOLUTION("renderer-resolution", Integer.class),
     RESOURCE_GROUP_URI("resource-group-file", URI.class),
     SHADING("shading", AFPShadingMode.class),

@@ -301,6 +301,8 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                 }
             }
 
+            imageObjectInfo.setUseIocaImages(paintingState.isUseIocaImages());
+
             //TODO To reduce AFP file size, investigate using a compression scheme.
             //Currently, all image data is uncompressed.
             ColorModel cm = renderedImage.getColorModel();
@@ -357,6 +359,10 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                                     paintingState.getResolution(),
                                     baos);
                             imageObjectInfo.setCompression(ImageContent.COMPID_JPEG);
+
+                            if (!paintingState.isUseIocaImages()) {
+                                imageObjectInfo.setMimeType("image/jpeg");
+                            }
                         } catch (IOException ioe) {
                             //Some JPEG codecs cannot encode CMYK
                             helper.encode(baos);
@@ -380,7 +386,10 @@ public class AFPImageHandlerRenderedImage extends AFPImageHandler implements Ima
                     (functionSet.equals(FunctionSet.FS11) || functionSet.equals(FunctionSet.FS45))
                     && paintingState.getWrapPSeg()
             );
-            imageObjectInfo.setMimeType(functionSet.getMimeType());
+            if (imageObjectInfo.getMimeType() == null) {
+                imageObjectInfo.setMimeType(functionSet.getMimeType());
+            }
+
             imageObjectInfo.setData(imageData);
             return imageObjectInfo;
         }

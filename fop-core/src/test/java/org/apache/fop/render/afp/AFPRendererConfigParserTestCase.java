@@ -26,8 +26,10 @@ import java.util.Map;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.afp.AFPConstants;
 import org.apache.fop.apps.AFPRendererConfBuilder;
@@ -168,6 +170,14 @@ public class AFPRendererConfigParserTestCase
         assertEquals(1.0f, conf.getBitmapEncodingQuality(), 0.001f);
         parseConfig(createRenderer().startImages().setBitmapEncodingQuality(0.5f).endImages());
         assertEquals(0.5f, conf.getBitmapEncodingQuality(), 0.001f);
+    }
+
+    @Test
+    public void testUseIocaImages() throws Exception {
+        parseConfig();
+        assertTrue(conf.isUseIocaImages());
+        parseConfig(createRenderer().startImages().setUseIocaImages(false).endImages());
+        assertFalse(conf.isUseIocaImages());
     }
 
     @Test

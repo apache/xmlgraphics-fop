@@ -57,6 +57,8 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     /** image encoding quality setting (0.0f..1.0f) */
     private float bitmapEncodingQuality;
 
+    private boolean useIocaImages = true;
+
     /** color image handler */
     private transient ColorConverter colorConverter;
 
@@ -327,6 +329,24 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
         quality = Math.max(quality, 0.0f);
         quality = Math.min(quality, 1.0f);
         this.bitmapEncodingQuality = quality;
+    }
+
+    /**
+     * Gets the ioca image setting
+     *
+     * @return true by default
+     */
+    public boolean isUseIocaImages() {
+        return this.useIocaImages;
+    }
+
+    /**
+     * Sets the tag that decides if we use ioca images or object containers
+     *
+     * @param useIocaImages true by default
+     */
+    public void setUseIocaImages(boolean useIocaImages) {
+        this.useIocaImages = useIocaImages;
     }
 
     /**

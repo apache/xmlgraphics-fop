@@ -43,6 +43,7 @@ import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_NATIVE;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_WRAP_PSEG;
 import static org.apache.fop.render.afp.AFPRendererOption.JPEG_ALLOW_JPEG_EMBEDDING;
 import static org.apache.fop.render.afp.AFPRendererOption.JPEG_BITMAP_ENCODING_QUALITY;
+import static org.apache.fop.render.afp.AFPRendererOption.JPEG_USE_IOCA_IMAGES;
 import static org.apache.fop.render.afp.AFPRendererOption.LINE_WIDTH_CORRECTION;
 import static org.apache.fop.render.afp.AFPRendererOption.RENDERER_RESOLUTION;
 import static org.apache.fop.render.afp.AFPRendererOption.RESOURCE_GROUP_URI;
@@ -137,6 +138,11 @@ public final class AFPRendererConfBuilder extends RendererConfBuilder {
 
         public ImagesBuilder setBitmapEncodingQuality(float value) {
             getJpeg().setAttribute(JPEG_BITMAP_ENCODING_QUALITY.getName(), String.valueOf(value));
+            return this;
+        }
+
+        public ImagesBuilder setUseIocaImages(boolean useIocaImages) {
+            getJpeg().setAttribute(JPEG_USE_IOCA_IMAGES.getName(), String.valueOf(useIocaImages));
             return this;
         }
 

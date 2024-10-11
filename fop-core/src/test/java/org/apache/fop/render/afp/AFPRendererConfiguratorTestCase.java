@@ -212,6 +212,14 @@ public class AFPRendererConfiguratorTestCase extends
     }
 
     @Test
+    public void testUseIocaImages() throws Exception {
+        parseConfig(createBuilder().startImages()
+                .setUseIocaImages(false)
+                .endImages());
+        verify(getDocHandler()).setUseIocaImages(false);
+    }
+
+    @Test
     public void testCanEmbedJpeg() throws Exception {
         parseConfig(createBuilder().startImages()
                                        .setAllowJpegEmbedding(true)

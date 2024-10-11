@@ -172,7 +172,7 @@ public class AFPResourceManager {
         Registry.ObjectType objectType = null;
 
         // new resource so create
-        if (dataObjectInfo instanceof AFPImageObjectInfo) {
+        if (dataObjectInfo.isUseIocaImages() && dataObjectInfo instanceof AFPImageObjectInfo) {
             AFPImageObjectInfo imageObjectInfo = (AFPImageObjectInfo)dataObjectInfo;
             namedObj = dataObjectFactory.createImage(imageObjectInfo);
         } else if (dataObjectInfo instanceof AFPGraphicsObjectInfo) {

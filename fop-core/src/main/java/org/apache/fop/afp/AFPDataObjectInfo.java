@@ -59,6 +59,11 @@ public class AFPDataObjectInfo {
     /** controls the mapping of the image data into the image area */
     private byte mappingOption = MappingOptionTriplet.SCALE_TO_FILL;
 
+    /**
+     * decides wether we use ioca images or object containers
+     */
+    private boolean useIocaImages = true;
+
     public static final byte DEFAULT_MAPPING_OPTION = 0x00;
 
     /**
@@ -280,6 +285,14 @@ public class AFPDataObjectInfo {
      */
     public byte getMappingOption() {
         return mappingOption;
+    }
+
+    public void setUseIocaImages(boolean useIocaImages) {
+        this.useIocaImages = useIocaImages;
+    }
+
+    public boolean isUseIocaImages() {
+        return useIocaImages;
     }
 
     /** {@inheritDoc} */

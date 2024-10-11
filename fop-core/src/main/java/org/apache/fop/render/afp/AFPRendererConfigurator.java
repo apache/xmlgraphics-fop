@@ -108,6 +108,9 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
         if (config.getBitmapEncodingQuality() != null) {
             documentHandler.setBitmapEncodingQuality(config.getBitmapEncodingQuality());
         }
+        if (config.isUseIocaImages() != null) {
+            documentHandler.setUseIocaImages(config.isUseIocaImages());
+        }
         if (config.getLineWidthCorrection() != null) {
             documentHandler.setLineWidthCorrection(config.getLineWidthCorrection());
         }

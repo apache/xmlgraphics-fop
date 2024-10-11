@@ -199,7 +199,7 @@ public class AFPDataObjectFactory {
     public IncludeObject createInclude(String includeName, AFPDataObjectInfo dataObjectInfo) {
         IncludeObject includeObj = factory.createInclude(includeName);
 
-        if (dataObjectInfo instanceof AFPImageObjectInfo) {
+        if (dataObjectInfo.isUseIocaImages() && dataObjectInfo instanceof AFPImageObjectInfo) {
             // IOCA image object
             includeObj.setObjectType(IncludeObject.TYPE_IMAGE);
         } else if (dataObjectInfo instanceof AFPGraphicsObjectInfo) {

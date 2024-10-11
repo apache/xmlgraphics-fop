@@ -491,6 +491,13 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         this.paintingState.setBitmapEncodingQuality(quality);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public void setUseIocaImages(boolean useIocaImages) {
+        this.paintingState.setUseIocaImages(useIocaImages);
+    }
+
     /** {@inheritDoc} */
     public void setShadingMode(AFPShadingMode shadingMode) {
         this.shadingMode = shadingMode;

@@ -60,6 +60,7 @@ import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_NATIVE;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_WRAP_PSEG;
 import static org.apache.fop.render.afp.AFPRendererOption.JPEG_ALLOW_JPEG_EMBEDDING;
 import static org.apache.fop.render.afp.AFPRendererOption.JPEG_BITMAP_ENCODING_QUALITY;
+import static org.apache.fop.render.afp.AFPRendererOption.JPEG_USE_IOCA_IMAGES;
 import static org.apache.fop.render.afp.AFPRendererOption.LINE_WIDTH_CORRECTION;
 import static org.apache.fop.render.afp.AFPRendererOption.RENDERER_RESOLUTION;
 import static org.apache.fop.render.afp.AFPRendererOption.RESOURCE_GROUP_URI;
@@ -186,6 +187,10 @@ public final class AFPRendererConfig implements RendererConfig {
 
     public Float getBitmapEncodingQuality() {
         return getParam(JPEG_BITMAP_ENCODING_QUALITY, Float.class);
+    }
+
+    public Boolean isUseIocaImages() {
+        return getParam(JPEG_USE_IOCA_IMAGES, Boolean.class);
     }
 
     public Float getLineWidthCorrection() {
@@ -338,10 +343,12 @@ public final class AFPRendererConfig implements RendererConfig {
             Configuration jpegConfig = imagesCfg.getChild(IMAGES_JPEG.getName());
             float bitmapEncodingQuality = 1.0f;
             boolean allowJpegEmbedding = false;
+            boolean useIocaImages = true;
             if (jpegConfig != null) {
                 allowJpegEmbedding = jpegConfig.getAttributeAsBoolean(
                         JPEG_ALLOW_JPEG_EMBEDDING.getName(),
                         false);
+                useIocaImages = jpegConfig.getAttributeAsBoolean(JPEG_USE_IOCA_IMAGES.getName(), true);
                 String bitmapEncodingQualityStr = jpegConfig.getAttribute(
                         JPEG_BITMAP_ENCODING_QUALITY.getName(), null);
                 if (bitmapEncodingQualityStr != null) {
@@ -354,6 +361,7 @@ public final class AFPRendererConfig implements RendererConfig {
             }
             setParam(JPEG_BITMAP_ENCODING_QUALITY, bitmapEncodingQuality);
             setParam(JPEG_ALLOW_JPEG_EMBEDDING, allowJpegEmbedding);
+            setParam(JPEG_USE_IOCA_IMAGES, useIocaImages);
         }
 
         private void createResourceGroupFile() throws FOPException {
