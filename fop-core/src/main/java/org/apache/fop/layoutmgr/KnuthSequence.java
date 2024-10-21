@@ -134,20 +134,20 @@ public abstract class KnuthSequence<T extends ListElement> extends ArrayList<T> 
     /**
      * @return the last element of this sequence.
      */
-    public ListElement getLast() {
+    public T getLast() {
         return (isEmpty()
                 ? null
-                : (ListElement) ListUtil.getLast(this));
+                : ListUtil.getLast(this));
     }
 
     /**
      * Remove the last element of this sequence.
      * @return the removed element.
      */
-    public ListElement removeLast() {
+    public T removeLast() {
         return (isEmpty()
                 ? null
-                : (ListElement) ListUtil.removeLast(this));
+                : ListUtil.removeLast(this));
     }
 
     /**
