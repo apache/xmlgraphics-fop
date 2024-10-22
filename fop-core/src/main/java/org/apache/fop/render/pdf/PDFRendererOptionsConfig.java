@@ -38,6 +38,7 @@ import static org.apache.fop.render.pdf.PDFRendererOption.FORM_XOBJECT;
 import static org.apache.fop.render.pdf.PDFRendererOption.LINEARIZATION;
 import static org.apache.fop.render.pdf.PDFRendererOption.MERGE_FONTS;
 import static org.apache.fop.render.pdf.PDFRendererOption.MERGE_FORM_FIELDS;
+import static org.apache.fop.render.pdf.PDFRendererOption.OBJECT_STREAMS;
 import static org.apache.fop.render.pdf.PDFRendererOption.OUTPUT_PROFILE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_A_MODE;
 import static org.apache.fop.render.pdf.PDFRendererOption.PDF_UA_MODE;
@@ -156,5 +157,9 @@ public final class PDFRendererOptionsConfig {
 
     public Boolean getFormXObjectEnabled() {
         return (Boolean)properties.get(FORM_XOBJECT);
+    }
+
+    public Boolean getObjectStreamsEnabled() {
+        return (Boolean)properties.get(OBJECT_STREAMS);
     }
 }

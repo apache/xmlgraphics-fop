@@ -120,7 +120,7 @@ public class PDFSignature {
                 startOfDocMDP = countingOutputStream.getByteCount();
                 return super.output(stream);
             }
-            throw new IOException("Disable pdf linearization");
+            throw new IOException("Disable pdf linearization and use-object-streams");
         }
     }
 

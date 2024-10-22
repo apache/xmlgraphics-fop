@@ -120,5 +120,8 @@ public class PDFNumber extends PDFObject {
         return sb.toString();
     }
 
+    public boolean supportsObjectStream() {
+        return false;
+    }
 }
 

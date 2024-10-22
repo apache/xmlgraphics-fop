@@ -35,8 +35,7 @@ import org.apache.fop.util.LanguageTags;
 /**
  * Class representing a PDF Structure Element.
  */
-public class PDFStructElem extends StructureHierarchyMember
-        implements StructureTreeElement, CompressedObject, Serializable {
+public class PDFStructElem extends StructureHierarchyMember implements StructureTreeElement, Serializable {
     private static final List<StructureType> BLSE = Arrays.asList(StandardStructureTypes.Table.TABLE,
             StandardStructureTypes.List.L, StandardStructureTypes.Paragraphlike.P);
 

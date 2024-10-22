@@ -173,6 +173,8 @@ public class PDFDocument {
 
     private FileIDGenerator fileIDGenerator;
 
+    private ObjectStreamManager objectStreamManager;
+
     private boolean accessibilityEnabled;
 
     private boolean mergeFontsEnabled;
@@ -184,6 +186,8 @@ public class PDFDocument {
     private boolean formXObjectEnabled;
 
     protected boolean outputStarted;
+
+    private boolean objectStreamsEnabled;
 
     /**
      * Creates an empty PDF document.
@@ -1027,15 +1031,36 @@ public class PDFDocument {
         //Write out objects until the list is empty. This approach (used with a
         //LinkedList) allows for output() methods to create and register objects
         //on the fly even during serialization.
-        while (this.objects.size() > 0) {
-            PDFObject object = this.objects.remove(0);
+
+        if (objectStreamsEnabled) {
+            List<PDFObject> indirectObjects = new ArrayList<>();
+            while (objects.size() > 0) {
+                PDFObject object = objects.remove(0);
+                if (object.supportsObjectStream()) {
+                    addToObjectStream(object);
+                } else {
+                    indirectObjects.add(object);
+                }
+            }
+            objects.addAll(indirectObjects);
+        }
+
+        while (objects.size() > 0) {
+            PDFObject object = objects.remove(0);
             streamIndirectObject(object, stream);
         }
     }
 
+    private void addToObjectStream(CompressedObject object) {
+        if (objectStreamManager == null) {
+            objectStreamManager = new ObjectStreamManager(this);
+        }
+        objectStreamManager.add(object);
+    }
+
     protected void writeTrailer(OutputStream stream, int first, int last, int size, long mainOffset, long startxref)
             throws IOException {
-        TrailerOutputHelper trailerOutputHelper = mayCompressStructureTreeElements()
+        TrailerOutputHelper trailerOutputHelper = useObjectStreams()
                 ? new CompressedTrailerOutputHelper()
                 : new UncompressedTrailerOutputHelper();
         if (structureTreeElements != null) {
@@ -1148,7 +1173,7 @@ public class PDFDocument {
     }
 
     private void outputTrailerObjectsAndXref(OutputStream stream) throws IOException {
-        TrailerOutputHelper trailerOutputHelper = mayCompressStructureTreeElements()
+        TrailerOutputHelper trailerOutputHelper = useObjectStreams()
                 ? new CompressedTrailerOutputHelper()
                 : new UncompressedTrailerOutputHelper();
         if (structureTreeElements != null) {
@@ -1170,10 +1195,15 @@ public class PDFDocument {
         stream.write(encode(trailer));
     }
 
-    private boolean mayCompressStructureTreeElements() {
-        return accessibilityEnabled
-                && versionController.getPDFVersion().compareTo(Version.V1_5) >= 0
-                && !isLinearizationEnabled();
+    private boolean useObjectStreams() {
+        if (objectStreamsEnabled && linearizationEnabled) {
+            throw new UnsupportedOperationException("Linearization and use-object-streams can't be both enabled");
+        }
+        if (objectStreamsEnabled && isEncryptionActive()) {
+            throw new UnsupportedOperationException("Encryption and use-object-streams can't be both enabled");
+        }
+        return objectStreamsEnabled || (accessibilityEnabled
+                && versionController.getPDFVersion().compareTo(Version.V1_5) >= 0 && !isLinearizationEnabled());
     }
 
     private TrailerDictionary createTrailerDictionary(boolean addRoot) {
@@ -1236,15 +1266,13 @@ public class PDFDocument {
     }
 
     private class CompressedTrailerOutputHelper implements TrailerOutputHelper {
-
-        private ObjectStreamManager structureTreeObjectStreams;
-
-        public void outputStructureTreeElements(OutputStream stream)
-                throws IOException {
+        public void outputStructureTreeElements(OutputStream stream) {
             assert structureTreeElements.size() > 0;
-            structureTreeObjectStreams = new ObjectStreamManager(PDFDocument.this);
+            if (objectStreamManager == null) {
+                objectStreamManager = new ObjectStreamManager(PDFDocument.this);
+            }
             for (PDFStructElem structElem : structureTreeElements) {
-                structureTreeObjectStreams.add(structElem);
+                objectStreamManager.add(structElem);
             }
         }
 
@@ -1252,9 +1280,8 @@ public class PDFDocument {
                 TrailerDictionary trailerDictionary, int first, int last, int size) throws IOException {
             // Outputting the object streams should not have created new indirect objects
             assert objects.isEmpty();
-            new CrossReferenceStream(PDFDocument.this, ++objectcount, trailerDictionary, position,
-                    indirectObjectOffsets,
-                    structureTreeObjectStreams.getCompressedObjectReferences())
+            new CrossReferenceStream(PDFDocument.this, trailerDictionary, position,
+                    indirectObjectOffsets, objectStreamManager.getCompressedObjectReferences())
                     .output(stream);
             return position;
         }
@@ -1289,5 +1316,13 @@ public class PDFDocument {
 
     public void setFormXObjectEnabled(boolean b) {
         formXObjectEnabled = b;
+    }
+
+    public void setObjectStreamsEnabled(boolean b) {
+        objectStreamsEnabled = b;
+    }
+
+    public int getObjectCount() {
+        return objectcount;
     }
 }

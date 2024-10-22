@@ -635,6 +635,7 @@ class PDFRenderingUtil {
         pdfDoc.setMergeFormFieldsEnabled(rendererConfig.getMergeFormFieldsEnabled());
         pdfDoc.setLinearizationEnabled(rendererConfig.getLinearizationEnabled());
         pdfDoc.setFormXObjectEnabled(rendererConfig.getFormXObjectEnabled());
+        pdfDoc.setObjectStreamsEnabled(rendererConfig.getObjectStreamsEnabled());
 
         return this.pdfDoc;
     }

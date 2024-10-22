@@ -47,7 +47,13 @@ public class CrossReferenceStream extends CrossReferenceObject {
 
     private final List<ObjectReference> objectReferences;
 
-    public CrossReferenceStream(PDFDocument document,
+    public CrossReferenceStream(PDFDocument document, TrailerDictionary trailerDictionary, long startxref,
+            List<Long> uncompressedObjectReferences, List<CompressedObjectReference> compressedObjectReferences) {
+        this(document, document.getObjectCount() + 1, trailerDictionary, startxref,
+                uncompressedObjectReferences, compressedObjectReferences);
+    }
+
+    protected CrossReferenceStream(PDFDocument document,
             int objectNumber,
             TrailerDictionary trailerDictionary,
             long startxref,
@@ -56,7 +62,7 @@ public class CrossReferenceStream extends CrossReferenceObject {
         super(trailerDictionary, startxref);
         this.document = document;
         this.objectNumber = objectNumber;
-        this.objectReferences = new ArrayList<ObjectReference>(uncompressedObjectReferences.size());
+        this.objectReferences = new ArrayList<>(uncompressedObjectReferences.size());
         for (Long offset : uncompressedObjectReferences) {
             objectReferences.add(offset == null ? null : new UncompressedObjectReference(offset));
         }

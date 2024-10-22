@@ -298,4 +298,8 @@ public abstract class AbstractPDFStream extends PDFObject {
             getDocument().registerObject(refLength);
         }
     }
+
+    public boolean supportsObjectStream() {
+        return false;
+    }
 }

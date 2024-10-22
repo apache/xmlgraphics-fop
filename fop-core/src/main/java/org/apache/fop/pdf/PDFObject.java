@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  * Object has a number and a generation (although the generation will always
  * be 0 in new documents).
  */
-public abstract class PDFObject implements PDFWritable {
+public abstract class PDFObject implements PDFWritable, CompressedObject {
 
     /** logger for all PDFObjects (and descendants) */
     protected static final Log log = LogFactory.getLog(PDFObject.class.getName());
@@ -357,5 +357,9 @@ public abstract class PDFObject implements PDFWritable {
     }
 
     public void getChildren(Set<PDFObject> children) {
+    }
+
+    public boolean supportsObjectStream() {
+        return true;
     }
 }
