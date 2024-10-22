@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk: ['8', '11', '17', '21']
+        jdk: ['8', '11', '17', '21', '23']
         os: [ubuntu-latest, windows-latest]
 
     steps:
@@ -30,26 +30,6 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package checkstyle:check spotbugs:check --file pom.xml
-      
-  build_nospotbugs:
-    name: Test with Java ${{ matrix.jdk }} ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        jdk: ['23']
-        os: [ubuntu-latest, windows-latest]
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK ${{ matrix.jdk }}
-      uses: actions/setup-java@v3
-      with:
-        java-version: ${{ matrix.jdk }}
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      run: mvn -B package checkstyle:check --file pom.xml      
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     #- name: Update dependency graph
