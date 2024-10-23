@@ -395,6 +395,9 @@ public class PDFDocument {
      */
     public void registerStructureElement(PDFStructElem structElem) {
         structureTreeElements.add(structElem);
+        if (linearizationEnabled) {
+            structElem.setObjectNumber(this);
+        }
     }
 
     /**

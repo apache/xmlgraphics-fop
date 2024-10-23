@@ -31,13 +31,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.pdf.PDFContentGenerator;
@@ -66,7 +74,37 @@ public class PDFLinearizationTestCase {
         }
         gen.flushPDFDoc();
         byte[] data = out.toByteArray();
-        checkPDF(data);
+        checkPDF(data, 5, 6);
+    }
+
+    @Test
+    public void testAccessibility() throws Exception {
+        String fopxconf = "<fop version=\"1.0\">"
+                + "<accessibility>true</accessibility>"
+                + "<renderers><renderer mime=\"application/pdf\">"
+                + "<linearization>true</linearization>"
+                + "</renderer></renderers></fop>";
+        String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">\n"
+                + "  <fo:layout-master-set>\n"
+                + "    <fo:simple-page-master master-name=\"simple\">\n"
+                + "      <fo:region-body/>\n"
+                + "    </fo:simple-page-master>\n"
+                + "  </fo:layout-master-set>\n"
+                + "  <fo:page-sequence master-reference=\"simple\">\n"
+                + "    <fo:flow flow-name=\"xsl-region-body\">\n"
+                + "      <fo:block>aaa<fo:block break-before=\"page\"/></fo:block>\n"
+                + "    </fo:flow>\n"
+                + "  </fo:page-sequence>\n"
+                + "</fo:root>\n";
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI(),
+                new ByteArrayInputStream(fopxconf.getBytes()));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, fopFactory.newFOUserAgent(), out);
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Source src = new StreamSource(new ByteArrayInputStream(fo.getBytes()));
+        Result res = new SAXResult(fop.getDefaultHandler());
+        transformer.transform(src, res);
+        checkPDF(out.toByteArray(), 6, 18);
     }
 
     @Test
@@ -94,7 +132,7 @@ public class PDFLinearizationTestCase {
         Assert.assertTrue(out.toString().contains("/Subtype /Image"));
     }
 
-    private void checkPDF(byte[] data) throws IOException {
+    private void checkPDF(byte[] data, int pagesObjNumber, int trailerCount) throws IOException {
         checkHintTable(data);
         InputStream is = new ByteArrayInputStream(data);
         Map<String, StringBuilder> objs = readObjs(is);
@@ -120,13 +158,13 @@ public class PDFLinearizationTestCase {
         Assert.assertTrue(firstObj.endsWith("startxref0%%EOF"));
         int pageObjNumber = getValue("/O", firstObj);
         Assert.assertTrue(objs.get(pageObjNumber + " 0 obj").toString().contains("/Type /Page"));
-        Assert.assertTrue(objs.get("5 0 obj").toString().contains("/Type /Pages"));
+        Assert.assertTrue(objs.get(pagesObjNumber + " 0 obj").toString().contains("/Type /Pages"));
 
         int total = 0;
         for (int i : objects) {
             total += i;
         }
-        Assert.assertEquals(total, objs.size() - 6);
+        Assert.assertEquals(total, objs.size() - trailerCount);
     }
 
     private void checkFirstObj(byte[] data) throws IOException {
