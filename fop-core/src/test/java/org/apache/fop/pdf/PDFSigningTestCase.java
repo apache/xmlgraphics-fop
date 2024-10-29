@@ -41,9 +41,28 @@ import org.apache.fop.fo.pagination.LayoutMasterSetTestCase;
 
 public class PDFSigningTestCase {
     @Test
-    public void textFO() throws Exception {
+    public void testFO() throws Exception {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        foToOutput(out, MimeConstants.MIME_PDF);
+        foToOutput(out, false);
+        String endStr = checkOutput(out);
+        Assert.assertTrue(endStr.contains("/FT /Sig\n"
+                + "  /Type /Annot\n"
+                + "  /Subtype /Widget\n"
+                + "  /F 132\n"
+                + "  /T (Signature1)\n"
+                + "  /TU (Signature1)\n"
+                + "  /Rect [0 0 0 0]"));
+    }
+
+    @Test
+    public void testWithObjectStreams() throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        foToOutput(out, true);
+        String endStr = checkOutput(out);
+        Assert.assertFalse(endStr.contains("/Subtype /Widget"));
+    }
+
+    private String checkOutput(ByteArrayOutputStream out) throws Exception {
         StringTokenizer byteRange = new StringTokenizer(out.toString().split("/ByteRange ")[1]);
         byteRange.nextToken();
         int startOfContents = Integer.parseInt(byteRange.nextToken());
@@ -62,31 +81,28 @@ public class PDFSigningTestCase {
         String endStr = new String(end);
         Assert.assertTrue(endStr.contains(
                 "/ByteRange [0 " + startOfContents + " " + endOfContents + " " + sizeOfEnd + "]"));
-        Assert.assertTrue(endStr.contains("/FT /Sig\n"
-                + "  /Type /Annot\n"
-                + "  /Subtype /Widget\n"
-                + "  /F 132\n"
-                + "  /T (Signature1)\n"
-                + "  /TU (Signature1)\n"
-                + "  /Rect [0 0 0 0]"));
+        return endStr;
     }
 
-    private void foToOutput(ByteArrayOutputStream out, String mimeFopIf) throws Exception {
-        FopFactory fopFactory = getFopFactory();
+    private void foToOutput(ByteArrayOutputStream out, boolean objectStreams) throws Exception {
+        FopFactory fopFactory = getFopFactory(objectStreams);
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        Fop fop = fopFactory.newFop(mimeFopIf, userAgent, out);
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         Source src = new StreamSource(LayoutMasterSetTestCase.class.getResourceAsStream("side-regions.fo"));
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
     }
 
-    private FopFactory getFopFactory() throws Exception {
+    private FopFactory getFopFactory(boolean objectStreams) throws Exception {
         String pkcs = PDFSigningTestCase.class.getResource("keystore.pkcs12").toString();
         String fopxconf = "<fop version=\"1.0\">\n"
                 + "  <renderers>\n"
-                + "    <renderer mime=\"application/pdf\">\n"
-                + "    <sign-params>\n"
+                + "    <renderer mime=\"application/pdf\">\n";
+        if (objectStreams) {
+            fopxconf += "<use-object-streams>true</use-object-streams>";
+        }
+        fopxconf += "    <sign-params>\n"
                 + "      <keystore>" + pkcs + "</keystore>\n"
                 + "    </sign-params>\n"
                 + "    </renderer>\n"

@@ -837,4 +837,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         return pdfVersion;
     }
 
+    public boolean supportsObjectStream() {
+        return false;
+    }
 }

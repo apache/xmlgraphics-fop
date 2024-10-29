@@ -348,4 +348,8 @@ public class PDFRoot extends PDFDictionary {
         af.add(fileSpec);
         fileSpec.put("AFRelationship", new PDFName("Data"));
     }
+
+    public boolean supportsObjectStream() {
+        return !getDocument().isEncryptionActive();
+    }
 }

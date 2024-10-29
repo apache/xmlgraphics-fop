@@ -1202,9 +1202,6 @@ public class PDFDocument {
         if (objectStreamsEnabled && linearizationEnabled) {
             throw new UnsupportedOperationException("Linearization and use-object-streams can't be both enabled");
         }
-        if (objectStreamsEnabled && isEncryptionActive()) {
-            throw new UnsupportedOperationException("Encryption and use-object-streams can't be both enabled");
-        }
         return objectStreamsEnabled || (accessibilityEnabled
                 && versionController.getPDFVersion().compareTo(Version.V1_5) >= 0 && !isLinearizationEnabled());
     }

@@ -35,8 +35,22 @@ import org.apache.fop.render.pdf.PDFContentGenerator;
 public class PDFObjectStreamTestCase {
     @Test
     public void testObjectStreamsEnabled() throws IOException {
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         PDFDocument doc = new PDFDocument("");
+        String out = buildObjectStreamsPDF(doc);
+        Assert.assertTrue(out.contains("<<\n  /Type /ObjStm\n  /N 3\n  /First 15\n  /Length 260\n>>\n"
+                + "stream\n8 0\n9 52\n4 121\n<<\n/Producer"));
+    }
+
+    @Test
+    public void testObjectStreamsWithEncryption() throws IOException {
+        PDFDocument doc = new PDFDocument("");
+        doc.setEncryption(new PDFEncryptionParams());
+        String out = buildObjectStreamsPDF(doc);
+        Assert.assertTrue(out.contains("<<\n  /Type /ObjStm\n  /N 3\n  /First 16\n  /Length 282\n>>\nstream"));
+    }
+
+    private String buildObjectStreamsPDF(PDFDocument doc) throws IOException {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         Map<String, List<String>> filterMap = new HashMap<>();
         List<String> filterList = new ArrayList<>();
         filterList.add("null");
@@ -55,7 +69,6 @@ public class PDFObjectStreamTestCase {
         gen.flushPDFDoc();
         doc.outputTrailer(out);
         Assert.assertTrue(out.toString().contains("/Subtype /Image"));
-        Assert.assertTrue(out.toString().contains("<<\n  /Type /ObjStm\n  /N 3\n  /First 15\n  /Length 260\n>>\n"
-                + "stream\n8 0\n9 52\n4 121\n<<\n/Producer"));
+        return out.toString();
     }
 }
