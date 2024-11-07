@@ -134,7 +134,6 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
     }
 
     protected void writeGlyphs(FOPGVTGlyphVector gv, GeneralPath debugShapes) throws IOException {
-        AffineTransform localTransform = new AffineTransform();
         Point2D prevPos = null;
         AffineTransform prevGlyphTransform = null;
         font = ((FOPGVTFont) gv.getFont()).getFont();
@@ -142,6 +141,8 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
             if (!gv.isGlyphVisible(index)) {
                 continue;
             }
+
+            char glyph = (char) gv.getGlyphCode(index);
             Point2D glyphPos = gv.getGlyphPosition(index);
 
             AffineTransform glyphTransform = gv.getGlyphTransform(index);
@@ -156,22 +157,27 @@ public abstract class NativeTextPainter extends StrokingTextPainter {
                 debugShapes.append(sh, false);
             }
 
-            //Exact position of the glyph
-            localTransform.setToIdentity();
-            localTransform.translate(glyphPos.getX(), glyphPos.getY());
-            if (glyphTransform != null) {
-                localTransform.concatenate(glyphTransform);
-            }
-            localTransform.scale(1, -1);
-
             positionGlyph(prevPos, glyphPos, glyphTransform != null || prevGlyphTransform != null);
-            char glyph = (char) gv.getGlyphCode(index);
+
             //Update last position
             prevPos = glyphPos;
             prevGlyphTransform = glyphTransform;
 
-            writeGlyph(glyph, localTransform);
+            writeGlyph(glyph, getLocalTransform(glyphPos, glyphTransform));
         }
+    }
+
+    protected AffineTransform getLocalTransform(Point2D glyphPos, AffineTransform glyphTransform) {
+        //Exact position of the glyph
+        AffineTransform localTransform = new AffineTransform();
+        localTransform.setToIdentity();
+        localTransform.translate(glyphPos.getX(), glyphPos.getY());
+        if (glyphTransform != null) {
+            localTransform.concatenate(glyphTransform);
+        }
+        localTransform.scale(1, -1);
+
+        return localTransform;
     }
 
     @Override

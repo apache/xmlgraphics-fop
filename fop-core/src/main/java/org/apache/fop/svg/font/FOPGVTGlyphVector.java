@@ -320,6 +320,10 @@ public class FOPGVTGlyphVector implements GVTGlyphVector {
         return gposAdjustments;
     }
 
+    public List getAssociations() {
+        return associations;
+    }
+
     public Point2D getGlyphPosition(int glyphIndex) {
         int positionIndex = glyphIndex * 2;
         return new Point2D.Float(positions[positionIndex], positions[positionIndex + 1]);

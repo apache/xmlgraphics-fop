@@ -31,7 +31,6 @@ import java.io.IOException;
 
 import org.apache.batik.gvt.text.TextPaintInfo;
 
-import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.svg.font.FOPGVTFont;
 import org.apache.fop.svg.font.FOPGVTGlyphVector;
@@ -47,6 +46,8 @@ import org.apache.fop.svg.font.FOPGVTGlyphVector;
  * @version $Id$
  */
 class PDFTextPainter extends NativeTextPainter {
+
+    private static final int[] PA_ZERO = new int[4];
 
     private PDFGraphics2D pdf;
 
@@ -108,40 +109,50 @@ class PDFTextPainter extends NativeTextPainter {
         pdf.writeClip(clip);
     }
 
-    private static int[] paZero = new int[4];
-
+    @Override
     protected void writeGlyphs(FOPGVTGlyphVector gv, GeneralPath debugShapes) throws IOException {
         if (gv.getGlyphPositionAdjustments() == null) {
             super.writeGlyphs(gv, debugShapes);
         } else {
-            FOPGVTFont gvtFont = (FOPGVTFont) gv.getFont();
-            String fk = gvtFont.getFontKey();
-            Font f = gvtFont.getFont();
-            Point2D initialPos = gv.getGlyphPosition(0);
-            int         fs              = f.getFontSize();
-            float       fsPoints        = fs / 1000f;
-            double      xc              = 0f;
-            double      yc              = 0f;
-            double      xoLast          = 0f;
-            double      yoLast          = 0f;
-            textUtil.writeTextMatrix(new AffineTransform(1, 0, 0, -1, initialPos.getX(), initialPos.getY()));
-            textUtil.updateTf(fk, fsPoints, f.isMultiByte(), false);
-            int[][] dp = gv.getGlyphPositionAdjustments();
-            for (int i = 0, n = gv.getNumGlyphs(); i < n; i++) {
-                int     gc              = gv.getGlyphCode(i);
-                int[]   pa              = ((i > dp.length) || (dp[i] == null)) ? paZero : dp[i];
-                double  xo              = xc + pa[0];
-                double  yo              = yc + pa[1];
-                double  xa              = f.getWidth(gc);
-                double  ya              = 0;
-                double  xd              = (xo - xoLast) / 1000f;
-                double  yd              = (yo - yoLast) / 1000f;
-                textUtil.writeTd(xd, yd);
-                textUtil.writeTj((char) gc, f.isMultiByte(), false);
-                xc += xa + pa[2];
-                yc += ya + pa[3];
-                xoLast = xo;
-                yoLast = yo;
+            Point2D prevPos = null;
+            AffineTransform prevGlyphTransform = null;
+            font = ((FOPGVTFont) gv.getFont()).getFont();
+            int[][] glyphPositionAdjustments = gv.getGlyphPositionAdjustments();
+            double glyphXPos = 0f;
+            double glyphYPos = 0f;
+            double prevAdjustedGlyphXPos = 0f;
+            double prevAdjustedGlyphYPos = 0f;
+            for (int index = 0; index < gv.getNumGlyphs(); index++) {
+                if (!gv.isGlyphVisible(index)) {
+                    continue;
+                }
+                Point2D glyphPos = gv.getGlyphPosition(index);
+                AffineTransform glyphTransform = gv.getGlyphTransform(index);
+                int[] positionAdjust = ((index > glyphPositionAdjustments.length)
+                        || (glyphPositionAdjustments[index] == null)) ? PA_ZERO : glyphPositionAdjustments[index];
+                if (log.isTraceEnabled()) {
+                    log.trace("pos " + glyphPos + ", transform " + glyphTransform);
+                }
+
+                positionGlyph(prevPos, glyphPos, glyphTransform != null || prevGlyphTransform != null);
+
+                char glyph = (char) gv.getGlyphCode(index);
+                double adjustedGlyphXPos = glyphXPos + positionAdjust[0];
+                double adjustedGlyphYPos = glyphYPos + positionAdjust[1];
+                double tdXPos = (adjustedGlyphXPos - prevAdjustedGlyphXPos) / 1000f;
+                double tdYPos = (adjustedGlyphYPos - prevAdjustedGlyphYPos) / 1000f;
+
+                textUtil.writeTd(tdXPos, tdYPos);
+
+                writeGlyph(glyph, getLocalTransform(glyphPos, glyphTransform));
+
+                //Update last position
+                prevPos = glyphPos;
+                prevGlyphTransform = glyphTransform;
+                glyphXPos = glyphPos.getX() + positionAdjust[2];
+                glyphYPos = glyphPos.getY() + positionAdjust[3];
+                prevAdjustedGlyphXPos = adjustedGlyphXPos;
+                prevAdjustedGlyphYPos = adjustedGlyphYPos;
             }
         }
     }
@@ -193,9 +204,7 @@ class PDFTextPainter extends NativeTextPainter {
                 || reposition);
         if (!repositionNextGlyph) {
             double xdiff = glyphPos.getX() - prevPos.getX();
-            //Width of previous character
-            double cw = prevVisibleGlyphWidth;
-            double effxdiff = (1000 * xdiff) - cw;
+            double effxdiff = (1000 * xdiff) - prevVisibleGlyphWidth;
             if (effxdiff != 0) {
                 double adjust = (-effxdiff / font.getFontSize());
                 textUtil.adjustGlyphTJ(adjust * 1000);

@@ -25,9 +25,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.io.StringWriter;
 
-import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -38,6 +38,7 @@ import org.apache.xmlgraphics.java2d.GraphicContext;
 
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontInfo;
+import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.base14.Base14FontCollection;
 import org.apache.fop.pdf.PDFDocument;
@@ -164,16 +165,42 @@ public class PDFTextPainterTestCase extends NativeTextPainterTest {
      */
     @Test
     public void testSingleByteAdjustments() throws Exception {
+        defaultSingleByteAdjustmentsTest(1, "BT\n"
+                + "3 Tr\n"
+                + "0.002 0.003 Td\n"
+                + "/F5 0.012 Tf\n"
+                + "1 0 0 -1 0 0 Tm [(\\0)] TJ\n"
+                + "ET\n");
+    }
+
+    @Test
+    public void testSingleByteAdjustmentsMultipleGlyphs() throws Exception {
+        defaultSingleByteAdjustmentsTest(3, "BT\n"
+                + "3 Tr\n"
+                + "0.002 0.003 Td\n"
+                + "/F5 0.012 Tf\n"
+                + "1 0 0 -1 0 0 Tm 0.008 0.009 Td\n"
+                + "[(\\0)] TJ\n"
+                + "1 0 0 -1 1 1 Tm 0.009 0.009 Td\n"
+                + "[(\\1)] TJ\n"
+                + "1 0 0 -1 2 2 Tm [(\\2)] TJ\n"
+                + "ET\n");
+    }
+
+    private void defaultSingleByteAdjustmentsTest(int numberOfGlyphs, String expected) throws Exception {
         FontInfo fontInfo = new FontInfo();
         new Base14FontCollection(true).setup(0, fontInfo);
 
-        PDFTextPainter painter = new PDFTextPainter(fontInfo);
-        PDFGraphics2D g2d = mock(PDFGraphics2D.class);
-        g2d.currentStream = new StringWriter();
-        painter.preparePainting(g2d);
-        painter.setInitialTransform(new AffineTransform());
         TextPaintInfo tpi = new TextPaintInfo();
         tpi.visible = true;
+
+        PDFGraphics2D g2d = mock(PDFGraphics2D.class);
+        g2d.fontInfo = fontInfo;
+        g2d.currentStream = new StringWriter();
+
+        PDFTextPainter painter = new PDFTextPainter(fontInfo);
+        painter.preparePainting(g2d);
+        painter.setInitialTransform(new AffineTransform());
         painter.tpi = tpi;
         painter.beginTextObject();
 
@@ -182,24 +209,35 @@ public class PDFTextPainterTestCase extends NativeTextPainterTest {
         Font font = fontInfo.getFontInstance(triplet, 12);
 
         FOPGVTFont mockGvtFont = mock(FOPGVTFont.class);
-        org.apache.fop.fonts.FontMetrics fontMetrics = font.getFontMetrics();
-        when(mockGvtFont.getFont()).thenReturn(new Font("Times", triplet, fontMetrics, 12));
-        when(mockGvtFont.getFontKey()).thenReturn("Times");
+        FontMetrics fontMetrics = font.getFontMetrics();
+        when(mockGvtFont.getFont()).thenReturn(new Font("F5", triplet, fontMetrics, 12));
+        when(mockGvtFont.getFontKey()).thenReturn("F5");
 
         when(mockGV.getFont()).thenReturn(mockGvtFont);
-        when(mockGV.getGlyphPositionAdjustments()).thenReturn(new int[][] {{2, 3, 4, 5}, {6, 7, 8, 9}});
-        when(mockGV.getGlyphPosition(0)).thenReturn(new Point(0, 0));
-        when(mockGV.getNumGlyphs()).thenReturn(1);
-        when(mockGV.getGlyphCode(0)).thenReturn(1);
+        addGlyphs(mockGV, numberOfGlyphs);
 
         GeneralPath gp = new GeneralPath();
 
         painter.writeGlyphs(mockGV, gp);
-        Assert.assertEquals("BT\n"
-                        + "3 Tr\n"
-                        + "1 0 0 -1 0 0 Tm /Times 0.012 Tf\n"
-                        + "0.002 0.003 Td\n"
-                        + "(\\1) Tj\n",
-                g2d.currentStream.toString());
+        painter.endTextObject();
+
+        assertEquals("Must write a Text Matrix for each glyph and use the glyph adjustments",
+                expected, g2d.currentStream.toString());
+    }
+
+    private void addGlyphs(FOPGVTGlyphVector mockGV, int max) {
+        int[][] array = new int[max][4];
+        for (int i = 0; i < max; i++) {
+            when(mockGV.getGlyphPosition(i)).thenReturn(new Point(i, i));
+            when(mockGV.getNumGlyphs()).thenReturn(max);
+            when(mockGV.getGlyphCode(i)).thenReturn(i);
+            when(mockGV.isGlyphVisible(i)).thenReturn(true);
+            array[i][0] = 2 + i * 4;
+            array[i][1] = 3 + i * 4;
+            array[i][2] = 4 + i * 4;
+            array[i][3] = 5 + i * 4;
+        }
+
+        when(mockGV.getGlyphPositionAdjustments()).thenReturn(array);
     }
 }

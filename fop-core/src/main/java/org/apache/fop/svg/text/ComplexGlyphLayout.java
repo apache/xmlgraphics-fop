@@ -22,14 +22,16 @@ package org.apache.fop.svg.text;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Point2D;
 import java.text.AttributedCharacterIterator;
+import java.util.List;
 
 import org.apache.batik.bridge.GlyphLayout;
 import org.apache.batik.gvt.font.GVTFont;
-import org.apache.batik.gvt.font.GVTGlyphVector;
 import org.apache.batik.gvt.text.GVTAttributedCharacterIterator;
 
+import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.svg.font.FOPGVTFont;
+import org.apache.fop.svg.font.FOPGVTGlyphVector;
 
 public class ComplexGlyphLayout extends GlyphLayout {
 
@@ -39,16 +41,21 @@ public class ComplexGlyphLayout extends GlyphLayout {
     }
 
     @Override
-    protected void doExplicitGlyphLayout() {
-        GVTGlyphVector gv = this.gv;
-        gv.performDefaultLayout();
-        int ng = gv.getNumGlyphs();
-        if (ng > 0) {
-            this.advance = gv.getGlyphPosition(ng);
-        } else {
-            this.advance = new Point2D.Float(0, 0);
+    protected int getAciIndex(int aciIndex, int loopIndex) {
+        if (gv instanceof FOPGVTGlyphVector) {
+            List associations = ((FOPGVTGlyphVector) gv).getAssociations();
+            // this method is called at the end of the cycle, therefore we still have the index of the current cycle
+            // since we are trying to determine the aci index for the next interation, we need to add 1 to the index
+            // the parent method does that automatically when it tries to get the character count
+            int nextIndex = loopIndex + 1;
+            if (nextIndex < associations.size() && associations.get(nextIndex) instanceof CharAssociation) {
+                CharAssociation association = (CharAssociation) associations.get(nextIndex);
+                return association.getStart();
+            }
         }
-        this.layoutApplied  = true;
+
+        //will only be used on the last iteration. the loop will stop after this and the value will not be used
+        return super.getAciIndex(aciIndex, loopIndex);
     }
 
     public static final boolean mayRequireComplexLayout(AttributedCharacterIterator aci) {
