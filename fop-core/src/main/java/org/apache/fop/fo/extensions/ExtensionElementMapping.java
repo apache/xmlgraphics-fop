@@ -73,6 +73,8 @@ public class ExtensionElementMapping extends ElementMapping {
         // used for scaling of background images
         PROPERTY_ATTRIBUTES.add("background-image-width");
         PROPERTY_ATTRIBUTES.add("background-image-height");
+        // reduce font size to fit container
+        PROPERTY_ATTRIBUTES.add("shrink-to-fit");
     }
 
     /**

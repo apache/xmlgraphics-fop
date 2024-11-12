@@ -60,6 +60,7 @@ public class BlockContainer extends FObj implements BreakPropertySet, WritingMod
     private Numeric referenceOrientation;
     private int span;
     private int disableColumnBalancing;
+    private int shrinkToFit;
     private WritingModeTraits writingModeTraits;
     // Unused but valid items, commented out for performance:
     //     private int intrusionDisplace;
@@ -101,6 +102,7 @@ public class BlockContainer extends FObj implements BreakPropertySet, WritingMod
             WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()),
             pList.getExplicit(PR_WRITING_MODE) != null);
         disableColumnBalancing = pList.get(PR_X_DISABLE_COLUMN_BALANCING).getEnum();
+        shrinkToFit = pList.get(PR_X_SHRINK_TO_FIT).getEnum();
     }
 
     /** {@inheritDoc} */
@@ -302,6 +304,14 @@ public class BlockContainer extends FObj implements BreakPropertySet, WritingMod
         return FO_BLOCK_CONTAINER;
     }
 
+    /**
+     * if true should reduce font size to fit area.
+     *
+     * @return
+     */
+    public boolean isShrinkToFit() {
+        return shrinkToFit == EN_TRUE;
+    }
     @Override
     protected boolean isBidiBoundary(boolean propagate) {
         return getExplicitWritingMode();

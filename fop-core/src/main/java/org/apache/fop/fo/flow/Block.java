@@ -173,6 +173,13 @@ public class Block extends FObjMixed implements BreakPropertySet,
         return commonFont;
     }
 
+    /**
+     * Set the Common Font
+     */
+    public void setCommonFont(CommonFont font) {
+     commonFont = font;
+    }
+
     /** @return the {@link CommonHyphenation} */
     public CommonHyphenation getCommonHyphenation() {
         return commonHyphenation;
@@ -231,6 +238,14 @@ public class Block extends FObjMixed implements BreakPropertySet,
     /** @return the "line-height" trait */
     public SpaceProperty getLineHeight() {
         return lineHeight;
+    }
+
+    /**
+     * Set the line height
+     * @param lineHeight
+     */
+    public void setLineHeight(SpaceProperty lineHeight) {
+        this.lineHeight = lineHeight;
     }
 
     /** @return the "span" trait */

@@ -35,10 +35,15 @@ import org.apache.fop.area.CTM;
 import org.apache.fop.area.Trait;
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.datatypes.Length;
+import org.apache.fop.datatypes.PercentBaseContext;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.BlockContainer;
+import org.apache.fop.fo.flow.ListItem;
 import org.apache.fop.fo.properties.CommonAbsolutePosition;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.CommonFont;
 import org.apache.fop.fo.properties.KeepProperty;
+import org.apache.fop.fo.properties.Property;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.traits.SpaceVal;
 
@@ -377,6 +382,11 @@ public class BlockContainerLayoutManager extends SpacedBorderedPaddedBlockLayout
         BlockContainerBreaker breaker = new BlockContainerBreaker(this, range);
         breaker.doLayout(relDims.bpd, autoHeight);
         boolean contentOverflows = breaker.isOverflow();
+        if (getBlockContainerFO().isShrinkToFit() && autoHeight == false && (contentOverflows || horizontalOverflow > 0)) {
+            ShrinkToFitHelper shrinkToFitHelper = new ShrinkToFitHelper(range).invoke();
+            breaker = shrinkToFitHelper.getBreaker();
+            contentOverflows = shrinkToFitHelper.isContentOverflows();
+        }
         if (autoHeight) {
             //Update content BPD now that it is known
             int newHeight = breaker.deferredAlg.totalWidth;
@@ -534,6 +544,11 @@ public class BlockContainerLayoutManager extends SpacedBorderedPaddedBlockLayout
         BlockContainerBreaker breaker = new BlockContainerBreaker(this, range);
         breaker.doLayout((autoHeight ? 0 : relDims.bpd), autoHeight);
         boolean contentOverflows = breaker.isOverflow();
+        if (getBlockContainerFO().isShrinkToFit() && autoHeight == false && (contentOverflows || horizontalOverflow > 0)) {
+            ShrinkToFitHelper shrinkToFitHelper = new ShrinkToFitHelper(range).invoke();
+            breaker = shrinkToFitHelper.getBreaker();
+            contentOverflows = shrinkToFitHelper.isContentOverflows();
+        }
         if (autoHeight) {
             //Update content BPD now that it is known
             int newHeight = breaker.deferredAlg.totalWidth;
@@ -1004,6 +1019,174 @@ public class BlockContainerLayoutManager extends SpacedBorderedPaddedBlockLayout
         return true;
     }
 
+
+    static public class ScaleLength extends Property implements Length {
+
+        private final Length length;
+        private final double scale;
+
+        public ScaleLength(Length originLength, double scale) {
+            if (originLength instanceof  ScaleLength) {
+                length = ((ScaleLength) originLength).length;
+            } else {
+                this.length = originLength;
+            }
+            this.scale = scale;
+
+        }
+        @Override
+        public double getNumericValue() {
+            return length.getNumericValue() * scale;
+        }
+
+        @Override
+        public double getNumericValue(PercentBaseContext context) {
+            return length.getNumericValue(context) * scale;
+        }
+
+        @Override
+        public int getDimension() {
+            return length.getDimension();
+        }
+
+        @Override
+        public boolean isAbsolute() {
+            return length.isAbsolute();
+        }
+
+        @Override
+        public int getValue() {
+            return (int) (length.getValue() * scale);
+        }
+
+        @Override
+        public int getValue(PercentBaseContext context) {
+            return (int) (length.getValue(context) * scale);
+        }
+
+        @Override
+        public int getEnum() {
+            return length.getEnum();
+        }
+
+        /** @return this.length */
+        @Override
+        public Length getLength() {
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return "ScaleLength{" +
+                    "length=" + length +
+                    ", scale=" + scale +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ScaleLength that = (ScaleLength) o;
+
+            if (Double.compare(that.scale, scale) != 0) return false;
+            return length.equals(that.length);
+        }
+
+        @Override
+        public int hashCode() {
+            int result;
+            long temp;
+            result = length.hashCode();
+            temp = Double.doubleToLongBits(scale);
+            result = 31 * result + (int) (temp ^ (temp >>> 32));
+            return result;
+        }
+    }
+
+    private class ShrinkToFitHelper {
+        private MinOptMax range;
+        private BlockContainerBreaker breaker;
+        private boolean contentOverflows;
+
+        public ShrinkToFitHelper(MinOptMax range) {
+            this.range = range;
+        }
+
+        public BlockContainerBreaker getBreaker() {
+            return breaker;
+        }
+
+        public boolean isContentOverflows() {
+            return contentOverflows;
+        }
+
+        public ShrinkToFitHelper invoke() {
+            double minScale = 0.2;
+            double maxScale = 1;
+            double curScale = minScale;
+            double threshold = 0.05;
+            while (maxScale - minScale > threshold) {
+                curScale = (minScale  + maxScale) / 2;
+                reduceFontSize(getBlockContainerFO(), curScale);
+                recreateChildrenLMs();
+                horizontalOverflow = 0;
+                breaker = new BlockContainerBreaker(BlockContainerLayoutManager.this, range);
+                breaker.doLayout(relDims.bpd, autoHeight);
+                contentOverflows = breaker.isOverflow();
+                if (contentOverflows || horizontalOverflow > 0) {
+                    maxScale = curScale;
+                } else {
+                    minScale = curScale;
+                }
+            }
+            if (minScale != curScale) {
+                reduceFontSize(getBlockContainerFO(), minScale);
+                recreateChildrenLMs();
+                horizontalOverflow = 0;
+                breaker = new BlockContainerBreaker(BlockContainerLayoutManager.this, range);
+                breaker.doLayout(relDims.bpd, autoHeight);
+                contentOverflows = breaker.isOverflow();
+            }
+            return this;
+        }
+
+        private void reduceFontSize(FONode foNode, double scale) {
+            FONode.FONodeIterator iter = foNode.getChildNodes();
+            if(iter == null) {
+                return;
+            }
+            while (iter.hasNext()){
+                FONode curNode = iter.next();
+                if (curNode instanceof org.apache.fop.fo.flow.Block) {
+                    org.apache.fop.fo.flow.Block block = (org.apache.fop.fo.flow.Block) curNode;
+                    CommonFont commonFont = block.getCommonFont();
+                    CommonFont newFont = commonFont.derive(new ScaleLength(commonFont.getFontSize(), scale));
+                    block.setCommonFont(newFont);
+                    block.setLineHeight(block.getLineHeight().scale(scale));
+                }
+                if (curNode instanceof org.apache.fop.fo.flow.InlineLevel) {
+                    org.apache.fop.fo.flow.InlineLevel block = (org.apache.fop.fo.flow.InlineLevel) curNode;
+                    CommonFont commonFont = block.getCommonFont();
+                    CommonFont newFont = commonFont.derive(new ScaleLength(commonFont.getFontSize(), scale));
+                    block.setCommonFont(newFont);
+                }
+                if (curNode instanceof org.apache.fop.fo.FOText) {
+                    org.apache.fop.fo.FOText block = (org.apache.fop.fo.FOText) curNode;
+                    CommonFont commonFont = block.getCommonFont();
+                    CommonFont newFont = commonFont.derive(new ScaleLength(commonFont.getFontSize(), scale));
+                    block.setCommonFont(newFont);
+                }
+                if (curNode instanceof ListItem) {
+                    ListItem listItem = (ListItem) curNode;
+                    reduceFontSize(listItem.getLabel(), scale);
+                    reduceFontSize(listItem.getBody(), scale);
+                }
+                reduceFontSize(curNode, scale);
+            }
+        }
+    }
 }
 
 

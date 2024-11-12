@@ -25,6 +25,7 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
+import org.apache.fop.layoutmgr.BlockContainerLayoutManager;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.CompareUtil;
 
@@ -55,6 +56,19 @@ public class LengthRangeProperty extends Property implements CompoundDatatype {
         int max = getMaximum(context).isAuto() ? Integer.MAX_VALUE
                 : getMaximum(context).getLength().getValue(context);
         return MinOptMax.getInstance(min, opt, max);
+    }
+
+    /**
+     * Scale the length
+     *
+     * @param scale
+     * @return
+     */
+    public LengthRangeProperty scale(double scale) {
+        this.minimum = new BlockContainerLayoutManager.ScaleLength((Length) this.minimum, scale);
+        this.optimum = new BlockContainerLayoutManager.ScaleLength((Length) this.optimum, scale);
+        this.maximum = new BlockContainerLayoutManager.ScaleLength((Length) this.maximum, scale);
+        return this;
     }
 
     /**

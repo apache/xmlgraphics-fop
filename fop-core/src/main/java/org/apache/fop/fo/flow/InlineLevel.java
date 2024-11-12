@@ -92,6 +92,15 @@ public abstract class InlineLevel extends FObjMixed implements CommonAccessibili
         return commonFont;
     }
 
+    /**
+     * Set the Common Font Property
+     *
+     * @param font
+     */
+    public void setCommonFont(CommonFont font) {
+        commonFont = font;
+    }
+
     /** @return the "color" trait */
     public Color getColor() {
         return color;

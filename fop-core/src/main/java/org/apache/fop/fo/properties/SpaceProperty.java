@@ -35,6 +35,16 @@ public class SpaceProperty extends LengthRangeProperty {
     private Property conditionality;
 
     /**
+     * scale the length
+     * @param scale
+     * @return
+     */
+    public SpaceProperty scale(double scale) {
+        super.scale(scale);
+        return this;
+    }
+
+    /**
      * Inner class used to create new instances of SpaceProperty
      */
     public static class Maker extends CompoundPropertyMaker {

@@ -132,6 +132,18 @@ public final class CommonFont {
         return CACHE.fetch(commonFont);
     }
 
+    public CommonFont derive(Length fontSize) {
+        CommonFont commonFont = new CommonFont(fontFamily,
+                fontSelectionStrategy,
+                fontStretch,
+                fontStyle,
+                fontVariant,
+                fontWeight,
+                fontSize,
+                fontSizeAdjust);
+        return CACHE.fetch(commonFont);
+    }
+
     /** @return an array with the font-family names */
     private String[] getFontFamily() {
         List<Property> lst = fontFamily.getList();

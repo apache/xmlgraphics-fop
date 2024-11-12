@@ -595,6 +595,14 @@ public class FOText extends FONode implements CharSequence, TextFragment {
     }
 
     /**
+     * Set the Common Font Properties
+     * @param font
+     */
+    public void setCommonFont(CommonFont font) {
+        commonFont = font;
+    }
+
+    /**
      * @return the Common Hyphenation Properties.
      */
     public CommonHyphenation getCommonHyphenation() {

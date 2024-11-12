@@ -1977,6 +1977,13 @@ public final class FOPropertyMapping implements Constants {
         m.setInherited(true);
         m.setDefault("false");
         addPropertyMaker("fox:disable-column-balancing", m);
+
+        // fox:shrink-to-fit
+        m  = new EnumProperty.Maker(PR_X_SHRINK_TO_FIT);
+        m.useGeneric(genericBoolean);
+        m.setInherited(true);
+        m.setDefault("false");
+        addPropertyMaker("fox:shrink-to-fit", m);
     }
 
     private void createLeaderAndRuleProperties() {
