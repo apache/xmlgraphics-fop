@@ -855,4 +855,8 @@ public class FOUserAgent {
     public boolean isLegacyLastPageChangeIPD() {
         return factory.isLegacyLastPageChangeIPD();
     }
+
+    public boolean isLegacyFoWrapper() {
+        return factory.isLegacyFoWrapper();
+    }
 }

@@ -173,6 +173,8 @@ public interface FopFactoryConfig {
 
     boolean isLegacyLastPageChangeIPD();
 
+    boolean isLegacyFoWrapper();
+
     /** @return the hyphenation pattern names */
     Map<String, String> getHyphenationPatternNames();
 

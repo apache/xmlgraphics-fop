@@ -27,8 +27,10 @@ import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.layoutmgr.BlockLayoutManager;
 import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
+import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthSequence;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LeafPosition;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
 
@@ -97,5 +99,12 @@ public class WrapperLayoutManager extends LeafNodeLayoutManager {
             return Collections.emptyList();
         }
         return list;
+    }
+
+    protected KnuthBox makeBox() {
+        if (parentLayoutManager instanceof InlineLayoutManager || fobj.getUserAgent().isLegacyFoWrapper()) {
+            return super.makeBox();
+        }
+        return new KnuthBox(areaInfo.ipdArea.getOpt(), notifyPos(new LeafPosition(this, 0)), false);
     }
 }

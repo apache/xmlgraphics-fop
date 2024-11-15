@@ -69,6 +69,7 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="11100" xpath="//lineArea/@bpd"/>
+    <eval expected="0" xpath="//lineArea/@bpd"/>
+    <eval expected="14173" xpath="//block/@bpd"/>
   </checks>
 </testcase>

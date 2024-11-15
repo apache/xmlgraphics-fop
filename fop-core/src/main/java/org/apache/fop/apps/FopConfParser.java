@@ -61,8 +61,9 @@ public class FopConfParser {
     private static final String SKIP_PAGE_POSITION_ONLY_ALLOWED = "skip-page-position-only-allowed";
     private static final String LEGACY_SKIP_PAGE_POSITION_ONLY = "legacy-skip-page-position-only";
     private static final String LEGACY_LAST_PAGE_CHANGE_IPD = "legacy-last-page-change-ipd";
+    private static final String LEGACY_FO_WRAPPER = "legacy-fo-wrapper";
 
-    private final Log log = LogFactory.getLog(FopConfParser.class);
+    private static final Log LOG = LogFactory.getLog(FopConfParser.class);
 
     private final FopFactoryBuilder fopFactoryBuilder;
 
@@ -169,8 +170,8 @@ public class FopConfParser {
 
     private void configure(final URI baseURI, final ResourceResolver resourceResolver,
             Configuration cfg) throws FOPException {
-        if (log.isDebugEnabled()) {
-            log.debug("Initializing FopFactory Configuration");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Initializing FopFactory Configuration");
         }
 
         // strict fo validation
@@ -179,7 +180,7 @@ public class FopConfParser {
                 boolean strict = cfg.getChild("strict-validation").getValueAsBoolean();
                 fopFactoryBuilder.setStrictFOValidation(strict);
             } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, false);
+                LogUtil.handleException(LOG, e, false);
             }
         }
 
@@ -189,7 +190,7 @@ public class FopConfParser {
                 strict = cfg.getChild("strict-configuration").getValueAsBoolean();
                 fopFactoryBuilder.setStrictUserConfigValidation(strict);
             } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, false);
+                LogUtil.handleException(LOG, e, false);
             }
         }
 
@@ -199,7 +200,7 @@ public class FopConfParser {
                 fopFactoryBuilder.setKeepEmptyTags(
                         cfg.getChild("accessibility").getAttributeAsBoolean(Accessibility.KEEP_EMPTY_TAGS, true));
             } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, false);
+                LogUtil.handleException(LOG, e, false);
             }
         }
 
@@ -209,7 +210,7 @@ public class FopConfParser {
                 URI confUri = InternalResourceResolver.getBaseURI(cfg.getChild("base").getValue(null));
                 fopFactoryBuilder.setBaseURI(baseURI.resolve(confUri));
             } catch (URISyntaxException use) {
-                LogUtil.handleException(log, use, strict);
+                LogUtil.handleException(LOG, use, strict);
             }
         }
 
@@ -218,16 +219,16 @@ public class FopConfParser {
             float srcRes = cfg.getChild("source-resolution").getValueAsFloat(
                     FopFactoryConfig.DEFAULT_SOURCE_RESOLUTION);
             fopFactoryBuilder.setSourceResolution(srcRes);
-            if (log.isDebugEnabled()) {
-                log.debug("source-resolution set to: " + srcRes + "dpi");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("source-resolution set to: " + srcRes + "dpi");
             }
         }
         if (cfg.getChild("target-resolution", false) != null) {
             float targetRes = cfg.getChild("target-resolution").getValueAsFloat(
                     FopFactoryConfig.DEFAULT_TARGET_RESOLUTION);
             fopFactoryBuilder.setTargetResolution(targetRes);
-            if (log.isDebugEnabled()) {
-                log.debug("target-resolution set to: " + targetRes + "dpi");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("target-resolution set to: " + targetRes + "dpi");
             }
         }
         if (cfg.getChild("break-indent-inheritance", false) != null) {
@@ -235,7 +236,7 @@ public class FopConfParser {
                 fopFactoryBuilder.setBreakIndentInheritanceOnReferenceAreaBoundary(
                              cfg.getChild("break-indent-inheritance").getValueAsBoolean());
             } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, strict);
+                LogUtil.handleException(LOG, e, strict);
             }
         }
         Configuration pageConfig = cfg.getChild("default-page-settings");
@@ -243,16 +244,16 @@ public class FopConfParser {
             String pageHeight = pageConfig.getAttribute("height",
                     FopFactoryConfig.DEFAULT_PAGE_HEIGHT);
             fopFactoryBuilder.setPageHeight(pageHeight);
-            if (log.isInfoEnabled()) {
-                log.info("Default page-height set to: " + pageHeight);
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Default page-height set to: " + pageHeight);
             }
         }
         if (pageConfig.getAttribute("width", null) != null) {
             String pageWidth = pageConfig.getAttribute("width",
                     FopFactoryConfig.DEFAULT_PAGE_WIDTH);
             fopFactoryBuilder.setPageWidth(pageWidth);
-            if (log.isInfoEnabled()) {
-                log.info("Default page-width set to: " + pageWidth);
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Default page-width set to: " + pageWidth);
             }
         }
 
@@ -271,7 +272,7 @@ public class FopConfParser {
                 fopFactoryBuilder.setPreferRenderer(
                              cfg.getChild(PREFER_RENDERER).getValueAsBoolean());
             } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, strict);
+                LogUtil.handleException(LOG, e, strict);
             }
         }
 
@@ -280,7 +281,7 @@ public class FopConfParser {
                 fopFactoryBuilder.setTableBorderOverpaint(
                         cfg.getChild(TABLE_BORDER_OVERPAINT).getValueAsBoolean());
             } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, false);
+                LogUtil.handleException(LOG, e, false);
             }
         }
 
@@ -289,7 +290,7 @@ public class FopConfParser {
                 fopFactoryBuilder.setSimpleLineBreaking(
                         cfg.getChild(SIMPLE_LINE_BREAKING).getValueAsBoolean());
             } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, false);
+                LogUtil.handleException(LOG, e, false);
             }
         }
 
@@ -298,7 +299,7 @@ public class FopConfParser {
                 fopFactoryBuilder.setSkipPagePositionOnlyAllowed(
                         cfg.getChild(SKIP_PAGE_POSITION_ONLY_ALLOWED).getValueAsBoolean());
             } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, false);
+                LogUtil.handleException(LOG, e, false);
             }
         }
         if (cfg.getChild(LEGACY_SKIP_PAGE_POSITION_ONLY, false) != null) {
@@ -306,7 +307,7 @@ public class FopConfParser {
                 fopFactoryBuilder.setLegacySkipPagePositionOnly(
                         cfg.getChild(LEGACY_SKIP_PAGE_POSITION_ONLY).getValueAsBoolean());
             } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, false);
+                LogUtil.handleException(LOG, e, false);
             }
         }
         if (cfg.getChild(LEGACY_LAST_PAGE_CHANGE_IPD, false) != null) {
@@ -314,7 +315,15 @@ public class FopConfParser {
                 fopFactoryBuilder.setLegacyLastPageChangeIPD(
                         cfg.getChild(LEGACY_LAST_PAGE_CHANGE_IPD).getValueAsBoolean());
             } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, false);
+                LogUtil.handleException(LOG, e, false);
+            }
+        }
+        if (cfg.getChild(LEGACY_FO_WRAPPER, false) != null) {
+            try {
+                fopFactoryBuilder.setLegacyFoWrapper(
+                        cfg.getChild(LEGACY_FO_WRAPPER).getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(LOG, e, false);
             }
         }
 
@@ -336,7 +345,7 @@ public class FopConfParser {
                         ResourceResolverFactory.createInternalResourceResolver(
                                 baseURI.resolve(fontBase), resourceResolver));
             } catch (URISyntaxException use) {
-                LogUtil.handleException(log, use, true);
+                LogUtil.handleException(LOG, use, true);
             }
         } else {
             fopFactoryBuilder.setHyphenBaseResourceResolver(
@@ -388,7 +397,7 @@ public class FopConfParser {
                 }
 
                 if (error.length() != 0) {
-                    LogUtil.handleError(log, error.toString(), strict);
+                    LogUtil.handleError(LOG, error.toString(), strict);
                     continue;
                 }
 
@@ -402,8 +411,8 @@ public class FopConfParser {
                 } else {
                     hyphPatNames.put(llccKey, filename);
                 }
-                if (log.isDebugEnabled()) {
-                    log.debug("Using hyphenation pattern filename " + filename
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using hyphenation pattern filename " + filename
                             + " for lang=\"" + lang + "\""
                             + (country != null ? ", country=\"" + country + "\"" : ""));
                 }
@@ -436,7 +445,7 @@ public class FopConfParser {
                     try {
                         p = Penalty.toPenalty(Integer.parseInt(value));
                     } catch (NumberFormatException nfe) {
-                        LogUtil.handleException(log, nfe, strict);
+                        LogUtil.handleException(LOG, nfe, strict);
                     }
                 }
                 if (p != null) {
@@ -444,7 +453,7 @@ public class FopConfParser {
                 }
             }
         } catch (ConfigurationException e) {
-            LogUtil.handleException(log, e, strict);
+            LogUtil.handleException(LOG, e, strict);
         }
     }
 

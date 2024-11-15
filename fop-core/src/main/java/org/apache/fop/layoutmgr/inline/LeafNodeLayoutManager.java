@@ -32,6 +32,7 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
 import org.apache.fop.layoutmgr.AbstractLayoutManager;
 import org.apache.fop.layoutmgr.InlineKnuthSequence;
+import org.apache.fop.layoutmgr.KnuthBox;
 import org.apache.fop.layoutmgr.KnuthGlue;
 import org.apache.fop.layoutmgr.KnuthPenalty;
 import org.apache.fop.layoutmgr.KnuthSequence;
@@ -278,13 +279,17 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
 
         addKnuthElementsForBorderPaddingStart(seq);
 
-        seq.add(new KnuthInlineBox(areaInfo.ipdArea.getOpt(), alignmentContext,
-                                    notifyPos(new LeafPosition(this, 0)), false));
+        seq.add(makeBox());
 
         addKnuthElementsForBorderPaddingEnd(seq);
 
         setFinished(true);
         return Collections.singletonList(seq);
+    }
+
+    protected KnuthBox makeBox() {
+        return new KnuthInlineBox(areaInfo.ipdArea.getOpt(), alignmentContext,
+                notifyPos(new LeafPosition(this, 0)), false);
     }
 
     /** {@inheritDoc} */
