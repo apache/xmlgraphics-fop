@@ -387,7 +387,7 @@ public final class AFPFontConfig implements FontConfig {
             try {
                 FontUris fontUris = new FontUris(new URI(fontUri), null);
                 EmbedFontInfo embedFontInfo = new EmbedFontInfo(fontUris, false, true, null, subfont, EncodingMode.AUTO,
-                        EmbeddingMode.FULL, false, false, true);
+                        EmbeddingMode.FULL, false, false, true, false);
                 Typeface tf = new LazyFont(embedFontInfo, resourceResolver, false).getRealFont();
                 AFPResourceAccessor accessor = getAccessor(resourceResolver);
                 CharacterSet characterSet = CharacterSetBuilder.getDoubleByteInstance().build(characterset,

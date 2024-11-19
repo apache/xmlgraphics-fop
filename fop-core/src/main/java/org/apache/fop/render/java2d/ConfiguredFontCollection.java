@@ -27,11 +27,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
-import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontInfo;
-import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.FontUris;
 import org.apache.fop.fonts.LazyFont;
@@ -73,7 +71,7 @@ public class ConfiguredFontCollection implements FontCollection {
             internalName = "F" + num++;
             try {
                 URI fontURI = configFontInfo.getEmbedURI();
-                FontMetricsMapper font;
+                CustomFontMetricsMapper font;
                 URI metricsURI = configFontInfo.getMetricsURI();
                 // If the user specified an XML-based metrics file, we'll use it
                 // Otherwise, calculate metrics directly from the font file.
@@ -83,12 +81,10 @@ public class ConfiguredFontCollection implements FontCollection {
                     font = new CustomFontMetricsMapper(fontMetrics, fontSource);
                 } else {
                     FontUris fontUris = configFontInfo.getFontUris();
-                    CustomFont fontMetrics = FontLoader.loadFont(fontUris, configFontInfo.getSubFontName(), true,
-                            configFontInfo.getEmbeddingMode(), configFontInfo.getEncodingMode(),
-                            configFontInfo.getKerning(), configFontInfo.getAdvanced(), resourceResolver,
-                            configFontInfo.getSimulateStyle(), configFontInfo.getEmbedAsType1(),
-                            configFontInfo.getUseSVG());
-                    font = new CustomFontMetricsMapper(fontMetrics);
+                    font = new CustomFontMetricsMapper(fontUris, configFontInfo, resourceResolver);
+                    if (!configFontInfo.isLazyLoad()) {
+                        font.getRealFont();
+                    }
                 }
 
                 fontInfo.addMetrics(internalName, font);

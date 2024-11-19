@@ -46,6 +46,7 @@ public class EmbedFontInfo implements Serializable {
     private final boolean simulateStyle;
     private final boolean embedAsType1;
     private final boolean useSVG;
+    private final boolean lazyLoad;
 
     /** the PostScript name of the font */
     protected String postScriptName;
@@ -68,9 +69,9 @@ public class EmbedFontInfo implements Serializable {
      * @param subFontName the sub-fontname used for TrueType Collections (null otherwise)
      * @param encodingMode the encoding mode to use for this font
      */
-    public EmbedFontInfo(FontUris fontUris, boolean kerning, boolean advanced,
-            List<FontTriplet> fontTriplets, String subFontName, EncodingMode encodingMode,
-            EmbeddingMode embeddingMode, boolean simulateStyle, boolean embedAsType1, boolean useSVG) {
+    public EmbedFontInfo(FontUris fontUris, boolean kerning, boolean advanced, List<FontTriplet> fontTriplets,
+                         String subFontName, EncodingMode encodingMode, EmbeddingMode embeddingMode,
+                         boolean simulateStyle, boolean embedAsType1, boolean useSVG, boolean lazyLoad) {
         this.kerning = kerning;
         this.advanced = advanced;
         this.fontTriplets = fontTriplets;
@@ -81,6 +82,7 @@ public class EmbedFontInfo implements Serializable {
         this.simulateStyle = simulateStyle;
         this.embedAsType1 = embedAsType1;
         this.useSVG = useSVG;
+        this.lazyLoad = lazyLoad;
     }
 
     /**
@@ -93,7 +95,7 @@ public class EmbedFontInfo implements Serializable {
     public EmbedFontInfo(FontUris fontUris, boolean kerning, boolean advanced,
             List<FontTriplet> fontTriplets, String subFontName) {
         this(fontUris, kerning, advanced, fontTriplets, subFontName, EncodingMode.AUTO,
-                EmbeddingMode.AUTO, false, false, true);
+                EmbeddingMode.AUTO, false, false, true, false);
     }
 
     /**
@@ -213,6 +215,10 @@ public class EmbedFontInfo implements Serializable {
 
     public boolean getUseSVG() {
         return useSVG;
+    }
+
+    public boolean isLazyLoad() {
+        return lazyLoad;
     }
 
     private void readObject(java.io.ObjectInputStream in)

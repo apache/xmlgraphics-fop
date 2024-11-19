@@ -38,7 +38,7 @@ import org.apache.fop.util.LogUtil;
  */
 public final class DefaultFontConfig implements FontConfig {
 
-    private static final Log log = LogFactory.getLog(DefaultFontConfig.class);
+    private static final Log LOG = LogFactory.getLog(DefaultFontConfig.class);
 
     private final List<Directory> directories = new ArrayList<Directory>();
 
@@ -116,24 +116,27 @@ public final class DefaultFontConfig implements FontConfig {
         }
 
         private void parseFonts() throws FOPException {
+            boolean lazyLoad = fontInfoCfg.getAttributeAsBoolean("lazy-load", false);
             for (Configuration fontCfg : fontInfoCfg.getChildren("font")) {
                 String embed = fontCfg.getAttribute("embed-url", null);
                 if (embed == null) {
-                    LogUtil.handleError(log, "Font configuration without embed-url attribute",
+                    LogUtil.handleError(LOG, "Font configuration without embed-url attribute",
                             strict);
                     continue;
                 }
+                String subFont = fontCfg.getAttribute("sub-font", null);
                 Font font = new Font(fontCfg.getAttribute("metrics-url", null), embed,
                         fontCfg.getAttribute("embed-url-afm", null),
                         fontCfg.getAttribute("embed-url-pfm", null),
-                        fontCfg.getAttribute("sub-font", null),
+                        subFont,
                         fontCfg.getAttributeAsBoolean("kerning", true),
                         fontCfg.getAttributeAsBoolean("advanced", true),
                         fontCfg.getAttribute("encoding-mode", EncodingMode.AUTO.getName()),
                         fontCfg.getAttribute("embedding-mode", EncodingMode.AUTO.getName()),
                         fontCfg.getAttributeAsBoolean("simulate-style", false),
                         fontCfg.getAttributeAsBoolean("embed-as-type1", false),
-                        fontCfg.getAttributeAsBoolean("svg", true));
+                        fontCfg.getAttributeAsBoolean("svg", true),
+                        lazyLoad);
                 instance.fonts.add(font);
                 boolean hasTriplets = false;
                 for (Configuration tripletCfg : fontCfg.getChildren("font-triplet")) {
@@ -143,7 +146,7 @@ public final class DefaultFontConfig implements FontConfig {
                 }
                 // no font triplet info
                 if (!hasTriplets) {
-                    LogUtil.handleError(log, "font without font-triplet", strict);
+                    LogUtil.handleError(LOG, "font without font-triplet", strict);
                 }
                 try {
                     if (eventAdapter != null && font.getSimulateStyle()
@@ -155,7 +158,7 @@ public final class DefaultFontConfig implements FontConfig {
                         throw new FOPException("The embed-as-type1 attribute is only supported in postscript");
                     }
                 } catch (ConfigurationException ex) {
-                    LogUtil.handleException(log, ex, true);
+                    LogUtil.handleException(LOG, ex, true);
                 }
             }
         }
@@ -167,7 +170,7 @@ public final class DefaultFontConfig implements FontConfig {
                     try {
                         instance.referencedFontFamilies.add(match.getAttribute("font-family"));
                     } catch (ConfigurationException ce) {
-                        LogUtil.handleException(log, ce, strict);
+                        LogUtil.handleException(LOG, ce, strict);
                         continue;
                     }
                 }
@@ -181,11 +184,11 @@ public final class DefaultFontConfig implements FontConfig {
                 try {
                     directory = directoriesCfg.getValue();
                 } catch (ConfigurationException e) {
-                    LogUtil.handleException(log, e, strict);
+                    LogUtil.handleException(LOG, e, strict);
                     continue;
                 }
                 if (directory == null) {
-                    LogUtil.handleException(log,
+                    LogUtil.handleException(LOG,
                             new FOPException("directory defined without value"), strict);
                     continue;
                 }
@@ -205,25 +208,25 @@ public final class DefaultFontConfig implements FontConfig {
             try {
                 String name = tripletCfg.getAttribute("name");
                 if (name == null) {
-                    LogUtil.handleError(log, "font-triplet without name", strict);
+                    LogUtil.handleError(LOG, "font-triplet without name", strict);
                     return null;
                 }
                 String weightStr = tripletCfg.getAttribute("weight");
                 if (weightStr == null) {
-                    LogUtil.handleError(log, "font-triplet without weight", strict);
+                    LogUtil.handleError(LOG, "font-triplet without weight", strict);
                     return null;
                 }
                 int weight = FontUtil.parseCSS2FontWeight(FontUtil.stripWhiteSpace(weightStr));
                 String style = tripletCfg.getAttribute("style");
                 if (style == null) {
-                    LogUtil.handleError(log, "font-triplet without style", strict);
+                    LogUtil.handleError(LOG, "font-triplet without style", strict);
                     return null;
                 } else {
                     style = FontUtil.stripWhiteSpace(style);
                 }
                 return FontInfo.createFontKey(name, style, weight);
             } catch (ConfigurationException e) {
-                LogUtil.handleException(log, e, strict);
+                LogUtil.handleException(LOG, e, strict);
             }
             return null;
         }
@@ -316,14 +319,12 @@ public final class DefaultFontConfig implements FontConfig {
 
         private final String embeddingMode;
 
-        public String getEncodingMode() {
-            return encodingMode;
-        }
-
-        private final boolean embedAsType1;
         private final boolean simulateStyle;
 
+        private final boolean embedAsType1;
+
         private final boolean useSVG;
+        private final boolean lazyLoad;
 
         private final List<FontTriplet> tripletList = new ArrayList<FontTriplet>();
 
@@ -333,7 +334,7 @@ public final class DefaultFontConfig implements FontConfig {
 
         private Font(String metrics, String embed, String afm, String pfm, String subFont, boolean kerning,
                      boolean advanced, String encodingMode, String embeddingMode, boolean simulateStyle,
-                     boolean embedAsType1, boolean useSVG) {
+                     boolean embedAsType1, boolean useSVG, boolean lazyLoad) {
             this.metrics = metrics;
             this.embedUri = embed;
             this.afm = afm;
@@ -346,6 +347,7 @@ public final class DefaultFontConfig implements FontConfig {
             this.simulateStyle = simulateStyle;
             this.embedAsType1 = embedAsType1;
             this.useSVG = useSVG;
+            this.lazyLoad = lazyLoad;
         }
 
         /**
@@ -384,6 +386,10 @@ public final class DefaultFontConfig implements FontConfig {
             return subFont;
         }
 
+        public String getEncodingMode() {
+            return encodingMode;
+        }
+
         public String getEmbeddingMode() {
             return embeddingMode;
         }
@@ -406,6 +412,10 @@ public final class DefaultFontConfig implements FontConfig {
 
         public boolean getUseSVG() {
             return useSVG;
+        }
+
+        public boolean isLazyLoad() {
+            return lazyLoad;
         }
     }
 }

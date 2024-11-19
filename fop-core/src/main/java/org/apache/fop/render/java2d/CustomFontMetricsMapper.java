@@ -29,10 +29,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.complexscripts.fonts.Positionable;
 import org.apache.fop.complexscripts.fonts.Substitutable;
 import org.apache.fop.fonts.CustomFont;
+import org.apache.fop.fonts.EmbedFontInfo;
+import org.apache.fop.fonts.FontLoader;
 import org.apache.fop.fonts.FontType;
+import org.apache.fop.fonts.FontUris;
 import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.Typeface;
 
@@ -49,6 +53,9 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
      * Font metrics for the font this class models.
      */
     private Typeface typeface;
+    private FontUris fontUris;
+    private EmbedFontInfo configFontInfo;
+    private InternalResourceResolver resourceResolver;
 
     /**
      * The font required by the Java2D renderer.
@@ -87,6 +94,13 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
         initialize(fontSource);
     }
 
+    public CustomFontMetricsMapper(FontUris fontUris, EmbedFontInfo configFontInfo,
+                                   InternalResourceResolver resourceResolver) {
+        this.fontUris = fontUris;
+        this.configFontInfo = configFontInfo;
+        this.resourceResolver = resourceResolver;
+    }
+
     private static final int TYPE1_FONT = 1; //Defined in Java 1.5
 
     /**
@@ -98,7 +112,7 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
     private void initialize(final InputStream inStream)
                 throws FontFormatException, IOException {
         int type = Font.TRUETYPE_FONT;
-        if (FontType.TYPE1.equals(typeface.getFontType())) {
+        if (FontType.TYPE1.equals(getRealFont().getFontType())) {
             type = TYPE1_FONT; //Font.TYPE1_FONT; only available in Java 1.5
         }
         this.font = Font.createFont(type, inStream);
@@ -112,16 +126,18 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
 
     /** {@inheritDoc} */
     public final boolean hasChar(final char c) {
+        getRealFont();
         return font.canDisplay(c);
     }
 
     /** {@inheritDoc} */
     public final char mapChar(final char c) {
-        return typeface.mapChar(c);
+        return getRealFont().mapChar(c);
     }
 
     /** {@inheritDoc} */
     public final Font getFont(final int size) {
+        getRealFont();
         if (this.size == size) {
             return font;
         }
@@ -133,104 +149,104 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
 
     /** {@inheritDoc} */
     public final int getAscender(final int size) {
-        return typeface.getAscender(size);
+        return getRealFont().getAscender(size);
     }
 
     /** {@inheritDoc} */
     public final int getCapHeight(final int size) {
-        return typeface.getCapHeight(size);
+        return getRealFont().getCapHeight(size);
     }
 
     /** {@inheritDoc} */
     public final int getDescender(final int size) {
-        return typeface.getDescender(size);
+        return getRealFont().getDescender(size);
     }
 
     /** {@inheritDoc} */
     public final String getEmbedFontName() {
-        return typeface.getEmbedFontName();
+        return getRealFont().getEmbedFontName();
     }
 
     /** {@inheritDoc} */
     public final Set<String> getFamilyNames() {
-        return typeface.getFamilyNames();
+        return getRealFont().getFamilyNames();
     }
 
     /** {@inheritDoc} */
     public final String getFontName() {
-        return typeface.getFontName();
+        return getRealFont().getFontName();
     }
 
     /** {@inheritDoc} */
     public final URI getFontURI() {
-        return typeface.getFontURI();
+        return getRealFont().getFontURI();
     }
 
     /** {@inheritDoc} */
     public final FontType getFontType() {
-        return typeface.getFontType();
+        return getRealFont().getFontType();
     }
 
     /** {@inheritDoc} */
     public final String getFullName() {
-        return typeface.getFullName();
+        return getRealFont().getFullName();
     }
 
     /** {@inheritDoc} */
     public final Map getKerningInfo() {
-        return typeface.getKerningInfo();
+        return getRealFont().getKerningInfo();
     }
 
     /** {@inheritDoc} */
     public final int getWidth(final int i, final int size) {
-        return typeface.getWidth(i, size);
+        return getRealFont().getWidth(i, size);
     }
 
     /** {@inheritDoc} */
     public final int[] getWidths() {
-        return typeface.getWidths();
+        return getRealFont().getWidths();
     }
 
     public Rectangle getBoundingBox(int glyphIndex, int size) {
-        return typeface.getBoundingBox(glyphIndex, size);
+        return getRealFont().getBoundingBox(glyphIndex, size);
     }
 
     /** {@inheritDoc} */
     public final int getXHeight(final int size) {
-        return typeface.getXHeight(size);
+        return getRealFont().getXHeight(size);
     }
 
     public int getUnderlinePosition(int size) {
-        return typeface.getUnderlinePosition(size);
+        return getRealFont().getUnderlinePosition(size);
     }
 
     public int getUnderlineThickness(int size) {
-        return typeface.getUnderlineThickness(size);
+        return getRealFont().getUnderlineThickness(size);
     }
 
     public int getStrikeoutPosition(int size) {
-        return typeface.getStrikeoutPosition(size);
+        return getRealFont().getStrikeoutPosition(size);
     }
 
     public int getStrikeoutThickness(int size) {
-        return typeface.getStrikeoutThickness(size);
+        return getRealFont().getStrikeoutThickness(size);
     }
 
     /** {@inheritDoc} */
     public final boolean hasKerningInfo() {
-        return typeface.hasKerningInfo();
+        return getRealFont().hasKerningInfo();
     }
 
     /** {@inheritDoc} */
     public boolean isMultiByte() {
-        return typeface.isMultiByte();
+        return getRealFont().isMultiByte();
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean performsPositioning() {
-        if (typeface instanceof Positionable) {
+        if (getRealFont() instanceof Positionable) {
             return ((Positionable) typeface).performsPositioning();
         } else {
             return false;
@@ -241,7 +257,7 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
      * {@inheritDoc}
      */
     public int[][] performPositioning(CharSequence cs, String script, String language, int fontSize) {
-        if (typeface instanceof Positionable) {
+        if (getRealFont() instanceof Positionable) {
             return ((Positionable) typeface).performPositioning(cs, script, language, fontSize);
         } else {
             return null;
@@ -252,7 +268,7 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
      * {@inheritDoc}
      */
     public int[][] performPositioning(CharSequence cs, String script, String language) {
-        if (typeface instanceof Positionable) {
+        if (getRealFont() instanceof Positionable) {
             return ((Positionable) typeface).performPositioning(cs, script, language);
         } else {
             return null;
@@ -263,7 +279,7 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
      * {@inheritDoc}
      */
     public boolean performsSubstitution() {
-        if (typeface instanceof Substitutable) {
+        if (getRealFont() instanceof Substitutable) {
             return ((Substitutable) typeface).performsSubstitution();
         } else {
             return false;
@@ -275,7 +291,7 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
      */
     public CharSequence performSubstitution(CharSequence cs, String script, String language, List associations,
                                             boolean retainControls) {
-        if (typeface instanceof Substitutable) {
+        if (getRealFont() instanceof Substitutable) {
             return ((Substitutable) typeface).performSubstitution(cs, script, language, associations, retainControls);
         } else {
             return cs;
@@ -287,7 +303,7 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
      */
     public CharSequence reorderCombiningMarks(CharSequence cs, int[][] gpa,
         String script, String language, List associations) {
-        if (typeface instanceof Substitutable) {
+        if (getRealFont() instanceof Substitutable) {
             return ((Substitutable) typeface).reorderCombiningMarks(cs, gpa, script, language, associations);
         } else {
             return cs;
@@ -295,7 +311,18 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
     }
 
     public Typeface getRealFont() {
+        if (typeface == null) {
+            try {
+                CustomFont fontMetrics = FontLoader.loadFont(fontUris, configFontInfo.getSubFontName(), true,
+                    configFontInfo.getEmbeddingMode(), configFontInfo.getEncodingMode(),
+                    configFontInfo.getKerning(), configFontInfo.getAdvanced(), resourceResolver,
+                    configFontInfo.getSimulateStyle(), configFontInfo.getEmbedAsType1(), configFontInfo.getUseSVG());
+                typeface = fontMetrics;
+                initialize(fontMetrics.getInputStream());
+            } catch (IOException | FontFormatException e) {
+                throw new RuntimeException("Failed to read font file " + fontUris.getEmbed() + " " + e.getMessage(), e);
+            }
+        }
         return typeface;
     }
-
 }

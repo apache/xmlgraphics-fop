@@ -54,7 +54,7 @@ public class EmbedFontInfoTestCase {
         triplets.add(triplet);
         FontUris fontUris = new FontUris(embedURI, metricsURI);
         sut = new EmbedFontInfo(fontUris, kerning, useAdvanced, triplets, subFontName, encMode,
-                embedMode, false, false, true);
+                embedMode, false, false, true, false);
     }
 
     @Test
