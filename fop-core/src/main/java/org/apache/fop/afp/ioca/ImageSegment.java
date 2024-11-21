@@ -114,6 +114,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
      * @param colorModel the IDE color model.
      * @deprecated Use {@link IDEStructureParameter#setColorModel(byte)} instead.
      */
+    @Deprecated
     public void setIDEColorModel(byte colorModel) {
         getImageContent().setImageIDEColorModel(colorModel);
     }
@@ -123,6 +124,7 @@ public class ImageSegment extends AbstractNamedAFPObject {
      * @param subtractive true for subtractive mode, false for additive mode
      * @deprecated Use {@link IDEStructureParameter#setSubtractive(boolean)} instead.
      */
+    @Deprecated
     public void setSubtractive(boolean subtractive) {
         getImageContent().setSubtractive(subtractive);
     }
