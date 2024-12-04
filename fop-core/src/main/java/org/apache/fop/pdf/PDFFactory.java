@@ -556,7 +556,7 @@ public class PDFFactory {
         PDFLink link = new PDFLink(rect);
 
         if (linkType == PDFLink.EXTERNAL) {
-            link.setAction(getExternalAction(destination, false));
+            link.setAction(getExternalAction(destination, false, null));
         } else {
             // linkType is internal
             String goToReference = getGoToReference(destination, yoffset);
@@ -583,7 +583,7 @@ public class PDFFactory {
      *                  displayed in a new window
      * @return the PDFAction thus created or found
      */
-    public PDFAction getExternalAction(String target, boolean newWindow) {
+    public PDFAction getExternalAction(String target, boolean newWindow, String altText) {
         URI uri = getTargetUri(target);
         if (uri != null) {
             String scheme = uri.getScheme();
@@ -595,7 +595,7 @@ public class PDFFactory {
                 scheme = "file";
             }
             if (scheme == null) {
-                return new PDFUri(uri.toASCIIString());
+                return new PDFUri(uri.toASCIIString(), altText);
             } else if (scheme.equalsIgnoreCase("embedded-file")) {
                 return getActionForEmbeddedFile(filename, newWindow);
             } else if (scheme.equalsIgnoreCase("file")) {
@@ -619,16 +619,16 @@ public class PDFFactory {
                     return getGoToPDFAction(filename, dest, page, newWindow);
                 } else {
                     if (uri.getQuery() != null || uri.getFragment() != null) {
-                        return new PDFUri(uri.toASCIIString());
+                        return new PDFUri(uri.toASCIIString(), altText);
                     } else {
                         return getLaunchAction(filename, newWindow);
                     }
                 }
             } else {
-                return new PDFUri(uri.toASCIIString());
+                return new PDFUri(uri.toASCIIString(), altText);
             }
         }
-        return new PDFUri(target);
+        return new PDFUri(target, altText);
     }
 
     private URI getTargetUri(String target) {

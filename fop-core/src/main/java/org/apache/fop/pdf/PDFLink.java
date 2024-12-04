@@ -93,15 +93,21 @@ public class PDFLink extends PDFObject {
             f |= 1 << (5 - 1); //NoRotate, bit 5
             fFlag = "/F " + f;
         }
-        String s = "<< /Type /Annot\n" + "/Subtype /Link\n" + "/Rect [ "
+        String dict = "<< /Type /Annot\n" + "/Subtype /Link\n" + "/Rect [ "
                    + (ulx) + " " + (uly) + " "
                    + (brx) + " " + (bry) + " ]\n" + "/C [ "
                    + this.color + " ]\n" + "/Border [ 0 0 0 ]\n" + "/A "
                    + this.action.getAction() + "\n" + "/H /I\n"
                    + (this.structParent != null
-                           ? "/StructParent " + this.structParent.toString() + "\n" : "")
-                   + fFlag + "\n>>";
-        return s;
+                           ? "/StructParent " + this.structParent.toString() + "\n" : "");
+        if (action instanceof PDFUri) {
+            String altText = ((PDFUri) action).getAltText();
+            if (altText != null && !altText.isEmpty()) {
+                dict += "/Contents " + PDFText.escapeText(altText) + "\n";
+            }
+        }
+        dict += fFlag + "\n>>";
+        return dict;
     }
 
     /*

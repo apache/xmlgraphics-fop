@@ -420,6 +420,7 @@ public final class Trait implements Serializable {
 
         private String destination;
         private boolean newWindow;
+        private String altText;
 
         /**
          * Constructs an ExternalLink object with the given destination
@@ -427,9 +428,10 @@ public final class Trait implements Serializable {
          * @param destination   target of the link
          * @param newWindow     true if the target should be opened in a new window
          */
-        public ExternalLink(String destination, boolean newWindow) {
+        public ExternalLink(String destination, boolean newWindow, String altText) {
             this.destination = destination;
             this.newWindow = newWindow;
+            this.altText = altText;
         }
 
         /**
@@ -452,7 +454,7 @@ public final class Trait implements Serializable {
                             "Malformed trait value for Trait.ExternalLink: " + traitValue);
                 }
             }
-            return new ExternalLink(dest, newWindow);
+            return new ExternalLink(dest, newWindow, null);
         }
 
         /**
@@ -482,6 +484,10 @@ public final class Trait implements Serializable {
             sb.append("newWindow=").append(newWindow);
             sb.append(",dest=").append(this.destination);
             return sb.toString();
+        }
+
+        public String getAltText() {
+            return altText;
         }
     }
 

@@ -259,7 +259,7 @@ public class PDFFactoryTestCase {
         PDFFactory pdfFactory = new PDFFactory(doc);
         String target = "embedded-file:" + unicodeFilename;
         PDFJavaScriptLaunchAction pdfAction = (PDFJavaScriptLaunchAction)
-                pdfFactory.getExternalAction(target, false);
+                pdfFactory.getExternalAction(target, false, null);
 
         String expectedString = "<<\n/S /JavaScript\n/JS (this.exportDataObject\\({cName:\""
                 + fileSpec.getFilename() + "\", nLaunch:2}\\);)\n>>";
@@ -280,5 +280,17 @@ public class PDFFactoryTestCase {
                 + "\n/H /I\n\n>>";
 
         assertEquals(expectedString, link.toPDFString());
+    }
+
+    @Test
+    public void testLinkAltText() throws IOException {
+        PDFDocument doc = new PDFDocument("");
+        PDFFactory pdfFactory = new PDFFactory(doc);
+        PDFAction action = pdfFactory.getExternalAction("a", false, "b");
+        PDFLink link = pdfFactory.makeLink(new Rectangle(), "a", 0, 0);
+        link.setAction(action);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        link.output(bos);
+        assertTrue(bos.toString().contains("/Contents (b)"));
     }
 }

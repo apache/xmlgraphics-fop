@@ -53,7 +53,7 @@ public class PDFAttachmentTestCase {
         docHandler.startPage(0, "", "", new Dimension());
         docHandler.handleExtensionObject(new PDFEmbeddedFileAttachment("filename", "src", "desc"));
         docHandler.getDocumentNavigationHandler().renderLink(new Link(
-                new URIAction("embedded-file:filename", false), new Rectangle()));
+                new URIAction("embedded-file:filename", false, null), new Rectangle()));
         docHandler.endDocument();
         Assert.assertTrue(out.toString().contains(
                 "<<\n  /Type /Filespec\n  /F (filename)\n  /UF (filename)\n  /AFRelationship /Data"));
@@ -76,7 +76,7 @@ public class PDFAttachmentTestCase {
                 "src", "desc");
         docHandler.handleExtensionObject(fileAtt);
         docHandler.getDocumentNavigationHandler().renderLink(new Link(
-                new URIAction("embedded-file:" + unicodeFilename, false), new Rectangle()));
+                new URIAction("embedded-file:" + unicodeFilename, false, null), new Rectangle()));
         docHandler.endDocument();
         Assert.assertTrue(out.toString().contains(
                 "<<\n  /Type /Filespec\n  /F (" + fileAtt.getFilename() + ")\n  /UF "
@@ -99,7 +99,7 @@ public class PDFAttachmentTestCase {
                 "src", "desc");
         docHandler.handleExtensionObject(fileAtt);
         docHandler.getDocumentNavigationHandler().renderLink(new Link(
-                new URIAction("embedded-file:" + unicodeFilename, false), new Rectangle()));
+                new URIAction("embedded-file:" + unicodeFilename, false, null), new Rectangle()));
         docHandler.endDocument();
         Assert.assertTrue(out.toString().contains(
                 "<<\n  /Type /Filespec\n  /F (t\\(st)\n  /UF (t\\(st)\n  /AFRelationship /Data"));

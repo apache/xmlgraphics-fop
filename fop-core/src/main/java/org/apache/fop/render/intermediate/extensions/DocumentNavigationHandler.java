@@ -165,8 +165,9 @@ public class DocumentNavigationHandler extends DefaultHandler
                 String id = attributes.getValue("id");
                 String gotoURI = attributes.getValue("uri");
                 String showDestination = attributes.getValue("show-destination");
+                String altText = attributes.getValue("alt-text");
                 boolean newWindow = "new".equals(showDestination);
-                URIAction action = new URIAction(gotoURI, newWindow);
+                URIAction action = new URIAction(gotoURI, newWindow, altText);
                 if (id != null) {
                     action.setID(id);
                 }

@@ -965,7 +965,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                 String extDest = extLink.getDestination();
                 if (extDest != null && extDest.length() > 0) {
                     linkTraitFound = true;
-                    action = new URIAction(extDest, extLink.newWindow());
+                    action = new URIAction(extDest, extLink.newWindow(), extLink.getAltText());
                     action = actionSet.put(action);
                 }
             }

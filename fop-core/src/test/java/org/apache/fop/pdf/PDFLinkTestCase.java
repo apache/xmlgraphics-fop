@@ -413,7 +413,7 @@ public class PDFLinkTestCase {
         docHandler.startDocument();
         docHandler.startPage(0, "", "", new Dimension());
         docHandler.getDocumentNavigationHandler().renderLink(new Link(
-                new URIAction(target, false), new Rectangle()));
+                new URIAction(target, false, null), new Rectangle()));
         docHandler.endDocument();
 
         // Normalize spaces between word for easier testing

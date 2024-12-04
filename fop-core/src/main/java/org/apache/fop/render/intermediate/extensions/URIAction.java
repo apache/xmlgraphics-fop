@@ -33,18 +33,20 @@ public class URIAction extends AbstractAction implements DocumentNavigationExten
 
     private String uri;
     private boolean newWindow;
+    private String altText;
 
     /**
      * Creates a new instance.
      * @param uri the target URI
      * @param newWindow true if the link should be opened in a new window
      */
-    public URIAction(String uri, boolean newWindow) {
+    public URIAction(String uri, boolean newWindow, String altText) {
         if (uri == null) {
             throw new NullPointerException("uri must not be null");
         }
         this.uri = uri;
         this.newWindow = newWindow;
+        this.altText = altText;
         setID(getIDPrefix() + (uri + newWindow).hashCode());
     }
 
@@ -97,6 +99,9 @@ public class URIAction extends AbstractAction implements DocumentNavigationExten
             atts.addAttribute("", "id", "id", XMLUtil.CDATA, getID());
         }
         atts.addAttribute("", "uri", "uri", XMLUtil.CDATA, getURI());
+        if (altText != null && !altText.isEmpty()) {
+            atts.addAttribute("", "alt-text", "alt-text", XMLUtil.CDATA, altText);
+        }
         if (isNewWindow()) {
             atts.addAttribute("", "show-destination", "show-destination", XMLUtil.CDATA, "new");
         }
@@ -106,4 +111,7 @@ public class URIAction extends AbstractAction implements DocumentNavigationExten
                 GOTO_URI.getLocalName(), GOTO_URI.getQName());
     }
 
+    public String getAltText() {
+        return altText;
+    }
 }

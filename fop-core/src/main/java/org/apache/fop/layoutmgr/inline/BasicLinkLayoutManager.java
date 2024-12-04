@@ -81,7 +81,7 @@ public class BasicLinkLayoutManager extends InlineLayoutManager {
             boolean newWindow = (fobj.getShowDestination() == Constants.EN_NEW);
             if (url.length() > 0) {
                 area.addTrait(Trait.EXTERNAL_LINK,
-                        new Trait.ExternalLink(url, newWindow));
+                        new Trait.ExternalLink(url, newWindow, fobj.getAltText()));
             }
         }
     }
