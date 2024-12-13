@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 import javax.xml.transform.stream.StreamResult;
 
@@ -127,6 +128,32 @@ public class PCLPainterTestCase {
         Assert.assertTrue(optimizeResources.length() > 900);
     }
 
+    @Test
+    public void testCursorPos() throws Exception {
+        Rectangle size = new Rectangle(1, 1);
+        PCLPageDefinition pclPageDef = new PCLPageDefinition("", 0, new Dimension(), size, true);
+        PCLDocumentHandler documentHandler = new PCLDocumentHandler(new IFContext(ua));
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        documentHandler.setResult(new StreamResult(output));
+        documentHandler.startDocument();
+        PCLPainter pclPainter = new PCLPainter(documentHandler, pclPageDef);
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("", "", "", 0);
+        MultiByteFont mbf = new MultiByteFont(ua.getResourceResolver(), EmbeddingMode.AUTO);
+        mbf.setEmbedURI(new URI("test/resources/fonts/ttf/DejaVuLGCSerif.ttf"));
+        mbf.setFontType(FontType.TRUETYPE);
+        int[] widths = new int[100];
+        Arrays.fill(widths, 100);
+        mbf.setWidthArray(widths);
+        fi.addMetrics("", new CustomFontMetricsMapper(mbf));
+        documentHandler.setFontInfo(fi);
+        pclPainter.setFont("", "", 0, "", 12000, Color.BLACK);
+        pclPainter.drawText(0, 0, 0, 0, null, "test");
+        Assert.assertTrue(output.toString().contains("&a0h0V"));
+        pclPainter.drawText(4800, 0, 0, 0, null, "test");
+        Assert.assertFalse(output.toString().contains("&a48h0V"));
+    }
+
     private ByteArrayOutputStream getPCL(boolean optimizeResources)
             throws IFException, URISyntaxException, IOException, FontFormatException {
         Rectangle size = new Rectangle(1, 1);
@@ -142,6 +169,7 @@ public class PCLPainterTestCase {
         MultiByteFont mbf = new MultiByteFont(ua.getResourceResolver(), EmbeddingMode.AUTO);
         mbf.setEmbedURI(new URI("test/resources/fonts/ttf/DejaVuLGCSerif.ttf"));
         mbf.setFontType(FontType.TRUETYPE);
+        mbf.setWidthArray(new int[100]);
         fi.addMetrics("", new CustomFontMetricsMapper(mbf));
         documentHandler.setFontInfo(fi);
         pclPainter.setFont("", "", 0, "", 0, Color.BLACK);

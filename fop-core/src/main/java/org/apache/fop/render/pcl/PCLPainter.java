@@ -86,6 +86,8 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
     private Stack<GraphicContext> graphicContextStack = new Stack<GraphicContext>();
     private GraphicContext graphicContext = new GraphicContext();
     private PCLSoftFontManager sfManager;
+    private int currentX = -1;
+    private int currentY = -1;
 
     /**
      * Main constructor.
@@ -448,6 +450,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
         }
         for (int i = 0; i < l; i++) {
             char orgChar = text.charAt(i);
+            currentX += getCharWidth(i, font, orgChar, text);
             char ch;
             float xGlyphAdjust = 0;
             float yGlyphAdjust = 0;
@@ -510,7 +513,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
             }
         }
 
-        if (x != -1 && y != -1) {
+        if (x != -1 && y != -1 && (currentX != x || currentY != y)) {
             setCursorPos(x, y);
         }
 
@@ -527,6 +530,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
         String current = "";
         for (int i = 0; i < l; i++) {
             char orgChar = text.charAt(i);
+            currentX += getCharWidth(i, font, orgChar, text);
             float glyphAdjust = 0;
             if (!font.hasChar(orgChar)) {
                 if (CharUtilities.isFixedWidthSpace(orgChar)) {
@@ -662,6 +666,14 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
         paintMarksAsBitmap(painter, boundingBox);
     }
 
+    private int getCharWidth(int i, Font font, char orgChar, String text) {
+        int width = font.getCharWidth(orgChar);
+        if (i > 0) {
+            width += font.getKernValue(text.charAt(i - 1), orgChar);
+        }
+        return width;
+    }
+
     /** Saves the current graphics state on the stack. */
     private void saveGraphicsState() {
         graphicContextStack.push(graphicContext);
@@ -702,6 +714,8 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
      * @param y the y coordinate (in millipoints)
      */
     void setCursorPos(int x, int y) throws IOException {
+        currentX = x;
+        currentY = y;
         Point2D transPoint = transformedPoint(x, y);
         gen.setCursorPos(transPoint.getX(), transPoint.getY());
     }
