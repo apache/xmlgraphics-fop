@@ -156,6 +156,14 @@
 
   <repositories>
     <repository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>apache.snapshots.https</id>
       <url>https://repository.apache.org/content/repositories/snapshots</url>
       <releases>
@@ -163,16 +171,6 @@
       </releases>
       <snapshots>
         <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>apache.releases.https</id>
-      <url>https://repository.apache.org/content/repositories/releases</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
       </snapshots>
     </repository>
     <repository>
