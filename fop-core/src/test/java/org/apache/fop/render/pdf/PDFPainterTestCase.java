@@ -22,6 +22,7 @@ package org.apache.fop.render.pdf;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +38,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.endsWith;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.mock;
@@ -76,6 +78,18 @@ import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.traits.BorderProps;
 
 public class PDFPainterTestCase {
+
+    private static final int PAGE_WIDTH = 100000;
+
+    private static final int PAGE_HEIGHT = 100000;
+
+    private static final int IMAGE_X = 10000;
+
+    private static final int IMAGE_Y = 15000;
+
+    private static final int IMAGE_WIDTH = 20000;
+
+    private static final int IMAGE_HEIGHT = 20000;
 
     private FOUserAgent foUserAgent;
     private PDFContentGenerator pdfContentGenerator;
@@ -335,35 +349,103 @@ public class PDFPainterTestCase {
     }
 
     @Test
-    public void testPDFUAImage() throws IFException, IOException {
+    public void testPDFUAImage() throws IOException, IFException {
+        String output = defaultTestPDFUAImage(new Dimension(), new Rectangle(), new AffineTransform());
+        assertTrue("The page dimensions and the image position is not set",
+                output.contains("/BBox [0 0 0 0]"));
+    }
+
+    @Test
+    public void testPDFUAImageWithoutPageRegionMargins() throws IOException, IFException {
+        defaultTestPDFUAImageWithImagePosition(new AffineTransform());
+    }
+
+    @Test
+    public void testPDFUAImageWithPageWithRegionMargins() throws IOException, IFException {
+        defaultTestPDFUAImageWithImagePosition(new AffineTransform(0d, 0d, 0d, 0d, 5000d, 5000d));
+    }
+
+    @Test
+    public void testPDFUAImageNullPageRegionMargins() throws IOException, IFException {
+        defaultTestPDFUAImageWithImagePosition(null);
+    }
+
+    private void defaultTestPDFUAImageWithImagePosition(AffineTransform transform) throws IOException, IFException {
+        String output = defaultTestPDFUAImage(new Dimension(PAGE_WIDTH, PAGE_HEIGHT),
+                new Rectangle(IMAGE_X, IMAGE_Y, IMAGE_WIDTH, IMAGE_HEIGHT), transform);
+
+        int rectX = 0;
+        int rectY = 0;
+        if (transform != null) {
+            rectX = (int) transform.getTranslateX();
+            rectY = (int) transform.getTranslateY();
+        }
+
+        output = output.substring(output.indexOf("[") + 1);
+        output = output.substring(0, output.indexOf("]"));
+
+        String[] array = output.split(" ");
+
+        // on the X axis, 0 is on the left
+        // on the Y axis, 0 is at the bottom
+        int position = (IMAGE_X + rectX) / 1000;
+        assertEquals("Left box boundary must be the X image position, adjusted to the region margins",
+                position, Integer.parseInt(array[0]));
+
+        position = (PAGE_HEIGHT - IMAGE_Y - rectY - IMAGE_HEIGHT) / 1000;
+        assertEquals("Top box boundary must be the page height minus the image height and the "
+                        + "Y image position, adjusted to the region margins",
+                position, Integer.parseInt(array[1]));
+
+        position = (IMAGE_X + rectX + IMAGE_WIDTH) / 1000;
+        assertEquals("Right box boundary must be the left box boundary plus the image width,"
+                        + " adjusted to the region margins",
+                position, Integer.parseInt(array[2]));
+
+        position = (PAGE_HEIGHT - IMAGE_Y - rectY) / 1000;
+        assertEquals("Bottom box boundary must be the image height minus the Y image position, "
+                        + "adjusted to the region margins",
+                position, Integer.parseInt(array[3]));
+    }
+
+    private String defaultTestPDFUAImage(Dimension dimension, Rectangle rectangle, AffineTransform transform)
+            throws IFException, IOException {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         foUserAgent = fopFactory.newFOUserAgent();
         foUserAgent.setAccessibility(true);
+
         IFContext ifContext = new IFContext(foUserAgent);
         pdfDocumentHandler = new PDFDocumentHandler(ifContext);
         pdfDocumentHandler.getStructureTreeEventHandler();
         pdfDocumentHandler.setResult(new StreamResult(new ByteArrayOutputStream()));
         pdfDocumentHandler.startDocument();
-        pdfDocumentHandler.startPage(0, "", "", new Dimension());
+        pdfDocumentHandler.startPage(0, "", "", dimension);
+
         PDFDocument doc = pdfDocumentHandler.getPDFDocument();
         doc.getProfile().setPDFUAMode(PDFUAMode.PDFUA_1);
         doc.getInfo().setTitle("a");
+
         PDFLogicalStructureHandler structureHandler = new PDFLogicalStructureHandler(doc);
         structureHandler.startPage(new PDFPage(new PDFResources(doc), 0,
                 new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()));
+
         PDFPainter pdfPainter = new PDFPainter(pdfDocumentHandler, structureHandler);
+        if (transform != null) {
+            pdfPainter.startViewport(transform, dimension, null);
+        }
+
         ifContext.setLanguage(Locale.US);
-        drawImage(doc, pdfPainter, ifContext);
-        String output = drawImage(doc, pdfPainter, ifContext);
-        Assert.assertTrue(output, output.contains("/BBox [0 0 0 0]"));
+
+        drawImage(doc, pdfPainter, ifContext, rectangle);
+        return drawImage(doc, pdfPainter, ifContext, rectangle);
     }
 
-    private String drawImage(PDFDocument doc, PDFPainter pdfPainter, IFContext ifContext)
+    private String drawImage(PDFDocument doc, PDFPainter pdfPainter, IFContext ifContext, Rectangle rectangle)
         throws IOException, IFException {
         PDFStructElem structElem = new PDFStructElem(doc.getRoot(), StandardStructureTypes.InlineLevelStructure.NOTE);
         structElem.setDocument(doc);
         ifContext.setStructureTreeElement(structElem);
-        pdfPainter.drawImage("test/resources/images/cmyk.jpg", new Rectangle());
+        pdfPainter.drawImage("test/resources/images/cmyk.jpg", rectangle);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         structElem.output(bos);
         return bos.toString();
@@ -418,8 +500,8 @@ public class PDFPainterTestCase {
         String out = drawSVGFont("<svg xmlns=\"http://www.w3.org/2000/svg\">\n"
                 + "<circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" />\n"
                 + "</svg>");
-        Assert.assertTrue(out.contains("0.00012 0 0 0.00012 0 0 cm"));
-        Assert.assertTrue(out.contains("1 0 0 rg"));
+        assertTrue(out.contains("0.00012 0 0 0.00012 0 0 cm"));
+        assertTrue(out.contains("1 0 0 rg"));
     }
 
     @Test
@@ -442,8 +524,8 @@ public class PDFPainterTestCase {
                 + "<g transform=\"translate(0 0) translate(0 0) scale(50)\"/>"
                 + "<circle cx=\"50\" cy=\"50\" r=\"40\" stroke=\"black\" stroke-width=\"3\" fill=\"red\" />\n"
                 + "</svg>");
-        Assert.assertTrue(out.contains("0.00012 0 0 0.00012 0 0 cm"));
-        Assert.assertTrue(out.contains("1 0 0 rg"));
+        assertTrue(out.contains("0.00012 0 0 0.00012 0 0 cm"));
+        assertTrue(out.contains("1 0 0 rg"));
     }
 
     private String drawSVGFont(String svg) throws IFException, IOException {
