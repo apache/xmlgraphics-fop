@@ -87,8 +87,6 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
 
     private final LanguageAvailabilityChecker languageAvailabilityChecker;
 
-    private AffineTransform viewportContentArea;
-
     private static class LanguageAvailabilityChecker {
 
         private final IFContext context;
@@ -146,7 +144,6 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             throws IFException {
         generator.saveGraphicsState();
         generator.concatenate(toPoints(transform));
-        this.viewportContentArea = transform;
         if (clipRect != null) {
             clipRect(clipRect);
         }
@@ -194,14 +191,14 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
             if (structElem != null) { //structElem is null if the image is marked as an artifact
                 PDFDictionary d = new PDFDictionary();
-                int x = rect.x / 1000;
-                int y = (getDocumentHandler().getCurrentPageRef().getPageDimension().height - rect.y) / 1000;
-                int w = rect.width / 1000;
-                int h = rect.height / 1000;
+                double x = rect.x / 1000d;
+                double y = -rect.y / 1000d;
+                double w = rect.width / 1000d;
+                double h = rect.height / 1000d;
 
-                if (viewportContentArea != null) {
-                    x += (int) viewportContentArea.getTranslateX() / 1000;
-                    y -= (int) viewportContentArea.getTranslateY() / 1000;
+                if (generator.getState().getTransform() != null) {
+                    x += generator.getState().getTransform().getTranslateX();
+                    y += generator.getState().getTransform().getTranslateY();
                 }
 
                 d.put("BBox", new PDFArray(x, y - h, x + w, y));

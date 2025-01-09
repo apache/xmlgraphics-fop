@@ -26,7 +26,11 @@ import java.awt.geom.AffineTransform;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -350,35 +354,49 @@ public class PDFPainterTestCase {
 
     @Test
     public void testPDFUAImage() throws IOException, IFException {
-        String output = defaultTestPDFUAImage(new Dimension(), new Rectangle(), new AffineTransform());
+        String output = defaultTestPDFUAImage(new Dimension(), new Rectangle(),
+                Collections.singletonList(new AffineTransform()));
         assertTrue("The page dimensions and the image position is not set",
                 output.contains("/BBox [0 0 0 0]"));
     }
 
     @Test
     public void testPDFUAImageWithoutPageRegionMargins() throws IOException, IFException {
-        defaultTestPDFUAImageWithImagePosition(new AffineTransform());
+        defaultTestPDFUAImageWithImagePosition(Collections.singletonList(new AffineTransform()));
     }
 
     @Test
     public void testPDFUAImageWithPageWithRegionMargins() throws IOException, IFException {
-        defaultTestPDFUAImageWithImagePosition(new AffineTransform(0d, 0d, 0d, 0d, 5000d, 5000d));
+        defaultTestPDFUAImageWithImagePosition(
+                Collections.singletonList(new AffineTransform(0d, 0d, 0d, 0d, 5000d, 5000d)));
     }
 
     @Test
     public void testPDFUAImageNullPageRegionMargins() throws IOException, IFException {
-        defaultTestPDFUAImageWithImagePosition(null);
+        defaultTestPDFUAImageWithImagePosition(new ArrayList<>());
     }
 
-    private void defaultTestPDFUAImageWithImagePosition(AffineTransform transform) throws IOException, IFException {
+    @Test
+    public void testPDFUAImageSecondTransformConcatenated() throws IOException, IFException {
+        defaultTestPDFUAImageWithImagePosition(Arrays.asList(new AffineTransform(0d, 0d, 0d, 0d, 5000d, 5000d),
+                new AffineTransform(1d, 0d, 0d, 1d, 10d, 10d)));
+    }
+
+    private void defaultTestPDFUAImageWithImagePosition(List<AffineTransform> transforms)
+            throws IOException, IFException {
         String output = defaultTestPDFUAImage(new Dimension(PAGE_WIDTH, PAGE_HEIGHT),
-                new Rectangle(IMAGE_X, IMAGE_Y, IMAGE_WIDTH, IMAGE_HEIGHT), transform);
+                new Rectangle(IMAGE_X, IMAGE_Y, IMAGE_WIDTH, IMAGE_HEIGHT), transforms);
 
         int rectX = 0;
         int rectY = 0;
-        if (transform != null) {
-            rectX = (int) transform.getTranslateX();
-            rectY = (int) transform.getTranslateY();
+        if (!transforms.isEmpty()) {
+            AffineTransform mainTransform = transforms.get(0);
+            for (int i = 1; i < transforms.size(); i++) {
+                mainTransform.concatenate(transforms.get(i));
+            }
+
+            rectX = (int) mainTransform.getTranslateX();
+            rectY = (int) mainTransform.getTranslateY();
         }
 
         output = output.substring(output.indexOf("[") + 1);
@@ -408,7 +426,7 @@ public class PDFPainterTestCase {
                 position, Integer.parseInt(array[3]));
     }
 
-    private String defaultTestPDFUAImage(Dimension dimension, Rectangle rectangle, AffineTransform transform)
+    private String defaultTestPDFUAImage(Dimension dimension, Rectangle rectangle, List<AffineTransform> transforms)
             throws IFException, IOException {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         foUserAgent = fopFactory.newFOUserAgent();
@@ -430,8 +448,8 @@ public class PDFPainterTestCase {
                 new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()));
 
         PDFPainter pdfPainter = new PDFPainter(pdfDocumentHandler, structureHandler);
-        if (transform != null) {
-            pdfPainter.startViewport(transform, dimension, null);
+        for (AffineTransform affineTransform : transforms) {
+            pdfPainter.startViewport(affineTransform, dimension, null);
         }
 
         ifContext.setLanguage(Locale.US);
