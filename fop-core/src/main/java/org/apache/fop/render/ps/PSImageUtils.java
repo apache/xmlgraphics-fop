@@ -81,7 +81,7 @@ public class PSImageUtils extends org.apache.xmlgraphics.ps.PSImageUtils {
         ImageFlavor[] inlineFlavors;
         ImageHandlerRegistry imageHandlerRegistry
             = renderingContext.getUserAgent().getImageHandlerRegistry();
-        inlineFlavors = imageHandlerRegistry.getSupportedFlavors(renderingContext);
+        inlineFlavors = imageHandlerRegistry.getSupportedFlavors(renderingContext, null);
         return inlineFlavors;
     }
 

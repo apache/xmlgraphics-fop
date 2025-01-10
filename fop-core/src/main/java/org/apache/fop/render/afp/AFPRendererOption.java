@@ -35,6 +35,7 @@ public enum AFPRendererOption implements RendererConfigOption {
     IMAGES_MAPPING_OPTION("mapping_option", Byte.class),
     IMAGES_MODE("mode", Boolean.class),
     IMAGES_NATIVE("native", Boolean.class),
+    IMAGES_NATIVE_PDF("native-pdf", Boolean.class),
     IMAGES_WRAP_PSEG("pseg", Boolean.class),
     JPEG_ALLOW_JPEG_EMBEDDING("allow-embedding", Boolean.class),
     JPEG_BITMAP_ENCODING_QUALITY("bitmap-encoding-quality", Float.class),

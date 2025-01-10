@@ -123,6 +123,17 @@ public class AFPRendererConfigParserTestCase
         assertEquals(true, conf.isCmykImagesSupported());
     }
 
+    @Test
+    public void testNativePDFImages() throws Exception {
+        parseConfig();
+        assertFalse(conf.isNativePDFImagesSupported());
+        parseConfig(createRenderer()
+                .startImages()
+                .setNativePDFImageSupport(true)
+                .endImages());
+        assertTrue(conf.isNativePDFImagesSupported());
+    }
+
     @Test(expected = IllegalStateException.class)
     public void testImagesException1() throws Exception {
         parseConfig(createRenderer().startImages().endImages());

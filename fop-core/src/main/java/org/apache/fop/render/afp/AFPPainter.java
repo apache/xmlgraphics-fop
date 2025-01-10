@@ -47,6 +47,7 @@ import org.apache.xmlgraphics.image.loader.ImageProcessingHints;
 import org.apache.xmlgraphics.image.loader.ImageSessionContext;
 import org.apache.xmlgraphics.image.loader.ImageSize;
 import org.apache.xmlgraphics.image.loader.impl.ImageGraphics2D;
+import org.apache.xmlgraphics.image.loader.impl.ImageRawStream;
 import org.apache.xmlgraphics.java2d.Graphics2DImagePainter;
 
 import org.apache.fop.afp.AFPBorderPainter;
@@ -68,6 +69,7 @@ import org.apache.fop.afp.modca.PresentationTextObject;
 import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
 import org.apache.fop.afp.util.AFPResourceAccessor;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.Typeface;
@@ -1150,5 +1152,16 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
     public void fillBackground(Rectangle rect, Paint fill, BorderProps bpsBefore,
             BorderProps bpsAfter, BorderProps bpsStart, BorderProps bpsEnd) throws IFException {
         // not supported in AFP
+    }
+
+    protected Image getImageForSupportedFlavors(ImageInfo info) {
+        if (getPaintingState().isNativePDFImagesSupported() && MimeConstants.MIME_PDF.equals(info.getMimeType())) {
+            return new ImageRawStream(info, null, (ImageRawStream.InputStreamFactory) null) {
+                public String getMimeType() {
+                    return MimeConstants.MIME_PDF;
+                }
+            };
+        }
+        return null;
     }
 }

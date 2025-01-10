@@ -57,6 +57,7 @@ import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MAPPING_OPTION;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MASK_ENABLED;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MODE;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_NATIVE;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_NATIVE_PDF;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_WRAP_PSEG;
 import static org.apache.fop.render.afp.AFPRendererOption.JPEG_ALLOW_JPEG_EMBEDDING;
 import static org.apache.fop.render.afp.AFPRendererOption.JPEG_BITMAP_ENCODING_QUALITY;
@@ -146,6 +147,10 @@ public final class AFPRendererConfig implements RendererConfig {
 
     public Boolean isNativeImagesSupported() {
         return getParam(IMAGES_NATIVE, Boolean.class);
+    }
+
+    public Boolean isNativePDFImagesSupported() {
+        return getParam(IMAGES_NATIVE_PDF, Boolean.class);
     }
 
     public AFPShadingMode getShadingMode() {
@@ -322,8 +327,8 @@ public final class AFPRendererConfig implements RendererConfig {
             }
             setParam(IMAGES_DITHERING_QUALITY, dq);
             setParam(IMAGES_NATIVE, imagesCfg.getAttributeAsBoolean(IMAGES_NATIVE.getName(), false));
-            setParam(IMAGES_WRAP_PSEG,
-                    imagesCfg.getAttributeAsBoolean(IMAGES_WRAP_PSEG.getName(), false));
+            setParam(IMAGES_NATIVE_PDF, imagesCfg.getAttributeAsBoolean(IMAGES_NATIVE_PDF.getName(), false));
+            setParam(IMAGES_WRAP_PSEG, imagesCfg.getAttributeAsBoolean(IMAGES_WRAP_PSEG.getName(), false));
             setParam(IMAGES_FS45, imagesCfg.getAttributeAsBoolean(IMAGES_FS45.getName(), false));
             setParam(IMAGES_MASK_ENABLED, imagesCfg.getAttributeAsBoolean(IMAGES_MASK_ENABLED.getName(), false));
             if ("scale-to-fit".equals(imagesCfg.getAttribute(IMAGES_MAPPING_OPTION.getName(), null))) {

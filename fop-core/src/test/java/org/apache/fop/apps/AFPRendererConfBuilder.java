@@ -40,6 +40,7 @@ import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MAPPING_OPTION;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MASK_ENABLED;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_MODE;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_NATIVE;
+import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_NATIVE_PDF;
 import static org.apache.fop.render.afp.AFPRendererOption.IMAGES_WRAP_PSEG;
 import static org.apache.fop.render.afp.AFPRendererOption.JPEG_ALLOW_JPEG_EMBEDDING;
 import static org.apache.fop.render.afp.AFPRendererOption.JPEG_BITMAP_ENCODING_QUALITY;
@@ -172,6 +173,10 @@ public final class AFPRendererConfBuilder extends RendererConfBuilder {
 
         public ImagesBuilder setNativeImageSupport(boolean value) {
             return setAttribute(IMAGES_NATIVE, value);
+        }
+
+        public ImagesBuilder setNativePDFImageSupport(boolean value) {
+            return setAttribute(IMAGES_NATIVE_PDF, value);
         }
 
         public AFPRendererConfBuilder endImages() {

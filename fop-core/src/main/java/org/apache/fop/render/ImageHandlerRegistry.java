@@ -142,11 +142,11 @@ public class ImageHandlerRegistry {
      * @param context the rendering context
      * @return the array of image flavors
      */
-    public synchronized ImageFlavor[] getSupportedFlavors(RenderingContext context) {
+    public synchronized ImageFlavor[] getSupportedFlavors(RenderingContext context, Image image) {
         //Extract all ImageFlavors into a single array
         List<ImageFlavor> flavors = new java.util.ArrayList<ImageFlavor>();
         for (ImageHandler handler : this.handlerList) {
-            if (handler.isCompatible(context, null)) {
+            if (handler.isCompatible(context, image)) {
                 ImageFlavor[] f = handler.getSupportedImageFlavors();
                 Collections.addAll(flavors, f);
             }

@@ -67,6 +67,7 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
      * format.
      */
     private boolean nativeImagesSupported;
+    private boolean nativePDFImagesSupported;
 
     private boolean canEmbedJpeg;
 
@@ -252,6 +253,14 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
      */
     public boolean isNativeImagesSupported() {
         return this.nativeImagesSupported;
+    }
+
+    public void setNativePDFImagesSupported(boolean nativePDFImagesSupported) {
+        this.nativePDFImagesSupported = nativePDFImagesSupported;
+    }
+
+    public boolean isNativePDFImagesSupported() {
+        return nativePDFImagesSupported;
     }
 
     /**

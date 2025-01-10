@@ -476,6 +476,10 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         paintingState.setNativeImagesSupported(nativeImages);
     }
 
+    public void setNativePDFImagesSupported(boolean nativeImages) {
+        paintingState.setNativePDFImagesSupported(nativeImages);
+    }
+
     /** {@inheritDoc} */
     public void setCMYKImagesSupported(boolean value) {
         paintingState.setCMYKImagesSupported(value);

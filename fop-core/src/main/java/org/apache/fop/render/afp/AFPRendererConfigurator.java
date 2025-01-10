@@ -84,6 +84,9 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
         if (config.isNativeImagesSupported() != null) {
             documentHandler.setNativeImagesSupported(config.isNativeImagesSupported());
         }
+        if (config.isNativePDFImagesSupported() != null) {
+            documentHandler.setNativePDFImagesSupported(config.isNativePDFImagesSupported());
+        }
         if (config.getShadingMode() != null) {
             documentHandler.setShadingMode(config.getShadingMode());
         }

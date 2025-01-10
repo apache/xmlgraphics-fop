@@ -86,6 +86,9 @@ public class AFPImageHandlerRawStream extends AbstractAFPImageHandlerRawStream {
     public boolean isCompatible(RenderingContext targetContext, Image image) {
         if (targetContext instanceof AFPRenderingContext) {
             AFPRenderingContext afpContext = (AFPRenderingContext)targetContext;
+            if (afpContext.getPaintingState().isNativePDFImagesSupported() && isPDFCompatible(image)) {
+                return true;
+            }
             return (afpContext.getPaintingState().isNativeImagesSupported())
                 && (image == null
                         || image instanceof ImageRawJPEG
@@ -98,5 +101,13 @@ public class AFPImageHandlerRawStream extends AbstractAFPImageHandlerRawStream {
     private boolean isCompatible(ImageRawStream rawStream) {
         return MimeConstants.MIME_TIFF.equals(rawStream.getMimeType())
                 || MimeConstants.MIME_PDF.equals(rawStream.getMimeType());
+    }
+
+    private boolean isPDFCompatible(Image image) {
+        if (image instanceof ImageRawStream) {
+            ImageRawStream rawStream = (ImageRawStream)image;
+            return MimeConstants.MIME_PDF.equals(rawStream.getMimeType());
+        }
+        return false;
     }
 }

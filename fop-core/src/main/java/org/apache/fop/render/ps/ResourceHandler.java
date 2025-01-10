@@ -297,7 +297,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
             ImageFlavor[] flavors;
             ImageHandlerRegistry imageHandlerRegistry
                 = userAgent.getImageHandlerRegistry();
-            flavors = imageHandlerRegistry.getSupportedFlavors(formContext);
+            flavors = imageHandlerRegistry.getSupportedFlavors(formContext, null);
 
             Map hints = ImageUtil.getDefaultHints(sessionContext);
             org.apache.xmlgraphics.image.loader.Image img = manager.getImage(

@@ -40,4 +40,15 @@ public class AFPImageHandlerRawStreamTestCase {
         Assert.assertFalse(Arrays.asList(
                 new AFPImageHandlerRawStream().getSupportedImageFlavors()).contains(ImageFlavor.RAW));
     }
+
+    @Test
+    public void testPDFIsCompatible() {
+        AFPPaintingState state = new AFPPaintingState();
+        state.setNativePDFImagesSupported(true);
+        AFPRenderingContext context = new AFPRenderingContext(null, null, state, null, null);
+        ImageRawStream stream = new ImageRawStream(null, ImageFlavor.RAW_PDF, (InputStream) null);
+        Assert.assertTrue(new AFPImageHandlerRawStream().isCompatible(context, stream));
+        stream = new ImageRawStream(null, ImageFlavor.RAW_JPEG, (InputStream) null);
+        Assert.assertFalse(new AFPImageHandlerRawStream().isCompatible(context, stream));
+    }
 }
