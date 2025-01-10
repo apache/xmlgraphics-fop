@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -118,7 +119,7 @@ public class DefaultFontConfigurator implements FontConfigurator<EmbedFontInfo> 
             FontFileFinder fontFileFinder = new FontFileFinder(directory.isRecursive() ? -1 : 1, listener);
             List<URL> fontURLList;
             try {
-                fontURLList = fontFileFinder.find(directory.getDirectory());
+                fontURLList = fontFileFinder.find(new File(directory.getDirectory()));
                 fontAdder.add(fontURLList, fontInfoList);
             } catch (IOException e) {
                 LogUtil.handleException(log, e, strict);
