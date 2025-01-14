@@ -604,12 +604,14 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
 
     @Override
     public void image(final ExternalGraphic eg) {
+        handleStartArtifact(eg);
         content(new Event(this) {
             public void run() {
                 eventHandler.image(eg);
             }
         }, true);
         super.image(eg);
+        handleEndArtifact(eg);
     }
 
     @Override

@@ -210,6 +210,28 @@ public class FO2StructureTreeConverterTestCase {
                         + "</structure-tree-sequence>");
     }
 
+    @Test
+    public void testExternalGraphicArtifact() throws Exception {
+        String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\">\n"
+                + "  <fo:layout-master-set>\n"
+                + "    <fo:simple-page-master master-name=\"simple\" page-height=\"27.9cm\" page-width=\"21.6cm\">\n"
+                + "      <fo:region-body />\n"
+                + "    </fo:simple-page-master>\n"
+                + "  </fo:layout-master-set>\n"
+                + "  <fo:page-sequence master-reference=\"simple\">\n"
+                + "    <fo:flow flow-name=\"xsl-region-body\">\n"
+                + "<fo:block><fo:external-graphic src=\"test/resources/fop/image/logo.jpg\" role=\"artifact\"/>"
+                + "</fo:block></fo:flow>\n"
+                + "  </fo:page-sequence>\n"
+                + "</fo:root>\n";
+        compare(fo, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><structure-tree-sequence>"
+                + "<structure-tree xmlns=\"http://xmlgraphics.apache.org/fop/intermediate\" "
+                + "xmlns:foi=\"http://xmlgraphics.apache.org/fop/internal\" "
+                + "xmlns:fox=\"http://xmlgraphics.apache.org/fop/extensions\">"
+                + "<fo:flow xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" flow-name=\"xsl-region-body\">"
+                + "<fo:block/></fo:flow></structure-tree></structure-tree-sequence>");
+    }
+
     private void compare(final String fo, String tree) throws Exception {
         foLoader = new FOLoader("") {
             public InputStream getFoInputStream() {
