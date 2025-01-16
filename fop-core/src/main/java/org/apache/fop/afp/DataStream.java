@@ -169,7 +169,7 @@ public class DataStream {
 
         if (currentPageGroup != null) {
             // End the current page group if necessary
-            endPageGroup();
+            endPageGroup(true);
         }
 
         // Write out document
@@ -626,14 +626,16 @@ public class DataStream {
 
     /**
      * Start a new page group. When processing has finished on the current page
-     * group the {@link #endPageGroup()}method must be invoked to mark the page
+     * group the endPageGroup method must be invoked to mark the page
      * group ending.
      *
      * @throws IOException thrown if an I/O exception of some sort has occurred
      */
-    public void startPageGroup() throws IOException {
-        endPageGroup();
-        this.currentPageGroup = factory.createPageGroup();
+    public void startPageGroup(boolean endPageGroup) throws IOException {
+        endPageGroup(endPageGroup);
+        if (currentPageGroup == null) {
+            currentPageGroup = factory.createPageGroup();
+        }
     }
 
     /**
@@ -641,8 +643,8 @@ public class DataStream {
      *
      * @throws IOException thrown if an I/O exception of some sort has occurred
      */
-    public void endPageGroup() throws IOException {
-        if (currentPageGroup != null) {
+    public void endPageGroup(boolean endPageGroup) throws IOException {
+        if (currentPageGroup != null && endPageGroup) {
             currentPageGroup.endPageGroup();
             document.addPageGroup(currentPageGroup);
             currentPageGroup = null;

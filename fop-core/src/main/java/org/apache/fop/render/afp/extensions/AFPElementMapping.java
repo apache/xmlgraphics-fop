@@ -59,6 +59,7 @@ public class AFPElementMapping extends ElementMapping {
     public static final String NAMESPACE = "http://xmlgraphics.apache.org/fop/extensions/afp";
 
     public static final QName PAGE_GROUP = new QName(NAMESPACE, null, "page-group");
+    public static final QName ADD_TO_PREVIOUS_PAGE_GROUP = new QName(NAMESPACE, null, "add-to-previous-page-group");
 
     /**
      * The usual namespace prefix used for AFP extensions

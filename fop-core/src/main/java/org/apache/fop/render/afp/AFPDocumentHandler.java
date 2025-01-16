@@ -216,7 +216,9 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
     public void startPageSequence(String id) throws IFException {
         try {
             if (!"false".equals(getContext().getForeignAttribute(AFPElementMapping.PAGE_GROUP))) {
-                dataStream.startPageGroup();
+                boolean addToPreviousPageGroup =
+                        "true".equals(getContext().getForeignAttribute(AFPElementMapping.ADD_TO_PREVIOUS_PAGE_GROUP));
+                dataStream.startPageGroup(!addToPreviousPageGroup);
             }
         } catch (IOException ioe) {
             throw new IFException("I/O error in startPageSequence()", ioe);
@@ -240,7 +242,7 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
             }
 
             //End page sequence
-            dataStream.endPageGroup();
+            dataStream.endPageGroup(false);
         } catch (IOException ioe) {
             throw new IFException("I/O error in endPageSequence()", ioe);
         }

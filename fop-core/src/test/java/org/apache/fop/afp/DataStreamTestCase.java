@@ -80,7 +80,7 @@ public class DataStreamTestCase {
         ds.createShading(10, 10, 300, 300, Color.white);
         ds.createIncludePageOverlay("testings", 10, 10);
         ds.startDocument();
-        ds.startPageGroup();
+        ds.startPageGroup(true);
         ds.createInvokeMediumMap("test");
         ds.createIncludePageSegment("test", 10, 10, 300, 300);
         ds.createTagLogicalElement("test", "test", 0);
@@ -118,10 +118,10 @@ public class DataStreamTestCase {
         ds = new DataStream(new Factory(), paintState, outStream);
         ds.startDocument();
         ds.createInvokeMediumMap("test");
-        ds.startPageGroup();
+        ds.startPageGroup(true);
         ds.startPage(1, 1, 0, 1, 1);
         ds.endPage();
-        ds.endPageGroup();
+        ds.endPageGroup(true);
         ds.endDocument();
         ByteArrayInputStream data = new ByteArrayInputStream(outStream.toByteArray());
         data.skip(21);
@@ -134,10 +134,10 @@ public class DataStreamTestCase {
     public void testMandatoryTripletIsAddedToAFP() throws Exception {
         ds = new DataStream(new Factory(), paintState, outStream);
         ds.startDocument();
-        ds.startPageGroup();
+        ds.startPageGroup(true);
         ds.startPage(1, 1, 0, 1, 1);
         ds.endPage();
-        ds.endPageGroup();
+        ds.endPageGroup(true);
         ds.endDocument();
         ByteArrayInputStream data = new ByteArrayInputStream(outStream.toByteArray());
         data.skip(17); //skipping the begin document data
