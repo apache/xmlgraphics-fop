@@ -779,6 +779,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
         boolean inWord = false;
         boolean inWhitespace = false;
         char ch = 0;
+        char prevChar = 0;
         int level = -1;
         int prevLevel = -1;
         boolean retainControls = false;
@@ -819,7 +820,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                 boolean processWord = breakOpportunity
                         || GlyphMapping.isSpace(ch)
                         || CharUtilities.isExplicitBreak(ch)
-                        || ((prevLevel != -1) && (level != prevLevel));
+                        || ((prevLevel != -1) && (level != prevLevel) && !Character.isHighSurrogate(prevChar));
                 if (!processWord && foText.getCommonFont().getFontSelectionStrategy() == EN_CHARACTER_BY_CHARACTER) {
                     if (lastFont == null || lastFontPos != nextStart - 1) {
                         lastFont = FontSelector.selectFontForCharactersInText(
@@ -887,6 +888,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             inWhitespace = ch == CharUtilities.SPACE
                     && foText.getWhitespaceTreatment() != Constants.EN_PRESERVE;
             prevLevel = level;
+            prevChar = ch;
             nextStart++;
         }
 
