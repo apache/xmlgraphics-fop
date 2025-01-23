@@ -626,6 +626,7 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
 
     @Override
     public void startInstreamForeignObject(final InstreamForeignObject ifo) {
+        handleStartArtifact(ifo);
         startContent(new Event(this) {
             public void run() {
                 eventHandler.startInstreamForeignObject(ifo);
@@ -641,6 +642,7 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
                 eventHandler.endInstreamForeignObject(ifo);
             }
         });
+        handleEndArtifact(ifo);
         super.endInstreamForeignObject(ifo);
     }
 

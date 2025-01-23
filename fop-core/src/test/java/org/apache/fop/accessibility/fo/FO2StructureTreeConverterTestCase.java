@@ -42,12 +42,13 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -163,8 +164,7 @@ public class FO2StructureTreeConverterTestCase {
                         + "    </fo:flow>\n"
                         + "  </fo:page-sequence>\n"
                         + "</fo:root>\n",
-                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
-                        + "<structure-tree-sequence>\n"
+                        "<structure-tree-sequence>\n"
                         + "<structure-tree xmlns=\"http://xmlgraphics.apache.org/fop/intermediate\" "
                         + "xmlns:foi=\"http://xmlgraphics.apache.org/fop/internal\" "
                         + "xmlns:fox=\"http://xmlgraphics.apache.org/fop/extensions\">\n"
@@ -184,8 +184,7 @@ public class FO2StructureTreeConverterTestCase {
     public void testRemoveTableHeader() throws Exception {
         keepEmptyTags = false;
         String fo = IOUtils.toString(getResource("table-artifact.fo"), "utf8").replace("role=\"artifact\"", "");
-        compare(fo, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n"
-                        + "<structure-tree-sequence>\n"
+        compare(fo, "<structure-tree-sequence>\n"
                         + "<structure-tree xmlns=\"http://xmlgraphics.apache.org/fop/intermediate\" "
                         + "xmlns:foi=\"http://xmlgraphics.apache.org/fop/internal\" "
                         + "xmlns:fox=\"http://xmlgraphics.apache.org/fop/extensions\">\n"
@@ -224,12 +223,37 @@ public class FO2StructureTreeConverterTestCase {
                 + "</fo:block></fo:flow>\n"
                 + "  </fo:page-sequence>\n"
                 + "</fo:root>\n";
-        compare(fo, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><structure-tree-sequence>"
+        compare(fo, "<structure-tree-sequence>"
                 + "<structure-tree xmlns=\"http://xmlgraphics.apache.org/fop/intermediate\" "
                 + "xmlns:foi=\"http://xmlgraphics.apache.org/fop/internal\" "
                 + "xmlns:fox=\"http://xmlgraphics.apache.org/fop/extensions\">"
                 + "<fo:flow xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" flow-name=\"xsl-region-body\">"
                 + "<fo:block/></fo:flow></structure-tree></structure-tree-sequence>");
+    }
+
+    @Test
+    public void testSVGArtifact() throws Exception {
+        String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" xmlns:svg=\"http://www.w3.org/2000/svg\">"
+                + "  <fo:layout-master-set>\n"
+                + "    <fo:simple-page-master page-width=\"8.5in\" page-height=\"11in\" master-name=\"Page\">\n"
+                + "      <fo:region-body region-name=\"Body\"/>\n"
+                + "    </fo:simple-page-master>\n"
+                + "  </fo:layout-master-set>\n"
+                + "  <fo:page-sequence master-reference=\"Page\">\n"
+                + "    <fo:flow flow-name=\"Body\">\n"
+                + "      <fo:block>\n"
+                + "        <fo:instream-foreign-object role=\"artifact\">\n"
+                + "          <svg:svg width=\"12cm\" height=\"12cm\">\n"
+                + "          </svg:svg>\n"
+                + "        </fo:instream-foreign-object>\n"
+                + "      </fo:block>\n"
+                + "    </fo:flow>\n"
+                + "  </fo:page-sequence>\n"
+                + "</fo:root>";
+        compare(fo, "<structure-tree-sequence><structure-tree xmlns=\"http://xmlgraphics.apache.org/fop/intermediate\">"
+                + "<fo:flow xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" flow-name=\"xsl-region-body\">"
+                + "<fo:block><marked-content/><marked-content/></fo:block></fo:flow></structure-tree>"
+                + "</structure-tree-sequence>");
     }
 
     private void compare(final String fo, String tree) throws Exception {
@@ -244,7 +268,8 @@ public class FO2StructureTreeConverterTestCase {
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer = tf.newTransformer();
         transformer.transform(new DOMSource(doc), new StreamResult(sw));
-        assertEquals(tree.replace("\n", ""), sw.toString().replace("\n", ""));
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLAssert.assertXMLEqual(tree, sw.toString());
     }
 
     private void testConverter(String foResourceName) throws Exception {
