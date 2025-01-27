@@ -225,7 +225,6 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
             childElements = childLM.getNextKnuthElements(childLC, alignment,
                     lmStack, restartPosition, restartLM);
         }
-        assert !childElements.isEmpty();
 
         // "wrap" the Position inside each element
         List tempList = childElements;

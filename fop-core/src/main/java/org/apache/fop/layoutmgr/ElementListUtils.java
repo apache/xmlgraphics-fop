@@ -178,6 +178,10 @@ public final class ElementListUtils {
      * @return true if the list ends with a forced break
      */
     public static boolean endsWithForcedBreak(List<ListElement> elems) {
+        if (elems.isEmpty()) {
+            return true;
+        }
+
         ListElement last = ListUtil.getLastListElement(elems);
         return last == null || last.isForcedBreak();
     }

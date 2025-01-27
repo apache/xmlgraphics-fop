@@ -19,12 +19,14 @@
 
 package org.apache.fop.util;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.layoutmgr.ElementListUtils;
 import org.apache.fop.layoutmgr.KnuthBox;
@@ -148,5 +150,11 @@ public class ElementListUtilsTestCase {
         assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(3)).getPenalty());
         assertEquals(KnuthElement.INFINITE, ((KnuthPenalty)lst.get(5)).getPenalty());
         assertEquals(0, ((KnuthGlue)lst.get(6)).getWidth());
+    }
+
+    @Test
+    public void testEndsWithForcedBreakWithEmptyList() {
+        assertTrue("An empty list should not throw an exception",
+                ElementListUtils.endsWithForcedBreak(new ArrayList<>()));
     }
 }
