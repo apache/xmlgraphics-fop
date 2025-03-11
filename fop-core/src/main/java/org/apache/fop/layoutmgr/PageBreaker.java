@@ -444,7 +444,7 @@ public class PageBreaker extends AbstractBreaker {
                     getTopLevelLM(), getPageProvider(), createLayoutListener(),
                     alg.getAlignment(), alg.getAlignmentLast(),
                     footnoteSeparatorLength,
-                    isPartOverflowRecoveryActivated(), false, false);
+                    isPartOverflowRecoveryActivated(), false, false, null);
             log.debug("===================================================");
         }
 
@@ -959,16 +959,27 @@ public class PageBreaker extends AbstractBreaker {
                     relayedFirstNewFootnoteIndex, relayedFootnoteListIndex, relayedFootnoteElementIndex,
                     relayedFootnoteSeparatorLength, previousFootnoteListIndex,
                     previousFootnoteElementIndex);
-            relayedFootnotesList = null;
-            relayedLengthList = null;
-            relayedTotalFootnotesLength = 0;
-            relayedInsertedFootnotesLength = 0;
-            relayedFootnotesPending = false;
-            relayedNewFootnotes = false;
-            relayedFirstNewFootnoteIndex = 0;
-            relayedFootnoteListIndex = 0;
-            relayedFootnoteElementIndex = -1;
-            relayedFootnoteSeparatorLength = null;
+            if (alg.handlingFloat()) {
+                relayedFootnotesList = null;
+                relayedLengthList = null;
+                relayedTotalFootnotesLength = 0;
+                relayedInsertedFootnotesLength = 0;
+                relayedFootnotesPending = false;
+                relayedNewFootnotes = false;
+                relayedFirstNewFootnoteIndex = 0;
+                relayedFootnoteListIndex = 0;
+                relayedFootnoteElementIndex = -1;
+                relayedFootnoteSeparatorLength = null;
+            }
+        }
+    }
+
+    protected void addAreas(PageBreakingAlgorithm alg, int startPart, int partCount,
+                            BlockSequence originalList, BlockSequence effectiveList, final LayoutContext childLC) {
+        super.addAreas(alg, startPart, partCount, originalList, effectiveList, childLC);
+        if (!alg.handlingFloat()) {
+            PageSequenceLayoutManager pslm = (PageSequenceLayoutManager) getTopLevelLM();
+            alg.relayFootnotes(pslm);
         }
     }
 }

@@ -110,6 +110,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private int previousFootnoteListIndex = -2;
     private int previousFootnoteElementIndex = -2;
     private boolean relayingFootnotes;
+    private LayoutContext childLC;
 
     /**
      * Construct a page breaking algorithm.
@@ -136,7 +137,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                                  int alignment, int alignmentLast,
                                  MinOptMax footnoteSeparatorLength,
                                  boolean partOverflowRecovery, boolean autoHeight,
-                                 boolean favorSinglePart) {
+                                 boolean favorSinglePart, LayoutContext childLC) {
         super(alignment, alignmentLast, true, partOverflowRecovery, 0);
         this.topLevelLM = topLevelLM;
         this.pageProvider = pageProvider;
@@ -145,6 +146,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         this.footnoteSeparatorLength = footnoteSeparatorLength;
         this.autoHeight = autoHeight;
         this.favorSinglePart = favorSinglePart;
+        this.childLC = childLC;
     }
 
     /**
@@ -249,7 +251,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
         footnoteElementIndex = -1;
         if (topLevelLM instanceof PageSequenceLayoutManager) {
             PageSequenceLayoutManager pslm = (PageSequenceLayoutManager) topLevelLM;
-            if (pslm.handlingStartOfFloat() || pslm.handlingEndOfFloat()) {
+            boolean spanAll = childLC != null && childLC.getCurrentSpan() == Constants.EN_ALL;
+            if (pslm.handlingStartOfFloat() || pslm.handlingEndOfFloat() || spanAll) {
                 pslm.retrieveFootnotes(this);
             }
             if (pslm.handlingStartOfFloat()) {
@@ -257,6 +260,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
             }
             if (pslm.handlingEndOfFloat()) {
                 totalWidth += pslm.getOffsetDueToFloat() + insertedFootnotesLength;
+            } else if (spanAll) {
+                totalWidth += insertedFootnotesLength;
             }
         }
     }
@@ -1362,7 +1367,7 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     }
 
     public void relayFootnotes(PageSequenceLayoutManager pslm) {
-        if (!relayingFootnotes) {
+        if (!relayingFootnotes && bestFloatEdgeNode != null) {
             previousFootnoteListIndex = ((KnuthPageNode) bestFloatEdgeNode.previous).footnoteListIndex;
             previousFootnoteElementIndex = ((KnuthPageNode) bestFloatEdgeNode.previous).footnoteElementIndex;
         }

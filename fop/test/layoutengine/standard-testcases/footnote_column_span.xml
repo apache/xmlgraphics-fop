@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks footnotes.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Helvetica">
+      <fo:layout-master-set>
+        <fo:simple-page-master margin-right="1in" margin-left="1in" margin-bottom="1in" margin-top="1in" page-width="8.5in" page-height="11in" master-name="Page">
+          <fo:region-body column-count="2" margin-right="0in" margin-bottom="0in" margin-left="0in" margin-top="0in" region-name="Body"/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence format="1" id="th_default_sequence1" master-reference="Page">
+        <fo:flow flow-name="Body">
+          <fo:block-container>
+            <fo:block>
+              <fo:block font-size="10pt" line-height="16pt" space-before="2pt">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.<fo:footnote><fo:inline font-size="70%" baseline-shift="super">1</fo:inline>
+                  <fo:footnote-body start-indent="0">
+                    <fo:list-block provisional-distance-between-starts="18pt">
+                      <fo:list-item>
+                        <fo:list-item-label end-indent="label-end()" font-size="70%" baseline-shift="super">
+                          <fo:block>1</fo:block>
+                        </fo:list-item-label>
+                        <fo:list-item-body start-indent="body-start()">
+                          <fo:block font-size="10pt" line-height="16pt" space-before="2pt">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</fo:block>
+                        </fo:list-item-body>
+                      </fo:list-item>
+                    </fo:list-block>
+                  </fo:footnote-body>
+                </fo:footnote>
+              </fo:block>
+            </fo:block>
+          </fo:block-container>
+          <fo:block-container break-before="column">
+            <fo:block>
+              <fo:block font-size="10pt" line-height="16pt" space-before="2pt">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</fo:block>
+            </fo:block>
+          </fo:block-container>
+          <fo:block-container span="all">
+            <fo:block>
+              <fo:list-block line-height="16pt" space-after="3pt">
+                <fo:list-item space-before="0pt">
+                  <fo:list-item-label font-family="ZapfDingbats" font-size="7pt">
+                    <fo:block>
+                      <fo:inline>&#x25CF;</fo:inline>
+                    </fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" start-indent="body-start()">
+                    <fo:block>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.  </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="0pt">
+                  <fo:list-item-label font-family="ZapfDingbats" font-size="7pt">
+                    <fo:block>
+                      <fo:inline>&#x25CF;</fo:inline>
+                    </fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" start-indent="body-start()">
+                    <fo:block>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.  </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="0pt">
+                  <fo:list-item-label font-family="ZapfDingbats" font-size="7pt">
+                    <fo:block>
+                      <fo:inline>&#x25CF;</fo:inline>
+                    </fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" start-indent="body-start()">
+                    <fo:block>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.  </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="0pt">
+                  <fo:list-item-label font-family="ZapfDingbats" font-size="7pt">
+                    <fo:block>
+                      <fo:inline>&#x25CF;</fo:inline>
+                    </fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" start-indent="body-start()">
+                    <fo:block>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.  </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="0pt">
+                  <fo:list-item-label font-family="ZapfDingbats" font-size="7pt">
+                    <fo:block>
+                      <fo:inline>&#x25CF;</fo:inline>
+                    </fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" start-indent="body-start()">
+                    <fo:block>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="0pt">
+                  <fo:list-item-label font-family="ZapfDingbats" font-size="7pt">
+                    <fo:block>
+                      <fo:inline>&#x25CF;</fo:inline>
+                    </fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" start-indent="body-start()">
+                    <fo:block>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.  </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="0pt">
+                  <fo:list-item-label font-family="ZapfDingbats" font-size="7pt">
+                    <fo:block>
+                      <fo:inline>&#x25CF;</fo:inline>
+                    </fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" start-indent="body-start()">
+                    <fo:block>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="0pt">
+                  <fo:list-item-label font-family="ZapfDingbats" font-size="7pt">
+                    <fo:block>
+                      <fo:inline>&#x25CF;</fo:inline>
+                    </fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" start-indent="body-start()">
+                    <fo:block>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.     <fo:footnote><fo:inline font-size="70%" baseline-shift="super">2</fo:inline>
+                        <fo:footnote-body start-indent="0">
+                          <fo:list-block provisional-distance-between-starts="18pt">
+                            <fo:list-item>
+                              <fo:list-item-label end-indent="label-end()" font-size="70%" baseline-shift="super">
+                                <fo:block>2</fo:block>
+                              </fo:list-item-label>
+                              <fo:list-item-body start-indent="body-start()">
+                                <fo:block font-size="10pt" line-height="16pt" space-before="2pt">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.</fo:block>
+                              </fo:list-item-body>
+                            </fo:list-item>
+                          </fo:list-block>
+                        </fo:footnote-body>
+                      </fo:footnote>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+            </fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="2" xpath="count(//pageViewport)"/>
+    <eval expected="1" xpath="//pageViewport[1]//footnote//word"/>
+    <eval expected="2" xpath="//pageViewport[2]//footnote//word"/>
+    <eval expected="Lorem" xpath="//pageViewport[1]//word"/>
+    <eval expected="ipsum." xpath="//pageViewport[2]//word"/>
+  </checks>
+</testcase>

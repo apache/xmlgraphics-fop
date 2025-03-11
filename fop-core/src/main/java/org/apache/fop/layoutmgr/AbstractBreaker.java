@@ -406,7 +406,7 @@ public abstract class AbstractBreaker {
                     PageBreakingAlgorithm alg = new PageBreakingAlgorithm(getTopLevelLM(),
                              getPageProvider(), createLayoutListener(),
                              alignment, alignmentLast, footnoteSeparatorLength,
-                             isPartOverflowRecoveryActivated(), autoHeight, isSinglePartFavored());
+                             isPartOverflowRecoveryActivated(), autoHeight, isSinglePartFavored(), childLC);
 
                     alg.setConstantLineWidth(flowBPD);
                     int optimalPageCount = alg.findBreakingPoints(blockList, 1, true,
