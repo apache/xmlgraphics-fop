@@ -162,6 +162,11 @@ public final class FopFactoryBuilder {
         return this;
     }
 
+    public FopFactoryBuilder setStaticRegionsPerPageForAccessibility(boolean staticRegionsPerPageForAccessibility) {
+        fopFactoryConfigBuilder.setStaticRegionsPerPageForAccessibility(staticRegionsPerPageForAccessibility);
+        return this;
+    }
+
     public FopFactoryBuilder setKeepEmptyTags(boolean b) {
         fopFactoryConfigBuilder.setKeepEmptyTags(b);
         return this;
@@ -378,6 +383,8 @@ public final class FopFactoryBuilder {
 
         private boolean accessibility;
 
+        private boolean staticRegionsPerPageForAccessibility;
+
         private boolean keepEmptyTags = true;
 
         private LayoutManagerMaker layoutManagerMaker;
@@ -444,6 +451,10 @@ public final class FopFactoryBuilder {
         /** {@inheritDoc} */
         public boolean isAccessibilityEnabled() {
             return accessibility;
+        }
+
+        public boolean isStaticRegionsPerPageForAccessibility() {
+            return staticRegionsPerPageForAccessibility;
         }
 
         public boolean isKeepEmptyTags() {
@@ -574,6 +585,9 @@ public final class FopFactoryBuilder {
     private interface FopFactoryConfigBuilder {
 
         void setAccessibility(boolean enableAccessibility);
+
+        void setStaticRegionsPerPageForAccessibility(boolean staticRegionsPerPageForAccessibility);
+
         void setKeepEmptyTags(boolean b);
 
         void setLayoutManagerMakerOverride(LayoutManagerMaker lmMaker);
@@ -633,6 +647,11 @@ public final class FopFactoryBuilder {
         public void setAccessibility(boolean enableAccessibility) {
             throwIllegalStateException();
         }
+
+        public void setStaticRegionsPerPageForAccessibility(boolean staticRegionsPerPageForAccessibility) {
+            throwIllegalStateException();
+        }
+
         public void setKeepEmptyTags(boolean b) {
             throwIllegalStateException();
         }
@@ -738,6 +757,10 @@ public final class FopFactoryBuilder {
 
         public void setAccessibility(boolean enableAccessibility) {
             config.accessibility = enableAccessibility;
+        }
+
+        public void setStaticRegionsPerPageForAccessibility(boolean staticRegionsPerPageForAccessibility) {
+            config.staticRegionsPerPageForAccessibility = staticRegionsPerPageForAccessibility;
         }
 
         public void setKeepEmptyTags(boolean b) {

@@ -40,6 +40,8 @@ public class PageSequenceStructElem extends PDFStructElem {
 
     private List<PDFStructElem> footnoteSeparator = new ArrayList<PDFStructElem>();
 
+    protected PDFStructElem sect;
+
     PageSequenceStructElem(PDFObject parent, StructureType structureType) {
         super(parent, structureType);
     }
@@ -62,7 +64,6 @@ public class PageSequenceStructElem extends PDFStructElem {
 
     @Override
     protected boolean attachKids() {
-        assert !kids.isEmpty();
         PDFArray k = new PDFArray();
         addRegions(k, regionBefores);
         addRegions(k, regionStarts);
@@ -75,7 +76,7 @@ public class PageSequenceStructElem extends PDFStructElem {
     }
 
     private void addRegions(PDFArray k, List<? extends PDFObject> regions) {
-        if (!regions.isEmpty()) {
+        if (regions != null && !regions.isEmpty()) {
             for (PDFObject kid : regions) {
                 k.add(kid);
             }

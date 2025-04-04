@@ -138,9 +138,11 @@ public class FopConfBuilder implements FontConfigurator<FopConfBuilder> {
      * @param setAccessibility true to enable accessibility features
      * @return <b>this</b>
      */
-    public FopConfBuilder setAccessibility(boolean setAccessibility, boolean keepEmptyTags) {
+    public FopConfBuilder setAccessibility(boolean setAccessibility, boolean keepEmptyTags,
+                                           boolean staticRegionsPerPage) {
         Element el = fopConfDOM.createElement(Accessibility.ACCESSIBILITY);
         el.setAttribute(Accessibility.KEEP_EMPTY_TAGS, String.valueOf(keepEmptyTags));
+        el.setAttribute(Accessibility.STATIC_REGION_PER_PAGE, String.valueOf(staticRegionsPerPage));
         el.appendChild(fopConfDOM.createTextNode(String.valueOf(setAccessibility)));
         root.appendChild(el);
         return this;

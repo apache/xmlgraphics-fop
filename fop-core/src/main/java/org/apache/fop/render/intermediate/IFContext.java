@@ -28,6 +28,7 @@ import org.apache.xmlgraphics.util.QName;
 import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.render.pdf.PDFStructureTreeBuilder;
 
 /**
  * This class provides a context object that is valid for a single processing run to create
@@ -168,6 +169,9 @@ public class IFContext implements PageIndexContext {
      * @see #setStructureTreeElement(StructureTreeElement)
      */
     public StructureTreeElement getStructureTreeElement() {
+        if (structureTreeElement instanceof PDFStructureTreeBuilder.Factory) {
+            return ((PDFStructureTreeBuilder.Factory)structureTreeElement).createStructureElement(pageNumber);
+        }
         return this.structureTreeElement;
     }
 

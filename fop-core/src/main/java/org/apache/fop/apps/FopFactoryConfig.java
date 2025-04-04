@@ -67,6 +67,9 @@ public interface FopFactoryConfig {
      * @return true if accessibility features have been requested
      */
     boolean isAccessibilityEnabled();
+
+    boolean isStaticRegionsPerPageForAccessibility();
+
     boolean isKeepEmptyTags();
 
     /**

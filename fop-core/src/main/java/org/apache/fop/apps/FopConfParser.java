@@ -65,6 +65,7 @@ public class FopConfParser {
     private static final String LEGACY_FO_WRAPPER = "legacy-fo-wrapper";
 
     private static final Log LOG = LogFactory.getLog(FopConfParser.class);
+    private static final String ACCESSIBILITY = "accessibility";
 
     private final FopFactoryBuilder fopFactoryBuilder;
 
@@ -195,11 +196,13 @@ public class FopConfParser {
             }
         }
 
-        if (cfg.getChild("accessibility", false) != null) {
+        if (cfg.getChild(ACCESSIBILITY, false) != null) {
             try {
-                fopFactoryBuilder.setAccessibility(cfg.getChild("accessibility").getValueAsBoolean());
+                fopFactoryBuilder.setAccessibility(cfg.getChild(ACCESSIBILITY).getValueAsBoolean());
+                fopFactoryBuilder.setStaticRegionsPerPageForAccessibility(
+                        cfg.getChild(ACCESSIBILITY).getAttributeAsBoolean(Accessibility.STATIC_REGION_PER_PAGE, false));
                 fopFactoryBuilder.setKeepEmptyTags(
-                        cfg.getChild("accessibility").getAttributeAsBoolean(Accessibility.KEEP_EMPTY_TAGS, true));
+                        cfg.getChild(ACCESSIBILITY).getAttributeAsBoolean(Accessibility.KEEP_EMPTY_TAGS, true));
             } catch (ConfigurationException e) {
                 LogUtil.handleException(LOG, e, false);
             }

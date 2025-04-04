@@ -149,6 +149,7 @@ public class FOUserAgent {
         this.resourceResolver = resourceResolver;
         setTargetResolution(factory.getTargetResolution());
         setAccessibility(factory.isAccessibilityEnabled());
+        setStaticRegionsPerPageForAccessibility(factory.isStaticRegionsPerPageForAccessibility());
         setKeepEmptyTags(factory.isKeepEmptyTags());
         imageSessionContext = new AbstractImageSessionContext(factory.getFallbackResolver()) {
 
@@ -720,6 +721,19 @@ public class FOUserAgent {
      */
     public boolean isAccessibilityEnabled() {
         Boolean enabled = (Boolean)this.getRendererOptions().get(Accessibility.ACCESSIBILITY);
+        if (enabled != null) {
+            return enabled;
+        } else {
+            return false;
+        }
+    }
+
+    public void setStaticRegionsPerPageForAccessibility(boolean staticRegionsPerPageForAccessibility) {
+        getRendererOptions().put(Accessibility.STATIC_REGION_PER_PAGE, staticRegionsPerPageForAccessibility);
+    }
+
+    public boolean isStaticRegionsPerPageForAccessibility() {
+        Boolean enabled = (Boolean)getRendererOptions().get(Accessibility.STATIC_REGION_PER_PAGE);
         if (enabled != null) {
             return enabled;
         } else {

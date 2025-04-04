@@ -22,6 +22,7 @@ package org.apache.fop.render.intermediate.extensions;
 import org.apache.xmlgraphics.util.XMLizable;
 
 import org.apache.fop.accessibility.StructureTreeElement;
+import org.apache.fop.render.pdf.PDFStructureTreeBuilder;
 
 /**
  * Abstract base class for document actions, like "go-to" actions with absolute page coordinates.
@@ -60,6 +61,9 @@ public abstract class AbstractAction implements XMLizable {
      * @return the reference to the structure element
      */
     public StructureTreeElement getStructureTreeElement() {
+        if (structureTreeElement instanceof PDFStructureTreeBuilder.Factory) {
+            return ((PDFStructureTreeBuilder.Factory)structureTreeElement).createStructureElement();
+        }
         return structureTreeElement;
     }
 

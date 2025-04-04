@@ -128,7 +128,7 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
             this.defaultStructureType = structureType;
         }
 
-        public final PDFStructElem build(StructureHierarchyMember parent, Attributes attributes,
+        public PDFStructElem build(StructureHierarchyMember parent, Attributes attributes,
                 PDFFactory pdfFactory, EventBroadcaster eventBroadcaster) {
             String role = attributes.getValue(ROLE);
             StructureType structureType;
@@ -196,6 +196,17 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
             ((PageSequenceStructElem) parent).addContent(flowName, kid);
         }
 
+        public PDFStructElem build(StructureHierarchyMember parent, Attributes attributes,
+                                         PDFFactory pdfFactory, EventBroadcaster eventBroadcaster) {
+            if (pdfFactory.getDocument().isStaticRegionsPerPageForAccessibility()) {
+                PageSequenceStructElem pageSequenceStructElem = (PageSequenceStructElem) parent;
+                if (pageSequenceStructElem.sect == null) {
+                    pageSequenceStructElem.sect = super.build(parent, attributes, pdfFactory, eventBroadcaster);
+                }
+                return pageSequenceStructElem.sect;
+            }
+            return super.build(parent, attributes, pdfFactory, eventBroadcaster);
+        }
     }
 
     private static class LanguageHolderBuilder extends DefaultStructureElementBuilder {
@@ -339,7 +350,7 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
 
     private EventBroadcaster eventBroadcaster;
 
-    private LinkedList<PDFStructElem> ancestors = new LinkedList<PDFStructElem>();
+    private LinkedList<StructureTreeElement> ancestors = new LinkedList<>();
 
     private PDFStructElem rootStructureElement;
 
@@ -374,7 +385,7 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         }
 
     public void startPageSequence(Locale language, String role) {
-        ancestors = new LinkedList<PDFStructElem>();
+        ancestors = new LinkedList<>();
         AttributesImpl attributes = new AttributesImpl();
         attributes.addAttribute("", ROLE, ROLE, XMLUtil.CDATA, role);
         PDFStructElem structElem = createStructureElement("page-sequence",
@@ -392,12 +403,58 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         if (!isPDFA1Safe(name)) {
             return null;
         }
-        assert parent == null || parent instanceof PDFStructElem;
-        PDFStructElem parentElem = parent == null ? ancestors.getFirst() : (PDFStructElem) parent;
-        PDFStructElem structElem = createStructureElement(name, parentElem, attributes,
-                pdfFactory, eventBroadcaster);
+        StructureTreeElement parentElem;
+        if (parent == null) {
+            parentElem = ancestors.getFirst();
+        } else {
+            parentElem = parent;
+        }
+        StructureTreeElement structElem;
+        if (pdfFactory.getDocument().isStaticRegionsPerPageForAccessibility()) {
+            structElem = new Factory(name, parentElem, attributes);
+        } else {
+            structElem = createStructureElement(
+                    name, (PDFStructElem)parentElem, attributes, pdfFactory, eventBroadcaster);
+        }
         ancestors.addFirst(structElem);
         return structElem;
+    }
+
+    public class Factory implements StructureTreeElement {
+        private String name;
+        private StructureTreeElement parentElem;
+        private Attributes attributes;
+        private PDFStructElem cache;
+        private int cachePage = -1;
+
+        Factory(String name, StructureTreeElement parentElem, Attributes attributes) {
+            this.name = name;
+            this.parentElem = parentElem;
+            this.attributes = new AttributesImpl(attributes);
+        }
+
+        public PDFStructElem createStructureElement() {
+            if (cache != null) {
+                return cache;
+            }
+            return createStructureElement(1);
+        }
+
+        public PDFStructElem createStructureElement(int pageNumber) {
+            if (cachePage == pageNumber) {
+                return cache;
+            }
+            StructureHierarchyMember parent;
+            if (parentElem instanceof Factory) {
+                parent = ((Factory) parentElem).createStructureElement(pageNumber);
+            } else {
+                parent = (StructureHierarchyMember) parentElem;
+            }
+            cache = PDFStructureTreeBuilder.createStructureElement(
+                    name, parent, attributes, pdfFactory, eventBroadcaster);
+            cachePage = pageNumber;
+            return cache;
+        }
     }
 
     public void endNode(String name) {

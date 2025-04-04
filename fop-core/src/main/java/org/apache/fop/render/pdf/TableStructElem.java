@@ -39,9 +39,8 @@ class TableStructElem extends PDFStructElem {
 
     @Override
     protected boolean attachKids() {
-        assert !kids.isEmpty();
         if (tableFooter != null) {
-            kids.add(tableFooter);
+            addKid(tableFooter);
         }
         return super.attachKids();
     }
