@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URI;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
@@ -234,6 +235,12 @@ public class CommandLineOptions {
             //Make sure the prepared serializer is used
             foUserAgent.setDocumentHandlerOverride(serializer);
         }
+
+	String sourceDateEpoch = System.getenv("SOURCE_DATE_EPOCH");
+	if (sourceDateEpoch != null) {
+		foUserAgent.setCreationDate(new Date(1000 * Long.parseLong(sourceDateEpoch)));
+	}
+
         return true;
     }
 
