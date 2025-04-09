@@ -19,13 +19,33 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Stack;
+
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Block;
+import org.apache.fop.area.LineArea;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.flow.table.TableAndCaption;
-import org.apache.fop.layoutmgr.BlockStackingLayoutManager;
-import org.apache.fop.layoutmgr.Keep;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.KeepProperty;
+import org.apache.fop.layoutmgr.BreakOpportunity;
+import org.apache.fop.layoutmgr.KnuthElement;
+import org.apache.fop.layoutmgr.KnuthPossPosIter;
+import org.apache.fop.layoutmgr.LMiter;
 import org.apache.fop.layoutmgr.LayoutContext;
+import org.apache.fop.layoutmgr.LayoutManager;
+import org.apache.fop.layoutmgr.ListElement;
+import org.apache.fop.layoutmgr.NonLeafPosition;
+import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
+import org.apache.fop.layoutmgr.SpacedBorderedPaddedBlockLayoutManager;
+import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.traits.MinOptMax;
 
 /**
  * LayoutManager for a table-and-caption FO.
@@ -35,130 +55,255 @@ import org.apache.fop.layoutmgr.PositionIterator;
  * The caption blocks have an implicit keep with the table.
  * TODO Implement getNextKnuthElements()
  */
-public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
-
+public class TableAndCaptionLayoutManager extends SpacedBorderedPaddedBlockLayoutManager implements BreakOpportunity {
     private Block curBlockArea;
+
+    /** Iterator over the child layout managers. */
+    private ProxyLMiter proxyLMiter;
 
     /**
      * Create a new table and caption layout manager.
-     * @param node table-and-caption FO
+     * @param tableAndCaption the block FO object to create the layout manager for.
      */
-    public TableAndCaptionLayoutManager(TableAndCaption node) {
-        super(node);
+    public TableAndCaptionLayoutManager(TableAndCaption tableAndCaption) {
+        super(tableAndCaption);
+        proxyLMiter = new ProxyLMiter();
+    }
+
+    @Override
+    protected CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return getTableAndCaptionFO().getCommonBorderPaddingBackground();
+    }
+
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
+        return getNextKnuthElements(context, alignment, null, null, null);
+    }
+
+    public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
+                                                  Position restartPosition, LayoutManager restartAtLM) {
+        resetSpaces();
+        return super.getNextKnuthElements(context, alignment, lmStack, restartPosition, restartAtLM);
+    }
+
+    private void resetSpaces() {
+        this.discardBorderBefore = false;
+        this.discardBorderAfter = false;
+        this.discardPaddingBefore = false;
+        this.discardPaddingAfter = false;
+        this.effSpaceBefore = null;
+        this.effSpaceAfter = null;
     }
 
     /**
-     * Returns the table-and-caption formatting object.
-     * @return the table-and-caption formatting object
+     * Proxy iterator for Block LM.
+     * This iterator creates and holds the complete list
+     * of child LMs.
+     * It uses fobjIter as its base iterator.
+     * Block LM's createNextChildLMs uses this iterator
+     * as its base iterator.
      */
-    public TableAndCaption getTableAndCaptionFO() {
-        return (TableAndCaption)this.fobj;
-    }
+    protected class ProxyLMiter extends LMiter {
 
-    /**
-     * Get the next break possibility.
-     *
-     * @param context the layout context for getting breaks
-     * @return the next break possibility
-     */
-    /*
-    public BreakPoss getNextBreakPoss(LayoutContext context) {
-        LayoutManager curLM; // currently active LM
-
-        MinOptMax stackSize = new MinOptMax();
-        // if starting add space before
-        // stackSize.add(spaceBefore);
-        BreakPoss lastPos = null;
-
-        // if there is a caption then get the side and work out when
-        // to handle it
-
-        while ((curLM = getChildLM()) != null) {
-            // Make break positions and return blocks!
-            // Set up a LayoutContext
-            int ipd = context.getRefIPD();
-            BreakPoss bp;
-
-            LayoutContext childLC = LayoutContext.newInstance();
-            // if line layout manager then set stack limit to ipd
-            // line LM actually generates a LineArea which is a block
-            childLC.setStackLimit(
-                  MinOptMax.subtract(context.getStackLimit(),
-                                     stackSize));
-            childLC.setRefIPD(ipd);
-
-            boolean over = false;
-            while (!curLM.isFinished()) {
-                if ((bp = curLM.getNextBreakPoss(childLC)) != null) {
-                    if (stackSize.opt + bp.getStackingSize().opt > context.getStackLimit().max) {
-                        // reset to last break
-                        if (lastPos != null) {
-                            LayoutManager lm = lastPos.getLayoutManager();
-                            lm.resetPosition(lastPos.getPosition());
-                            if (lm != curLM) {
-                                curLM.resetPosition(null);
-                            }
-                        } else {
-                            curLM.resetPosition(null);
-                        }
-                        over = true;
-                        break;
-                    }
-                    stackSize.add(bp.getStackingSize());
-                    lastPos = bp;
-                    childBreaks.add(bp);
-
-                    if (bp.nextBreakOverflows()) {
-                        over = true;
-                        break;
-                    }
-
-                    childLC.setStackLimit(MinOptMax.subtract(
-                                             context.getStackLimit(), stackSize));
-                }
-            }
-            BreakPoss breakPoss = new BreakPoss(
-                                    new LeafPosition(this, childBreaks.size() - 1));
-            if (over) {
-                breakPoss.setFlag(BreakPoss.NEXT_OVERFLOWS, true);
-            }
-            breakPoss.setStackingSize(stackSize);
-            return breakPoss;
+        /**
+         * Constructs a proxy iterator for Block LM.
+         */
+        public ProxyLMiter() {
+            super(TableAndCaptionLayoutManager.this);
+            listLMs = new ArrayList<>(10);
         }
-        setFinished(true);
-        return null;
-    }*/
 
-    /**
-     * Add the areas.
-     *
-     * @param parentIter the position iterator
-     * @param layoutContext the layout context for adding areas
-     */
-    public void addAreas(PositionIterator parentIter,
-                         LayoutContext layoutContext) {
+        /**
+         * @return true if there are more child lms
+         */
+        public boolean hasNext() {
+            return (curPos < listLMs.size()) || createNextChildLMs(curPos);
+        }
+
+        /**
+         * @param pos ...
+         * @return true if new child lms were added
+         */
+        protected boolean createNextChildLMs(int pos) {
+            List<LayoutManager> newLMs = createChildLMs(pos + 1 - listLMs.size());
+            if (newLMs != null) {
+                listLMs.addAll(newLMs);
+            }
+            return pos < listLMs.size();
+        }
+    }
+
+    public boolean createNextChildLMs(int pos) {
+        while (proxyLMiter.hasNext()) {
+            LayoutManager lm = proxyLMiter.next();
+            addChildLM(lm);
+            if (pos < childLMs.size()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public KeepProperty getKeepTogetherProperty() {
+        return getTableAndCaptionFO().getKeepTogether();
+    }
+
+    public KeepProperty getKeepWithPreviousProperty() {
+        return getTableAndCaptionFO().getKeepWithPrevious();
+    }
+
+    public KeepProperty getKeepWithNextProperty() {
+        return getTableAndCaptionFO().getKeepWithNext();
+    }
+
+    public void addAreas(PositionIterator parentIter, LayoutContext layoutContext) {
         getParentArea(null);
+
+        // if this will create the first block area in a page
+        // and display-align is after or center, add space before
+        if (layoutContext.getSpaceBefore() > 0) {
+            addBlockSpacing(0.0, MinOptMax.getInstance(layoutContext.getSpaceBefore()));
+        }
+
+        LayoutManager childLM;
+        LayoutManager lastLM = null;
+        LayoutContext lc = LayoutContext.offspringOf(layoutContext);
+        lc.setSpaceAdjust(layoutContext.getSpaceAdjust());
+        // set space after in the LayoutContext for children
+        if (layoutContext.getSpaceAfter() > 0) {
+            lc.setSpaceAfter(layoutContext.getSpaceAfter());
+        }
+        PositionIterator childPosIter;
+
+        // "unwrap" the NonLeafPositions stored in parentIter
+        // and put them in a new list;
+        LinkedList<Position> positionList = new LinkedList<>();
+        Position pos;
+        boolean spaceBefore = false;
+        boolean spaceAfter = false;
+        Position firstPos = null;
+        Position lastPos = null;
+        while (parentIter.hasNext()) {
+            pos = parentIter.next();
+            if (pos.getIndex() >= 0) {
+                if (firstPos == null) {
+                    firstPos = pos;
+                }
+                lastPos = pos;
+            }
+            Position innerPosition = pos;
+            if (pos instanceof NonLeafPosition) {
+                //Not all elements are wrapped
+                innerPosition = pos.getPosition();
+            }
+            if (innerPosition == null) {
+                // pos was created by this BlockLM and was inside an element
+                // representing space before or after
+                // this means the space was not discarded
+                if (positionList.isEmpty()) {
+                    // pos was in the element representing space-before
+                    spaceBefore = true;
+                } else {
+                    // pos was in the element representing space-after
+                    spaceAfter = true;
+                }
+            } else if (innerPosition.getLM() == this
+                    && !(innerPosition instanceof MappingPosition)) {
+                // pos was created by this BlockLM and was inside a penalty
+                // allowing or forbidding a page break
+                // nothing to do
+            } else {
+                // innerPosition was created by another LM
+                positionList.add(innerPosition);
+                lastLM = innerPosition.getLM();
+            }
+        }
+
         addId();
 
-        /* TODO: Reimplement using Knuth approach
-        LayoutManager childLM;
-        int iStartPos = 0;
-        LayoutContext lc = LayoutContext.newInstance();
-        while (parentIter.hasNext()) {
-            LeafPosition lfp = (LeafPosition) parentIter.next();
-            // Add the block areas to Area
-            PositionIterator breakPosIter = new BreakPossPosIter(
-                    childBreaks, iStartPos, lfp.getLeafPos() + 1);
-            iStartPos = lfp.getLeafPos() + 1;
-            while ((childLM = breakPosIter.getNextChildLM()) != null) {
-                childLM.addAreas(breakPosIter, lc);
-            }
-        }*/
+        registerMarkers(true, isFirst(firstPos), isLast(lastPos));
 
+        if (bpUnit == 0) {
+            // the Positions in positionList were inside the elements
+            // created by the LineLM
+            childPosIter = new StackingIter(positionList.listIterator());
+        } else {
+            // the Positions in positionList were inside the elements
+            // created by the BlockLM in the createUnitElements() method
+            LinkedList<KnuthElement> splitList = new LinkedList<>();
+            int splitLength = 0;
+            int iFirst = ((MappingPosition) positionList.getFirst()).getFirstIndex();
+            int iLast = ((MappingPosition) positionList.getLast()).getLastIndex();
+            // copy from storedList to splitList all the elements from
+            // iFirst to iLast
+            ListIterator<KnuthElement> storedListIterator = storedList.listIterator(iFirst);
+            while (storedListIterator.nextIndex() <= iLast) {
+                KnuthElement element = storedListIterator.next();
+                // some elements in storedList (i.e. penalty items) were created
+                // by this BlockLM, and must be ignored
+                if (element.getLayoutManager() != this) {
+                    splitList.add(element);
+                    splitLength += element.getWidth();
+                    lastLM = element.getLayoutManager();
+                }
+            }
+            // add space before and / or after the paragraph
+            // to reach a multiple of bpUnit
+            if (spaceBefore && spaceAfter) {
+                adjustedSpaceBefore = (neededUnits(splitLength
+                        + foSpaceBefore.getMin()
+                        + foSpaceAfter.getMin())
+                        * bpUnit - splitLength) / 2;
+                adjustedSpaceAfter = neededUnits(splitLength
+                        + foSpaceBefore.getMin()
+                        + foSpaceAfter.getMin())
+                        * bpUnit - splitLength - adjustedSpaceBefore;
+            } else if (spaceBefore) {
+                adjustedSpaceBefore = neededUnits(splitLength
+                        + foSpaceBefore.getMin())
+                        * bpUnit - splitLength;
+            } else {
+                adjustedSpaceAfter = neededUnits(splitLength
+                        + foSpaceAfter.getMin())
+                        * bpUnit - splitLength;
+            }
+            childPosIter = new KnuthPossPosIter(splitList, 0, splitList
+                    .size());
+        }
+
+        while ((childLM = childPosIter.getNextChildLM()) != null) {
+            // set last area flag
+            lc.setFlags(LayoutContext.LAST_AREA,
+                    (layoutContext.isLastArea() && childLM == lastLM));
+            lc.setStackLimitBP(layoutContext.getStackLimitBP());
+            // Add the line areas to Area
+            childLM.addAreas(childPosIter, lc);
+        }
+
+        registerMarkers(false, isFirst(firstPos), isLast(lastPos));
+
+        TraitSetter.addSpaceBeforeAfter(curBlockArea, layoutContext.getSpaceAdjust(),
+                effSpaceBefore, effSpaceAfter);
         flush();
 
-        //childBreaks.clear();
         curBlockArea = null;
+        resetSpaces();
+
+        //Notify end of block layout manager to the PSLM
+        checkEndOfLayout(lastPos);
+    }
+
+    private static class StackingIter extends PositionIterator {
+        public StackingIter(Iterator parentIter) {
+            super(parentIter);
+        }
+
+        protected LayoutManager getLM(Object nextObj) {
+            return ((Position) nextObj).getLM();
+        }
+
+        protected Position getPos(Object nextObj) {
+            return ((Position) nextObj);
+        }
     }
 
     /**
@@ -170,54 +315,98 @@ public class TableAndCaptionLayoutManager extends BlockStackingLayoutManager {
      * Finally, based on the dimensions of the parent area, it initializes
      * its own area. This includes setting the content IPD and the maximum
      * BPD.
-     *
-     * @param childArea the child area to locate the parent
-     * @return the area for this table and caption
+     * @param childArea area to get the parent area for
+     * @return the parent area
      */
     public Area getParentArea(Area childArea) {
         if (curBlockArea == null) {
             curBlockArea = new Block();
-            curBlockArea.setChangeBarList(getChangeBarList());
 
-            // Set up dimensions
+            curBlockArea.setIPD(super.getContentAreaIPD());
+
+            curBlockArea.setBidiLevel(getTableAndCaptionFO().getBidiLevelRecursive());
+
             // Must get dimensions from parent area
-            Area parentArea = parentLayoutManager.getParentArea(curBlockArea);
-            int referenceIPD = parentArea.getIPD();
-            curBlockArea.setIPD(referenceIPD);
-            curBlockArea.setBidiLevel(getTableAndCaptionFO().getBidiLevel());
-            // Get reference IPD from parentArea
+            //Don't optimize this line away. It can have ugly side-effects.
+            parentLayoutManager.getParentArea(curBlockArea);
+
+            // set traits
+            TraitSetter.setProducerID(curBlockArea, getTableAndCaptionFO().getId());
+            TraitSetter.addBorders(curBlockArea,
+                    getCommonBorderPaddingBackground(),
+                    discardBorderBefore, discardBorderAfter, false, false, this);
+            TraitSetter.addPadding(curBlockArea,
+                    getCommonBorderPaddingBackground(),
+                    discardPaddingBefore, discardPaddingAfter, false, false, this);
+            TraitSetter.addMargins(curBlockArea,
+                    getCommonBorderPaddingBackground(),
+                    startIndent, endIndent,
+                    this);
+            TraitSetter.setLayer(curBlockArea, getTableAndCaptionFO().getLayer());
+            curBlockArea.setLocation(FONode.getLocatorString(getTableAndCaptionFO().getLocator()));
             setCurrentArea(curBlockArea); // ??? for generic operations
         }
         return curBlockArea;
     }
 
-    /**
-     * Add the child to the current area.
-     *
-     * @param childArea the area to add
-     */
     public void addChildArea(Area childArea) {
         if (curBlockArea != null) {
-            curBlockArea.addBlock((Block) childArea);
+            if (childArea instanceof LineArea) {
+                curBlockArea.addLineArea((LineArea) childArea);
+            } else {
+                curBlockArea.addBlock((Block) childArea);
+            }
         }
     }
 
-    /** {@inheritDoc} */
-    public Keep getKeepWithNext() {
-        return Keep.KEEP_AUTO;
-        /* TODO Complete me!
-        return KeepUtil.getCombinedBlockLevelKeepStrength(
-                getTableAndCaptionFO().getKeepWithNext());
-        */
+    /**
+     * Force current area to be added to parent area.
+     * {@inheritDoc}
+     */
+    protected void flush() {
+        if (curBlockArea != null) {
+            TraitSetter.addBackground(curBlockArea, getTableAndCaptionFO().getCommonBorderPaddingBackground(), this);
+            super.flush();
+        }
     }
 
-    /** {@inheritDoc} */
-    public Keep getKeepWithPrevious() {
-        return Keep.KEEP_AUTO;
-        /* TODO Complete me!
-        return KeepUtil.getCombinedBlockLevelKeepStrength(
-                getTableAndCaptionFO().getKeepWithPrevious());
-        */
+    /**
+     * Returns the table-and-caption formatting object.
+     * @return the table-and-caption formatting object
+     */
+    protected TableAndCaption getTableAndCaptionFO() {
+        return (TableAndCaption) fobj;
     }
 
+    // --------- Property Resolution related functions --------- //
+
+    /**
+     * Returns the IPD of the content area
+     * @return the IPD of the content area
+     */
+    public int getContentAreaIPD() {
+        if (curBlockArea != null) {
+            return curBlockArea.getIPD();
+        }
+        return super.getContentAreaIPD();
+    }
+
+    /**
+     * Returns the BPD of the content area
+     * @return the BPD of the content area
+     */
+    public int getContentAreaBPD() {
+        if (curBlockArea != null) {
+            return curBlockArea.getBPD();
+        }
+        return -1;
+    }
+
+    public boolean getGeneratesBlockArea() {
+        return true;
+    }
+
+    public boolean isRestartable() {
+        return true;
+    }
 }

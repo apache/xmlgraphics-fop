@@ -58,6 +58,7 @@ import org.apache.fop.fo.flow.RetrieveTableMarker;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TableCaption;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableFooter;
 import org.apache.fop.fo.flow.table.TableHeader;
@@ -256,6 +257,14 @@ class StructureTreeEventTrigger extends FOEventHandler {
     public void endTable(Table tbl) {
         endElement(tbl);
         tables.pop();
+    }
+
+    public void startTableCaption(TableCaption tableCaption) {
+        startElement(tableCaption);
+    }
+
+    public void endTableCaption(TableCaption tableCaption) {
+        endElement(tableCaption);
     }
 
     @Override

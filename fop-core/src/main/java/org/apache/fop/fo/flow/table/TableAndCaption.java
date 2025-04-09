@@ -19,7 +19,6 @@
 
 package org.apache.fop.fo.flow.table;
 
-// XML
 import org.xml.sax.Locator;
 
 import org.apache.fop.apps.FOPException;
@@ -29,6 +28,8 @@ import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.ValidationException;
 import org.apache.fop.fo.properties.CommonAccessibility;
 import org.apache.fop.fo.properties.CommonAccessibilityHolder;
+import org.apache.fop.fo.properties.CommonBorderPaddingBackground;
+import org.apache.fop.fo.properties.KeepProperty;
 
 /**
  * Class modelling the <a href="http://www.w3.org/TR/xsl/#fo_table-and-caption">
@@ -37,25 +38,13 @@ import org.apache.fop.fo.properties.CommonAccessibilityHolder;
  */
 public class TableAndCaption extends FObj implements CommonAccessibilityHolder {
 
+    private static final String TABLE_CAPTION = "fo:table-caption";
+    private static final String TABLE = "fo:table";
     private CommonAccessibility commonAccessibility;
-
-    // The value of properties relevant for fo:table-and-caption.
-    // Unused but valid items, commented out for performance:
-    //     private CommonAural commonAural;
-    //     private CommonBorderPaddingBackground commonBorderPaddingBackground;
-    //     private CommonMarginBlock commonMarginBlock;
-    //     private CommonRelativePosition commonRelativePosition;
-    //     private int breakAfter;
-    //     private int breakBefore;
-    //     private int captionSide;
-    //     private int intrusionDisplace;
-    //     private KeepProperty keepTogether;
-    //     private KeepProperty keepWithNext;
-    //     private KeepProperty keepWithPrevious;
-    //     private int textAlign;
-    // End of property values
-
-    static boolean notImplementedWarningGiven;
+    private CommonBorderPaddingBackground commonBorderPaddingBackground;
+    private KeepProperty keepTogether;
+    private KeepProperty keepWithNext;
+    private KeepProperty keepWithPrevious;
 
     /** used for FO validation */
     private boolean tableCaptionFound;
@@ -68,19 +57,16 @@ public class TableAndCaption extends FObj implements CommonAccessibilityHolder {
      */
     public TableAndCaption(FONode parent) {
         super(parent);
-
-        if (!notImplementedWarningGiven) {
-            getFOValidationEventProducer().unimplementedFeature(this, getName(),
-                    "fo:table-and-caption", getLocator());
-            // @SuppressFBWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
-            notImplementedWarningGiven = true;
-        }
     }
 
     @Override
     public void bind(PropertyList pList) throws FOPException {
         super.bind(pList);
         commonAccessibility = CommonAccessibility.getInstance(pList);
+        keepTogether = pList.get(PR_KEEP_TOGETHER).getKeep();
+        keepWithNext = pList.get(PR_KEEP_WITH_NEXT).getKeep();
+        keepWithPrevious = pList.get(PR_KEEP_WITH_PREVIOUS).getKeep();
+        commonBorderPaddingBackground = pList.getBorderPaddingBackgroundProps();
     }
 
     /**
@@ -104,21 +90,21 @@ public class TableAndCaption extends FObj implements CommonAccessibilityHolder {
         if (FO_URI.equals(nsURI)) {
             if (localName.equals("marker")) {
                 if (tableCaptionFound) {
-                    nodesOutOfOrderError(loc, "fo:marker", "fo:table-caption");
+                    nodesOutOfOrderError(loc, "fo:marker", TABLE_CAPTION);
                 } else if (tableFound) {
-                    nodesOutOfOrderError(loc, "fo:marker", "fo:table");
+                    nodesOutOfOrderError(loc, "fo:marker", TABLE);
                 }
             } else if (localName.equals("table-caption")) {
                 if (tableCaptionFound) {
-                    tooManyNodesError(loc, "fo:table-caption");
+                    tooManyNodesError(loc, TABLE_CAPTION);
                 } else if (tableFound) {
-                    nodesOutOfOrderError(loc, "fo:table-caption", "fo:table");
+                    nodesOutOfOrderError(loc, TABLE_CAPTION, TABLE);
                 } else {
                     tableCaptionFound = true;
                 }
             } else if (localName.equals("table")) {
                 if (tableFound) {
-                    tooManyNodesError(loc, "fo:table");
+                    tooManyNodesError(loc, TABLE);
                 } else {
                     tableFound = true;
                 }
@@ -146,5 +132,20 @@ public class TableAndCaption extends FObj implements CommonAccessibilityHolder {
         return commonAccessibility;
     }
 
+    public KeepProperty getKeepTogether() {
+        return keepTogether;
+    }
+
+    public KeepProperty getKeepWithNext() {
+        return keepWithNext;
+    }
+
+    public KeepProperty getKeepWithPrevious() {
+        return keepWithPrevious;
+    }
+
+    public CommonBorderPaddingBackground getCommonBorderPaddingBackground() {
+        return commonBorderPaddingBackground;
+    }
 }
 

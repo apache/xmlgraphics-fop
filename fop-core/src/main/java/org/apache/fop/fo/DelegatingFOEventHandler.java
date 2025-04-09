@@ -46,6 +46,7 @@ import org.apache.fop.fo.flow.RetrieveTableMarker;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TableCaption;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableFooter;
@@ -202,6 +203,14 @@ public abstract class DelegatingFOEventHandler extends FOEventHandler {
     @Override
     public void endTable(Table tbl) {
         delegate.endTable(tbl);
+    }
+
+    public void startTableCaption(TableCaption tableCaption) {
+        delegate.startTableCaption(tableCaption);
+    }
+
+    public void endTableCaption(TableCaption tableCaption) {
+        delegate.endTableCaption(tableCaption);
     }
 
     @Override

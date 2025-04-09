@@ -54,6 +54,7 @@ import org.apache.fop.fo.flow.RetrieveTableMarker;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TableCaption;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableFooter;
@@ -356,6 +357,24 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
             }
         });
         super.endTable(tbl);
+    }
+
+    public void startTableCaption(final TableCaption tableCaption) {
+        startContent(new Event(this) {
+            public void run() {
+                eventHandler.startTableCaption(tableCaption);
+            }
+        }, true);
+        super.startTableCaption(tableCaption);
+    }
+
+    public void endTableCaption(final TableCaption tableCaption) {
+        endContent(new Event(this) {
+            public void run() {
+                eventHandler.endTableCaption(tableCaption);
+            }
+        });
+        super.endTableCaption(tableCaption);
     }
 
     @Override

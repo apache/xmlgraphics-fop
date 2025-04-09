@@ -34,7 +34,6 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FONodeMocks;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
-import org.apache.fop.fo.flow.table.UnimplementedWarningNeutralizer;
 
 /**
  * This tests that all the FONodes that implement CommonAccessibilityHolder correctly configure
@@ -50,10 +49,6 @@ public class CommonAccessibilityHolderTestCase {
     private final String sourceDocument = "source document";
 
     static {
-        /* This triggers 'unimplemented feature' FO validation events so that the event system is
-         * not triggered when testing, avoiding extra convoluted dependency stubbing. */
-        UnimplementedWarningNeutralizer.neutralizeUnimplementedWarning();
-
         IMPLEMENTATIONS.add(org.apache.fop.fo.flow.BasicLink.class);
         IMPLEMENTATIONS.add(org.apache.fop.fo.flow.Block.class);
         IMPLEMENTATIONS.add(org.apache.fop.fo.pagination.bookmarks.Bookmark.class);

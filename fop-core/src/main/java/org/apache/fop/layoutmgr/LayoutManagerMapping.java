@@ -62,7 +62,9 @@ import org.apache.fop.fo.flow.RetrieveMarker;
 import org.apache.fop.fo.flow.RetrieveTableMarker;
 import org.apache.fop.fo.flow.Wrapper;
 import org.apache.fop.fo.flow.table.Table;
+import org.apache.fop.fo.flow.table.TableAndCaption;
 import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TableCaption;
 import org.apache.fop.fo.flow.table.TableCell;
 import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TableFooter;
@@ -91,6 +93,8 @@ import org.apache.fop.layoutmgr.inline.TextLayoutManager;
 import org.apache.fop.layoutmgr.inline.WrapperLayoutManager;
 import org.apache.fop.layoutmgr.list.ListBlockLayoutManager;
 import org.apache.fop.layoutmgr.list.ListItemLayoutManager;
+import org.apache.fop.layoutmgr.table.TableAndCaptionLayoutManager;
+import org.apache.fop.layoutmgr.table.TableCaptionLayoutManager;
 import org.apache.fop.layoutmgr.table.TableLayoutManager;
 import org.apache.fop.util.CharUtilities;
 
@@ -143,6 +147,8 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                    new PageNumberCitationLayoutManagerMaker());
         registerMaker(PageNumberCitationLast.class,
                 new PageNumberCitationLastLayoutManagerMaker());
+        registerMaker(TableAndCaption.class, new TableAndCaptionManagerMaker());
+        registerMaker(TableCaption.class, new TableCaptionManagerMaker());
         registerMaker(Table.class, new TableLayoutManagerMaker());
         registerMaker(TableBody.class, new Maker());
         registerMaker(TableColumn.class, new Maker());
@@ -455,6 +461,18 @@ public class LayoutManagerMapping implements LayoutManagerMaker {
                 FONode child = (FONode) baseIter.next();
                 makeLayoutManagers(child, lms);
             }
+        }
+    }
+
+    public class TableAndCaptionManagerMaker extends Maker {
+        public void make(FONode node, List layoutManagers, FOUserAgent userAgent) {
+            layoutManagers.add(new TableAndCaptionLayoutManager((TableAndCaption)node));
+        }
+    }
+
+    public class TableCaptionManagerMaker extends Maker {
+        public void make(FONode node, List layoutManagers, FOUserAgent userAgent) {
+            layoutManagers.add(new TableCaptionLayoutManager((TableCaption)node));
         }
     }
 
