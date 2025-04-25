@@ -19,6 +19,10 @@
 
 package org.apache.fop.render.intermediate.extensions;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -47,7 +51,23 @@ public class URIAction extends AbstractAction implements DocumentNavigationExten
         this.uri = uri;
         this.newWindow = newWindow;
         this.altText = altText;
-        setID(getIDPrefix() + (uri + newWindow).hashCode());
+        setID(createID(getIDPrefix(), uri + newWindow));
+    }
+
+    private String createID(String idPrefix, String url) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] thedigest = md.digest(url.getBytes(StandardCharsets.UTF_8));
+
+            StringBuilder hex = new StringBuilder();
+            for (byte b : thedigest) {
+                hex.append(String.format("%02x", b));
+            }
+
+            return idPrefix + hex;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("MD5 algorithm not found", e);
+        }
     }
 
     /**

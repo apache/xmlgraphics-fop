@@ -32,4 +32,12 @@ public class URIActionTestCase {
         Assert.assertEquals(action.getID(), action2.getID());
         Assert.assertFalse(action.getID().equals(action3.getID()));
     }
+
+    @Test
+    public void testIdEdgeCase() {
+        URIAction action = new URIAction("19", true, null);
+        URIAction action2 = new URIAction("0X", true, null);
+        Assert.assertNotEquals("We can't use the hashcode for the ids as some strings have the same hashcode",
+                action.getID(), action2.getID());
+    }
 }
