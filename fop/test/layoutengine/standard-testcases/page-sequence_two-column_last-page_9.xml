@@ -1,0 +1,1186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      Test case: last content spans all columns and does not fit on last page, and there is not even 
+      space left to fit any part of it after switching to last-page master.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+      <fo:layout-master-set>
+        <fo:simple-page-master margin-right="0.5in" margin-left="0.5in" margin-top="0.35in" margin-bottom="0.25in" master-name="PageFirst" page-width="8.5in" page-height="11in">
+          <fo:region-body margin-top="0.85in" column-count="2" column-gap="0.3in" margin-bottom="1in" region-name="PageBody" background-color="red"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="PageRestEven" margin-right="0.5in" margin-left="0.5in" margin-top="0.35in" margin-bottom="0.25in" page-width="8.5in" page-height="11in">
+          <fo:region-body margin-top="0.5in" column-gap="0.3in" column-count="2" margin-bottom="1in" region-name="PageBody" background-color="yellow"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="PageRestOdd" margin-right="0.5in" margin-left="0.5in" margin-top="0.35in" margin-bottom="0.25in" page-width="8.5in" page-height="11in">
+          <fo:region-body margin-top="0.5in" column-gap="0.3in" column-count="2" margin-bottom="1in" region-name="PageBody" background-color="green"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="PageLastEven" page-width="8.5in" page-height="11in" margin-bottom="0.25in" margin-right="0.5in" margin-top="0.35in" margin-left="0.5in">
+          <fo:region-body column-count="2" margin-top="0.5in" column-gap="0.3in" margin-bottom="2.5in" region-name="PageBody" background-color="orange"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="PageLastOdd" page-width="8.5in" page-height="11in" margin-bottom="0.25in" margin-right="0.5in" margin-top="0.35in" margin-left="0.5in">
+          <fo:region-body margin-top="0.5in" column-gap="0.3in" column-count="2" margin-bottom="2.5in" region-name="PageBody" background-color="pink"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="LetterPages">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference page-position="first" master-reference="PageFirst"/>
+            <fo:conditional-page-master-reference odd-or-even="odd" page-position="rest" master-reference="PageRestOdd"/>
+            <fo:conditional-page-master-reference odd-or-even="even" page-position="rest" master-reference="PageRestEven"/>
+            <fo:conditional-page-master-reference odd-or-even="even" page-position="last" master-reference="PageLastEven"/>
+            <fo:conditional-page-master-reference odd-or-even="odd" page-position="last" master-reference="PageLastOdd"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence format="1" id="th_default_sequence1" initial-page-number="auto" force-page-count="auto" master-reference="LetterPages">
+        <fo:flow flow-name="PageBody">
+          <fo:block-container>
+            <fo:block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt">
+                    <fo:block>A.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.25in" space-after="4pt">
+                    <fo:block>When this endorsement is attached to the Standard Property Policy <fo:inline>CP 00 99,</fo:inline> the term Coverage Part in this endorsement is replaced by the term Policy. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt">
+                    <fo:block>B.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.25in" space-after="4pt">
+                    <fo:block>Nothing in this endorsement increases the applicable Limit of Insurance. We will not pay any Loss Payee more than their financial interest in the Covered Property, and we will not pay more than the applicable Limit of Insurance on the Covered Property.</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt">
+                    <fo:block>C.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.25in" space-after="4pt">
+                    <fo:block>The following is added to the<fo:inline> Loss Payment</fo:inline> Loss Condition, as indicated in the Declarations or in the Schedule:</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.25in">
+                    <fo:block>1.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>
+                      <fo:inline>Loss Payable Clause</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:block font-size="10pt" line-height="10pt" margin-left="0.5in">For Covered Property in which both you and a Loss Payee shown in the Schedule or in the Declarations have an insurable interest, we will: </fo:block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>Adjust losses with you; and</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>Pay any claim for loss or damage jointly to you and the Loss Payee, as<fo:inline> </fo:inline>interests may appear</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.25in">
+                    <fo:block>2.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>
+                      <fo:inline>Lender's Loss Payable Clause</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>The Loss Payee shown in the Schedule or in the Declarations is a creditor, including a mortgageholder or trustee, whose interest in Covered Property is established by such written instruments as<fo:inline>:</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(1)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Warehouse receipts; </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(2)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>A contract for deed;</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(3)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Bills of lading; </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(4)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Financing statements; or </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(5)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Mortgages, deeds of trust, or security agreements. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>For Covered Property in which both you and a Loss Payee have an insurable interest<fo:inline>:</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(1)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>We will pay for covered loss or damage to each Loss Payee in their order of precedence, as interests may appear. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(2)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>The Loss Payee has the right to receive loss payment even if the Loss Payee has started foreclosure or similar action on the Covered Property. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(3)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>If we deny your claim because of your acts or because you have failed to comply with the terms of the Coverage Part, the Loss Payee will still have the right to receive loss payment if the Loss Payee:</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(a)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>Pays any premium due under this Coverage Part at our request if you have failed to do so; </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(b)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>Submits a signed, sworn proof of loss within 60 days after receiving notice from us of your failure to do so; and </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(c)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>Has notified us of any change in ownership, occupancy or substantial change in risk known to the Loss Payee. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:block font-size="10pt" line-height="10pt" margin-left="1in">All of the terms of this Coverage Part will then apply directly to the Loss Payee. </fo:block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(4)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>If we pay the Loss Payee for any loss or damage and deny payment to you because of your acts or because you have failed to comply with the terms of this Coverage Part:</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(a)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>The Loss Payee's rights will be transferred to us to the extent of the amount we pay; and </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(b)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>The Loss Payee's rights to recover the full amount of the Loss Payee's claim will not be impaired. At our option, we may pay to the Loss Payee the whole principal on the debt plus any accrued interest. In this event, you will pay your remaining debt to us.  </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>c.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>If we cancel this policy, we will give written notice to the Loss Payee at least: </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(1)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>10 days before the effective date of cancellation if we cancel for your nonpayment of premium; or </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(2)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>30 days before the effective date of cancellation if we cancel for any other reason. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>d.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>If we elect not to renew this policy, we will give written notice to the Loss Payee at least 10 days before the expiration date of this policy. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.25in">
+                    <fo:block>3.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>
+                      <fo:inline>Contract Of Sale Clause</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>The Loss Payee shown in the Schedule or in the Declarations is a person or organization you have entered into a contract with for the sale of Covered Property. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>For Covered Property in which both you and the Loss Payee have an insurable interest, we will: </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(1)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Adjust losses with you; and </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(2)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Pay any claim for loss or damage jointly to you and the Loss Payee, as interests may appear.</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>c.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>The following is added to the <fo:inline>Other Insurance</fo:inline> Condition: </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:block font-size="10pt" line-height="10pt" margin-left="0.5in" fox:tab-stops="end space 24pt start space 30pt" text-align="left">For Covered Property that is the subject of a contract of sale, the word "you" includes the Loss Payee.</fo:block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.25in">
+                    <fo:block>4.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>
+                      <fo:inline>Building Owner Loss Payable Clause</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>The Loss Payee shown in the Schedule or in the Declarations is the owner of the described building in which you are a tenant. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>We will adjust losses to the described building with the Loss Payee. Any loss payment made to the Loss Payee will satisfy your claims against us for the owner's property. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>c.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>We will adjust losses to tenants' improvements and betterments with you, unless the lease provides otherwise.</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:block font-size="10pt" line-height="11pt">
+                <fo:leader/>
+              </fo:block>
+            </fo:block>
+          </fo:block-container>
+          <fo:block-container span="all">
+            <fo:block>
+              <fo:block font-size="10pt" line-height="11pt">
+                <fo:leader/>
+              </fo:block>
+              <fo:table border-collapse="separate" table-layout="fixed" width="100%">
+                <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+                <fo:table-body>
+                  <fo:table-row>
+                    <fo:table-cell padding-top="2pt" padding-left="2pt" white-space="normal" border-collapse="collapse" white-space-collapse="false" padding="5px">
+                      <fo:block>
+                        <fo:block text-align="center">
+                          <fo:inline>SCHEDULE</fo:inline>
+                        </fo:block>
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                </fo:table-body>
+              </fo:table>
+              <fo:block font-size="10pt" line-height="11pt">
+                <fo:leader/>
+              </fo:block>
+              <fo:table border-collapse="separate" table-layout="fixed" width="100%">
+                <fo:table-column column-width="proportional-column-width(100)" column-number="1"/>
+                <fo:table-body>
+                  <fo:table-row>
+                    <fo:table-cell padding-top="2pt" padding-left="2pt" white-space="normal" border-collapse="collapse" white-space-collapse="false" padding="5px" border-right-style="solid" border-bottom-color="black" border-top-width="1pt" border-left-style="solid" border-right-width="1pt" border-bottom-width="1pt" border-left-color="black" border-top-color="black" border-bottom-style="solid" border-right-color="black" border-left-width="1pt" border-top-style="solid">
+                      <fo:block>
+                        <fo:block font-size="10pt" line-height="11pt">Information required to complete this Schedule, if not shown above, will be shown in the Declarations.</fo:block>
+                      </fo:block>
+                    </fo:table-cell>
+                  </fo:table-row>
+                </fo:table-body>
+              </fo:table>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt">
+                    <fo:block>A.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.25in" space-after="4pt">
+                    <fo:block>When this endorsement is attached to the Standard Property Policy <fo:inline>CP 00 99,</fo:inline> the term Coverage Part in this endorsement is replaced by the term Policy. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt">
+                    <fo:block>B.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.25in" space-after="4pt">
+                    <fo:block>Nothing in this endorsement increases the applicable Limit of Insurance. We will not pay any Loss Payee more than their financial interest in the Covered Property, and we will not pay more than the applicable Limit of Insurance on the Covered Property.</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt">
+                    <fo:block>C.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.25in" space-after="4pt">
+                    <fo:block>The following is added to the<fo:inline> Loss Payment</fo:inline> Loss Condition, as indicated in the Declarations or in the Schedule:</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.25in">
+                    <fo:block>1.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>
+                      <fo:inline>Loss Payable Clause</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:block font-size="10pt" line-height="10pt" margin-left="0.5in">For Covered Property in which both you and a Loss Payee shown in the Schedule or in the Declarations have an insurable interest, we will: </fo:block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>Adjust losses with you; and</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>Pay any claim for loss or damage jointly to you and the Loss Payee, as<fo:inline> </fo:inline>interests may appear</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.25in">
+                    <fo:block>2.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>
+                      <fo:inline>Lender's Loss Payable Clause</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>The Loss Payee shown in the Schedule or in the Declarations is a creditor, including a mortgageholder or trustee, whose interest in Covered Property is established by such written instruments as<fo:inline>:</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(1)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Warehouse receipts; </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(2)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>A contract for deed;</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(3)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Bills of lading; </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(4)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Financing statements; or </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(5)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Mortgages, deeds of trust, or security agreements. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>For Covered Property in which both you and a Loss Payee have an insurable interest<fo:inline>:</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(1)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>We will pay for covered loss or damage to each Loss Payee in their order of precedence, as interests may appear. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(2)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>The Loss Payee has the right to receive loss payment even if the Loss Payee has started foreclosure or similar action on the Covered Property. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(3)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>If we deny your claim because of your acts or because you have failed to comply with the terms of the Coverage Part, the Loss Payee will still have the right to receive loss payment if the Loss Payee:</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(a)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>Pays any premium due under this Coverage Part at our request if you have failed to do so; </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(b)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>Submits a signed, sworn proof of loss within 60 days after receiving notice from us of your failure to do so; and </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(c)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>Has notified us of any change in ownership, occupancy or substantial change in risk known to the Loss Payee. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:block font-size="10pt" line-height="10pt" margin-left="1in">All of the terms of this Coverage Part will then apply directly to the Loss Payee. </fo:block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(4)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>If we pay the Loss Payee for any loss or damage and deny payment to you because of your acts or because you have failed to comply with the terms of this Coverage Part:</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(a)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>The Loss Payee's rights will be transferred to us to the extent of the amount we pay; and </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(b)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>The Loss Payee's rights to recover the full amount of the Loss Payee's claim will not be impaired. At our option, we may pay to the Loss Payee the whole principal on the debt plus any accrued interest. In this event, you will pay your remaining debt to us.  </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>c.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>If we cancel this policy, we will give written notice to the Loss Payee at least: </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(1)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>10 days before the effective date of cancellation if we cancel for your nonpayment of premium; or </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(2)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>30 days before the effective date of cancellation if we cancel for any other reason. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>d.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>If we elect not to renew this policy, we will give written notice to the Loss Payee at least 10 days before the expiration date of this policy. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.25in">
+                    <fo:block>3.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>
+                      <fo:inline>Contract Of Sale Clause</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>The Loss Payee shown in the Schedule or in the Declarations is a person or organization you have entered into a contract with for the sale of Covered Property. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>For Covered Property in which both you and the Loss Payee have an insurable interest, we will: </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(1)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Adjust losses with you; and </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(2)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Pay any claim for loss or damage jointly to you and the Loss Payee, as interests may appear.</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>c.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>The following is added to the <fo:inline>Other Insurance</fo:inline> Condition: </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:block font-size="10pt" line-height="10pt" margin-left="0.5in" fox:tab-stops="end space 24pt start space 30pt" text-align="left">For Covered Property that is the subject of a contract of sale, the word "you" includes the Loss Payee</fo:block>
+              <fo:block font-size="10pt" line-height="10pt" margin-left="0.5in" fox:tab-stops="end space 24pt start space 30pt">
+                <fo:leader/>
+              </fo:block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.25in">
+                    <fo:block>4.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>
+                      <fo:inline>Building Owner Loss Payable Clause</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>The Loss Payee shown in the Schedule or in the Declarations is the owner of the described building in which you are a tenant. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>We will adjust losses to the described building with the Loss Payee. Any loss payment made to the Loss Payee will satisfy your claims against us for the owner's property. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>c.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>We will adjust losses to tenants' improvements and betterments with you, unless the lease provides otherwise.</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:block font-size="10pt" line-height="11pt">
+                <fo:leader/>
+              </fo:block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt">
+                    <fo:block>A.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.25in" space-after="4pt">
+                    <fo:block>When this endorsement is attached to the Standard Property Policy <fo:inline>CP 00 99,</fo:inline> the term Coverage Part in this endorsement is replaced by the term Policy. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt">
+                    <fo:block>B.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.25in" space-after="4pt">
+                    <fo:block>Nothing in this endorsement increases the applicable Limit of Insurance. We will not pay any Loss Payee more than their financial interest in the Covered Property, and we will not pay more than the applicable Limit of Insurance on the Covered Property.</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt">
+                    <fo:block>C.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.25in" space-after="4pt">
+                    <fo:block>The following is added to the<fo:inline> Loss Payment</fo:inline> Loss Condition, as indicated in the Declarations or in the Schedule:</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.25in">
+                    <fo:block>1.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>
+                      <fo:inline>Loss Payable Clause</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:block font-size="10pt" line-height="10pt" margin-left="0.5in">For Covered Property in which both you and a Loss Payee shown in the Schedule or in the Declarations have an insurable interest, we will: </fo:block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>Adjust losses with you; and</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>Pay any claim for loss or damage jointly to you and the Loss Payee, as<fo:inline> </fo:inline>interests may appear</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.25in">
+                    <fo:block>2.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>
+                      <fo:inline>Lender's Loss Payable Clause</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>The Loss Payee shown in the Schedule or in the Declarations is a creditor, including a mortgageholder or trustee, whose interest in Covered Property is established by such written instruments as<fo:inline>:</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(1)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Warehouse receipts; </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(2)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>A contract for deed;</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(3)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Bills of lading; </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(4)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Financing statements; or </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(5)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Mortgages, deeds of trust, or security agreements. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>For Covered Property in which both you and a Loss Payee have an insurable interest<fo:inline>:</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(1)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>We will pay for covered loss or damage to each Loss Payee in their order of precedence, as interests may appear. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(2)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>The Loss Payee has the right to receive loss payment even if the Loss Payee has started foreclosure or similar action on the Covered Property. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(3)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>If we deny your claim because of your acts or because you have failed to comply with the terms of the Coverage Part, the Loss Payee will still have the right to receive loss payment if the Loss Payee:</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(a)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>Pays any premium due under this Coverage Part at our request if you have failed to do so; </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(b)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>Submits a signed, sworn proof of loss within 60 days after receiving notice from us of your failure to do so; and </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(c)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>Has notified us of any change in ownership, occupancy or substantial change in risk known to the Loss Payee. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:block font-size="10pt" line-height="10pt" margin-left="1in">All of the terms of this Coverage Part will then apply directly to the Loss Payee. </fo:block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(4)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>If we pay the Loss Payee for any loss or damage and deny payment to you because of your acts or because you have failed to comply with the terms of this Coverage Part:</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(a)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>The Loss Payee's rights will be transferred to us to the extent of the amount we pay; and </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>(b)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1.25in">
+                    <fo:block>The Loss Payee's rights to recover the full amount of the Loss Payee's claim will not be impaired. At our option, we may pay to the Loss Payee the whole principal on the debt plus any accrued interest. In this event, you will pay your remaining debt to us.  </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>c.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>If we cancel this policy, we will give written notice to the Loss Payee at least: </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(1)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>10 days before the effective date of cancellation if we cancel for your nonpayment of premium; or </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(2)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>30 days before the effective date of cancellation if we cancel for any other reason. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>d.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>If we elect not to renew this policy, we will give written notice to the Loss Payee at least 10 days before the expiration date of this policy. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.25in">
+                    <fo:block>3.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>
+                      <fo:inline>Contract Of Sale Clause</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>The Loss Payee shown in the Schedule or in the Declarations is a person or organization you have entered into a contract with for the sale of Covered Property. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>For Covered Property in which both you and the Loss Payee have an insurable interest, we will: </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(1)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Adjust losses with you; and </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>(2)</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="1in">
+                    <fo:block>Pay any claim for loss or damage jointly to you and the Loss Payee, as interests may appear.</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>c.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>The following is added to the <fo:inline>Other Insurance</fo:inline> Condition: </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:block font-size="10pt" line-height="10pt" margin-left="0.5in" fox:tab-stops="end space 24pt start space 30pt" text-align="left">For Covered Property that is the subject of a contract of sale, the word "you" includes the Loss Payee</fo:block>
+              <fo:block font-size="10pt" line-height="10pt" margin-left="0.5in" fox:tab-stops="end space 24pt start space 30pt">
+                <fo:leader/>
+              </fo:block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.25in">
+                    <fo:block>4.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>
+                      <fo:inline>Building Owner Loss Payable Clause</fo:inline>
+                    </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+              <fo:list-block font-size="10pt" line-height="11pt">
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>a.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>The Loss Payee shown in the Schedule or in the Declarations is the owner of the described building in which you are a tenant. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>b.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>We will adjust losses to the described building with the Loss Payee. Any loss payment made to the Loss Payee will satisfy your claims against us for the owner's property. </fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>c.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>We will adjust losses to tenants' improvements and betterments with you, unless the lease provides otherwise.</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>d.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>abc</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+                <fo:list-item space-before="4pt" space-after="4pt">
+                  <fo:list-item-label font-size="10pt" space-before="4pt" start-indent="0.5in">
+                    <fo:block>e.</fo:block>
+                  </fo:list-item-label>
+                  <fo:list-item-body font-size="10pt" space-before="4pt" start-indent="0.75in">
+                    <fo:block>abad</fo:block>
+                  </fo:list-item-body>
+                </fo:list-item>
+              </fo:list-block>
+            </fo:block>
+          </fo:block-container>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="4" xpath="count(//pageViewport)"/>
+    <eval expected="A." xpath="//pageViewport[1]//word"/>
+    <eval expected="c." xpath="//pageViewport[2]//word"/>
+    <eval expected="(a)" xpath="//pageViewport[3]//word"/>
+    <eval expected="(1)" xpath="//pageViewport[4]//word"/>
+    <eval expected="PageFirst" xpath="//pageViewport[1]/@simple-page-master-name"/>
+    <eval expected="PageRestEven" xpath="//pageViewport[2]/@simple-page-master-name"/>
+    <eval expected="PageRestOdd" xpath="//pageViewport[3]/@simple-page-master-name"/>
+    <eval expected="PageRestEven" xpath="//pageViewport[4]/@simple-page-master-name"/>
+  </checks>
+</testcase>

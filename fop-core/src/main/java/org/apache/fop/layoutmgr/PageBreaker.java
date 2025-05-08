@@ -475,11 +475,14 @@ public class PageBreaker extends AbstractBreaker {
                 //Replace last page
                 pslm.setCurrentPage(pageProvider.getPage(false, currentPageNum));
             } else {
-                setLastPageIndex(currentPageNum + 1);
+                if (optimalPageCount <= pslm.getCurrentPV().getBodyRegion().getMainReference().getColumnCount()) {
+                    setLastPageIndex(currentPageNum + 1);
+                }
                 //Last page-master cannot hold the content.
                 //Add areas now...
                 addAreas(alg, restartPoint, partCount - restartPoint, originalList, effectiveList);
                 if (!ipdChange && pslm.currentPageNum == currentPageNum) {
+                    setLastPageIndex(currentPageNum + 1);
                     //...and add a blank last page
                     pslm.setCurrentPage(pslm.makeNewPage(true));
                 }
