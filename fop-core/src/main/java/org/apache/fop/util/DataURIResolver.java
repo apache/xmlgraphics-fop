@@ -27,6 +27,7 @@ import javax.xml.transform.URIResolver;
  * @deprecated
  * @see org.apache.xmlgraphics.util.uri.DataURIResolver
  */
+@Deprecated
 public class DataURIResolver implements URIResolver {
 
     private final URIResolver newResolver = new org.apache.xmlgraphics.util.uri.DataURIResolver();
@@ -40,6 +41,7 @@ public class DataURIResolver implements URIResolver {
      * @see org.apache.xmlgraphics.util.uri.DataURIResolver#resolve(String,
      *      String)
      */
+    @Deprecated
     public Source resolve(String href, String base) throws TransformerException {
         return newResolver.resolve(href, base);
     }

@@ -99,6 +99,7 @@ public final class FopFactoryBuilder {
      * @return build the {@link FopFactoryConfig}
      * @deprecated Exposing the {@link FopFactoryConfig} is only to maintain backwards compatibility
      */
+    @Deprecated
     public FopFactoryConfig buildConfig() {
         return buildConfiguration();
     }
