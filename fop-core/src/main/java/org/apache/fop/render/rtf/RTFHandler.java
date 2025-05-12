@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -186,7 +187,7 @@ public class RTFHandler extends FOEventHandler {
     public void startDocument() throws SAXException {
         // TODO sections should be created
         try {
-            rtfFile = new RtfFile(new OutputStreamWriter(os));
+            rtfFile = new RtfFile(new OutputStreamWriter(os, StandardCharsets.UTF_8));
             docArea = rtfFile.startDocumentArea();
         } catch (IOException ioe) {
             // TODO could we throw Exception in all FOEventHandler events?

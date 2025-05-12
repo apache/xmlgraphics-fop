@@ -27,10 +27,11 @@ package org.apache.fop.render.rtf.rtflib.rtfdoc;
  */
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.fop.render.rtf.rtflib.exceptions.RtfStructureException;
 
@@ -234,10 +235,10 @@ extends RtfContainer {
         if (args.length != 0) {
             final String outFile = args[0];
             System.err.println("Outputting RTF to file '" + outFile + "'");
-            w = new BufferedWriter(new FileWriter(outFile));
+            w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile), StandardCharsets.UTF_8));
         } else {
             System.err.println("Outputting RTF code to standard output");
-            w = new BufferedWriter(new OutputStreamWriter(System.out));
+            w = new BufferedWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
         }
 
         final RtfFile f = new RtfFile(w);

@@ -20,6 +20,7 @@
 package org.apache.fop.fonts.truetype;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.apache.fontbox.cff.CFFFont;
@@ -131,7 +132,7 @@ public class OTFFile extends OpenFont {
         input.readShort(); //rangeShift
 
         for (int q = 0; q < numTables; q++) {
-            String tagName = new String(input.readBytes(4));
+            String tagName = new String(input.readBytes(4), StandardCharsets.UTF_8);
             readLong(input); //Checksum
             long offset = readLong(input);
             long length = readLong(input);

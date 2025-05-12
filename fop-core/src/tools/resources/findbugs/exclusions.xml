@@ -332,10 +332,6 @@
     <Bug pattern="DM_CONVERT_CASE"/>
   </Match>
   <Match>
-    <!-- 17 warnings -->
-    <Bug pattern="DM_DEFAULT_ENCODING"/>
-  </Match>
-  <Match>
     <!-- 20 warnings -->
     <Bug pattern="DM_FP_NUMBER_CTOR"/>
   </Match>

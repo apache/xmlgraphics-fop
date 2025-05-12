@@ -22,6 +22,7 @@ package org.apache.fop.render.mif;
 // Java
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 
@@ -89,9 +90,9 @@ public class MIFElement {
         }
         String indentStr = sb.toString();
         if (!started) {
-            os.write((indentStr + "<" + name).getBytes());
+            os.write((indentStr + "<" + name).getBytes(StandardCharsets.UTF_8));
             if (valueElements != null) {
-                os.write(("\n").getBytes());
+                os.write(("\n").getBytes(StandardCharsets.UTF_8));
             }
             started = true;
         }
@@ -110,9 +111,9 @@ public class MIFElement {
             if (!finish || !done) {
                 return false;
             }
-            os.write((indentStr + "> # end of " + name + "\n").getBytes());
+            os.write((indentStr + "> # end of " + name + "\n").getBytes(StandardCharsets.UTF_8));
         } else {
-            os.write((" " + valueStr + ">\n").getBytes());
+            os.write((" " + valueStr + ">\n").getBytes(StandardCharsets.UTF_8));
         }
         finished = true;
         return true;

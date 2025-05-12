@@ -21,8 +21,11 @@ package org.apache.fop.tools.anttasks;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -170,8 +173,8 @@ public class FileCompare {
         File oldFile;
         File newFile;
         try {
-            PrintWriter results
-                = new PrintWriter(new java.io.FileWriter("results.html"), true);
+            PrintWriter results = new PrintWriter(new OutputStreamWriter(new FileOutputStream("results.html"),
+                    StandardCharsets.UTF_8));
             this.writeHeader(results);
             for (String aFilenameList : filenameList) {
                 oldFile = new File(referenceDirectory + aFilenameList);
