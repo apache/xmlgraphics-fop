@@ -1003,7 +1003,7 @@ public class RTFHandler extends FOEventHandler {
             RtfListItem item
                 = (RtfListItem)builderContext.getContainer(RtfListItem.class, true, this);
 
-            RtfListItemLabel label = item.new RtfListItemLabel(item);
+            RtfListItemLabel label = new RtfListItem.RtfListItemLabel(item);
             builderContext.pushContainer(label);
         } catch (IOException ioe) {
             handleIOTrouble(ioe);

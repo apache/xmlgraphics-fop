@@ -249,7 +249,7 @@ public class Character extends FObj implements StructureTreeElementHolder {
         return ranges;
     }
 
-    private class FOCharIterator extends CharIterator {
+    private static class FOCharIterator extends CharIterator {
 
         private boolean bFirst = true;
         private Character foChar;

@@ -182,7 +182,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
      * which was the first element in the paragraph
      * returned by each LM.
      */
-    private final class Update {
+    private static final class Update {
         private final InlineLevelLayoutManager inlineLM;
         private final int firstIndex;
 

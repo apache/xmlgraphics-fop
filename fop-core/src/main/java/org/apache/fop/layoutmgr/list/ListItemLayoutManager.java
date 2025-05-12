@@ -85,7 +85,7 @@ public class ListItemLayoutManager extends SpacedBorderedPaddedBlockLayoutManage
     private Keep keepWithNextPendingOnLabel;
     private Keep keepWithNextPendingOnBody;
 
-    public class ListItemPosition extends Position {
+    public static class ListItemPosition extends Position {
         private int labelFirstIndex;
         private int labelLastIndex;
         private int bodyFirstIndex;

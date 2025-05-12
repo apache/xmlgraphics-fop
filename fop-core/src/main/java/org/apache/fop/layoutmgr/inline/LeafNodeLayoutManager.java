@@ -73,7 +73,7 @@ public abstract class LeafNodeLayoutManager extends AbstractLayoutManager
     /**
      * Store information about the inline area
      */
-    protected class AreaInfo {
+    protected static class AreaInfo {
         /** letter space count */
         protected short letterSpaces;
         /** ipd of area */

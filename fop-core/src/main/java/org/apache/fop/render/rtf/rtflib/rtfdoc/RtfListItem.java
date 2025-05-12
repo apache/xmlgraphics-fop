@@ -64,7 +64,7 @@ public class RtfListItem extends RtfContainer
     /**
      * special RtfTextrun that is used as list item label
      */
-    public class RtfListItemLabel extends RtfTextrun implements IRtfTextrunContainer {
+    public static class RtfListItemLabel extends RtfTextrun implements IRtfTextrunContainer {
 
         private RtfListItem rtfListItem;
 

@@ -156,7 +156,7 @@ public class Marker extends FObjMixed {
      * specified properties/attributes as bundles of name-value-namespace
      * strings
      */
-    protected class MarkerPropertyList extends PropertyList
+    protected static class MarkerPropertyList extends PropertyList
             implements Attributes {
 
         /** the array of attributes **/

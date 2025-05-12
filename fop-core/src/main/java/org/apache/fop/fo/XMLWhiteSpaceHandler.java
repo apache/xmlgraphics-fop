@@ -439,7 +439,7 @@ public class XMLWhiteSpaceHandler {
      * with an iterator that starts at the first white-space
      * character in the sequence of trailing white-space
      */
-    private class PendingInline {
+    private static class PendingInline {
         protected CharIterator firstTrailingWhiteSpace;
 
         PendingInline(CharIterator firstTrailingWhiteSpace) {

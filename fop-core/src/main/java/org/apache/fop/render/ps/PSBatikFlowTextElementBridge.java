@@ -64,7 +64,7 @@ public class PSBatikFlowTextElementBridge extends BatikFlowTextElementBridge {
         return this.textPainter;
     }
 
-    private class PSFlowExtTextPainter extends PSTextPainter {
+    private static class PSFlowExtTextPainter extends PSTextPainter {
 
         /**
          * Main constructor

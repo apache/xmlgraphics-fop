@@ -621,7 +621,7 @@ public abstract class CharacterSetBuilder {
         }
     }
 
-    private class FontControl {
+    private static class FontControl {
 
         private int dpi;
         private int unitsPerEm;

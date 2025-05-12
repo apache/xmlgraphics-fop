@@ -384,10 +384,6 @@
     <Bug pattern="SE_BAD_FIELD"/>
   </Match>
   <Match>
-    <!-- 21 warnings -->
-    <Bug pattern="SIC_INNER_SHOULD_BE_STATIC"/>
-  </Match>
-  <Match>
     <!-- 20 warnings -->
     <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON"/>
   </Match>

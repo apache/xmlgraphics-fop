@@ -209,7 +209,7 @@ public final class Registry {
     /**
      * Encapsulates a MOD:CA Registry Object Type entry
      */
-    public class ObjectType {
+    public static class ObjectType {
         private final byte componentId;
         private final byte[] oid;
         private final String name;

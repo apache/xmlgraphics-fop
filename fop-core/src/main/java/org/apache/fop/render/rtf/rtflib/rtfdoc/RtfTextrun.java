@@ -61,7 +61,7 @@ public class RtfTextrun extends RtfContainer {
     private RtfSpaceManager rtfSpaceManager = new RtfSpaceManager();
 
     /**  Class which represents the opening of a RTF group mark.*/
-    private class RtfOpenGroupMark extends RtfElement {
+    private static class RtfOpenGroupMark extends RtfElement {
 
         RtfOpenGroupMark(RtfContainer parent, Writer w, RtfAttributes attr)
                 throws IOException {
@@ -86,7 +86,7 @@ public class RtfTextrun extends RtfContainer {
     }
 
     /**  Class which represents the closing of a RTF group mark.*/
-    private class RtfCloseGroupMark extends RtfElement {
+    private static class RtfCloseGroupMark extends RtfElement {
         private int breakType = BREAK_NONE;
 
         RtfCloseGroupMark(RtfContainer parent, Writer w, int breakType)

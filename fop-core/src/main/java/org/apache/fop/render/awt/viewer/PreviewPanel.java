@@ -279,7 +279,7 @@ public class PreviewPanel extends JPanel {
     /**
      * Allows any mouse drag on the page area to scroll the display window.
      */
-    private class ViewportScroller implements MouseListener, MouseMotionListener {
+    private static class ViewportScroller implements MouseListener, MouseMotionListener {
         /** The viewport to be scrolled */
         private final JViewport viewport;
         /** Starting position of a mouse drag - X co-ordinate */

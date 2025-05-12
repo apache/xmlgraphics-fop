@@ -64,7 +64,7 @@ public class PSSVGFlowRootElementBridge extends SVGFlowRootElementBridge {
         return this.textPainter;
     }
 
-    private class PSFlowTextPainter extends PSTextPainter {
+    private static class PSFlowTextPainter extends PSTextPainter {
 
         /**
          * Main constructor

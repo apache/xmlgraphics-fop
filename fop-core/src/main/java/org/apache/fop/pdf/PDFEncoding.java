@@ -146,7 +146,7 @@ public class PDFEncoding extends PDFDictionary {
     /**
      * Builder class for constructing the Differences array.
      */
-    public class DifferencesBuilder {
+    public static class DifferencesBuilder {
 
         private int currentCode = -1;
 

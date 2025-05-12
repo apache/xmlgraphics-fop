@@ -581,7 +581,7 @@ public class BlockContainerLayoutManager extends SpacedBorderedPaddedBlockLayout
                 rect, relDims);
     }
 
-    private class BlockContainerPosition extends NonLeafPosition {
+    private static class BlockContainerPosition extends NonLeafPosition {
 
         private BlockContainerBreaker breaker;
 

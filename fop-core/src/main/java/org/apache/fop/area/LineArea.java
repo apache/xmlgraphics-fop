@@ -44,7 +44,7 @@ public class LineArea extends Area {
      * page-number or a page-number-citation is resolved
      */
     // @SuppressFBWarnings("SE_INNER_CLASS")
-    private final class LineAdjustingInfo implements Serializable {
+    private static final class LineAdjustingInfo implements Serializable {
 
         private static final long serialVersionUID = -6103629976229458273L;
 

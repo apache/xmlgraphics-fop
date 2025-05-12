@@ -48,7 +48,7 @@ public class XMPContentHandlerFactory implements ContentHandlerFactory {
     /**
      * Local subclass of XMPHandler that implements ObjectSource for FOP integration.
      */
-    private class FOPXMPHandler extends XMPHandler implements ObjectSource {
+    private static class FOPXMPHandler extends XMPHandler implements ObjectSource {
 
         private ObjectBuiltListener obListener;
 

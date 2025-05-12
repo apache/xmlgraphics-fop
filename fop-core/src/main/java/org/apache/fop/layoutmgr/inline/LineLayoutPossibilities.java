@@ -32,7 +32,7 @@ public class LineLayoutPossibilities {
     /** logger instance */
     private static final Log LOG = LogFactory.getLog(LineLayoutPossibilities.class);
 
-    private final class Possibility {
+    private static final class Possibility {
         private int lineCount;
         private double demerits;
         private List<LineLayoutManager.LineBreakPosition> breakPositions;
