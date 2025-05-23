@@ -1457,5 +1457,9 @@
     <eval expected="(2)" xpath="//pageViewport[2]//word"/>
     <eval expected="(Enter" xpath="//pageViewport[3]//word"/>
     <eval expected="Loss" xpath="//pageViewport[4]//word"/>
+    <eval expected="PageFirst" xpath="//pageViewport[1]/@simple-page-master-name"/>
+    <eval expected="PageRestEven" xpath="//pageViewport[2]/@simple-page-master-name"/>
+    <eval expected="PageRestOdd" xpath="//pageViewport[3]/@simple-page-master-name"/>
+    <eval expected="PageLastEven" xpath="//pageViewport[4]/@simple-page-master-name"/>    
   </checks>
 </testcase>

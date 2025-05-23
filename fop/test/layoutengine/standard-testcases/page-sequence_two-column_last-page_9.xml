@@ -1173,7 +1173,7 @@
     </fo:root>
   </fo>
   <checks>
-    <eval expected="4" xpath="count(//pageViewport)"/>
+    <eval expected="5" xpath="count(//pageViewport)"/>
     <eval expected="A." xpath="//pageViewport[1]//word"/>
     <eval expected="c." xpath="//pageViewport[2]//word"/>
     <eval expected="(a)" xpath="//pageViewport[3]//word"/>
@@ -1182,5 +1182,6 @@
     <eval expected="PageRestEven" xpath="//pageViewport[2]/@simple-page-master-name"/>
     <eval expected="PageRestOdd" xpath="//pageViewport[3]/@simple-page-master-name"/>
     <eval expected="PageRestEven" xpath="//pageViewport[4]/@simple-page-master-name"/>
+    <eval expected="PageLastOdd" xpath="//pageViewport[5]/@simple-page-master-name"/>
   </checks>
 </testcase>

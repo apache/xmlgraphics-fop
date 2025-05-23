@@ -475,7 +475,9 @@ public class PageBreaker extends AbstractBreaker {
                 //Replace last page
                 pslm.setCurrentPage(pageProvider.getPage(false, currentPageNum));
             } else {
-                if (optimalPageCount <= pslm.getCurrentPV().getBodyRegion().getMainReference().getColumnCount()) {
+                if (optimalPageCount > pslm.getCurrentPV().getBodyRegion().getMainReference().getColumnCount()) {
+                    setLastPageIndex(currentPageNum + 2);
+                } else {
                     setLastPageIndex(currentPageNum + 1);
                 }
                 //Last page-master cannot hold the content.
