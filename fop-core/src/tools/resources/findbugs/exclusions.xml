@@ -163,14 +163,6 @@
     </Or>
   </Match>
   <Match>
-    <!-- class only used when building? -->
-    <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH"/>
-    <And>
-      <Class name="org.apache.fop.hyphenation.SerializeHyphPattern"/>
-      <Method name="serializeFile"/>
-    </And>
-  </Match>
-  <Match>
     <Bug pattern="DM_EXIT"/>
     <Or>
       <And>
@@ -240,14 +232,6 @@
     </Or>
   </Match>
   <Match>
-    <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH"/>
-    <!-- TODO - fix potential file descriptor leak -->
-    <And>
-      <Class name="org.apache.fop.hyphenation.SerializeHyphPattern"/>
-      <Method name="serializeFile"/>
-    </And>
-  </Match>
-  <Match>
     <Bug pattern="SE_INNER_CLASS"/>
     <Or>
       <Class name="org.apache.fop.afp.AFPPaintingState$AFPData"/>
@@ -301,17 +285,6 @@
     <!-- Properties not yet implemented -->
     <Class name="org.apache.fop.fo.properties.CommonAural"/>
   </Match>
-   <Match>
-     <Class name="org.apache.fop.render.pdf.ImageRawPNGAdapter"/>
-     <Or>
-       <Method name="outputContents"/>
-       <Method name="setup"/>
-     </Or>
-     <Or>
-       <Bug pattern="OS_OPEN_STREAM"/>
-       <Bug pattern="OS_OPEN_STREAM_EXCEPTION_PATH"/>
-     </Or>
-   </Match> 
   <!-- END - APPROVED EXCLUSIONS -->
 
   <!-- START - TEMPORARY (UNAPPROVED) EXCLUSIONS -->
@@ -330,14 +303,6 @@
   <Match>
     <!-- 29 warnings -->
     <Bug pattern="DM_CONVERT_CASE"/>
-  </Match>
-  <Match>
-    <!-- 20 warnings -->
-    <Bug pattern="DM_FP_NUMBER_CTOR"/>
-  </Match>
-  <Match>
-    <!-- 88 warnings -->
-    <Bug pattern="DM_NUMBER_CTOR"/>
   </Match>
   <Match>
     <!-- 84 warnings -->

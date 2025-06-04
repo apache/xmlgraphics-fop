@@ -74,13 +74,10 @@ public class SerializeHyphPattern {
         if (startProcess) {
             HyphenationTree hTree = buildPatternFile(infile);
             // serialize class
-            try {
-                // @SuppressFBWarnings("OS_OPEN_STREAM_EXCEPTION_PATH")
-                ObjectOutputStream out = new ObjectOutputStream(
+            try (ObjectOutputStream out = new ObjectOutputStream(
                         new java.io.BufferedOutputStream(
-                        new java.io.FileOutputStream(outfile)));
+                        new java.io.FileOutputStream(outfile)))) {
                 out.writeObject(hTree);
-                out.close();
             } catch (IOException ioe) {
                 System.err.println("Can't write compiled pattern file: "
                                    + outfile);

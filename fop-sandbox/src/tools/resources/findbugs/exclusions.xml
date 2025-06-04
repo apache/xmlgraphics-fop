@@ -73,12 +73,6 @@
     <Bug pattern="DM_CONVERT_CASE"/>
   </Match>
   <Match>
-    <Bug pattern="DM_FP_NUMBER_CTOR"/>
-  </Match>
-  <Match>
-    <Bug pattern="DM_NUMBER_CTOR"/>
-  </Match>
-  <Match>
     <Bug pattern="EI_EXPOSE_REP2"/>
   </Match>
   <Match>

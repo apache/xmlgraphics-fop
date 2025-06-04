@@ -118,11 +118,12 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
             // here we need to inflate the PNG pixel data, which includes alpha, separate the alpha channel
             // and then deflate it back again
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BufferedOutputStream dos = new BufferedOutputStream(new DeflaterOutputStream(baos, new Deflater()));
-            InputStream in = ((ImageRawStream) image).createInputStream();
-            try {
-                InflaterInputStream infStream = new InflaterInputStream(in, new Inflater());
-                DataInputStream dataStream = new DataInputStream(infStream);
+            InputStream in = null;
+            DataInputStream dataStream = null;
+            try (BufferedOutputStream dos = new BufferedOutputStream(
+                    new DeflaterOutputStream(baos, new Deflater()))) {
+                in = ((ImageRawStream) image).createInputStream();
+                dataStream = new DataInputStream(new InflaterInputStream(in, new Inflater()));
                 // offset is the byte offset of the alpha component
                 int offset = numberOfInterleavedComponents - 1; // 1 for GA, 3 for RGBA
                 int numColumns = image.getSize().getWidthPx();
@@ -139,11 +140,11 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
                     }
                     offset = numberOfInterleavedComponents - 1;
                 }
-                dos.close();
             } catch (IOException e) {
-                throw new RuntimeException("Error processing transparency channel:", e);
+                throw new RuntimeException("Error processing transparency channel: " + getKey(), e);
             } finally {
                 IOUtils.closeQuietly(in);
+                IOUtils.closeQuietly(dataStream);
             }
             // set up alpha channel compression
             FlateFilter transFlate;
@@ -211,6 +212,7 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
     public void outputContents(OutputStream out) throws IOException {
         InputStream in = ((ImageRawStream) image).createInputStream();
 
+        DataInputStream dataStream = null;
         try {
             if (numberOfInterleavedComponents == 1 || numberOfInterleavedComponents == 3) {
                 // means we have Gray, RGB, or Palette
@@ -220,8 +222,8 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
                 // TODO: since we have alpha here do this when the alpha channel is extracted
                 int numBytes = numberOfInterleavedComponents - 1; // 1 for Gray, 3 for RGB
                 int numColumns = image.getSize().getWidthPx();
-                InflaterInputStream infStream = new InflaterInputStream(in, new Inflater());
-                DataInputStream dataStream = new DataInputStream(infStream);
+                dataStream = new DataInputStream(new InflaterInputStream(in, new Inflater()));
+
                 int offset = 0;
                 int bytesPerRow = numberOfInterleavedComponents * numColumns;
                 int filter;
@@ -242,6 +244,7 @@ public class ImageRawPNGAdapter extends AbstractImageAdapter {
             }
         } finally {
             IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(dataStream);
         }
     }
 
