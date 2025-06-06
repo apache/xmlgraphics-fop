@@ -172,7 +172,11 @@ public class FontFileFinder extends DirectoryWalker implements FontFinder {
     public List<URL> find(File directory) throws IOException {
         List<URL> results = new java.util.ArrayList<>();
         if (!directory.isDirectory()) {
-            eventListener.fontDirectoryNotFound(this, directory.getAbsolutePath());
+            if (eventListener != null) {
+                eventListener.fontDirectoryNotFound(this, directory.getAbsolutePath());
+            } else {
+                log.warn("Font directory not found: " + directory.getAbsolutePath());
+            }
         } else {
             walkDirectory(directory, results);
         }

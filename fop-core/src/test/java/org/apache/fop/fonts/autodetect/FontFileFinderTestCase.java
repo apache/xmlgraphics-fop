@@ -29,11 +29,14 @@ import java.nio.file.spi.FileSystemProvider;
 
 import org.junit.Test;
 
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import org.apache.fop.fonts.FontEventListener;
 
 public class FontFileFinderTestCase {
 
@@ -61,6 +64,26 @@ public class FontFileFinderTestCase {
         // it's used to make sure we don't access the same synlink twice
         verify(targetDirectory.toPath(), times(0)).toRealPath();
         verify(linkDirectory.toPath(), times(2)).toRealPath();
+    }
+
+    @Test
+    public void testNullEventListener() throws IOException {
+        FontFileFinder finder = new FontFileFinder(null);
+        try {
+            finder.find(new File(""));
+        } catch (NullPointerException e) {
+            fail("Should not throw NullPointerException when event listener is null");
+        }
+    }
+
+    @Test
+    public void testValidEventListener() throws IOException {
+        FontEventListener mockListener = mock(FontEventListener.class);
+        FontFileFinder finder = new FontFileFinder(mockListener);
+
+        finder.find(new File(""));
+
+        verify(mockListener, times(1)).fontDirectoryNotFound(any(), any());
     }
 
     private File createMockDirectory(String path) throws IOException {
