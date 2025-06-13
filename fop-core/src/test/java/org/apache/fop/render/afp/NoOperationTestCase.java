@@ -108,8 +108,7 @@ public class NoOperationTestCase extends AbstractAFPTest {
 
     private String getNopText(UnparsedStructuredField field) throws UnsupportedEncodingException {
         byte[] data = field.getData();
-        String text = new String(data, AFPConstants.EBCIDIC_ENCODING);
-        return text;
+        return new String(data, AFPConstants.EBCIDIC_ENCODING);
     }
 
     private UnparsedStructuredField skipTo(MODCAParser parser, int typeID) throws IOException {

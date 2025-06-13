@@ -522,8 +522,7 @@ public class PropertyMaker implements Cloneable {
      */
     protected Property checkEnumValues(String value) {
         if (enums != null) {
-            Property p = (Property) enums.get(value);
-            return p;
+            return (Property) enums.get(value);
         }
         return null;
     }

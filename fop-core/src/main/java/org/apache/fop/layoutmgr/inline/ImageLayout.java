@@ -365,8 +365,7 @@ public class ImageLayout implements Constants {
 
     private int evaluateLength(Length length, int referenceValue) {
         double numericValue = length.getNumericValue(percentBaseContext);
-        int bpd = numericValue < 0 ? referenceValue : (int) Math.round(numericValue);
-        return bpd;
+        return numericValue < 0 ? referenceValue : (int) Math.round(numericValue);
     }
 
     private int evaluateLength(Length length) {

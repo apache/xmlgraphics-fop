@@ -281,10 +281,9 @@ public class Java2DGraphicsState {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        String s = "Java2DGraphicsState " + currentGraphics.toString()
+        return "Java2DGraphicsState " + currentGraphics.toString()
                 + ", Stroke (width: " + currentStrokeWidth + " style: "
                 + currentStrokeStyle + "), " + getTransform();
-        return s;
     }
 
 }

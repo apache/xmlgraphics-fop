@@ -201,9 +201,8 @@ public class PDFTranscoder extends AbstractFOPTranscoder {
         if (isTextStroked()) {
             fontInfo = null;
         }
-        BridgeContext ctx = new PDFBridgeContext(userAgent, fontInfo,
+        return new PDFBridgeContext(userAgent, fontInfo,
                 getImageManager(), getImageSessionContext());
-        return ctx;
     }
 
 }

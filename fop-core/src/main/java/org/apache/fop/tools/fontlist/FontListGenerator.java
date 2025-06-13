@@ -54,8 +54,7 @@ public class FontListGenerator {
     public SortedMap listFonts(FopFactory fopFactory, String mime, FontEventListener listener)
             throws FOPException {
         FontInfo fontInfo = setupFonts(fopFactory, mime, listener);
-        SortedMap fontFamilies = buildFamilyMap(fontInfo);
-        return fontFamilies;
+        return buildFamilyMap(fontInfo);
     }
 
     private FontInfo setupFonts(FopFactory fopFactory, String mime, FontEventListener listener)

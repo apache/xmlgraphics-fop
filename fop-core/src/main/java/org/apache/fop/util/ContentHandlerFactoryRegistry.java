@@ -94,8 +94,7 @@ public class ContentHandlerFactoryRegistry {
      * @return the ContentHandlerFactory or null, if no suitable instance is available.
      */
     public ContentHandlerFactory getFactory(String namespaceURI) {
-        ContentHandlerFactory factory = (ContentHandlerFactory)factories.get(namespaceURI);
-        return factory;
+        return (ContentHandlerFactory)factories.get(namespaceURI);
     }
 
     /**

@@ -124,8 +124,7 @@ public class FOPFontFamilyResolverTestCase {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         BufferedImage dummyImage = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
         FontRenderContext frc = ge.createGraphics(dummyImage).getFontRenderContext();
-        LineMetrics awtMetrics = awtFont.getLineMetrics("ABC", frc);
-        return awtMetrics;
+        return awtFont.getLineMetrics("ABC", frc);
     }
 
     private void printDifference(String value, float awt, float fop) {
