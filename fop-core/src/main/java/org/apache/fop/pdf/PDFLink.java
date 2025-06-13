@@ -21,6 +21,7 @@ package org.apache.fop.pdf;
 
 // Java
 import java.awt.geom.Rectangle2D;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 /**
@@ -103,7 +104,12 @@ public class PDFLink extends PDFObject {
         if (action instanceof PDFUri) {
             String altText = ((PDFUri) action).getAltText();
             if (altText != null && !altText.isEmpty()) {
-                dict += "/Contents " + PDFText.escapeText(altText) + "\n";
+                if (getDocumentSafely().isEncryptionActive()) {
+                    altText = new String(encodeText(altText), StandardCharsets.ISO_8859_1);
+                } else {
+                    altText = PDFText.escapeText(altText);
+                }
+                dict += "/Contents " + altText + "\n";
             }
         }
         dict += fFlag + "\n>>";
