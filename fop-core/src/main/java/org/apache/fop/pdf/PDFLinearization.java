@@ -21,6 +21,7 @@ package org.apache.fop.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -312,7 +313,7 @@ public class PDFLinearization {
 
     private static void writePadding(int padding, OutputStream stream) throws IOException {
         for (int i = 0; i < padding; i++) {
-            stream.write(" ".getBytes("UTF-8"));
+            stream.write(" ".getBytes(StandardCharsets.UTF_8));
         }
     }
 

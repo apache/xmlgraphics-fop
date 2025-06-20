@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -208,8 +209,8 @@ public class PDFSignature {
                     .replace("\0", " ");
             try (OutputStream editedPDF = getTempOS()) {
                 IOUtils.copyLarge(pdfIS, editedPDF, 0, startOfContents);
-                editedPDF.write(byteRange.getBytes("UTF-8"));
-                editedPDF.write(byteRangePadding.getBytes("UTF-8"));
+                editedPDF.write(byteRange.getBytes(StandardCharsets.UTF_8));
+                editedPDF.write(byteRangePadding.getBytes(StandardCharsets.UTF_8));
                 IOUtils.copyLarge(pdfIS, editedPDF, offsetToPDFEnd - startOfContents, Long.MAX_VALUE);
             }
             pdfIS.reset();
@@ -219,10 +220,10 @@ public class PDFSignature {
                 String signedHexPadding = new String(new char[SIZE_OF_CONTENTS - (signed.length * 2)])
                         .replace("\0", "0");
                 String signedHex = "<" + PDFText.toHex(signed, false) + signedHexPadding + ">";
-                os.write(signedHex.getBytes("UTF-8"));
+                os.write(signedHex.getBytes(StandardCharsets.UTF_8));
             }
-            os.write(byteRange.getBytes("UTF-8"));
-            os.write(byteRangePadding.getBytes("UTF-8"));
+            os.write(byteRange.getBytes(StandardCharsets.UTF_8));
+            os.write(byteRangePadding.getBytes(StandardCharsets.UTF_8));
             IOUtils.copyLarge(pdfIS, os, offsetToPDFEnd - startOfContents, Long.MAX_VALUE);
         }
     }

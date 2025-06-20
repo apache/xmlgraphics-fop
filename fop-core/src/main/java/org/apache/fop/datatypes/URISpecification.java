@@ -19,7 +19,7 @@
 
 package org.apache.fop.datatypes;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -130,13 +130,9 @@ public final class URISpecification {
                 //Note: this may not be accurate for some very special cases.
                 sb.append(ch);
             } else {
-                try {
-                    byte[] utf8 = Character.toString(ch).getBytes("UTF-8");
-                    for (byte anUtf8 : utf8) {
-                        appendEscape(sb, anUtf8);
-                    }
-                } catch (UnsupportedEncodingException e) {
-                    throw new Error("Incompatible JVM. UTF-8 not supported.");
+                byte[] utf8 = Character.toString(ch).getBytes(StandardCharsets.UTF_8);
+                for (byte anUtf8 : utf8) {
+                    appendEscape(sb, anUtf8);
                 }
             }
         }

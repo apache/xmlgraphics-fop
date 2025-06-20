@@ -25,6 +25,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -148,7 +149,7 @@ public class SVGRenderer extends Java2DRenderer {
             return;
         }
         try {
-            Writer writer = new java.io.OutputStreamWriter(out, "UTF-8");
+            Writer writer = new java.io.OutputStreamWriter(out, StandardCharsets.UTF_8.name());
             this.svgGenerator.stream(writer, useCSS);
         } finally {
             if (out != this.firstOutputStream) {

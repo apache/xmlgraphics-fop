@@ -87,7 +87,7 @@ public final class UnicodeClasses {
         }
         f.createNewFile();
         FileOutputStream fw = new FileOutputStream(f);
-        OutputStreamWriter ow = new OutputStreamWriter(fw, "utf-8");
+        OutputStreamWriter ow = new OutputStreamWriter(fw, StandardCharsets.UTF_8);
         int maxChar;
         maxChar = Character.MAX_VALUE;
 
@@ -189,7 +189,7 @@ public final class UnicodeClasses {
         }
         f.createNewFile();
         FileOutputStream fw = new FileOutputStream(f);
-        OutputStreamWriter ow = new OutputStreamWriter(fw, "utf-8");
+        OutputStreamWriter ow = new OutputStreamWriter(fw, StandardCharsets.UTF_8);
 
         URI inuri = unidata.resolve("Blocks.txt");
         InputStream inis = null;
@@ -199,7 +199,7 @@ public final class UnicodeClasses {
         } else if (scheme.equals("http")) {
             inis = inuri.toURL().openStream();
         }
-        InputStreamReader insr = new InputStreamReader(inis, "utf-8");
+        InputStreamReader insr = new InputStreamReader(inis, StandardCharsets.UTF_8);
         BufferedReader inbr = new BufferedReader(insr);
         Map blocks = new HashMap();
         for (String line = inbr.readLine(); line != null; line = inbr.readLine()) {
@@ -221,7 +221,7 @@ public final class UnicodeClasses {
         } else if (scheme.equals("http")) {
             inis = inuri.toURL().openStream();
         }
-        insr = new InputStreamReader(inis, "utf-8");
+        insr = new InputStreamReader(inis, StandardCharsets.UTF_8);
         inbr = new BufferedReader(insr);
         int maxChar;
         maxChar = Character.MAX_VALUE;
@@ -306,10 +306,10 @@ public final class UnicodeClasses {
         }
         f.createNewFile();
         FileOutputStream fw = new FileOutputStream(f);
-        OutputStreamWriter ow = new OutputStreamWriter(fw, "utf-8");
+        OutputStreamWriter ow = new OutputStreamWriter(fw, StandardCharsets.UTF_8);
 
         FileInputStream inis = new FileInputStream(in);
-        InputStreamReader insr = new InputStreamReader(inis, "utf-8");
+        InputStreamReader insr = new InputStreamReader(inis, StandardCharsets.UTF_8);
         BufferedReader inbr = new BufferedReader(insr);
 
         ow.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");

@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
 
@@ -184,7 +185,7 @@ public class ImageHandlingTestCase extends AbstractPostScriptTest {
                 + "rotate=\"30 30 0 15\">Hello SVG with FOP</text>\n"
                 + "</svg>";
         SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory(null);
-        Document doc = factory.createDocument(null, IOUtils.toInputStream(svg, "utf-8"));
+        Document doc = factory.createDocument(null, IOUtils.toInputStream(svg, StandardCharsets.UTF_8));
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         new PSImageHandlerSVG().handleImage(
                 new PSRenderingContext(ua, new PSGenerator(bos), new FontInfo()),

@@ -28,7 +28,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.ObjectOutputStream;
 import java.nio.IntBuffer;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,7 +104,7 @@ public final class GenerateArabicTestData implements ArabicWordFormsConstants {
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(spn);
-                LineNumberReader lr = new LineNumberReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
+                LineNumberReader lr = new LineNumberReader(new InputStreamReader(fis, StandardCharsets.UTF_8));
                 String wf;
                 while ((wf = lr.readLine()) != null) {
                     GlyphSequence igs = tf.mapCharsToGlyphs(wf);

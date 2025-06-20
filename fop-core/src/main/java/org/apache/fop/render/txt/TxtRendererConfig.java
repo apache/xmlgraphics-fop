@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.txt;
 
+import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 
 import org.apache.fop.apps.FOPException;
@@ -37,7 +38,7 @@ import org.apache.fop.render.RendererConfigOption;
 public final class TxtRendererConfig implements RendererConfig {
 
     public enum TxtRendererOption implements RendererConfigOption {
-        ENCODING("encoding", "UTF-8");
+        ENCODING("encoding", StandardCharsets.UTF_8.name());
 
         private final String name;
         private final Object defaultValue;

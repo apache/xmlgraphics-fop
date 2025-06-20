@@ -21,6 +21,7 @@ package org.apache.fop.render.afp;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,7 +91,7 @@ public class AFPParser {
             } else if ("TRN".equals(PTOCA_MAP.get(functionType))) {
                 byte[] data = new byte[len - 2];
                 bis.read(data);
-                sb.append(" " + new String(data, "UTF-16BE"));
+                sb.append(" " + new String(data, StandardCharsets.UTF_16BE));
             } else {
                 bis.skip(len - 2);
             }

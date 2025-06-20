@@ -18,6 +18,8 @@
 /* $Id$ */
 package org.apache.fop.afp.fonts;
 
+import java.nio.charset.StandardCharsets;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -33,7 +35,8 @@ public class OutlineFontTestCase {
     }
 
     public static CharacterSet getCharacterSet() {
-        CharacterSet characterSet = new CharacterSet("00000000", "utf-8", CharacterSetType.SINGLE_BYTE, "", null, null);
+        CharacterSet characterSet = new CharacterSet("00000000", StandardCharsets.UTF_8.name(),
+                CharacterSetType.SINGLE_BYTE, "", null, null);
         characterSet.addCharacterSetOrientation(new CharacterSetOrientation(0, 0, 0, 0));
         return characterSet;
     }

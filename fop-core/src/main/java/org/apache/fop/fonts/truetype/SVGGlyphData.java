@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -54,7 +55,8 @@ public class SVGGlyphData {
     public String getDataURL(int height) {
         try {
             String modifiedSVG = updateTransform(svg, height);
-            return DataURLUtil.createDataURL(new ByteArrayInputStream(modifiedSVG.getBytes("UTF-8")), "image/svg");
+            return DataURLUtil.createDataURL(
+                    new ByteArrayInputStream(modifiedSVG.getBytes(StandardCharsets.UTF_8)), "image/svg");
         } catch (IOException | TransformerException | SAXException | ParserConfigurationException e) {
             throw new RuntimeException(e);
         }

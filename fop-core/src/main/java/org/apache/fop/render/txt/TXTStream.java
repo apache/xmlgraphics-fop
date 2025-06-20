@@ -21,13 +21,14 @@ package org.apache.fop.render.txt;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Helper class for text streams.
  */
 public class TXTStream {
 
-    private static final String DEFAULT_ENCODING = "UTF-8";
+    private static final String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
 
     private OutputStream out;
     private boolean doOutput = true;
@@ -68,7 +69,7 @@ public class TXTStream {
 
     /**
      * Set the encoding for the text stream.
-     * @param encoding the encoding, if null, "UTF-8" is chosen as default
+     * @param encoding the encoding, if null, StandardCharsets.UTF_8 is chosen as default
      */
     public void setEncoding(String encoding) {
         if (encoding != null) {

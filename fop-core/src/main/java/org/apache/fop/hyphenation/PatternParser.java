@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import javax.xml.parsers.SAXParserFactory;
@@ -489,7 +490,7 @@ public class PatternParser extends DefaultHandler implements PatternConsumer {
             PrintStream p = null;
             if (args.length > 1) {
                 FileOutputStream f = new FileOutputStream(args[1]);
-                p = new PrintStream(f, false, "utf-8");
+                p = new PrintStream(f, false, StandardCharsets.UTF_8.name());
                 pp.setTestOut(p);
             }
             pp.parse(args[0]);

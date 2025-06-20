@@ -21,7 +21,7 @@ package org.apache.fop.pdf;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -79,14 +79,14 @@ public class PDFStructureTreeTestCase {
     }
 
     private ByteArrayOutputStream foToOutput(String fo)
-            throws IOException, SAXException, TransformerException {
+            throws SAXException, TransformerException {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         userAgent.setAccessibility(true);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, bos);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        Source src = new StreamSource(new ByteArrayInputStream(fo.getBytes("UTF-8")));
+        Source src = new StreamSource(new ByteArrayInputStream(fo.getBytes(StandardCharsets.UTF_8)));
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
         return bos;

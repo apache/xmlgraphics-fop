@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -183,7 +184,8 @@ public class FO2StructureTreeConverterTestCase {
     @Test
     public void testRemoveTableHeader() throws Exception {
         keepEmptyTags = false;
-        String fo = IOUtils.toString(getResource("table-artifact.fo"), "utf8").replace("role=\"artifact\"", "");
+        String fo = IOUtils.toString(getResource("table-artifact.fo"), StandardCharsets.UTF_8)
+                .replace("role=\"artifact\"", "");
         compare(fo, "<structure-tree-sequence>\n"
                         + "<structure-tree xmlns=\"http://xmlgraphics.apache.org/fop/intermediate\" "
                         + "xmlns:foi=\"http://xmlgraphics.apache.org/fop/internal\" "

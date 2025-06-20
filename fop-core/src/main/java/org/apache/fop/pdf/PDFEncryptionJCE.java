@@ -21,7 +21,7 @@ package org.apache.fop.pdf;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -332,19 +332,15 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         protected byte[] preparePassword(String password) {
             int finalLength = 32;
             byte[] preparedPassword = new byte[finalLength];
-            try {
-                byte[] passwordBytes = password.getBytes("UTF-8");
-                if (passwordBytes.length >= finalLength) {
-                    System.arraycopy(passwordBytes, 0, preparedPassword, 0, finalLength);
-                } else {
-                    System.arraycopy(passwordBytes, 0, preparedPassword, 0, passwordBytes.length);
-                    System.arraycopy(padding, 0, preparedPassword, passwordBytes.length, finalLength
-                            - passwordBytes.length);
-                }
-                return preparedPassword;
-            } catch (UnsupportedEncodingException e) {
-                throw new UnsupportedOperationException(e);
+            byte[] passwordBytes = password.getBytes(StandardCharsets.UTF_8);
+            if (passwordBytes.length >= finalLength) {
+                System.arraycopy(passwordBytes, 0, preparedPassword, 0, finalLength);
+            } else {
+                System.arraycopy(passwordBytes, 0, preparedPassword, 0, passwordBytes.length);
+                System.arraycopy(padding, 0, preparedPassword, passwordBytes.length, finalLength
+                        - passwordBytes.length);
             }
+            return preparedPassword;
         }
 
         void run() {
@@ -548,20 +544,16 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         protected byte[] preparePassword(String password) {
             byte[] passwordBytes;
             byte[] preparedPassword;
-            try {
-                // the password needs to be normalized first but we are bypassing that step for now
-                passwordBytes = password.getBytes("UTF-8");
-                if (passwordBytes.length > 127) {
-                    preparedPassword = new byte[127];
-                    System.arraycopy(passwordBytes, 0, preparedPassword, 0, 127);
-                } else {
-                    preparedPassword = new byte[passwordBytes.length];
-                    System.arraycopy(passwordBytes, 0, preparedPassword, 0, passwordBytes.length);
-                }
-                return preparedPassword;
-            } catch (UnsupportedEncodingException e) {
-                throw new UnsupportedOperationException(e.getMessage());
+            // the password needs to be normalized first but we are bypassing that step for now
+            passwordBytes = password.getBytes(StandardCharsets.UTF_8);
+            if (passwordBytes.length > 127) {
+                preparedPassword = new byte[127];
+                System.arraycopy(passwordBytes, 0, preparedPassword, 0, 127);
+            } else {
+                preparedPassword = new byte[passwordBytes.length];
+                System.arraycopy(passwordBytes, 0, preparedPassword, 0, passwordBytes.length);
             }
+            return preparedPassword;
         }
 
         /**

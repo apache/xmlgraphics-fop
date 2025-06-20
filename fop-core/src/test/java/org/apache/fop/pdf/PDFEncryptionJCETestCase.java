@@ -22,6 +22,7 @@ package org.apache.fop.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -460,7 +461,7 @@ public class PDFEncryptionJCETestCase {
             IllegalBlockSizeException, BadPaddingException {
         MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
         String dataText = "Test data to encrypt.";
-        byte[] data = dataText.getBytes("UTF-8");
+        byte[] data = dataText.getBytes(StandardCharsets.UTF_8);
         PDFEncryptionParams params = new PDFEncryptionParams();
         params.setEncryptionLengthInBits(256);
         params.setUserPassword("userpassword");
@@ -486,7 +487,7 @@ public class PDFEncryptionJCETestCase {
         byte[] userKeySalt = new byte[8];
         System.arraycopy(u, 32, userValSalt, 0, 8);
         System.arraycopy(u, 40, userKeySalt, 0, 8);
-        byte[] uPassBytes = params.getUserPassword().getBytes("UTF-8");
+        byte[] uPassBytes = params.getUserPassword().getBytes(StandardCharsets.UTF_8);
         byte[] testUPass = new byte[uPassBytes.length + 8];
         System.arraycopy(uPassBytes, 0, testUPass, 0, uPassBytes.length);
         System.arraycopy(userValSalt, 0, testUPass, uPassBytes.length, 8);
@@ -501,7 +502,7 @@ public class PDFEncryptionJCETestCase {
         byte[] ownerKeySalt = new byte[8];
         System.arraycopy(o, 32, ownerValSalt, 0, 8);
         System.arraycopy(o, 40, ownerKeySalt, 0, 8);
-        byte[] oPassBytes = params.getOwnerPassword().getBytes("UTF-8");
+        byte[] oPassBytes = params.getOwnerPassword().getBytes(StandardCharsets.UTF_8);
         byte[] testOPass = new byte[oPassBytes.length + 8 + 48];
         System.arraycopy(oPassBytes, 0, testOPass, 0, oPassBytes.length);
         System.arraycopy(ownerValSalt, 0, testOPass, oPassBytes.length, 8);

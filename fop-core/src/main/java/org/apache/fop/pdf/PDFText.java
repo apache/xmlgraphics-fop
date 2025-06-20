@@ -21,6 +21,7 @@ package org.apache.fop.pdf;
 
 import java.io.ByteArrayOutputStream;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 import org.apache.fop.util.CharUtilities;
@@ -99,12 +100,7 @@ public class PDFText extends PDFObject {
             }
 
             if (hexMode) {
-                final byte[] uniBytes;
-                try {
-                    uniBytes = text.getBytes("UTF-16");
-                } catch (java.io.UnsupportedEncodingException uee) {
-                    throw new RuntimeException("Incompatible VM", uee);
-                }
+                final byte[] uniBytes = text.getBytes(StandardCharsets.UTF_16);
                 return toHex(uniBytes);
             } else {
                 final StringBuffer result = new StringBuffer(text.length() * 2);
@@ -192,13 +188,8 @@ public class PDFText extends PDFObject {
      */
     public static final String toUnicodeHex(char c) {
         final StringBuffer buf = new StringBuffer(4);
-        final byte[] uniBytes;
-        try {
-            final char[] a = {c};
-            uniBytes = new String(a).getBytes("UTF-16BE");
-        } catch (java.io.UnsupportedEncodingException uee) {
-            throw new RuntimeException("Incompatible VM", uee);
-        }
+        final char[] a = {c};
+        final byte[] uniBytes = new String(a).getBytes(StandardCharsets.UTF_16BE);
 
         for (byte uniByte : uniBytes) {
             buf.append(DIGITS[(uniByte >>> 4) & 0x0F]);

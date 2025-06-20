@@ -24,8 +24,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -309,13 +309,11 @@ public class FopConfBuilder implements FontConfigurator<FopConfBuilder> {
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.name());
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
         try {
             transformer.transform(new DOMSource(fopConfDOM),
-                    new StreamResult(new OutputStreamWriter(out, "UTF-8")));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+                    new StreamResult(new OutputStreamWriter(out, StandardCharsets.UTF_8)));
         } catch (TransformerException e) {
             throw new RuntimeException(e);
         }
