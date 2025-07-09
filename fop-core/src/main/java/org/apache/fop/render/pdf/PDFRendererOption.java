@@ -81,7 +81,7 @@ public enum PDFRendererOption implements RendererConfigOption {
             return Boolean.valueOf(value);
         }
     },
-    MERGE_FONTS("merge-fonts", false) {
+    MERGE_FONTS("merge-fonts", null) {
         @Override
         Boolean deserialize(String value) {
             return Boolean.valueOf(value);

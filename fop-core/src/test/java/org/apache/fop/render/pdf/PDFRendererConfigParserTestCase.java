@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.apps.AbstractRendererConfigParserTester;
@@ -231,5 +232,13 @@ public class PDFRendererConfigParserTestCase
     public void testMergeFormFields() throws Exception {
         parseConfig(createRenderer().setMergeFormFieldsEnabled(true));
         assertTrue(conf.getConfigOptions().getMergeFormFieldsEnabled());
+    }
+
+    @Test
+    public void testMergeFonts() throws Exception {
+        parseConfig(createRenderer());
+        assertNull(conf.getConfigOptions().getMergeFontsParams());
+        parseConfig(createRenderer().setMergeFontsEnabled(true));
+        assertTrue(conf.getConfigOptions().getMergeFontsParams().isRemapSingleByteFontEnabled());
     }
 }

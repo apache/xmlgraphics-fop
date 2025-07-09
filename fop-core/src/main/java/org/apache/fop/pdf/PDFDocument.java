@@ -180,7 +180,7 @@ public class PDFDocument {
 
     private boolean staticRegionsPerPageForAccessibility;
 
-    private boolean mergeFontsEnabled;
+    private PDFMergeFontsParams mergeFontsParams;
 
     private boolean mergeFormFieldsEnabled;
 
@@ -1230,13 +1230,13 @@ public class PDFDocument {
         return trailerDictionary;
     }
 
-    public boolean isMergeFontsEnabled() {
-        return mergeFontsEnabled;
+    public PDFMergeFontsParams getMergeFontsParams() {
+        return mergeFontsParams;
     }
 
-    public void setMergeFontsEnabled(boolean mergeFontsEnabled) {
-        this.mergeFontsEnabled = mergeFontsEnabled;
-        if (mergeFontsEnabled) {
+    public void setMergeFontsParams(PDFMergeFontsParams mergeFontsParams) {
+        this.mergeFontsParams = mergeFontsParams;
+        if (mergeFontsParams != null) {
             getResources().createFontsAsObj();
         }
     }

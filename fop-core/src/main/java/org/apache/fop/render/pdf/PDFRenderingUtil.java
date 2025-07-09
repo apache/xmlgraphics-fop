@@ -632,7 +632,7 @@ class PDFRenderingUtil {
 
         pdfDoc.enableAccessibility(userAgent.isAccessibilityEnabled());
         pdfDoc.setStaticRegionsPerPageForAccessibility(userAgent.isStaticRegionsPerPageForAccessibility());
-        pdfDoc.setMergeFontsEnabled(rendererConfig.getMergeFontsEnabled());
+        pdfDoc.setMergeFontsParams(rendererConfig.getMergeFontsParams());
         pdfDoc.setMergeFormFieldsEnabled(rendererConfig.getMergeFormFieldsEnabled());
         pdfDoc.setLinearizationEnabled(rendererConfig.getLinearizationEnabled());
         pdfDoc.setFormXObjectEnabled(rendererConfig.getFormXObjectEnabled());

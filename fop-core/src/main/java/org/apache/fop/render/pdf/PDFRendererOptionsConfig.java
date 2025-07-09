@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFEncryptionParams;
+import org.apache.fop.pdf.PDFMergeFontsParams;
 import org.apache.fop.pdf.PDFSignParams;
 import org.apache.fop.pdf.PDFUAMode;
 import org.apache.fop.pdf.PDFVTMode;
@@ -143,8 +144,8 @@ public final class PDFRendererOptionsConfig {
         return (Version) properties.get(VERSION);
     }
 
-    public Boolean getMergeFontsEnabled() {
-        return (Boolean)properties.get(MERGE_FONTS);
+    public PDFMergeFontsParams getMergeFontsParams() {
+        return (PDFMergeFontsParams)properties.get(MERGE_FONTS);
     }
 
     public Boolean getMergeFormFieldsEnabled() {
