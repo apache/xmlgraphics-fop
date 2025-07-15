@@ -94,8 +94,8 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         addBuilder("basic-link",                new LinkBuilder());
         // Out-of-Line Formatting Objects
         addBuilder("float",                     StandardStructureTypes.Grouping.DIV);
-        addBuilder("footnote",                  StandardStructureTypes.InlineLevelStructure.NOTE);
-        addBuilder("footnote-body",             StandardStructureTypes.Grouping.SECT);
+        addBuilder("footnote",                  StandardStructureTypes.InlineLevelStructure.REFERENCE);
+        addBuilder("footnote-body",             StandardStructureTypes.InlineLevelStructure.NOTE);
         // Other Formatting Objects
         addBuilder("wrapper",                   StandardStructureTypes.InlineLevelStructure.SPAN);
         addBuilder("marker",                    StandardStructureTypes.Grouping.PRIVATE);

@@ -267,6 +267,9 @@ public class PDFStructElem extends StructureHierarchyMember implements Structure
     }
 
     public int output(OutputStream stream) throws IOException {
+        if (structureType == StandardStructureTypes.InlineLevelStructure.NOTE) {
+            put("ID", "Note ID " + getObjectNumber().getNumber());
+        }
         if (getDocument() != null && getDocument().getProfile().getPDFUAMode().isEnabled()) {
             if (entries.containsKey("Alt") && "".equals(get("Alt"))) {
                 put("Alt", "No alternate text specified");
