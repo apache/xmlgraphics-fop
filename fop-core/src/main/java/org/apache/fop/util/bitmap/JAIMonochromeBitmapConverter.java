@@ -93,10 +93,8 @@ public class JAIMonochromeBitmapConverter implements
         RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
 
         // Dither the image.
-        PlanarImage dst = JAI.create(opName, pb, hints);
-
         //Convert it to a BufferedImage
-        return dst;
+        return JAI.create(opName, pb, hints);
     }
 
 }

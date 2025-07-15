@@ -170,9 +170,8 @@ public abstract class AbstractPSTranscoder extends AbstractFOPTranscoder {
 
     /** {@inheritDoc} */
     public BridgeContext createBridgeContext(String version) {
-        BridgeContext ctx = new PSBridgeContext(userAgent, (isTextStroked() ? null : fontInfo),
+        return new PSBridgeContext(userAgent, (isTextStroked() ? null : fontInfo),
                 getImageManager(), getImageSessionContext());
-        return ctx;
     }
 
 }
