@@ -375,6 +375,11 @@ public final class FopFactoryBuilder {
         return this;
     }
 
+    public FopFactoryBuilder setLegacyInvalidBreakPosition(boolean value) {
+        fopFactoryConfigBuilder.setLegacyInvalidBreakPosition(value);
+        return this;
+    }
+
     public static class FopFactoryConfigImpl implements FopFactoryConfig {
 
         private final EnvironmentProfile enviro;
@@ -428,6 +433,8 @@ public final class FopFactoryBuilder {
         private boolean legacyLastPageChangeIPD;
 
         private boolean legacyFoWrapper;
+
+        private boolean legacyInvalidBreakPosition = FopFactoryConfig.DEFAULT_LEGACY_INVALID_BREAK_POSITION;
 
         private static final class ImageContextImpl implements ImageContext {
 
@@ -573,6 +580,10 @@ public final class FopFactoryBuilder {
             return legacyFoWrapper;
         }
 
+        public boolean isLegacyInvalidBreakPosition() {
+            return legacyInvalidBreakPosition;
+        }
+
         public Map<String, String> getHyphenationPatternNames() {
             return hyphPatNames;
         }
@@ -599,6 +610,8 @@ public final class FopFactoryBuilder {
         void setStrictFOValidation(boolean validateStrictly);
 
         void setStrictUserConfigValidation(boolean validateStrictly);
+
+        void setLegacyInvalidBreakPosition(boolean invalidBreakPosition);
 
         void setBreakIndentInheritanceOnReferenceAreaBoundary(boolean value);
 
@@ -674,6 +687,10 @@ public final class FopFactoryBuilder {
         }
 
         public void setStrictUserConfigValidation(boolean validateStrictly) {
+            throwIllegalStateException();
+        }
+
+        public void setLegacyInvalidBreakPosition(boolean ignoreInvalidBreakPosition) {
             throwIllegalStateException();
         }
 
@@ -788,8 +805,7 @@ public final class FopFactoryBuilder {
             config.hasStrictUserValidation = validateStrictly;
         }
 
-        public void setBreakIndentInheritanceOnReferenceAreaBoundary(
-                boolean value) {
+        public void setBreakIndentInheritanceOnReferenceAreaBoundary(boolean value) {
             config.breakIndentInheritanceOnReferenceBoundary = value;
         }
 
@@ -856,6 +872,10 @@ public final class FopFactoryBuilder {
 
         public void setLegacyFoWrapper(boolean b) {
             config.legacyFoWrapper = b;
+        }
+
+        public void setLegacyInvalidBreakPosition(boolean legacyInvalidBreakPosition) {
+            config.legacyInvalidBreakPosition = legacyInvalidBreakPosition;
         }
     }
 

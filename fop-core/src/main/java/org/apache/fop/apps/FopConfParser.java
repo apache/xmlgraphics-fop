@@ -63,6 +63,7 @@ public class FopConfParser {
     private static final String LEGACY_SKIP_PAGE_POSITION_ONLY = "legacy-skip-page-position-only";
     private static final String LEGACY_LAST_PAGE_CHANGE_IPD = "legacy-last-page-change-ipd";
     private static final String LEGACY_FO_WRAPPER = "legacy-fo-wrapper";
+    private static final String LEGACY_INVALID_BREAK_POSITION = "legacy-invalid-break-position";
 
     private static final Log LOG = LogFactory.getLog(FopConfParser.class);
     private static final String ACCESSIBILITY = "accessibility";
@@ -328,6 +329,14 @@ public class FopConfParser {
                         cfg.getChild(LEGACY_FO_WRAPPER).getValueAsBoolean());
             } catch (ConfigurationException e) {
                 LogUtil.handleException(LOG, e, false);
+            }
+        }
+        if (cfg.getChild(LEGACY_INVALID_BREAK_POSITION, false) != null) {
+            try {
+                fopFactoryBuilder.setLegacyInvalidBreakPosition(
+                        cfg.getChild(LEGACY_INVALID_BREAK_POSITION).getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(LOG, e, strict);
             }
         }
 

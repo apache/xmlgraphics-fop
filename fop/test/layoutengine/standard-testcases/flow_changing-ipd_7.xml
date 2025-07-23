@@ -56,7 +56,7 @@
 </fo:root>
   </fo>
   <checks>
-    <eval expected="4" xpath="count(//pageViewport)" />
-    <eval expected="Call" xpath="//pageViewport[3]//word[1]" />
+    <eval expected="3" xpath="count(//pageViewport)"/>
+    <eval expected="Call" xpath="//pageViewport[2]//word[1]"/>
   </checks>
 </testcase>

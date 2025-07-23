@@ -81,6 +81,10 @@ public final class MutableConfig implements FopFactoryConfig {
         return delegate.validateUserConfigStrictly();
     }
 
+    public boolean isLegacyInvalidBreakPosition() {
+        return delegate.isLegacyInvalidBreakPosition();
+    }
+
     public boolean isBreakIndentInheritanceOnReferenceAreaBoundary() {
         return setBreakInheritance;
     }

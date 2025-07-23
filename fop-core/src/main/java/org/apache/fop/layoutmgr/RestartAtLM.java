@@ -100,10 +100,18 @@ class RestartAtLM {
                     position = position.getPosition();
                 }
                 if (position.getPosition() == null) {
+                    if (!breaker.getPageProvider().foUserAgent.isLegacyInvalidBreakPosition()) {
+                        breaker.firstElementsForRestart = new LinkedList<>();
+                        breaker.positionAtBreak = new LeafPosition(surroundingLM, positionIndex + 1);
+
+                        return surroundingLM;
+                    }
+
                     if (!position.getLM().getFObj().isForceKeepTogether()) {
                         position.getLM().getFObj().setForceKeepTogether(true);
                         invalidPosition = true;
                     }
+
                     return null;
                 }
                 restartAtLM = position.getPosition().getLM();

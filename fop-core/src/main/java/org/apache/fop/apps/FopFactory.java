@@ -256,6 +256,10 @@ public final class FopFactory implements ImageContext {
         return config.isLegacyFoWrapper();
     }
 
+    public boolean isLegacyInvalidBreakPosition() {
+        return config.isLegacyInvalidBreakPosition();
+    }
+
     /**
      * Returns a new {@link Fop} instance. FOP will be configured with a default user agent
      * instance. Use this factory method if your output type requires an output stream.

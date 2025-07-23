@@ -40,6 +40,11 @@ import org.apache.fop.layoutmgr.LayoutManagerMaker;
 // part of the API. Why would a user care how the internal objects are passed around? They shouldn't.
 public interface FopFactoryConfig {
 
+    /**
+     * Defines if FOP should allow breaks at positions deemed invalid
+     */
+    boolean DEFAULT_LEGACY_INVALID_BREAK_POSITION = false;
+
     /** Defines if FOP should use an alternative rule to determine text indents */
     boolean DEFAULT_BREAK_INDENT_INHERITANCE = false;
 
@@ -177,6 +182,8 @@ public interface FopFactoryConfig {
     boolean isLegacyLastPageChangeIPD();
 
     boolean isLegacyFoWrapper();
+
+    boolean isLegacyInvalidBreakPosition();
 
     /** @return the hyphenation pattern names */
     Map<String, String> getHyphenationPatternNames();

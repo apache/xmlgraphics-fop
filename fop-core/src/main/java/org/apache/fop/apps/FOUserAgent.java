@@ -540,6 +540,16 @@ public class FOUserAgent {
     }
 
     /**
+     * Are invalid positions to be allowed when breaking text?
+     *
+     * @return if invalid break positions are to be allowed
+     * @see FopFactory#isLegacyInvalidBreakPosition()
+     */
+    public boolean isLegacyInvalidBreakPosition() {
+        return factory.isLegacyInvalidBreakPosition();
+    }
+
+    /**
      * @return true if the indent inheritance should be broken when crossing reference area
      *         boundaries (for more info, see the javadoc for the relative member variable)
      * @see FopFactory#isBreakIndentInheritanceOnReferenceAreaBoundary()
