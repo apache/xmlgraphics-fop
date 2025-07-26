@@ -270,9 +270,8 @@ public class FopServlet extends HttpServlet {
 
     /** @return a new FOUserAgent for FOP */
     protected FOUserAgent getFOUserAgent() {
-        FOUserAgent userAgent = fopFactory.newFOUserAgent();
         //Configure foUserAgent as desired
-        return userAgent;
+        return fopFactory.newFOUserAgent();
     }
 
 }
