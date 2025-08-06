@@ -696,7 +696,8 @@ list of possible build targets.
         <include name="fop-transcoder.jar"/>
       </fileset>
     </path>
-    <junit-run classpath="transcoder-classpath" title="basic functionality for fop-transcoder.jar" testsuite="org.apache.fop.BasicTranscoderTestSuite" outfile="TEST-transcoder"/>
+      <junit-run classpath="transcoder-classpath" title="basic functionality for fop-transcoder.jar"
+                 testsuite="org.apache.fop.svg.BasicTranscoderTestSuite" outfile="TEST-transcoder"/>
     <echo message="Running basic functionality tests for fop-transcoder-allinone.jar"/>
     <!-- These are the same tests as in the block above but testing the "allinone" JAR
          instead. Please don't add any additional paths other than the test classes, the
@@ -716,7 +717,7 @@ list of possible build targets.
         <include name="batik*.jar"/>
       </fileset>
     </path>
-    <junit-run classpath="transcoder-all-classpath" title="basic functionality for fop-transcoder-allinone.jar" testsuite="org.apache.fop.BasicTranscoderTestSuite" outfile="TEST-transcoder-allinone"/>
+    <junit-run classpath="transcoder-all-classpath" title="basic functionality for fop-transcoder-allinone.jar" testsuite="org.apache.fop.svg.BasicTranscoderTestSuite" outfile="TEST-transcoder-allinone"/>
   </target>
   <target name="hyphenation-present" depends="junit-compile" if="junit.present">
     <condition property="hyphenation.present">

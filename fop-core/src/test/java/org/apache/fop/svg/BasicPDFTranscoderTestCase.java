@@ -17,11 +17,15 @@
 
 /* $Id$ */
 
-package org.apache.fop;
+package org.apache.fop.svg;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 import org.apache.batik.transcoder.Transcoder;
 
-import org.apache.fop.svg.PDFTranscoder;
+import org.apache.fop.configuration.Configuration;
 
 /**
  * Basic runtime test for the PDF transcoder. It is used to verify that
@@ -32,6 +36,20 @@ public class BasicPDFTranscoderTestCase extends AbstractBasicTranscoderTest {
     @Override
     protected Transcoder createTranscoder() {
         return new PDFTranscoder();
+    }
+
+    @Test
+    public void testFontAutoDetect() {
+        //Create transcoder
+        PDFTranscoder transcoder = (PDFTranscoder) createTranscoder();
+
+        Configuration effectiveConfiguration = transcoder.getEffectiveConfiguration();
+        Configuration autoDetectConf = effectiveConfiguration.getChild("fonts").getChild("auto-detect");
+
+        assertEquals("The auto-detect conf must be added to it's parent (fonts) "
+                        + "before the parent (fonts) is added to cfg",
+                "DefaultConfiguration",
+                autoDetectConf.getClass().getSimpleName());
     }
 
 }

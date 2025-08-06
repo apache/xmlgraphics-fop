@@ -17,7 +17,7 @@
 
 /* $Id$ */
 
-package org.apache.fop;
+package org.apache.fop.svg;
 
 import org.apache.batik.transcoder.Transcoder;
 

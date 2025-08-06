@@ -160,9 +160,9 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
             if (autoFonts) {
                 DefaultConfiguration c = new DefaultConfiguration("cfg");
                 DefaultConfiguration fonts = new DefaultConfiguration("fonts");
-                c.addChild(fonts);
                 DefaultConfiguration autodetect = new DefaultConfiguration("auto-detect");
                 fonts.addChild(autodetect);
+                c.addChild(fonts);
                 effCfg = c;
             }
         }
