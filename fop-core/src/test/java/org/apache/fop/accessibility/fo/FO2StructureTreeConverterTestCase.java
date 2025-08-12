@@ -94,6 +94,11 @@ public class FO2StructureTreeConverterTestCase {
     }
 
     @Test
+    public void testPDFUAMergeWithExternalDocument() throws Exception {
+        testConverter("/org/apache/fop/fo/pdfua_with_external_document.fo");
+    }
+
+    @Test
     public void testAbbreviationProperty() throws Exception {
         testConverter("abb.fo");
     }

@@ -35,6 +35,7 @@ import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
+import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.fo.flow.AbstractRetrieveMarker;
 import org.apache.fop.fo.flow.BasicLink;
@@ -405,6 +406,12 @@ class StructureTreeEventTrigger extends FOEventHandler {
     public void image(ExternalGraphic eg) {
         startElementWithIDAndAltText(eg, eg.getAltText());
         endElement(eg);
+    }
+
+    @Override
+    public void startExternalDocument(ExternalDocument externalDocument) {
+        startElementWithIDAndAltText(externalDocument, null);
+        endElement(externalDocument);
     }
 
     @Override

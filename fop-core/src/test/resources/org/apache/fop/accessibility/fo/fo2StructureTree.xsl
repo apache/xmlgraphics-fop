@@ -44,6 +44,12 @@
     </structure-tree>
   </xsl:template>
 
+  <!-- fo:page-sequence maps to structure-tree -->
+  <xsl:template match="fox:external-document">
+	<fo:external-document xmlns:fo="http://www.w3.org/1999/XSL/Format" fox:alt-text="">
+	  <xsl:apply-templates/>
+	</fo:external-document>
+  </xsl:template>
 
   <!-- Declarations and Pagination and Layout Formatting Objects -->
   <xsl:template match="fo:static-content|fo:flow">

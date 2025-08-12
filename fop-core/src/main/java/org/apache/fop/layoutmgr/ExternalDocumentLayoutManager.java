@@ -197,6 +197,9 @@ public class ExternalDocumentLayoutManager extends AbstractPageSequenceLayoutMan
         lineArea.addInlineArea(vp);
         lineArea.updateExtentsFromChildren();
         blockArea.addLineArea(lineArea);
+
+        TraitSetter.addStructureTreeElement(vp, fobj.getStructureTreeElement());
+
         curPage.getPageViewport().getCurrentFlow().addBlock(blockArea);
         curPage.getPageViewport().getCurrentSpan().notifyFlowsFinished();
     }

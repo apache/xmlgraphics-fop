@@ -25,7 +25,10 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.xml.sax.helpers.AttributesImpl;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.apache.fop.pdf.PDFDocument;
@@ -66,5 +69,17 @@ public class PDFStructureTreeBuilderTestCase {
         assertNull(structElem.getParent());
         assertNull(structElem.getParentStructElem());
         assertNull(structElem.getKids());
+    }
+
+    @Test
+    public void testExternalDocumentBuilder() {
+        pdfFactory.getDocument().makeStructTreeRoot(null);
+
+        PDFStructElem elem = PDFStructureTreeBuilder.createStructureElement("external-document", new PDFStructElem(),
+                new AttributesImpl(), pdfFactory, null);
+
+        assertNotNull("Must create a PDFStructElem", elem);
+        assertEquals("Elem must be of type figure", StandardStructureTypes.Illustration.FIGURE,
+                elem.getStructureType());
     }
 }

@@ -21,6 +21,7 @@ package org.apache.fop.fo.extensions;
 
 import org.xml.sax.Locator;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.FONode;
@@ -47,6 +48,7 @@ public class ExternalDocument extends AbstractPageSequence implements GraphicsPr
     private String src;
     private int textAlign;
     private Length width;
+    private StructureTreeElement structureTreeElement;
     // Unused but valid items, commented out for performance:
     //     private CommonAccessibility commonAccessibility;
     //     private CommonAural commonAural;
@@ -192,6 +194,16 @@ public class ExternalDocument extends AbstractPageSequence implements GraphicsPr
      */
     public String getLocalName() {
         return "external-document";
+    }
+
+    @Override
+    public StructureTreeElement getStructureTreeElement() {
+        return this.structureTreeElement;
+    }
+
+    @Override
+    public void setStructureTreeElement(StructureTreeElement element) {
+        this.structureTreeElement = element;
     }
 
 }

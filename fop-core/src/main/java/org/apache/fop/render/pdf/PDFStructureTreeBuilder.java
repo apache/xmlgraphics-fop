@@ -71,6 +71,7 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
         addBuilder("character", new LanguageHolderBuilder(StandardStructureTypes.InlineLevelStructure.SPAN));
         addBuilder("external-graphic",          new ImageBuilder());
         addBuilder("instream-foreign-object",   new ImageBuilder());
+        addBuilder("external-document", new ImageBuilder());
         addBuilder("inline",                    new InlineHolderBuilder());
         addBuilder("inline-container",          StandardStructureTypes.Grouping.DIV);
         addBuilder("page-number",               StandardStructureTypes.InlineLevelStructure.QUOTE);
