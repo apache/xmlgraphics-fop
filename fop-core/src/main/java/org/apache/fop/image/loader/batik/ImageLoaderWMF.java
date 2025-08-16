@@ -63,8 +63,7 @@ public class ImageLoaderWMF extends AbstractImageLoader {
             throw new IllegalArgumentException(
                     "ImageInfo was expected to contain the Windows Metafile (WMF)");
         }
-        ImageWMF wmfImage = (ImageWMF)img;
-        return wmfImage;
+        return (ImageWMF)img;
     }
 
 }
