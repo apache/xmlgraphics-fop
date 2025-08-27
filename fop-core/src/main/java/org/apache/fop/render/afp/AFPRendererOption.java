@@ -46,7 +46,8 @@ public enum AFPRendererOption implements RendererConfigOption {
     LINE_WIDTH_CORRECTION("line-width-correction", Float.class),
     GOCA("goca", Boolean.class),
     GOCA_WRAP_PSEG("pseg", Boolean.class),
-    GOCA_TEXT("text", Boolean.class);
+    GOCA_TEXT("text", Boolean.class),
+    METADATA_IN_OBJECT_CONTAINER("metadata-in-object-container", Boolean.class);
 
     private final String name;
 

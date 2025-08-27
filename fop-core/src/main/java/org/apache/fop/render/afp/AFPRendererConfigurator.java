@@ -126,6 +126,9 @@ public class AFPRendererConfigurator extends PrintRendererConfigurator {
         if (config.getDefaultResourceGroupUri() != null) {
             documentHandler.setDefaultResourceGroupUri(config.getDefaultResourceGroupUri());
         }
+        if (config.isMetadataInObjectContainer() != null) {
+            documentHandler.setMetadataInObjectContainer(config.isMetadataInObjectContainer());
+        }
         AFPResourceLevelDefaults resourceLevelDefaults = config.getResourceLevelDefaults();
         if (resourceLevelDefaults != null) {
             documentHandler.setResourceLevelDefaults(resourceLevelDefaults);

@@ -519,6 +519,10 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
         paintingState.setLineWidthCorrection(correction);
     }
 
+    public void setMetadataInObjectContainer(boolean metadataInObjectContainer) {
+        paintingState.setMetadataInObjectContainer(metadataInObjectContainer);
+    }
+
     /** {@inheritDoc} */
     public int getResolution() {
         return paintingState.getResolution();

@@ -73,7 +73,7 @@ public class AFPDataObjectFactory {
         AFPResourceInfo resourceInfo = dataObjectInfo.getResourceInfo();
         AFPResourceLevel resourceLevel = resourceInfo.getLevel();
         final boolean dataInContainer = true;
-        final boolean containerHasOEG = resourceLevel.isInline();
+        final boolean containerHasOEG = dataObjectInfo.isMetadataInObjectContainer() || resourceLevel.isInline();
         final boolean dataInOCD = true;
         objectContainer.setObjectClassification(
                 ObjectClassificationTriplet.CLASS_TIME_INVARIANT_PAGINATED_PRESENTATION_OBJECT,
@@ -214,7 +214,7 @@ public class AFPDataObjectFactory {
             if (objectType != null) {
                 // set object classification
                 final boolean dataInContainer = true;
-                final boolean containerHasOEG = false; // environment parameters set in include
+                final boolean containerHasOEG = dataObjectInfo.isMetadataInObjectContainer();
                 final boolean dataInOCD = true;
                 includeObj.setObjectClassification(
                    // object scope not defined
@@ -232,19 +232,19 @@ public class AFPDataObjectFactory {
         int yOffset = objectAreaInfo.getY();
         includeObj.setObjectAreaOffset(xOffset, yOffset);
 
-        int width = objectAreaInfo.getWidth();
-        int height = objectAreaInfo.getHeight();
-        includeObj.setObjectAreaSize(width, height);
-
         int rotation = objectAreaInfo.getRotation();
         includeObj.setObjectAreaOrientation(rotation);
 
-        int widthRes = objectAreaInfo.getWidthRes();
-        int heightRes = objectAreaInfo.getHeightRes();
-        includeObj.setMeasurementUnits(widthRes, heightRes);
+        if (!dataObjectInfo.isMetadataInObjectContainer()) {
+            int width = objectAreaInfo.getWidth();
+            int height = objectAreaInfo.getHeight();
+            includeObj.setObjectAreaSize(width, height);
 
-        includeObj.setMappingOption(MappingOptionTriplet.SCALE_TO_FIT);
-
+            int widthRes = objectAreaInfo.getWidthRes();
+            int heightRes = objectAreaInfo.getHeightRes();
+            includeObj.setMeasurementUnits(widthRes, heightRes);
+            includeObj.setMappingOption(MappingOptionTriplet.SCALE_TO_FIT);
+        }
         return includeObj;
     }
 
@@ -254,10 +254,11 @@ public class AFPDataObjectFactory {
      * @param namedObj an named object
      * @param resourceInfo resource information
      * @param objectType the object type
+     * @param dataObjectInfo
      * @return a new resource object wrapper
      */
-    public ResourceObject createResource(AbstractNamedAFPObject namedObj,
-            AFPResourceInfo resourceInfo, Registry.ObjectType objectType) {
+    public ResourceObject createResource(AbstractNamedAFPObject namedObj, AFPResourceInfo resourceInfo,
+                                         Registry.ObjectType objectType, AFPDataObjectInfo dataObjectInfo) {
         ResourceObject resourceObj = null;
         String resourceName = resourceInfo.getName();
         if (resourceName != null) {
@@ -279,7 +280,7 @@ public class AFPDataObjectFactory {
 
                 // set object classification
                 final boolean dataInContainer = true;
-                final boolean containerHasOEG = false; // must be included
+                final boolean containerHasOEG = dataObjectInfo.isMetadataInObjectContainer();
                 final boolean dataInOCD = true;
                 // mandatory triplet for object container
                 resourceObj.setObjectClassification(

@@ -91,7 +91,7 @@ public class ObjectContainer extends AbstractDataObject {
         AFPResourceLevel resourceLevel = resourceInfo.getLevel();
 
         // only need to set MCD and CDD when OC when is inlined (pre-2000 apps)
-        if (resourceLevel.isInline()) {
+        if (dataObjectInfo.isMetadataInObjectContainer() || resourceLevel.isInline()) {
             super.setViewport(dataObjectInfo);
 
             MapContainerData mapContainerData

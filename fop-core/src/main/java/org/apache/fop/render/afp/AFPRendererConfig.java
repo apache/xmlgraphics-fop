@@ -63,6 +63,7 @@ import static org.apache.fop.render.afp.AFPRendererOption.JPEG_ALLOW_JPEG_EMBEDD
 import static org.apache.fop.render.afp.AFPRendererOption.JPEG_BITMAP_ENCODING_QUALITY;
 import static org.apache.fop.render.afp.AFPRendererOption.JPEG_USE_IOCA_IMAGES;
 import static org.apache.fop.render.afp.AFPRendererOption.LINE_WIDTH_CORRECTION;
+import static org.apache.fop.render.afp.AFPRendererOption.METADATA_IN_OBJECT_CONTAINER;
 import static org.apache.fop.render.afp.AFPRendererOption.RENDERER_RESOLUTION;
 import static org.apache.fop.render.afp.AFPRendererOption.RESOURCE_GROUP_URI;
 import static org.apache.fop.render.afp.AFPRendererOption.SHADING;
@@ -196,6 +197,10 @@ public final class AFPRendererConfig implements RendererConfig {
 
     public Boolean isUseIocaImages() {
         return getParam(JPEG_USE_IOCA_IMAGES, Boolean.class);
+    }
+
+    public Boolean isMetadataInObjectContainer() {
+        return getParam(METADATA_IN_OBJECT_CONTAINER, Boolean.class);
     }
 
     public Float getLineWidthCorrection() {
@@ -336,6 +341,8 @@ public final class AFPRendererConfig implements RendererConfig {
             } else {
                 setParam(IMAGES_MAPPING_OPTION, AFPDataObjectInfo.DEFAULT_MAPPING_OPTION);
             }
+            setParam(METADATA_IN_OBJECT_CONTAINER,
+                    imagesCfg.getAttributeAsBoolean(METADATA_IN_OBJECT_CONTAINER.getName(), false));
             configureJpegImages(imagesCfg);
         }
 

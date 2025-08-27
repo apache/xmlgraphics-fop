@@ -102,7 +102,7 @@ public final class UnparsedStructuredField {
     * Returns category code function name for this field.
     * @return the category code function name
     */
-   private String getCategoryCodeAsString() {
+   public String getCategoryCodeAsString() {
        switch (getSfCategoryCode() & 0xFF) {
        case 0x5F: return "Page Segment";
        case 0x6B: return "Object Area";

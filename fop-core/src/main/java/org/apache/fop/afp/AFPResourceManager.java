@@ -203,7 +203,7 @@ public class AFPResourceManager {
                 }
 
                 // wrap newly created data object in a resource object
-                namedObj = dataObjectFactory.createResource(namedObj, resourceInfo, objectType);
+                namedObj = dataObjectFactory.createResource(namedObj, resourceInfo, objectType, dataObjectInfo);
             }
 
             // add data object into its resource group destination

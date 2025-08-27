@@ -103,6 +103,7 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
     /** use FS45 images*/
     private boolean fs45;
     private boolean maskEnabled;
+    private boolean metadataInObjectContainer;
 
     /** the current page */
     private transient AFPPagePaintingState pagePaintingState;
@@ -454,6 +455,14 @@ public class AFPPaintingState extends org.apache.fop.util.AbstractPaintingState 
 
     public void setWrapGocaPSeg(boolean pSeg) {
         this.gocaPSeg = pSeg;
+    }
+
+    public boolean isMetadataInObjectContainer() {
+        return metadataInObjectContainer;
+    }
+
+    public void setMetadataInObjectContainer(boolean metadataInObjectContainer) {
+        this.metadataInObjectContainer = metadataInObjectContainer;
     }
 
     /**

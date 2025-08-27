@@ -72,6 +72,16 @@ public class AFPDataObjectInfo {
     public AFPDataObjectInfo() {
     }
 
+    private AFPPaintingState paintingState;
+
+    public void setPaintingState(AFPPaintingState paintingState) {
+        this.paintingState = paintingState;
+    }
+
+    public boolean isMetadataInObjectContainer() {
+        return paintingState != null && paintingState.isMetadataInObjectContainer();
+    }
+
     /**
      * Sets the image mime type
      *

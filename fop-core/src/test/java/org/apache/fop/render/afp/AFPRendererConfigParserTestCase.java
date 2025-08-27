@@ -219,4 +219,15 @@ public class AFPRendererConfigParserTestCase
     public void testForNameException() throws Exception {
         ImagesModeOptions.forName("_");
     }
+
+    @Test
+    public void testMetadataInObjectContainer() throws Exception {
+        parseConfig();
+        assertFalse(conf.isMetadataInObjectContainer());
+        parseConfig(createRenderer()
+                .startImages()
+                .setMetadataInObjectContainer(true)
+                .endImages());
+        assertTrue(conf.isMetadataInObjectContainer());
+    }
 }
