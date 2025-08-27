@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFactory;
@@ -36,6 +37,11 @@ import org.apache.fop.pdf.StandardStructureTypes;
 public class PDFStructureTreeBuilderTestCase {
     private PDFFactory pdfFactory;
 
+    @Before
+    public void setUp() {
+        PDFDocument doc = new PDFDocument("");
+        pdfFactory = new PDFFactory(doc);
+    }
     @Test
     public void testAddImageContentItem() throws IOException {
         PDFStructElem structElem = new PDFStructElem(null, StandardStructureTypes.Illustration.FIGURE);
@@ -52,9 +58,13 @@ public class PDFStructureTreeBuilderTestCase {
                 + ">>] >>");
     }
 
-    @Before
-    public void setUp() {
-        PDFDocument doc = new PDFDocument("");
-        pdfFactory = new PDFFactory(doc);
+    @Test
+    public void testMemoryLeak() throws IOException {
+        PDFStructElem structElem = new PDFStructElem(new PDFStructElem(), StandardStructureTypes.Table.TABLE);
+        structElem.addKid(new PDFStructElem());
+        structElem.output(new ByteArrayOutputStream());
+        assertNull(structElem.getParent());
+        assertNull(structElem.getParentStructElem());
+        assertNull(structElem.getKids());
     }
 }

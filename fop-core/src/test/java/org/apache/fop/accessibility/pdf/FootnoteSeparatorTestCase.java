@@ -27,7 +27,6 @@ import org.junit.Test;
 import org.xml.sax.helpers.AttributesImpl;
 import static org.junit.Assert.assertEquals;
 
-import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFactory;
 import org.apache.fop.pdf.PDFParentTree;
@@ -39,7 +38,7 @@ public class FootnoteSeparatorTestCase {
 
     @Test
     public void testFootNoteSeparatorText() throws IOException {
-        PDFParentTree  tree = new  PDFParentTree();
+        PDFParentTree tree = new PDFParentTree();
         AttributesImpl attributes = new AttributesImpl();
         attributes.addAttribute("", "role", "role", "CDATA", null);
         PDFDocument doc = new PDFDocument("");
@@ -49,20 +48,16 @@ public class FootnoteSeparatorTestCase {
                 factory, null);
         AttributesImpl att = new AttributesImpl();
         att.addAttribute("", "flow-name", "flow-name", "CDATA", "xsl-footnote-separator");
-        PDFStructElem staticSection = PDFStructureTreeBuilder.createStructureElement("static-content", part, att,
+        PDFStructureTreeBuilder.createStructureElement("static-content", part, att,
                 factory, null);
-        PDFStructElem block = PDFStructureTreeBuilder.createStructureElement("block", part, new AttributesImpl(),
+        PDFStructureTreeBuilder.createStructureElement("block", part, new AttributesImpl(),
                 factory, null);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         part.output(bos);
-        PDFArray array  = (PDFArray)part.get("K");
-        PDFStructElem elem1 = (PDFStructElem)array.get(0);
-        String test = elem1.getStructureType().getName().getName();
-        String expected = "P";
-        assertEquals(test, expected);
-        PDFStructElem  elem2 =  (PDFStructElem)array.get(1);
-        test = elem2.getStructureType().getName().getName();
-        expected = "Sect";
-        assertEquals(test, expected);
+        assertEquals(bos.toString(), "<<\n"
+            + "  /S /Part\n"
+            + "  /P 1 0 R\n"
+            + "  /K [<< /S /P /P null >> << /S /Sect /P null >>]\n"
+            + ">>");
     }
 }

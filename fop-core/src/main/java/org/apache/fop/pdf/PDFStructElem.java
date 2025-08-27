@@ -283,7 +283,16 @@ public class PDFStructElem extends StructureHierarchyMember implements Structure
                 }
             }
         }
-        return super.output(stream);
+        int len = super.output(stream);
+        close();
+        return len;
+    }
+
+    private void close() {
+        parent = null;
+        parentElement = null;
+        entries = null;
+        kids = null;
     }
 
     private boolean isBSLE(PDFStructElem kid) {
