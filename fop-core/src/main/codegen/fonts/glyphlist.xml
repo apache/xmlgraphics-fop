@@ -788,7 +788,7 @@
     <glyph codepoint='2302' name='house'/>
     <glyph codepoint='02DD' name='hungarumlaut'/>
     <glyph codepoint='002D' name='hyphen'/>
-    <glyph codepoint='00AD' name='hyphen'/>
+    <glyph codepoint='00AD' name='softhyphen'/>
     <glyph codepoint='F6E5' name='hypheninferior'/>
     <glyph codepoint='F6E6' name='hyphensuperior'/>
     <glyph codepoint='0069' name='i'/>

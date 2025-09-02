@@ -523,6 +523,11 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
         }
     }
 
+    @Override
+    public boolean supportsSoftHyphen() {
+        return false;
+    }
+
     private static String toString(Paint paint) {
         if (paint instanceof Color) {
             return ColorUtil.colorToString((Color)paint);

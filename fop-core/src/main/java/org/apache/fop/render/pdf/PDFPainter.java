@@ -649,4 +649,9 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         return ch;
     }
 
+    @Override
+    public boolean supportsSoftHyphen() {
+        return true;
+    }
+
 }

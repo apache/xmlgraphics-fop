@@ -261,4 +261,10 @@ public interface IFPainter {
 
     //etc. etc.
 
+    /**
+     * Allows specific painters to indicate whether a soft hyphen is supported.
+     *
+     * @return true if the painter supports soft hyphens, false otherwise
+     */
+    boolean supportsSoftHyphen();
 }

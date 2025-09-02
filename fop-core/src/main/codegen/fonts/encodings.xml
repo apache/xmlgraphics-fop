@@ -293,7 +293,7 @@
     <glyph codepoint='aa' name='ordfeminine'/>
     <glyph codepoint='ab' name='guillemotleft'/>
     <glyph codepoint='ac' name='logicalnot'/>
-    <glyph codepoint='ad' name='hyphen'/>
+    <glyph codepoint='ad' name='softhyphen'/>
     <glyph codepoint='ae' name='registered'/>
     <glyph codepoint='af' name='macron'/>
     <glyph codepoint='b0' name='degree'/>
@@ -938,6 +938,7 @@
     <glyph codepoint='aa' name='ordfeminine'/>
     <glyph codepoint='ab' name='guillemotleft'/>
     <glyph codepoint='ac' name='logicalnot'/>
+    <glyph codepoint='ad' name='softhyphen'/>
     <glyph codepoint='ae' name='registered'/>
     <glyph codepoint='af' name='macron'/>
     <glyph codepoint='b0' name='degree'/>

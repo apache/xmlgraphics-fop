@@ -66,6 +66,7 @@ import org.apache.fop.util.ContentHandlerFactory;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
 import org.apache.fop.util.DOMBuilderContentHandlerFactory;
 import org.apache.fop.util.LanguageTags;
+import org.apache.fop.util.StringUtils;
 import org.apache.fop.util.XMLUtil;
 import org.apache.fop.utils.DefaultErrorListener;
 
@@ -683,7 +684,9 @@ public class IFParser implements IFConstants {
                     documentHandler.getContext().setHyphenated(isHyphenated);
                 }
                 boolean nextIsSpace = Boolean.valueOf(lastAttributes.getValue("next-is-space"));
-                painter.drawText(x, y, letterSpacing, wordSpacing, dp, content.toString(), nextIsSpace);
+
+                painter.drawText(x, y, letterSpacing, wordSpacing, dp,
+                        StringUtils.processSoftHyphen(content.toString(), painter), nextIsSpace);
                 documentHandler.getContext().setHyphenated(false);
                 resetStructureTreeElement();
             }

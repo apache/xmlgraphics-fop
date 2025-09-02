@@ -98,6 +98,7 @@ import org.apache.fop.render.intermediate.extensions.NamedDestination;
 import org.apache.fop.render.intermediate.extensions.URIAction;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.util.StringUtils;
 
 /**
  * This renderer implementation is an adapter to the {@link IFPainter} interface. It is used
@@ -1240,8 +1241,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
                         painter.drawText(startx, starty, 0, 0,
                                          trimAdjustments(dp, text.length()), text.toString());
                     } else { */
-                        painter.drawText(startx, starty, tls, tws,
-                                         trimAdjustments(dp, text.length()), text.toString(), nextIsSpace);
+                    painter.drawText(startx, starty, tls, tws, trimAdjustments(dp, text.length()),
+                            StringUtils.processSoftHyphen(text.toString(), painter), nextIsSpace);
                     /* } */
                 } catch (IFException e) {
                     handleIFException(e);
@@ -1252,7 +1253,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
         void drawText(int x, int y, int letterSpacing, int wordSpacing, int[][] dx, String text, boolean nextIsSpace)
                 throws IFException {
-            painter.drawText(startx, starty, tls, tws, dx, text, nextIsSpace);
+            painter.drawText(startx, starty, tls, tws, dx, StringUtils.processSoftHyphen(text, painter), nextIsSpace);
         }
 
         /**

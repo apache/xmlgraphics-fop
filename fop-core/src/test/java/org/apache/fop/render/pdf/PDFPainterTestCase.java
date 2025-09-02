@@ -66,6 +66,7 @@ import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.base14.Helvetica;
 import org.apache.fop.fonts.truetype.SVGGlyphData;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilterList;
@@ -80,6 +81,7 @@ import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.util.CharUtilities;
 
 public class PDFPainterTestCase {
 
@@ -200,6 +202,41 @@ public class PDFPainterTestCase {
         assertEquals(sb.toString(), "BT\n/f1 0.012 Tf\n1 0 0.3333 -1 0 0 Tm [<0000000000000000>] TJ\n");
         verify(pdfContentGenerator).add("2 Tr 0.31543 w\n");
         verify(pdfContentGenerator).add("0 Tr\n");
+    }
+
+    @Test
+    public void testSoftHyphenNotReplaced() throws IFException {
+        pdfDocumentHandler = makePDFDocumentHandler(new StringBuilder());
+
+        final StringBuilder sb = new StringBuilder();
+        PDFTextUtil pdfTextUtil = new PDFTextUtil() {
+            protected void write(String code) {
+                //no need for current test
+            }
+
+            protected void write(StringBuffer code) {
+                //no need for current test
+            }
+
+            @Override
+            public void writeTJMappedCodePoint(int ch) {
+                sb.append((char) ch);
+            }
+        };
+        pdfTextUtil.beginTextObject();
+        when(pdfContentGenerator.getTextUtil()).thenReturn(pdfTextUtil);
+
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("f1", new FontTriplet("a", "italic", 700));
+        fi.addMetrics("f1", new Helvetica(false));
+        pdfDocumentHandler.setFontInfo(fi);
+
+        MyPDFPainter pdfPainter = new MyPDFPainter(pdfDocumentHandler, null);
+        pdfPainter.setFont("a", "italic", 700, null, 12, null);
+        pdfPainter.drawText(0, 0, 0, 0, null, String.valueOf(CharUtilities.SOFT_HYPHEN));
+
+        assertEquals("Soft hyphen must not be replaced by a normal hyphen",
+                String.valueOf(CharUtilities.SOFT_HYPHEN), sb.toString());
     }
 
     /**

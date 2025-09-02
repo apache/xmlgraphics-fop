@@ -514,4 +514,8 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
         }
         return true;
     }
+
+    public boolean supportsSoftHyphen() {
+        return false;
+    }
 }

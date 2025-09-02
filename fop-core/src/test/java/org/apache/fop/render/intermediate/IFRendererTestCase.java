@@ -33,8 +33,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
@@ -42,6 +44,7 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.area.inline.WordArea;
+import org.apache.fop.util.CharUtilities;
 
 public class IFRendererTestCase {
     private List<WordArea> wordAreas = new ArrayList<WordArea>();
@@ -80,7 +83,46 @@ public class IFRendererTestCase {
                 + "  </fo:page-sequence>\n"
                 + "</fo:root>";
         foToOutput(new ByteArrayInputStream(fo.getBytes()));
-        Assert.assertTrue(wordAreas.get(0).isNextIsSpace());
-        Assert.assertFalse(wordAreas.get(1).isNextIsSpace());
+        assertTrue(wordAreas.get(0).isNextIsSpace());
+        assertFalse(wordAreas.get(1).isNextIsSpace());
+    }
+
+    @Test
+    public void testSoftHyphen() throws FOPException, TransformerException {
+        String fo = getSoftHyphenTestFO("&#x00AD;");
+        foToOutput(new ByteArrayInputStream(fo.getBytes()));
+        assertTrue("PDF files are able to handle the soft hyphen, so must not replace with normal hyphen",
+                wordAreas.get(1).getWord().endsWith(String.valueOf(CharUtilities.SOFT_HYPHEN)));
+
+
+        wordAreas = new ArrayList<>();
+        fo = getSoftHyphenTestFO("-");
+        foToOutput(new ByteArrayInputStream(fo.getBytes()));
+        assertTrue("Must not replace the hyphenation character", wordAreas.get(1).getWord().endsWith("-"));
+
+        wordAreas = new ArrayList<>();
+        fo = getSoftHyphenTestFO("/");
+        foToOutput(new ByteArrayInputStream(fo.getBytes()));
+        assertTrue("Must not replace the hyphenation character", wordAreas.get(1).getWord().endsWith("/"));
+    }
+
+    private String getSoftHyphenTestFO(String hyphenationCharacter) {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                + "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" "
+                + "xmlns:fox=\"http://xmlgraphics.apache.org/fop/extensions\">\n"
+                + "\t<fo:layout-master-set>\n"
+                + "\t\t<fo:simple-page-master master-name=\"mainPage\" page-width=\"90pt\">\n"
+                + "\t\t\t<fo:region-body/>\n"
+                + "\t\t</fo:simple-page-master>\n"
+                + "\t</fo:layout-master-set>\n"
+                + "\t<fo:page-sequence master-reference=\"mainPage\">\n"
+                + "\t\t<fo:flow flow-name=\"xsl-region-body\">\n"
+                + "\t\t\t<fo:block language=\"en\" country=\"GB\" hyphenate=\"true\" page-break-inside=\"auto\" "
+                + "hyphenation-character=\"" + hyphenationCharacter + "\">\n"
+                + "\t\t\t\tcomputer computer computer computer computer computer computer computer\n"
+                + "\t\t\t</fo:block>\n"
+                + "\t\t</fo:flow>\n"
+                + "\t</fo:page-sequence>\n"
+                + "</fo:root>";
     }
 }
