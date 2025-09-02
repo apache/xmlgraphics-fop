@@ -23,6 +23,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -98,5 +100,16 @@ public class HyphenationTestCase {
 
         frxml.delete();
         f.delete();
+    }
+
+    @Test
+    public void testHyphenatorCountry() {
+        Map<String, String> hyphPatNames = new HashMap<>();
+        hyphPatNames.put("de_CH", "test/resources/fop/fr.xml" + Hyphenator.XMLTYPE);
+        InternalResourceResolver resourceResolver = ResourceResolverFactory.createDefaultInternalResourceResolver(
+                new File(".").toURI());
+        Hyphenation hyph = Hyphenator.hyphenate("de", "CH", resourceResolver, hyphPatNames,
+                "hello", 0, 0, fopFactory.newFOUserAgent());
+        assertEquals(hyph.toString(), "-hel-lo");
     }
 }
