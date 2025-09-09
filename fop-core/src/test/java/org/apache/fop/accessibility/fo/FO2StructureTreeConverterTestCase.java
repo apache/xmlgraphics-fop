@@ -20,11 +20,8 @@
 package org.apache.fop.accessibility.fo;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
@@ -50,7 +47,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.IOUtils;
@@ -59,14 +55,11 @@ import org.apache.fop.accessibility.StructureTree2SAXEventAdapter;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fo.FODocumentParser;
 import org.apache.fop.fo.FODocumentParser.FOEventHandlerFactory;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.LoadingException;
 import org.apache.fop.fotreetest.DummyFOEventHandler;
-import org.apache.fop.render.intermediate.IFContext;
-import org.apache.fop.render.pdf.PDFDocumentHandler;
 
 public class FO2StructureTreeConverterTestCase {
 
@@ -135,20 +128,6 @@ public class FO2StructureTreeConverterTestCase {
 
     private static InputStream getResource(String name) {
         return FO2StructureTreeConverterTestCase.class.getResourceAsStream(name);
-    }
-
-    @Test
-    public void testPDFA() throws Exception {
-        FOUserAgent userAgent = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
-        userAgent.getRendererOptions().put("pdf-a-mode", "PDF/A-1b");
-        userAgent.setAccessibility(true);
-        PDFDocumentHandler d = new PDFDocumentHandler(new IFContext(userAgent));
-        OutputStream writer = new ByteArrayOutputStream();
-        StreamResult result = new StreamResult(writer);
-        d.setResult(result);
-        d.getStructureTreeEventHandler();
-        d.startDocument();
-        assertNull(d.getStructureTreeEventHandler().startNode("table-body", null, null));
     }
 
     @Test

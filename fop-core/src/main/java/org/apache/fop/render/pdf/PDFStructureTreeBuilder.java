@@ -465,8 +465,7 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     }
 
     private boolean isPDFA1Safe(String name) {
-        return !((pdfFactory.getDocument().getProfile().getPDFAMode().isPart1()
-                || pdfFactory.getDocument().getProfile().getPDFUAMode().isEnabled())
+        return !((pdfFactory.getDocument().getProfile().getPDFAMode().isPart1())
                 && (name.equals("table-body")
                 || name.equals("table-header")
                 || name.equals("table-footer")));
