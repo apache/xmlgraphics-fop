@@ -273,8 +273,7 @@ public abstract class AbstractFOPTranscoder extends SVGAbstractTranscoder implem
                 try {
                     ParsedURL url = new ParsedURL(baseURI, uri);
                     InputStream in = url.openStream();
-                    StreamSource source = new StreamSource(in, url.toString());
-                    return source;
+                    return new StreamSource(in, url.toString());
                 } catch (IOException ioe) {
                     userAgent.displayError(ioe);
                     return null;

@@ -207,8 +207,7 @@ public class TIFFRenderer extends Java2DRenderer {
                 SampleModel sm = new PixelInterleavedSampleModel(
                         DataBuffer.TYPE_BYTE, w, h, bands, w * bands, off);
 
-                RenderedImage rimg = new FormatRed(GraphicsUtil.wrap(pageImage), sm);
-                return rimg;
+                return new FormatRed(GraphicsUtil.wrap(pageImage), sm);
             }
         }
 

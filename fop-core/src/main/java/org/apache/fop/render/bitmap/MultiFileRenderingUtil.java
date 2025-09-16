@@ -92,8 +92,7 @@ public class MultiFileRenderingUtil {
         } else {
             File f = new File(outputDir,
                     filePrefix + (pageNumber + 1) + "." + fileExtension);
-            OutputStream os = new BufferedOutputStream(new FileOutputStream(f));
-            return os;
+            return new BufferedOutputStream(new FileOutputStream(f));
         }
     }
 
