@@ -32,6 +32,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.apache.fop.accessibility.StructureTree2SAXEventAdapter;
 import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
+import org.apache.fop.fo.FOElementMapping;
 import org.apache.fop.fo.extensions.InternalElementMapping;
 import org.apache.fop.util.XMLConstants;
 import org.apache.fop.util.XMLUtil;
@@ -69,31 +70,44 @@ final class IFStructureTreeBuilder implements StructureTreeEventHandler {
         }
 
         private abstract static class Element extends SAXEventRecorder.Event {
-
-            protected final String uri;
+            private final boolean isFONamespace;
             protected final String localName;
-            protected final String qName;
 
             private Element(String uri, String localName, String qName) {
-                this.uri = uri;
                 this.localName = localName;
-                this.qName = qName;
+                isFONamespace = FOElementMapping.URI.equals(uri);
+                if (!isFONamespace && !IFConstants.NAMESPACE.equals(uri)) {
+                    throw new UnsupportedOperationException();
+                }
+            }
+
+            protected String getQName() {
+                if (isFONamespace) {
+                    return "fo:" + localName;
+                }
+                return localName;
+            }
+
+            protected String getURI() {
+                if (isFONamespace) {
+                    return FOElementMapping.URI;
+                }
+                return IFConstants.NAMESPACE;
             }
         }
 
         private static final class StartElement extends SAXEventRecorder.Element {
-
             private final Attributes attributes;
 
             private StartElement(String uri, String localName, String qName,
                     Attributes attributes) {
                 super(uri, localName, qName);
-                this.attributes = attributes;
+                this.attributes = new AttributesImpl(attributes);
             }
 
             @Override
             void replay(ContentHandler handler) throws SAXException {
-                handler.startElement(uri, localName, qName, attributes);
+                handler.startElement(getURI(), localName, getQName(), attributes);
             }
         }
 
@@ -105,7 +119,7 @@ final class IFStructureTreeBuilder implements StructureTreeEventHandler {
 
             @Override
             void replay(ContentHandler handler) throws SAXException {
-                handler.endElement(uri, localName, qName);
+                handler.endElement(getURI(), localName, getQName());
             }
         }
 

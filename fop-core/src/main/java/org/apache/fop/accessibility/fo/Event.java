@@ -24,7 +24,7 @@ import java.util.List;
 import org.apache.fop.fo.FOEventHandler;
 
 class Event {
-    private List<Event> children = new ArrayList<Event>();
+    private List<Event> children;
     protected FOEventHandler eventHandler;
     protected Event parent;
     protected boolean hasContent;
@@ -37,6 +37,12 @@ class Event {
         this.parent = parent;
     }
 
+    private void init() {
+        if (children == null) {
+            children = new ArrayList<>();
+        }
+    }
+
     public void run() {
         if (hasContent()) {
             for (Event e : children) {
@@ -47,6 +53,7 @@ class Event {
     }
 
     private boolean hasContent() {
+        init();
         for (Event e : children) {
             if (e.hasContent()) {
                 return true;
@@ -56,6 +63,7 @@ class Event {
     }
 
     public void add(Event child) {
+        init();
         children.add(child);
     }
 }
