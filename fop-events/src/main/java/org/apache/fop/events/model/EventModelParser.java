@@ -20,6 +20,7 @@
 package org.apache.fop.events.model;
 
 import java.util.Stack;
+import java.util.concurrent.*;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -57,16 +58,38 @@ public final class EventModelParser {
      * @return the created event model structure
      * @throws TransformerException if an error occurs while parsing the XML file
      */
-    public static EventModel parse(Source src)
-            throws TransformerException {
-        Transformer transformer = tFactory.newTransformer();
-        transformer.setErrorListener(new DefaultErrorListener(LOG));
-
+    public static EventModel parse(Source src) throws TransformerException {
         EventModel model = new EventModel();
-        SAXResult res = new SAXResult(getContentHandler(model));
-
-        transformer.transform(src, res);
-        return model;
+        // Create a single-thread executor for this parsing operation
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        try ( AutoCloseable executorAc = () -> executor.shutdown() ) {
+            // Submit the parsing task and wait for completion
+            Future<Void> parsingTask = executor.submit(() -> {
+                try {
+                    Transformer transformer = tFactory.newTransformer();
+                    transformer.setErrorListener(new DefaultErrorListener(LOG));
+                    SAXResult res = new SAXResult(getContentHandler(model));
+                    transformer.transform(src, res);
+                    return null;
+                } catch (TransformerException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            // Block until parsing is complete
+            parsingTask.get();
+            return model;
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof RuntimeException &&
+                    e.getCause().getCause() instanceof TransformerException) {
+                throw (TransformerException) e.getCause().getCause();
+            }
+            throw new TransformerException(e.getCause());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new TransformerException("Parsing was interrupted", e);
+        } catch (Exception e) {
+            throw new TransformerException("Parsing generic error", e);
+        }
     }
 
     /**
