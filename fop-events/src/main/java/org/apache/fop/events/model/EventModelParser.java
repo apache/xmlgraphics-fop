@@ -57,9 +57,33 @@ public final class EventModelParser {
         public abstract EventModel parse(Source src) throws TransformerException;
     }
 
+    private static int parseJavaMajorVersion() {
+        String javaVersion = System.getProperty("java.version");
+        String[] parts = javaVersion.split("\\.");
+        if (parts[0].equals("1")) {
+            // Java 8 and below use 1.x format
+            return Integer.parseInt(parts[1]);
+        } else {
+            // Java 9+ use direct major version
+            return Integer.parseInt(parts[0]);
+        }
+    }
+
+    private static boolean isClassicBehaviour( int majorVersion ) {
+        try {
+
+            boolean useClassicParser = majorVersion < 25;
+            LOG.debug( String.format( "Java major version: %s, using %s parser",
+                    majorVersion, useClassicParser ? "classic" : "thread-isolated") );
+            return useClassicParser;
+        } catch (Exception e) {
+            LOG.debug("Error detecting Java version, defaulting to thread-isolated parser", e);
+            return false;
+        }
+    }
+
     private static EventModelParserWorker init() {
-        String javaVersion =  System.getProperty("java.version");
-        if ( javaVersion.compareTo( "25" ) < 0 ) {
+        if ( isClassicBehaviour( parseJavaMajorVersion() ) ) {
             // preserve the classic fop parsing behaviour on java 24 or less
             return new EventModelParserWorker() {
                 @Override
