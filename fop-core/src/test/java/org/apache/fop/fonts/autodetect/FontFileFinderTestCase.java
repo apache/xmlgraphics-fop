@@ -81,7 +81,7 @@ public class FontFileFinderTestCase {
         FontEventListener mockListener = mock(FontEventListener.class);
         FontFileFinder finder = new FontFileFinder(mockListener);
 
-        finder.find(new File(""));
+        finder.find(new File("not-exists"));
 
         verify(mockListener, times(1)).fontDirectoryNotFound(any(), any());
     }

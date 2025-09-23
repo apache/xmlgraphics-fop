@@ -20,6 +20,8 @@
 package org.apache.fop.events.model;
 
 import java.util.Stack;
+import java.util.concurrent.*;
+import java.util.function.Function;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -51,22 +53,100 @@ public final class EventModelParser {
     private static SAXTransformerFactory tFactory
         = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
 
+    abstract static class EventModelParserWorker {
+        public abstract EventModel parse(Source src) throws TransformerException;
+    }
+
+    private static int parseJavaMajorVersion() {
+        String javaVersion = System.getProperty("java.version");
+        String[] parts = javaVersion.split("\\.");
+        if (parts[0].equals("1")) {
+            // Java 8 and below use 1.x format
+            return Integer.parseInt(parts[1]);
+        } else {
+            // Java 9+ use direct major version
+            return Integer.parseInt(parts[0]);
+        }
+    }
+
+    private static boolean isClassicBehaviour( int majorVersion ) {
+        try {
+
+            boolean useClassicParser = majorVersion < 25;
+            LOG.debug( String.format( "Java major version: %s, using %s parser",
+                    majorVersion, useClassicParser ? "classic" : "thread-isolated") );
+            return useClassicParser;
+        } catch (Exception e) {
+            LOG.debug("Error detecting Java version, defaulting to thread-isolated parser", e);
+            return false;
+        }
+    }
+
+    private static EventModelParserWorker init() {
+        if ( isClassicBehaviour( parseJavaMajorVersion() ) ) {
+            // preserve the classic fop parsing behaviour on java 24 or less
+            return new EventModelParserWorker() {
+                @Override
+                public EventModel parse(Source src) throws TransformerException {
+                    Transformer transformer = tFactory.newTransformer();
+                    transformer.setErrorListener(new DefaultErrorListener(LOG));
+                    EventModel model = new EventModel();
+                    SAXResult res = new SAXResult(getContentHandler(model));
+                    transformer.transform(src, res);
+                    return model;
+                }
+            };
+        } else {
+            return new EventModelParserWorker() {
+                // new parsing behaviour on java 25+ (independent thread)
+                @Override
+                public EventModel parse(Source src) throws TransformerException {
+                    EventModel model = new EventModel();
+                    // Create a single-thread executor for this parsing operation
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    try ( AutoCloseable executorAc = () -> executor.shutdown() ) {
+                        // Submit the parsing task and wait for completion
+                        Future<Void> parsingTask = executor.submit(() -> {
+                            try {
+                                Transformer transformer = tFactory.newTransformer();
+                                transformer.setErrorListener(new DefaultErrorListener(LOG));
+                                SAXResult res = new SAXResult(getContentHandler(model));
+                                transformer.transform(src, res);
+                                return null;
+                            } catch (TransformerException e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                        // Block until parsing is complete
+                        parsingTask.get();
+                        return model;
+                    } catch (ExecutionException e) {
+                        if (e.getCause() instanceof RuntimeException &&
+                                e.getCause().getCause() instanceof TransformerException) {
+                            throw (TransformerException) e.getCause().getCause();
+                        }
+                        throw new TransformerException(e.getCause());
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        throw new TransformerException("Parsing was interrupted", e);
+                    } catch (Exception e) {
+                        throw new TransformerException("Parsing generic error", e);
+                    }
+                }
+            };
+        }
+    }
+
+    private static final EventModelParserWorker PARSER_WORKER = init();
+
     /**
      * Parses an event model file into an EventModel instance.
      * @param src the Source instance pointing to the XML file
      * @return the created event model structure
      * @throws TransformerException if an error occurs while parsing the XML file
      */
-    public static EventModel parse(Source src)
-            throws TransformerException {
-        Transformer transformer = tFactory.newTransformer();
-        transformer.setErrorListener(new DefaultErrorListener(LOG));
-
-        EventModel model = new EventModel();
-        SAXResult res = new SAXResult(getContentHandler(model));
-
-        transformer.transform(src, res);
-        return model;
+    public static EventModel parse(Source src) throws TransformerException {
+        return PARSER_WORKER.parse(src);
     }
 
     /**
