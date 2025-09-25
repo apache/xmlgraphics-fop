@@ -146,6 +146,15 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
       </properties>
     </profile>
+    <profile>
+      <id>spotbugs-java11</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <properties>
+        <findbugs.plugin.version>4.8.6.7</findbugs.plugin.version>
+      </properties>
+    </profile>
   </profiles>
 
   <scm>
