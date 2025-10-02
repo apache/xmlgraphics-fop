@@ -166,7 +166,8 @@ public class PDFEncodingTestCase extends BasePDFTest {
 
     private static String extractTextFromPDF(byte[] pdfContent) throws IOException {
         PDFTextStripper pdfStripper = new PDFTextStripper();
-        PDDocument pdDoc = Loader.loadPDF(pdfContent);
-        return pdfStripper.getText(pdDoc);
+        try (PDDocument pdDoc = Loader.loadPDF(pdfContent)) {
+            return pdfStripper.getText(pdDoc);
+        }
     }
 }
