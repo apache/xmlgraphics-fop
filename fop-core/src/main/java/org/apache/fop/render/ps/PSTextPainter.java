@@ -447,7 +447,9 @@ public class PSTextPainter extends NativeTextPainter {
                     gen.write(">");
                 } else {
                     char codepoint = (char) (mapped % 256);
-                    gen.write("(" + codepoint + ")");
+                    StringBuffer sb = new StringBuffer();
+                    PSGenerator.escapeChar(codepoint, sb);
+                    gen.write("(" + sb.toString() + ")");
                 }
                 gen.writeln(" false charpath");
 

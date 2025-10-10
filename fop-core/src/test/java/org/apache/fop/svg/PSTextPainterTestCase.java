@@ -81,4 +81,12 @@ public class PSTextPainterTestCase extends NativeTextPainterTest {
         OutputStream os = g2d.getPSGenerator().getOutputStream();
         Assert.assertFalse(os.toString().contains("( ) false charpath"));
     }
+
+    @Test
+    public void testBullet() throws Exception {
+        PSGraphics2D g2d = (PSGraphics2D) runTest("bullet.svg",
+                new OperatorValidator().addOperatorMatch("GS", "GS"));
+        OutputStream os = g2d.getPSGenerator().getOutputStream();
+        Assert.assertTrue(os.toString().contains("(\\267) false charpath"));
+    }
 }

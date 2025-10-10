@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 816 1056" height="1056" width="816" id="svg2" version="1.1">
+  <defs id="defs6">
+    <clipPath id="clipPath82" clipPathUnits="userSpaceOnUse">
+      <path id="path80" d="M 0,0 H 612 V 792 H 0 Z"/>
+    </clipPath>
+  </defs>
+  <g transform="matrix(1.3333333,0,0,-1.3333333,0,1056)" id="g10">
+    <g id="g76">
+      <g clip-path="url(#clipPath82)" id="g78">
+        <text id="text86" style="font-variant:normal;font-weight:normal;font-stretch:normal;font-size:9.96000004px;font-family:Symbol;-inkscape-font-specification:SymbolMT;writing-mode:lr-tb;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.285;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1" transform="matrix(1,0,0,-1,82.8,456.24)">
+          <tspan id="tspan84" y="0" x="0.0">•</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>
