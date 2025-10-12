@@ -1266,6 +1266,14 @@ public interface Constants {
     int EN_FIRST_INCLUDING_CARRYOVER = 204;
     /** Enumeration constant -- for auto-toggle */
     int EN_SELECT_FIRST_FITTING = 205;
+    /** Enumeration constant -- non-standard force-page-count property value */
+    int EN_DOUBLY_EVEN = 206;
+    /** Enumeration constant -- non-standard force-page-count property value */
+    int EN_END_ON_DOUBLY_EVEN = 207;
+    /** Enumeration constant -- non-standard force-page-count property value */
+    int EN_DOUBLY_ODD = 208;
+    /** Enumeration constant -- non-standard force-page-count property value */
+    int EN_END_ON_DOUBLY_ODD = 209;
     /** Number of enumeration constants defined */
-    int ENUM_COUNT = 205;
+    int ENUM_COUNT = 209;
 }
