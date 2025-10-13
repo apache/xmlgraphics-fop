@@ -20,16 +20,12 @@
 package org.apache.fop.svg;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.pdfbox.Loader;
@@ -51,9 +47,6 @@ import org.apache.fop.configuration.DefaultConfigurationBuilder;
  * nothing obvious is broken after compiling.
  */
 public class BasicPDFTranscoderTestCase extends AbstractBasicTranscoderTest {
-
-    @Rule
-    public TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Override
     protected Transcoder createTranscoder() {
@@ -101,8 +94,7 @@ public class BasicPDFTranscoderTestCase extends AbstractBasicTranscoderTest {
                 + "</svg>";
         TranscoderInput input = new TranscoderInput(new ByteArrayInputStream(svgFragment.getBytes()));
 
-        File outputFile = tempFolder.newFile("output.pdf");
-        OutputStream os = new FileOutputStream(outputFile);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
         TranscoderOutput output = new TranscoderOutput(os);
 
         try {
@@ -111,20 +103,14 @@ public class BasicPDFTranscoderTestCase extends AbstractBasicTranscoderTest {
             os.close();
         }
 
-        PDDocument pdfDocument = null;
-        try {
-            pdfDocument = Loader.loadPDF(outputFile);
+        try (PDDocument pdfDocument = Loader.loadPDF(os.toByteArray())) {
             FontExtractor fontExtractor = new FontExtractor();
             fontExtractor.getText(pdfDocument);
             assertEquals("Courier", fontExtractor.getFontUsage().get("H"));
-        } finally {
-            if (pdfDocument != null) {
-                pdfDocument.close();
-            }
         }
     }
 
-    class FontExtractor extends PDFTextStripper {
+    static class FontExtractor extends PDFTextStripper {
 
         private Map<String, String> fontUsage = new HashMap<>();
 
