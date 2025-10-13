@@ -37,6 +37,7 @@ public class MinOptMaxTestCase {
     @Test
     public void testZero() {
         assertEquals(MinOptMax.getInstance(0), MinOptMax.ZERO);
+        assertTrue(MinOptMax.getInstance(0, 0, 0) == MinOptMax.ZERO);
     }
 
     @Test

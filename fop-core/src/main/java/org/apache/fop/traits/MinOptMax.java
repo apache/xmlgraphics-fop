@@ -20,6 +20,7 @@
 package org.apache.fop.traits;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * This class holds the resolved (as mpoints) form of a
@@ -37,7 +38,7 @@ public final class MinOptMax implements Serializable {
     /**
      * The zero <code>MinOptMax</code> instance with <code>min == opt == max == 0</code>.
      */
-    public static final MinOptMax ZERO = getInstance(0);
+    public static final MinOptMax ZERO = new MinOptMax(0, 0, 0);
 
     private final int min;
     private final int opt;
@@ -59,6 +60,9 @@ public final class MinOptMax implements Serializable {
         if (max < opt) {
             throw new IllegalArgumentException("max (" + max + ") < opt (" + opt + ")");
         }
+        if (min == 0 && opt == 0 && max == 0) {
+            return ZERO;
+        }
         return new MinOptMax(min, opt, max);
     }
 
@@ -71,7 +75,7 @@ public final class MinOptMax implements Serializable {
      * @see #isStiff()
      */
     public static MinOptMax getInstance(int value) {
-        return new MinOptMax(value, value, value);
+        return getInstance(value, value, value);
     }
 
     // Private constructor without consistency checks
@@ -136,7 +140,7 @@ public final class MinOptMax implements Serializable {
      * @return the sum of this <code>MinOptMax</code> and the given <code>MinOptMax</code>.
      */
     public MinOptMax plus(MinOptMax operand) {
-        return new MinOptMax(min + operand.min, opt + operand.opt, max + operand.max);
+        return getInstance(min + operand.min, opt + operand.opt, max + operand.max);
     }
 
 
@@ -147,7 +151,7 @@ public final class MinOptMax implements Serializable {
      * @return the result of the addition
      */
     public MinOptMax plus(int value) {
-        return new MinOptMax(min + value, opt + value, max + value);
+        return getInstance(min + value, opt + value, max + value);
     }
 
     /**
@@ -166,7 +170,7 @@ public final class MinOptMax implements Serializable {
     public MinOptMax minus(MinOptMax operand) throws ArithmeticException {
         checkCompatibility(getShrink(), operand.getShrink(), "shrink");
         checkCompatibility(getStretch(), operand.getStretch(), "stretch");
-        return new MinOptMax(min - operand.min, opt - operand.opt, max - operand.max);
+        return getInstance(min - operand.min, opt - operand.opt, max - operand.max);
     }
 
     private void checkCompatibility(int thisElasticity, int operandElasticity, String msge) {
@@ -184,7 +188,7 @@ public final class MinOptMax implements Serializable {
      * @return the result of the subtraction
      */
     public MinOptMax minus(int value) {
-        return new MinOptMax(min - value, opt - value, max - value);
+        return getInstance(min - value, opt - value, max - value);
     }
 
     /**
@@ -328,10 +332,7 @@ public final class MinOptMax implements Serializable {
      * {@inheritDoc}
      */
     public int hashCode() {
-        int result = min;
-        result = 31 * result + opt;
-        result = 31 * result + max;
-        return result;
+        return Objects.hash(min, opt, max);
     }
 
     /**
