@@ -2284,6 +2284,10 @@ public final class FOPropertyMapping implements Constants {
         m.addEnum("odd", getEnumProperty(EN_ODD, "ODD"));
         m.addEnum("end-on-even", getEnumProperty(EN_END_ON_EVEN, "END_ON_EVEN"));
         m.addEnum("end-on-odd", getEnumProperty(EN_END_ON_ODD, "END_ON_ODD"));
+        m.addEnum("doubly-even", getEnumProperty(EN_DOUBLY_EVEN, "DOUBLY_EVEN"));
+        m.addEnum("end-on-doubly-even", getEnumProperty(EN_END_ON_DOUBLY_EVEN, "END_ON_DOUBLY_EVEN"));
+        m.addEnum("doubly-odd", getEnumProperty(EN_DOUBLY_ODD, "DOUBLY_ODD"));
+        m.addEnum("end-on-doubly-odd", getEnumProperty(EN_END_ON_DOUBLY_ODD, "END_ON_DOUBLY_ODD"));
         m.addEnum("no-force", getEnumProperty(EN_NO_FORCE, "NO_FORCE"));
         m.addEnum("auto", getEnumProperty(EN_AUTO, "AUTO"));
         m.setDefault("auto");

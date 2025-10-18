@@ -268,6 +268,18 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
             if (lastPageNum % 2 == 0) {
                 forcedLastPageNum++;
             }
+        } else if ((lastPageNum - startPageNum + 1) % 4 != 0
+                && getPageSequence().getForcePageCount() ==  Constants.EN_DOUBLY_EVEN) {
+            forcedLastPageNum += 4 - (lastPageNum - startPageNum + 1) % 4;
+        } else if (lastPageNum % 4 != 0
+                && getPageSequence().getForcePageCount() ==  Constants.EN_END_ON_DOUBLY_EVEN) {
+            forcedLastPageNum += 4 - lastPageNum % 4;
+        } else if ((lastPageNum - startPageNum + 1) % 4 != 3
+                && getPageSequence().getForcePageCount() ==  Constants.EN_DOUBLY_ODD) {
+            forcedLastPageNum += 4 - (lastPageNum - startPageNum + 2) % 4;
+        } else if (lastPageNum % 4 != 3
+                && getPageSequence().getForcePageCount() ==  Constants.EN_END_ON_DOUBLY_ODD) {
+            forcedLastPageNum += 4 - (lastPageNum + 1) % 4;
         }
         return forcedLastPageNum;
     }
