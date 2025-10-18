@@ -28,14 +28,18 @@ import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationException;
+import org.apache.fop.fonts.CustomFontCollection;
 import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfigurator;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.FontCacheManagerFactory;
+import org.apache.fop.fonts.FontCollection;
 import org.apache.fop.fonts.FontDetectorFactory;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontManager;
+import org.apache.fop.fonts.FontManagerConfigurator;
 import org.apache.fop.fonts.FontSetup;
+import org.apache.fop.fonts.base14.Base14FontCollection;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.render.pdf.PDFRendererConfig;
 import org.apache.fop.render.pdf.PDFRendererConfig.PDFRendererConfigParser;
@@ -92,7 +96,11 @@ public class PDFDocumentGraphics2DConfigurator {
             FontManager fontManager = new FontManager(resourceResolver, FontDetectorFactory.createDefault(),
                     FontCacheManagerFactory.createDefault());
 
-            //TODO Make use of fontBaseURL, font substitution and referencing configuration
+            FontManagerConfigurator fmConfigurator = new FontManagerConfigurator(cfg, thisUri,
+                    thisUri, null);
+            fmConfigurator.configure(fontManager, strict);
+
+            //TODO Make use of fontBaseURL and referencing configuration
             //Requires a change to the expected configuration layout
 
             DefaultFontConfig.DefaultFontConfigParser parser
@@ -102,7 +110,11 @@ public class PDFDocumentGraphics2DConfigurator {
                     = new DefaultFontConfigurator(fontManager, null, strict);
             List<EmbedFontInfo> fontInfoList = fontInfoConfigurator.configure(fontInfoConfig);
             fontManager.saveCache();
-            FontSetup.setup(fontInfo, fontInfoList, resourceResolver, useComplexScriptFeatures);
+            FontCollection[] fontCollections = new FontCollection[] {
+                    new Base14FontCollection(fontManager.isBase14KerningEnabled()),
+                    new CustomFontCollection(resourceResolver, fontInfoList, useComplexScriptFeatures)
+            };
+            fontManager.setup(fontInfo, fontCollections);
         } else {
             FontSetup.setup(fontInfo, useComplexScriptFeatures);
         }
