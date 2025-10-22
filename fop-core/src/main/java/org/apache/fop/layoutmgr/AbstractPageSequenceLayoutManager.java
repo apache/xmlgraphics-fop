@@ -377,6 +377,22 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
             if (currentPageNum % 2 == 0) { // we are now on an even page
                 curPage = makeNewPage(true);
             }
+        } else if (forcePageCount == Constants.EN_DOUBLY_EVEN) {
+            while ((this.currentPageNum - this.startPageNum + 1) % 4 != 0) {
+                this.curPage = makeNewPage(true);
+            }
+        } else if (forcePageCount == Constants.EN_END_ON_DOUBLY_EVEN) {
+            while (this.currentPageNum % 4 != 0) {
+                this.curPage = makeNewPage(true);
+            }
+        } else if (forcePageCount == Constants.EN_DOUBLY_ODD) {
+            while ((this.currentPageNum - this.startPageNum + 1) % 4 != 3) {
+                this.curPage = makeNewPage(true);
+            }
+        } else if (forcePageCount == Constants.EN_END_ON_DOUBLY_ODD) {
+            while (this.currentPageNum % 4 != 3) {
+                this.curPage = makeNewPage(true);
+            }
         } /*  else if (forcePageCount == Constants.EN_NO_FORCE) {
             // i hope: nothing special at all
         } */
