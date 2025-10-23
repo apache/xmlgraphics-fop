@@ -72,6 +72,11 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
     private int tableOmitFooterAtBreak;
     private int tableOmitHeaderAtBreak;
     private WritingModeTraits writingModeTraits;
+
+    // Used to determine when a table has a width attribute
+    // For example  <fo:table ...... width = "100%">
+    private Length width;
+
     // Unused but valid items, commented out for performance:
     //     private CommonAural commonAural;
     //     private CommonRelativePosition commonRelativePosition;
@@ -141,6 +146,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
         writingModeTraits = new WritingModeTraits(
             WritingMode.valueOf(pList.get(PR_WRITING_MODE).getEnum()),
             pList.getExplicit(PR_WRITING_MODE) != null);
+        width = pList.get(PR_WIDTH).getLength();
 
         //Bind extension properties
         widowContentLimit = pList.get(PR_X_WIDOW_CONTENT_LIMIT).getLength();
@@ -152,10 +158,10 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
             eventProducer.nonAutoBPDOnTable(this, getLocator());
             // Anyway, the bpd of a table is not used by the layout code
         }
-        if (tableLayout == EN_AUTO) {
+        /*if (tableLayout == EN_AUTO) {
             getFOValidationEventProducer().unimplementedFeature(this, getName(),
                     "table-layout=\"auto\"", getLocator());
-        }
+        }*/
         if (!isSeparateBorderModel()) {
             if (borderCollapse == EN_COLLAPSE_WITH_PRECEDENCE) {
                 getFOValidationEventProducer().unimplementedFeature(this, getName(),
@@ -398,6 +404,11 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
     /** @return true of table-layout="auto" */
     public boolean isAutoLayout() {
         return (tableLayout == EN_AUTO);
+    }
+
+    /** @return the table width. It is EN_AUTO when the width attribute is not provided in the <fo:table> tag */
+    public Length getWidth() {
+        return width;
     }
 
     /**

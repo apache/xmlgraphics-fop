@@ -275,4 +275,12 @@ public interface LayoutManager extends PercentBaseContext {
     boolean isFromFootnote();
 
     void setFromFootnote(boolean fromFootnote);
+
+    /**
+     * Iterates over all childLMs to obtain the minimal width required to render all of them (i.e. their content)
+     * without an overflow.
+     * @return returns the longest required minimal width of all contained layout managers
+     */
+    int getMinimumIPD();
+
 }

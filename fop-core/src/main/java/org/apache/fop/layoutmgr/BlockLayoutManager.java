@@ -137,20 +137,23 @@ public class BlockLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
             //Handled already by the parent (break collapsing, see above)
         }
 
+        List<ListElement> childElements;
+
         if (lmStack == null) {
-            return childLM.getNextKnuthElements(childLC, alignment);
+            childElements = childLM.getNextKnuthElements(childLC, alignment);
         } else {
             if (childLM instanceof LineLayoutManager) {
                 if (!(restartPosition instanceof LeafPosition)) {
                     restartPosition = null;
                 }
-                return ((LineLayoutManager) childLM).getNextKnuthElements(childLC, alignment,
+                childElements = ((LineLayoutManager) childLM).getNextKnuthElements(childLC, alignment,
                         (LeafPosition) restartPosition);
             } else {
-                return childLM.getNextKnuthElements(childLC, alignment,
+                childElements = childLM.getNextKnuthElements(childLC, alignment,
                         lmStack, restartPosition, restartAtLM);
             }
         }
+        return childElements;
     }
 
     private void resetSpaces() {
