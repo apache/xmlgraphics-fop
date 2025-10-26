@@ -158,4 +158,8 @@ public class RetrieveTableMarker extends AbstractRetrieveMarker {
         getFOEventHandler().restoreState(this);
     }
 
+    @Override
+    protected void endRestoreFOEventHandlerState() {
+
+    }
 }

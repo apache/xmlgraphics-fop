@@ -212,6 +212,7 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
             try {
                 restoreFOEventHandlerState();
                 cloneFromMarker(marker);
+                endRestoreFOEventHandlerState();
             } catch (FOPException exc) {
                 getFOValidationEventProducer().markerCloningFailed(this,
                         marker.getMarkerClassName(), exc, getLocator());
@@ -222,6 +223,8 @@ public abstract class AbstractRetrieveMarker extends FObjMixed {
     }
 
     protected abstract void restoreFOEventHandlerState();
+
+    protected abstract void endRestoreFOEventHandlerState();
 
     /**
      * Return the value for the <code>retrieve-class-name</code>

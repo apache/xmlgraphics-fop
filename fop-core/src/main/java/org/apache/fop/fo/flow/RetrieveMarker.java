@@ -126,4 +126,8 @@ public class RetrieveMarker extends AbstractRetrieveMarker {
         getFOEventHandler().restoreState(this);
     }
 
+    @Override
+    protected void endRestoreFOEventHandlerState() {
+        getFOEventHandler().endRestoreState(this);
+    }
 }

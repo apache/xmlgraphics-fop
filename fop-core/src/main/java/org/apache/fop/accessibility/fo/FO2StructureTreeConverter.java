@@ -29,6 +29,7 @@ import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.fo.DelegatingFOEventHandler;
 import org.apache.fop.fo.FOEventHandler;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
 import org.apache.fop.fo.extensions.ExternalDocument;
 import org.apache.fop.fo.flow.AbstractRetrieveMarker;
@@ -784,6 +785,22 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
             }
         }, true);
         super.restoreState(retrieveMarker);
+    }
+
+    @Override
+    public void endRestoreState(RetrieveMarker retrieveMarker) {
+        boolean isInsideArtifact = false;
+        FONode obj = retrieveMarker.getParent();
+        while (obj != null && !isInsideArtifact) {
+            if (obj instanceof CommonAccessibilityHolder && isArtifact((CommonAccessibilityHolder)obj)) {
+                isInsideArtifact = true;
+            } else {
+                obj = obj.getParent();
+            }
+        }
+        if (isInsideArtifact && !converters.isEmpty()) {
+            converter = converters.pop();
+        }
     }
 
     @SuppressWarnings("unchecked")
