@@ -46,12 +46,11 @@ import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
-import org.apache.fop.configuration.ConfigurationException;
 
 public class TaggingTestCase {
 
     @Test
-    public void testMultipleStaticContentArtifact() throws ConfigurationException, FOPException,
+    public void testMultipleStaticContentArtifact() throws FOPException,
             TransformerException, IOException {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
