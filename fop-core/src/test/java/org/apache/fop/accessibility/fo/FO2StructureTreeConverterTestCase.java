@@ -20,10 +20,13 @@
 package org.apache.fop.accessibility.fo;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -34,6 +37,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
@@ -46,15 +50,22 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
-
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.documentinterchange.markedcontent.PDMarkedContent;
+import org.apache.pdfbox.text.PDFMarkedContentExtractor;
 
 import org.apache.fop.accessibility.StructureTree2SAXEventAdapter;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.fo.FODocumentParser;
 import org.apache.fop.fo.FODocumentParser.FOEventHandlerFactory;
 import org.apache.fop.fo.FOEventHandler;
@@ -240,6 +251,83 @@ public class FO2StructureTreeConverterTestCase {
                 + "<fo:flow xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" flow-name=\"xsl-region-body\">"
                 + "<fo:block><marked-content/><marked-content/></fo:block></fo:flow></structure-tree>"
                 + "</structure-tree-sequence>");
+    }
+
+    @Test
+    public void testMultipleStaticContentArtifact() throws FOPException,
+            TransformerException, IOException {
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+        foUserAgent.setAccessibility(true);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, out);
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer transformer = factory.newTransformer();
+
+        String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" xmlns:svg=\"http://www.w3.org/2000/svg\">"
+                + "  <fo:layout-master-set>\n"
+                + "    <fo:simple-page-master page-width=\"8.5in\" page-height=\"11in\" master-name=\"Page\">\n"
+                + "      <fo:region-body region-name=\"Body\"/>\n"
+                + "      <fo:region-before region-name=\"xsl-region-before\" extent=\"0.5in\"/>\n"
+                + "    </fo:simple-page-master>\n"
+                + "  </fo:layout-master-set>\n"
+                + "  <fo:page-sequence master-reference=\"Page\">\n"
+                + "    <fo:static-content flow-name=\"xsl-region-before\" role=\"artifact\">\n"
+                + "      <fo:block>\n"
+                + "        <fo:retrieve-marker retrieve-class-name=\"headline-current\"/>\n"
+                + "      </fo:block>\n"
+                + "    </fo:static-content>\n"
+                + "    <fo:flow flow-name=\"Body\">\n"
+                + "      <fo:block>\n"
+                + "        <fo:marker marker-class-name=\"headline-current\">1</fo:marker>\n"
+                + "        <fo:block>A</fo:block>\n"
+                + "      </fo:block>\n"
+                + "    </fo:flow>\n"
+                + "  </fo:page-sequence>\n"
+                + "  <fo:page-sequence master-reference=\"Page\">\n"
+                + "    <fo:static-content flow-name=\"xsl-region-before\" role=\"artifact\">\n"
+                + "      <fo:block>\n"
+                + "        <fo:retrieve-marker retrieve-class-name=\"headline-current\"/>\n"
+                + "      </fo:block>\n"
+                + "    </fo:static-content>\n"
+                + "    <fo:flow flow-name=\"Body\">\n"
+                + "      <fo:block>\n"
+                + "        <fo:marker marker-class-name=\"headline-current\">2</fo:marker>\n"
+                + "        <fo:block>B</fo:block>\n"
+                + "      </fo:block>\n"
+                + "    </fo:flow>\n"
+                + "  </fo:page-sequence>\n"
+                + "</fo:root>";
+        Source src = new StreamSource(new ByteArrayInputStream(fo.getBytes()));
+        Result res = new SAXResult(fop.getDefaultHandler());
+
+        try {
+            transformer.transform(src, res);
+        } finally {
+            out.close();
+        }
+
+        try (PDDocument pdfDocument = Loader.loadPDF(out.toByteArray())) {
+            PDFMarkedContentExtractor extractor = new PDFMarkedContentExtractor();
+            assertEquals(2, pdfDocument.getPages().getCount());
+            extractor.processPage(pdfDocument.getPages().get(0));
+            extractor.processPage(pdfDocument.getPages().get(1));
+
+            List<PDMarkedContent> markedContents = extractor.getMarkedContents();
+            assertEquals(4, markedContents.size());
+
+            assertEquals("Artifact", markedContents.get(0).getTag());
+            assertEquals("1", markedContents.get(0).getContents().get(0).toString());
+
+            assertEquals("P", markedContents.get(1).getTag());
+            assertEquals("A", markedContents.get(1).getContents().get(0).toString());
+
+            assertEquals("Artifact", markedContents.get(2).getTag());
+            assertEquals("2", markedContents.get(2).getContents().get(0).toString());
+
+            assertEquals("P", markedContents.get(3).getTag());
+            assertEquals("B", markedContents.get(3).getContents().get(0).toString());
+        }
     }
 
     private void compare(final String fo, String tree) throws Exception {
