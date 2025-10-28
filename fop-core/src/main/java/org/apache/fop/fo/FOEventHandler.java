@@ -571,6 +571,9 @@ public abstract class FOEventHandler {
     public void restoreState(RetrieveMarker retrieveMarker) {
     }
 
+    public void endRestoreState(RetrieveMarker retrieveMarker) {
+    }
+
     /**
      * Process the start of a retrieve-table-marker.
      *
