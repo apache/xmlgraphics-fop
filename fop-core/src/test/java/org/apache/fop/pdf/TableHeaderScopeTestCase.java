@@ -22,7 +22,6 @@ package org.apache.fop.pdf;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.verification.VerificationMode;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;

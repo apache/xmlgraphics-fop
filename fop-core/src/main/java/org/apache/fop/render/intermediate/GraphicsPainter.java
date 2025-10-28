@@ -93,8 +93,8 @@ public interface GraphicsPainter {
      * @param height the extent of the ellipse in the y direction
      * @throws IOException if an I/O error occurs
      */
-    void arcTo(final double startAngle, final double endAngle, final int cx, final int cy,
-            final int width, final int height) throws IOException;
+    void arcTo(double startAngle, double endAngle, int cx, int cy,
+             int width, int height) throws IOException;
 
     /**
      * Rotate the coordinate frame

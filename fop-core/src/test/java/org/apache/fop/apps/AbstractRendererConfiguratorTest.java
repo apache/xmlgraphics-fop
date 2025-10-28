@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.xml.sax.SAXException;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

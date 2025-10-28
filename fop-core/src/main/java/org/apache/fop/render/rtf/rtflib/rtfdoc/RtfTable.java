@@ -143,7 +143,7 @@ public class RtfTable extends RtfContainer {
      * @return true if id is the highestRow
      */
     public boolean isHighestRow(int id) {
-        return (highestRow == id) ? true : false;
+        return highestRow == id;
     }
 
     /**

@@ -49,8 +49,7 @@ public class ParagraphAlignment extends TestDocument {
      * @param sect RtfSection
      * @throws java.io.IOException for I/O errors
      */
-    protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws java.io.IOException
-    {
+    protected void generateDocument(RtfDocumentArea rda, RtfSection sect) throws java.io.IOException {
         RtfAttributes attr = new RtfAttributes();
         attr.set(RtfText.ALIGN_CENTER);
         RtfParagraph p = sect.newParagraph(attr);

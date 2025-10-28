@@ -27,7 +27,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -41,7 +40,6 @@ import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.util.CharUtilities;
-
 
 public class Java2DUtilTestCase {
 

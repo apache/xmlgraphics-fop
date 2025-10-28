@@ -21,7 +21,6 @@ package org.apache.fop.render.pcl.fonts;
 import java.io.IOException;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertArrayEquals;
 
 public class PCLByteWriterUtilTestCase {

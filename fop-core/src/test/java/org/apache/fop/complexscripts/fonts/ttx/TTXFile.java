@@ -69,6 +69,7 @@ import org.apache.fop.util.CharUtilities;
 
 
 // CSOFF: LineLengthCheck
+// CSOFF: InnerAssignment
 
 /**
  * This class supports a subset of the <code>TTX</code> file as produced by the Adobe FLEX

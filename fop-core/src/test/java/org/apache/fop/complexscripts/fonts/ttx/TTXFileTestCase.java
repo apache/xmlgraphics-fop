@@ -22,7 +22,6 @@ package org.apache.fop.complexscripts.fonts.ttx;
 import java.io.File;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 

@@ -22,7 +22,6 @@ package org.apache.fop.svg.font;
 import java.util.Collections;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.fonts.FontInfo;

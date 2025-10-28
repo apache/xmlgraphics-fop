@@ -52,10 +52,8 @@
 package org.apache.fop.fonts.base14;
 
 import java.awt.Rectangle;
-import java.net.URI;
-<xsl:if test="count(kerning) &gt; 0">
-import java.util.Map;
-</xsl:if>
+import java.net.URI;<xsl:if test="count(kerning) &gt; 0">
+import java.util.Map;</xsl:if>
 import java.util.Set;
 
 import org.apache.fop.fonts.Base14Font;

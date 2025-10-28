@@ -26,14 +26,12 @@ import java.net.URI;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-
 import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FopConfBuilder;
 import org.apache.fop.apps.FopConfParser;
 import org.apache.fop.apps.FopFactory;
-
 import static org.apache.fop.apps.FopConfParserTestCase.getFopFactory;
 
 /**

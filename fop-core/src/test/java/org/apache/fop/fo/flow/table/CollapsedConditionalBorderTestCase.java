@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.fo.Constants;

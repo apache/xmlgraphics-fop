@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -36,7 +35,6 @@ import org.apache.fop.apps.AFPRendererConfBuilder;
 import org.apache.fop.apps.AbstractRendererConfigParserTester;
 import org.apache.fop.render.afp.AFPRendererConfig.AFPRendererConfigParser;
 import org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions;
-
 import static org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions.MODE_COLOR;
 import static org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions.MODE_GRAYSCALE;
 

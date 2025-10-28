@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.IOUtils;

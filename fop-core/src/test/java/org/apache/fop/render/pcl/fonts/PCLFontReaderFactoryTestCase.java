@@ -23,7 +23,6 @@ import java.io.FileInputStream;
 import java.net.URI;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

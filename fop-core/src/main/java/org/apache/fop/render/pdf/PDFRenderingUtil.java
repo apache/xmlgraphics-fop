@@ -89,7 +89,6 @@ import org.apache.fop.render.pdf.extensions.PDFEmbeddedFileAttachment;
 import org.apache.fop.render.pdf.extensions.PDFObjectType;
 import org.apache.fop.render.pdf.extensions.PDFPageExtension;
 import org.apache.fop.render.pdf.extensions.PDFReferenceExtension;
-
 import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPTION_PARAMS;
 import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_ACCESSCONTENT;
 import static org.apache.fop.render.pdf.PDFEncryptionOption.NO_ANNOTATIONS;

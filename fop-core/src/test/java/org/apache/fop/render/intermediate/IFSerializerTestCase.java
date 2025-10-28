@@ -29,7 +29,6 @@ import javax.xml.transform.sax.SAXResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.helpers.DefaultHandler;
-
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;

@@ -34,6 +34,7 @@ import org.apache.fop.complexscripts.util.ScriptContextTester;
 import org.apache.fop.fonts.MultiByteFont;
 
 // CSOFF: LineLengthCheck
+// CSOFF: InnerAssignment
 
 /**
  * <p>Abstract script processor base class for which an implementation of the substitution and positioning methods

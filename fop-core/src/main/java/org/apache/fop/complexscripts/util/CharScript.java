@@ -35,6 +35,7 @@ import org.apache.fop.util.CharUtilities;
 public final class CharScript {
 
     // CSOFF: LineLength
+    // CSOFF: InnerAssignment
 
     //
     // The following script codes are based on ISO 15924. Codes less than 1000 are

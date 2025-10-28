@@ -22,7 +22,6 @@ package org.apache.fop.render.pcl;
 
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
 import org.apache.fop.apps.MimeConstants;
-
 import static org.apache.fop.render.pcl.Java2DRendererOption.DISABLE_PJL;
 import static org.apache.fop.render.pcl.Java2DRendererOption.RENDERING_MODE;
 import static org.apache.fop.render.pcl.Java2DRendererOption.TEXT_RENDERING;

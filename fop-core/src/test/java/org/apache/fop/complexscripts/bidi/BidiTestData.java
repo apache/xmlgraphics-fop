@@ -25,6 +25,8 @@ import java.io.ObjectInputStream;
 
 import org.apache.commons.io.IOUtils;
 
+// CSOFF: InnerAssignment
+
 /*
  * !!! THIS IS A GENERATED FILE !!!
  * If updates to the source are needed, then:

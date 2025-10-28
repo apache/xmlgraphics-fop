@@ -107,7 +107,7 @@ public class GraphicsSetPatternSymbol extends AbstractGraphicsDrawingOrder {
     /** {@inheritDoc} */
     public String toString() {
         return "GraphicsSetPatternSymbol(fill="
-            + (pattern == SOLID_FILL ? true : false)  + ")";
+            + (pattern == SOLID_FILL)  + ")";
     }
 
     /** {@inheritDoc} */

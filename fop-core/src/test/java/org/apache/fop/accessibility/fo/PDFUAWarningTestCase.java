@@ -25,7 +25,6 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.fop.pdf.PDFDocument;

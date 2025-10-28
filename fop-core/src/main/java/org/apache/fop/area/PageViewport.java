@@ -38,7 +38,6 @@ import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.Markers;
 import org.apache.fop.fo.pagination.SimplePageMaster;
 import org.apache.fop.traits.WritingModeTraitsGetter;
-
 import static org.apache.fop.fo.Constants.FO_REGION_BODY;
 
 /**

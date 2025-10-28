@@ -372,7 +372,7 @@ public class RtfTableRow extends RtfContainer implements ITableAttributes {
      * @return true if the cell is the highest cell
      */
     public boolean isHighestCell(int cellId) {
-        return (highestCell == cellId) ? true : false;
+        return highestCell == cellId;
     }
 
     /**

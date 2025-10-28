@@ -48,8 +48,7 @@ public class Event extends EventObject {
      * @param severity the severity level
      * @param params the event parameters (a map of name/value pairs)
      */
-    public Event(Object source, String eventID, EventSeverity severity, Map<String, Object> params)
-    {
+    public Event(Object source, String eventID, EventSeverity severity, Map<String, Object> params) {
         this (source, eventID, severity, Locale.getDefault(), params);
     }
 
@@ -61,8 +60,7 @@ public class Event extends EventObject {
      * @param locale to use when formatting event (or null, which means use default locale)
      * @param params the event parameters (a map of name/value pairs)
      */
-    public Event(Object source, String eventID, EventSeverity severity, Locale locale, Map<String, Object> params)
-    {
+    public Event(Object source, String eventID, EventSeverity severity, Locale locale, Map<String, Object> params) {
         super(source);
         int pos = eventID.lastIndexOf('.');
         if (pos < 0 || pos == eventID.length() - 1) {

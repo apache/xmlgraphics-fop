@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.junit.Test;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,7 +30,6 @@ import static org.mockito.Mockito.when;
 
 import org.apache.fop.afp.fonts.CharactersetEncoder.EncodedChars;
 import org.apache.fop.afp.ptoca.TransparentDataControlSequence.TransparentData;
-
 import static org.apache.fop.afp.ptoca.PtocaConstants.TRANSPARENT_DATA_MAX_SIZE;
 
 public class TransparentDataControlSequenceTestCase {

@@ -32,7 +32,6 @@ import javax.xml.transform.TransformerException;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
-
 import static org.junit.Assert.assertTrue;
 
 import org.apache.xmlgraphics.io.Resource;

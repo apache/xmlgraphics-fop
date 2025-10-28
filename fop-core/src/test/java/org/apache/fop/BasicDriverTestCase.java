@@ -29,7 +29,6 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -40,7 +39,6 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.cli.InputHandler;
-
 import static org.apache.fop.FOPTestUtils.getBaseDir;
 
 /**

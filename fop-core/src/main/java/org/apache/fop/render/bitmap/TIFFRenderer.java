@@ -45,7 +45,6 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.render.java2d.Java2DRenderer;
-
 import static org.apache.fop.render.bitmap.TIFFCompressionValue.CCITT_T4;
 import static org.apache.fop.render.bitmap.TIFFCompressionValue.CCITT_T6;
 import static org.apache.fop.render.bitmap.TIFFCompressionValue.PACKBITS;

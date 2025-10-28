@@ -354,12 +354,23 @@ public class Fop extends Task {
     public void execute() throws BuildException {
         int logLevel = SimpleLog.LOG_LEVEL_INFO;
         switch (getMessageType()) {
-            case Project.MSG_DEBUG  : logLevel = SimpleLog.LOG_LEVEL_DEBUG; break;
-            case Project.MSG_INFO   : logLevel = SimpleLog.LOG_LEVEL_INFO; break;
-            case Project.MSG_WARN   : logLevel = SimpleLog.LOG_LEVEL_WARN; break;
-            case Project.MSG_ERR    : logLevel = SimpleLog.LOG_LEVEL_ERROR; break;
-            case Project.MSG_VERBOSE: logLevel = SimpleLog.LOG_LEVEL_DEBUG; break;
-            default: logLevel = SimpleLog.LOG_LEVEL_INFO;
+            case Project.MSG_DEBUG:
+                logLevel = SimpleLog.LOG_LEVEL_DEBUG;
+                break;
+            case Project.MSG_INFO:
+                logLevel = SimpleLog.LOG_LEVEL_INFO;
+                break;
+            case Project.MSG_WARN:
+                logLevel = SimpleLog.LOG_LEVEL_WARN;
+                break;
+            case Project.MSG_ERR:
+                logLevel = SimpleLog.LOG_LEVEL_ERROR;
+                break;
+            case Project.MSG_VERBOSE:
+                logLevel = SimpleLog.LOG_LEVEL_DEBUG;
+                break;
+            default:
+                logLevel = SimpleLog.LOG_LEVEL_INFO;
         }
         SimpleLog logger = new SimpleLog("FOP/Anttask");
         logger.setLevel(logLevel);

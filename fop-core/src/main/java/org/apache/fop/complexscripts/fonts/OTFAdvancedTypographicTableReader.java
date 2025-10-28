@@ -35,6 +35,7 @@ import org.apache.fop.fonts.truetype.OFTableName;
 import org.apache.fop.fonts.truetype.OpenFont;
 
 // CSOFF: LineLengthCheck
+// CSOFF: InnerAssignment
 
 /**
  * <p>OpenType Font (OTF) advanced typographic table reader. Used by @{Link org.apache.fop.fonts.truetype.TTFFile}

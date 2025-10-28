@@ -24,7 +24,6 @@ import java.io.ByteArrayOutputStream;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 
 import org.apache.xmlgraphics.ps.PSGenerator;

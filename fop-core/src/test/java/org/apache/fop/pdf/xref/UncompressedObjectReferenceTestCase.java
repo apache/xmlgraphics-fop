@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertArrayEquals;
 
 public class UncompressedObjectReferenceTestCase extends ObjectReferenceTest {

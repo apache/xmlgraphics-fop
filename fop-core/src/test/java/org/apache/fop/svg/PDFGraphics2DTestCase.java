@@ -22,7 +22,6 @@ package org.apache.fop.svg;
 import java.awt.BasicStroke;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 
 public class PDFGraphics2DTestCase {

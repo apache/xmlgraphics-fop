@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

@@ -27,7 +27,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,8 +39,6 @@ import org.apache.fop.render.pdf.extensions.PDFCollectionEntryExtension;
 import org.apache.fop.render.pdf.extensions.PDFDictionaryAttachment;
 import org.apache.fop.render.pdf.extensions.PDFDictionaryExtension;
 import org.apache.fop.render.pdf.extensions.PDFDictionaryType;
-
-
 
 public class PDFPagePieceTestCase {
     @Test

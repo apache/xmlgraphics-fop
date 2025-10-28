@@ -20,7 +20,6 @@
 package org.apache.fop.apps;
 
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
-
 import static org.apache.fop.render.bitmap.BitmapRendererOption.ANTI_ALIASING;
 import static org.apache.fop.render.bitmap.BitmapRendererOption.BACKGROUND_COLOR;
 import static org.apache.fop.render.bitmap.BitmapRendererOption.COLOR_MODE;

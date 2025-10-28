@@ -22,7 +22,6 @@ import java.awt.Rectangle;
 import java.io.IOException;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doThrow;

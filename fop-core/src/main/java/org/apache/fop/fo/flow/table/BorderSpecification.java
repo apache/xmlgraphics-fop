@@ -79,13 +79,27 @@ public/*TODO*/ class BorderSpecification {
     public String toString() {
         String holderName = "";
         switch (holder) {
-        case Constants.FO_TABLE: holderName = "table"; break;
-        case Constants.FO_TABLE_COLUMN: holderName = "table-column"; break;
-        case Constants.FO_TABLE_HEADER: holderName = "table-header"; break;
-        case Constants.FO_TABLE_FOOTER: holderName = "table-footer"; break;
-        case Constants.FO_TABLE_BODY: holderName = "table-body"; break;
-        case Constants.FO_TABLE_ROW: holderName = "table-row"; break;
-        case Constants.FO_TABLE_CELL: holderName = "table-cell"; break;
+        case Constants.FO_TABLE:
+            holderName = "table";
+            break;
+        case Constants.FO_TABLE_COLUMN:
+            holderName = "table-column";
+            break;
+        case Constants.FO_TABLE_HEADER:
+            holderName = "table-header";
+            break;
+        case Constants.FO_TABLE_FOOTER:
+            holderName = "table-footer";
+            break;
+        case Constants.FO_TABLE_BODY:
+            holderName = "table-body";
+            break;
+        case Constants.FO_TABLE_ROW:
+            holderName = "table-row";
+            break;
+        case Constants.FO_TABLE_CELL:
+            holderName = "table-cell";
+            break;
         default: assert false;
         }
         return "{" + borderInfo + ", " + holderName + "}";

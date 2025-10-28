@@ -24,7 +24,6 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
-
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;

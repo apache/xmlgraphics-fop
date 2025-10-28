@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.io.IOUtils;

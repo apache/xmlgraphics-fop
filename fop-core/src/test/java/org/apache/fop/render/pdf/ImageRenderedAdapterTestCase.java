@@ -27,7 +27,6 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.nullable;

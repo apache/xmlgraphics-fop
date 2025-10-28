@@ -26,6 +26,7 @@ import org.apache.fop.traits.Direction;
 import org.apache.fop.util.CharUtilities;
 
 // CSOFF: LineLengthCheck
+// CSOFF: InnerAssignment
 
 /**
  * <p>The <code>UnicodeBidiAlgorithm</code> class implements functionality prescribed by

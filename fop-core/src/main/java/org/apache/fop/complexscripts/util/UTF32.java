@@ -21,6 +21,7 @@ package org.apache.fop.complexscripts.util;
 
 import org.apache.fop.util.CharUtilities;
 
+// CSOFF: InnerAssignment
 
 /**
  * <p>UTF32 related utilities.</p>

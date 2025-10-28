@@ -20,7 +20,6 @@
 package org.apache.fop.apps;
 
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
-
 import static org.apache.fop.render.ps.PSRendererOption.AUTO_ROTATE_LANDSCAPE;
 import static org.apache.fop.render.ps.PSRendererOption.DSC_COMPLIANT;
 import static org.apache.fop.render.ps.PSRendererOption.LANGUAGE_LEVEL;

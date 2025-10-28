@@ -30,7 +30,6 @@ import org.apache.fop.render.Renderer;
 import org.apache.fop.render.RendererConfig.RendererConfigParser;
 import org.apache.fop.render.bitmap.TIFFRendererConfig.TIFFRendererConfigParser;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
-
 import static org.apache.fop.render.bitmap.TIFFCompressionValue.NONE;
 
 /**

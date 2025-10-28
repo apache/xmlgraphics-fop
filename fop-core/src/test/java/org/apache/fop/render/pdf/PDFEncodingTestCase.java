@@ -24,7 +24,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -33,7 +32,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 import org.apache.fop.apps.FOUserAgent;
-
 
 /** Test that characters are correctly encoded in a generated PDF file */
 public class PDFEncodingTestCase extends BasePDFTest {

@@ -44,7 +44,6 @@ import javax.xml.xpath.XPathFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -62,7 +61,6 @@ import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.render.xml.XMLRenderer;
-
 import static org.apache.fop.FOPTestUtils.getBaseDir;
 
 /**

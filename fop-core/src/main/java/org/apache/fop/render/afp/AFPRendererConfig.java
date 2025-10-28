@@ -42,7 +42,6 @@ import org.apache.fop.fonts.FontManager;
 import org.apache.fop.render.RendererConfig;
 import org.apache.fop.render.afp.AFPFontConfig.AFPFontInfoConfigParser;
 import org.apache.fop.util.LogUtil;
-
 import static org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions.MODE_COLOR;
 import static org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions.MODE_GRAYSCALE;
 import static org.apache.fop.render.afp.AFPRendererOption.DEFAULT_RESOURCE_LEVELS;

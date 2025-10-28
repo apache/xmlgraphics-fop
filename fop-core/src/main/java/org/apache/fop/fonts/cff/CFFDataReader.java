@@ -209,13 +209,24 @@ public class CFFDataReader {
             realNumber.append(nibble);
         } else {
             switch (nibble) {
-            case 0xa: realNumber.append("."); break;
-            case 0xb: realNumber.append("E"); break;
-            case 0xc: realNumber.append("E-"); break;
-            case 0xd: break;
-            case 0xe: realNumber.append("-"); break;
-            case 0xf: return true;
-            default:  throw new AssertionError("Unexpected nibble value");
+            case 0xa:
+                realNumber.append(".");
+                break;
+            case 0xb:
+                realNumber.append("E");
+                break;
+            case 0xc:
+                realNumber.append("E-");
+                break;
+            case 0xd:
+                break;
+            case 0xe:
+                realNumber.append("-");
+                break;
+            case 0xf:
+                return true;
+            default:
+                throw new AssertionError("Unexpected nibble value");
             }
         }
         return false;

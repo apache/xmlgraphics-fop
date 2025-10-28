@@ -22,7 +22,6 @@ package org.apache.fop.layoutmgr.table;
 import java.awt.Color;
 
 import org.junit.Test;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

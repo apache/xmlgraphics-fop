@@ -34,7 +34,6 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Test;
-
 import org.xml.sax.SAXException;
 
 import org.apache.fop.apps.FOUserAgent;

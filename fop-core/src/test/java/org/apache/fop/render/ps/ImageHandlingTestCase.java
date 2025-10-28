@@ -27,9 +27,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
-
 import org.w3c.dom.Document;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

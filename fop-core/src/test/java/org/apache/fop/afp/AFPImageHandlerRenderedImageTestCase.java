@@ -21,14 +21,12 @@ package org.apache.fop.afp;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -38,7 +36,6 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
-
 import org.apache.fop.render.afp.AFPImageHandlerRenderedImage;
 import org.apache.fop.render.afp.AFPParser;
 import org.apache.fop.render.afp.AFPRenderingContext;

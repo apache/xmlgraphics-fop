@@ -20,7 +20,6 @@
 package org.apache.fop.fo.pagination;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;

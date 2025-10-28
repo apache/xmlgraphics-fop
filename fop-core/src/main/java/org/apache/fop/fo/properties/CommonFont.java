@@ -191,16 +191,35 @@ public final class CommonFont {
     public FontTriplet[] getFontState(FontInfo fontInfo) {
         int fw;
         switch (fontWeight.getEnum()) {
-        case Constants.EN_100: fw = 100; break;
-        case Constants.EN_200: fw = 200; break;
-        case Constants.EN_300: fw = 300; break;
-        case Constants.EN_400: fw = 400; break;
-        case Constants.EN_500: fw = 500; break;
-        case Constants.EN_600: fw = 600; break;
-        case Constants.EN_700: fw = 700; break;
-        case Constants.EN_800: fw = 800; break;
-        case Constants.EN_900: fw = 900; break;
-        default: fw = 400;
+        case Constants.EN_100:
+            fw = 100;
+            break;
+        case Constants.EN_200:
+            fw = 200;
+            break;
+        case Constants.EN_300:
+            fw = 300;
+            break;
+        case Constants.EN_400:
+            fw = 400;
+            break;
+        case Constants.EN_500:
+            fw = 500;
+            break;
+        case Constants.EN_600:
+            fw = 600;
+            break;
+        case Constants.EN_700:
+            fw = 700;
+            break;
+        case Constants.EN_800:
+            fw = 800;
+            break;
+        case Constants.EN_900:
+            fw = 900;
+            break;
+        default:
+            fw = 400;
         }
 
         String style;
