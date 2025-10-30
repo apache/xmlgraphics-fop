@@ -158,10 +158,7 @@ public class Table extends TableFObj implements ColumnNumberManagerHolder, Break
             eventProducer.nonAutoBPDOnTable(this, getLocator());
             // Anyway, the bpd of a table is not used by the layout code
         }
-        /*if (tableLayout == EN_AUTO) {
-            getFOValidationEventProducer().unimplementedFeature(this, getName(),
-                    "table-layout=\"auto\"", getLocator());
-        }*/
+
         if (!isSeparateBorderModel()) {
             if (borderCollapse == EN_COLLAPSE_WITH_PRECEDENCE) {
                 getFOValidationEventProducer().unimplementedFeature(this, getName(),
