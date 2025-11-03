@@ -68,6 +68,7 @@ list of possible build targets.
     <path refid="libs-build-classpath"/>
     <fileset dir="${lib-tools}">
       <include name="*.jar"/>
+      <exclude name="checkstyle*.jar"/>
     </fileset>
   </path>
   <path id="libs-run-classpath">
