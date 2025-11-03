@@ -40,6 +40,7 @@ import java.util.TreeMap;
 import org.apache.fop.util.License;
 
 // CSOFF: LineLengthCheck
+// CSOFF: InnerAssignment
 
 /**
  * <p>Utility for generating a Java class and associated data files representing

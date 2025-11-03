@@ -999,7 +999,7 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Checkstyle                                                          -->
 <!-- =================================================================== -->
-  <property name="checkstyle.location" value="${lib-tools}/checkstyle-5.5-all.jar" />
+  <property name="checkstyle.location" value="${lib-tools}/checkstyle-9.3-all.jar" />
   <property name="checkstyle.config" value="${core.checkstyle.dir}/checkstyle.xml" />
   <property name="checkstyle.suppressions.file" value="${core.checkstyle.dir}/suppressions.xml" />
   <path id="checkstyle-classpath">
@@ -1007,7 +1007,7 @@ NOTE:
   </path>
   <condition property="checkstyle.avail">
     <and>
-      <available classname="com.puppycrawl.tools.checkstyle.CheckStyleTask">
+      <available classname="com.puppycrawl.tools.checkstyle.ant.CheckstyleAntTask">
         <classpath refid="checkstyle-classpath"/>
       </available>
       <available file="${checkstyle.config}"/>
@@ -1019,7 +1019,7 @@ NOTE:
     <echo message="... please provide ${checkstyle.config}"/>
   </target>
   <target name="checkstyle" depends="package, checkstyle-avail" if="checkstyle.avail" description="Runs Checkstyle for a code quality report">
-    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstyle-classpath"/>
+    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.ant.CheckstyleAntTask" classpathref="checkstyle-classpath"/>
     <mkdir dir="${build.dir}"/>
     <checkstyle config="${checkstyle.config}" failonviolation="true" maxWarnings="0">
       <classpath>
