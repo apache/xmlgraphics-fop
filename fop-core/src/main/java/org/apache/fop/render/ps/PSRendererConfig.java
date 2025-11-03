@@ -35,7 +35,6 @@ import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.render.RendererConfig;
 import org.apache.fop.util.LogUtil;
-
 import static org.apache.fop.render.ps.PSRendererOption.ACROBAT_DOWNSAMPLE;
 import static org.apache.fop.render.ps.PSRendererOption.AUTO_ROTATE_LANDSCAPE;
 import static org.apache.fop.render.ps.PSRendererOption.DSC_COMPLIANT;

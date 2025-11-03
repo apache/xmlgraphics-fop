@@ -72,8 +72,7 @@ public class RtfBookmarkContainerImpl extends RtfContainer implements IRtfBookma
      *
      * @exception IOException On error
      */
-    RtfBookmarkContainerImpl(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException
-    {
+    RtfBookmarkContainerImpl(RtfContainer parent, Writer w, RtfAttributes attr) throws IOException {
         super(parent, w, attr);
     }
 

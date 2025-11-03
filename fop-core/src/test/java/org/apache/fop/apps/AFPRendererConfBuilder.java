@@ -27,7 +27,6 @@ import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
 import org.apache.fop.render.afp.AFPRendererConfig;
 import org.apache.fop.render.afp.AFPRendererOption;
 import org.apache.fop.render.afp.AFPShadingMode;
-
 import static org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions.MODE_GRAYSCALE;
 import static org.apache.fop.render.afp.AFPRendererOption.DEFAULT_RESOURCE_LEVELS;
 import static org.apache.fop.render.afp.AFPRendererOption.GOCA;

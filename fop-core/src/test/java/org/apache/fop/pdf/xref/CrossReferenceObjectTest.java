@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-
 import static org.junit.Assert.assertArrayEquals;
 
 import org.apache.fop.pdf.PDFDocument;

@@ -20,7 +20,6 @@
 package org.apache.fop.area.inline;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 public class InlineParentTestCase {

@@ -22,7 +22,6 @@ package org.apache.fop.fo.flow.table;
 import java.util.Iterator;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.datatypes.PercentBaseContext;

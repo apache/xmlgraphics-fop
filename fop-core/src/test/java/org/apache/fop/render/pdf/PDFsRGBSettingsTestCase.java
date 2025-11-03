@@ -24,7 +24,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
-
 import static org.junit.Assert.fail;
 
 import org.apache.fop.apps.FOUserAgent;

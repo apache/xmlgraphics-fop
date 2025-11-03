@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.apache.fop.afp.fonts.CharactersetEncoder.EncodedChars;
 import org.apache.fop.afp.ptoca.TransparentDataControlSequence.TransparentData;
-
 import static org.apache.fop.afp.ptoca.PtocaConstants.TRANSPARENT_DATA_MAX_SIZE;
 
 /**

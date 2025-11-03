@@ -36,7 +36,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.xml.sax.ContentHandler;
 
 import org.apache.commons.io.FilenameUtils;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

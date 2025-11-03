@@ -21,7 +21,6 @@ package org.apache.fop.fo.pagination;
 
 import org.junit.Test;
 import org.xml.sax.Locator;
-
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;

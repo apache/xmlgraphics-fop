@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 // CSOFF: LineLengthCheck
+// CSOFF: InnerAssignment
 
 /**
  * <p>Base class implementation of glyph mapping table. This base

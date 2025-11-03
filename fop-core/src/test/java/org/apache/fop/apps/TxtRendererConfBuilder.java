@@ -20,7 +20,6 @@
 package org.apache.fop.apps;
 
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
-
 import static org.apache.fop.render.txt.TxtRendererConfig.TxtRendererOption.ENCODING;
 
 public class TxtRendererConfBuilder extends RendererConfBuilder {

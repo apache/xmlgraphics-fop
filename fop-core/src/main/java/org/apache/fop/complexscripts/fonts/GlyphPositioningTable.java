@@ -33,6 +33,7 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.GlyphTester;
 
 // CSOFF: LineLengthCheck
+// CSOFF: InnerAssignment
 
 /**
  * <p>The <code>GlyphPositioningTable</code> class is a glyph table that implements

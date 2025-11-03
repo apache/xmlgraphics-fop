@@ -39,7 +39,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.xml.sax.SAXException;
 
 import org.apache.xmlgraphics.util.QName;

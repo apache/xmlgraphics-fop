@@ -24,7 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertArrayEquals;
 
 import org.apache.fop.pdf.PDFObjectNumber;

@@ -23,7 +23,6 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.endsWith;
 import static org.mockito.Mockito.mock;

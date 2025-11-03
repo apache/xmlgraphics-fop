@@ -22,7 +22,6 @@ package org.apache.fop.afp.modca;
 import java.util.Arrays;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 
 /**

@@ -26,6 +26,7 @@ import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.GlyphSequence;
 
 // CSOFF: LineLengthCheck
+// CSOFF: InnerAssignment
 
 /**
  * <p>The <code>GujaratiScriptProcessor</code> class implements a script processor for

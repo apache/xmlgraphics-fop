@@ -753,8 +753,7 @@ public abstract class AbstractRenderer
 
             handleBlockTraits(block);
 
-            if (children != null && block.getTrait(Trait.VISIBILITY) != Visibility.HIDDEN)
-            {
+            if (children != null && block.getTrait(Trait.VISIBILITY) != Visibility.HIDDEN) {
                 renderBlocks(block, children);
             }
 

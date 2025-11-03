@@ -18,7 +18,6 @@
 package org.apache.fop.layoutmgr;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.fo.Constants;

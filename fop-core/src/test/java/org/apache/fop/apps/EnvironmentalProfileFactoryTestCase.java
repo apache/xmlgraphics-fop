@@ -20,7 +20,6 @@ package org.apache.fop.apps;
 import java.net.URI;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 

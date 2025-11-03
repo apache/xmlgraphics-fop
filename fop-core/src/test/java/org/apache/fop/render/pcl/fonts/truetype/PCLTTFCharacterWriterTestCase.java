@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

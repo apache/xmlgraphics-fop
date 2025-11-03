@@ -31,7 +31,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.fop.render.pdf.BasePDFTest;
-
 import static org.apache.fop.FOPTestUtils.getBaseDir;
 
 /**

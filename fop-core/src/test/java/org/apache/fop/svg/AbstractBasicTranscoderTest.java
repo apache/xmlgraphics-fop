@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;

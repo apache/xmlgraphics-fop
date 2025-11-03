@@ -554,10 +554,14 @@ public class Type1SubsetFile {
             if (isSpace) {
                 spaceCount++;
                 switch (spaceCount - 1) {
-                case 1: charIndex = Integer.parseInt(encodingEntry.substring(lastSpaceIndex + 1,
-                        i)); break;
-                case 2: charName = encodingEntry.substring(lastSpaceIndex + 1, i); break;
-                default: break;
+                case 1:
+                    charIndex = Integer.parseInt(encodingEntry.substring(lastSpaceIndex + 1, i));
+                    break;
+                case 2:
+                    charName = encodingEntry.substring(lastSpaceIndex + 1, i);
+                    break;
+                default:
+                    break;
                 }
             }
             if (isSpace) {

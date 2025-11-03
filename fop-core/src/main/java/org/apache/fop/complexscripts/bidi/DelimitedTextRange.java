@@ -34,6 +34,7 @@ import org.apache.fop.traits.WritingModeTraitsGetter;
 import org.apache.fop.util.CharUtilities;
 
 // CSOFF: LineLengthCheck
+// CSOFF: InnerAssignment
 
 /**
  * The <code>DelimitedTextRange</code> class implements the "delimited text range" as described

@@ -165,20 +165,29 @@ public class Shading {
 
         switch (shadingType) {
         // Function based shading
-        case 1: outputShadingType1(out, doubleFormatter, functionRenderer); break;
+        case 1:
+            outputShadingType1(out, doubleFormatter, functionRenderer);
+            break;
         // Axial shading
         case 2:
         // Radial shading
-        case 3: outputShadingType2or3(out, doubleFormatter, functionRenderer); break;
+        case 3:
+            outputShadingType2or3(out, doubleFormatter, functionRenderer);
+            break;
         // Free-form Gouraud-shaded triangle meshes
         case 4:
         // Coons patch meshes
         case 6:
         // Tensor product patch meshes
-        case 7: outputShadingType4or6or7(out, doubleFormatter, functionRenderer); break;
+        case 7:
+            outputShadingType4or6or7(out, doubleFormatter, functionRenderer);
+            break;
         // Lattice Free form gouraud-shaded triangle mesh
-        case 5: outputShadingType5(out, doubleFormatter, functionRenderer); break;
-        default: throw new UnsupportedOperationException("Shading type " + shadingType);
+        case 5:
+            outputShadingType5(out, doubleFormatter, functionRenderer);
+            break;
+        default:
+            throw new UnsupportedOperationException("Shading type " + shadingType);
         }
 
         out.append(">>");

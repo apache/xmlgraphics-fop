@@ -39,6 +39,7 @@ import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.complexscripts.util.ScriptContextTester;
 
 // CSOFF: LineLengthCheck
+// CSOFF: InnerAssignment
 
 /**
  * <p>The <code>IndicScriptProcessor</code> class implements a script processor for

@@ -22,7 +22,6 @@ package org.apache.fop.render.pdf;
 import java.io.StringWriter;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.pdf.CMapBuilder;

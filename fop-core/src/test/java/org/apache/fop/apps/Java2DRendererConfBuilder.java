@@ -20,7 +20,6 @@
 package org.apache.fop.apps;
 
 import org.apache.fop.apps.FopConfBuilder.RendererConfBuilder;
-
 import static org.apache.fop.render.java2d.Java2DRendererOption.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
 
 public class Java2DRendererConfBuilder extends RendererConfBuilder {

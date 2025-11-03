@@ -27,7 +27,6 @@ import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.PropertyList;
 import org.apache.fop.fo.expr.PropertyException;
 import org.apache.fop.util.CompareUtil;
-
 import static org.apache.fop.fo.Constants.PR_X_XML_BASE;
 
 /**

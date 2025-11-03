@@ -91,7 +91,6 @@ import org.apache.fop.util.LanguageTags;
 import org.apache.fop.util.XMLConstants;
 import org.apache.fop.util.XMLUtil;
 import org.apache.fop.utils.DefaultErrorListener;
-
 import static org.apache.fop.fo.Constants.FO_REGION_AFTER;
 import static org.apache.fop.fo.Constants.FO_REGION_BEFORE;
 import static org.apache.fop.fo.Constants.FO_REGION_BODY;

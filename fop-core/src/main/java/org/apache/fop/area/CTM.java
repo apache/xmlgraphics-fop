@@ -26,7 +26,6 @@ import java.io.Serializable;
 
 import org.apache.fop.datatypes.FODimension;
 import org.apache.fop.traits.WritingMode;
-
 import static org.apache.fop.fo.Constants.EN_LR_TB;
 import static org.apache.fop.fo.Constants.EN_RL_TB;
 import static org.apache.fop.fo.Constants.EN_TB_LR;

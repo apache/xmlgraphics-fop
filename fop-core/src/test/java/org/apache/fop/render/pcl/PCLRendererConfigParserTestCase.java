@@ -20,7 +20,6 @@
 package org.apache.fop.render.pcl;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.apps.AbstractRendererConfigParserTester;

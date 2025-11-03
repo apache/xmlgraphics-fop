@@ -35,7 +35,6 @@ import org.apache.batik.gvt.font.GVTLineMetrics;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontMetrics;
 
-
 public class KerningGlyphLayoutTestCase extends FOPGVTGlyphVectorTest {
     private final int fontSize = 37500;
 

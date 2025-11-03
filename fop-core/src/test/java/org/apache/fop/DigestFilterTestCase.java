@@ -31,7 +31,6 @@ import org.junit.Test;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-
 import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.util.DigestFilter;

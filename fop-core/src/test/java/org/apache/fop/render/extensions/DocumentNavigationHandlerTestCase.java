@@ -43,7 +43,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

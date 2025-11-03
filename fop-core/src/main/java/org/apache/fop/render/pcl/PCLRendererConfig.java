@@ -30,7 +30,6 @@ import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.render.RendererConfig;
-
 import static org.apache.fop.render.pcl.Java2DRendererOption.DISABLE_PJL;
 import static org.apache.fop.render.pcl.Java2DRendererOption.MODE_COLOR;
 import static org.apache.fop.render.pcl.Java2DRendererOption.OPTIMIZE_RESOURCES;

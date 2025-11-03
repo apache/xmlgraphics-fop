@@ -43,7 +43,6 @@ import org.apache.fop.pdf.PDFSignParams;
 import org.apache.fop.render.RendererConfig;
 import org.apache.fop.render.RendererConfigOption;
 import org.apache.fop.util.LogUtil;
-
 import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPTION_LENGTH;
 import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPTION_PARAMS;
 import static org.apache.fop.render.pdf.PDFEncryptionOption.ENCRYPT_METADATA;

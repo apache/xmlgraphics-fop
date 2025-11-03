@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 // CSOFF: LineLengthCheck
+// CSOFF: InnerAssignment
 
 /**
  * <p>The <code>GlyphSubtable</code> implements an abstract glyph subtable that
@@ -71,8 +72,7 @@ public abstract class GlyphSubtable implements Comparable {
      * @param format subtable format
      * @param mapping subtable mapping table
      */
-    protected GlyphSubtable(String lookupId, int sequence, int flags, int format, GlyphMappingTable mapping)
-    {
+    protected GlyphSubtable(String lookupId, int sequence, int flags, int format, GlyphMappingTable mapping) {
         if ((lookupId == null) || (lookupId.length() == 0)) {
             throw new AdvancedTypographicTableFormatException("invalid lookup identifier, must be non-empty string");
         } else if (mapping == null) {

@@ -18,7 +18,6 @@
 package org.apache.fop.svg;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 public class SimpleSVGUserAgentTestCase {

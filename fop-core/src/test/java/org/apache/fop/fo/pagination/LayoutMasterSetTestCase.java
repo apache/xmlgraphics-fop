@@ -20,7 +20,6 @@
 package org.apache.fop.fo.pagination;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.apps.FOUserAgent;

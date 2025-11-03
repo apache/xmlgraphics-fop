@@ -37,7 +37,6 @@ import org.apache.fop.render.intermediate.IFDocumentNavigationHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.PageIndexContext;
 import org.apache.fop.util.XMLUtil;
-
 import static org.apache.fop.render.intermediate.IFConstants.EL_ID;
 
 /**

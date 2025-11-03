@@ -35,6 +35,8 @@ import org.apache.fop.layoutmgr.WhitespaceManagementPenalty.Variant;
 import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.ListUtil;
 
+// CSOFF: InnerAssignment
+
 class PageBreakingAlgorithm extends BreakingAlgorithm {
 
     /** the logger for the class */

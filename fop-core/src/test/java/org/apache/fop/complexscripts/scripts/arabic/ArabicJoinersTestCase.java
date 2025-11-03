@@ -24,7 +24,6 @@ import java.util.BitSet;
 import java.util.HashMap;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.complexscripts.scripts.ScriptProcessor;

@@ -34,6 +34,7 @@ import org.apache.fop.complexscripts.util.GlyphTester;
 import org.apache.fop.fonts.MultiByteFont;
 
 // CSOFF: LineLengthCheck
+// CSOFF: InnerAssignment
 
 /**
  * <p>The <code>GlyphSubstitutionTable</code> class is a glyph table that implements

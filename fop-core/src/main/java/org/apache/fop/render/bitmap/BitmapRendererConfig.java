@@ -33,7 +33,6 @@ import org.apache.fop.render.RendererConfig;
 import org.apache.fop.render.java2d.Java2DRendererConfig;
 import org.apache.fop.render.java2d.Java2DRendererConfig.Java2DRendererConfigParser;
 import org.apache.fop.util.ColorUtil;
-
 import static org.apache.fop.render.bitmap.BitmapRendererOption.ANTI_ALIASING;
 import static org.apache.fop.render.bitmap.BitmapRendererOption.BACKGROUND_COLOR;
 import static org.apache.fop.render.bitmap.BitmapRendererOption.COLOR_MODE;

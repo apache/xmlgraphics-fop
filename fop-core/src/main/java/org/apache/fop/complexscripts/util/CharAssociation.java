@@ -22,6 +22,8 @@ package org.apache.fop.complexscripts.util;
 import java.util.HashMap;
 import java.util.Map;
 
+// CSOFF: InnerAssignment
+
 /**
  * A structure class encapsulating an interval of characters expressed as an offset and count of
  * Unicode scalar values (in an IntBuffer). A <code>CharAssociation</code> is used to maintain a

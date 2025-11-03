@@ -22,7 +22,6 @@ package org.apache.fop.util;
 import java.util.Locale;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 /**

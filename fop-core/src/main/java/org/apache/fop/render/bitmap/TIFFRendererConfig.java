@@ -31,7 +31,6 @@ import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.render.RendererConfigOption;
-
 import static org.apache.fop.render.bitmap.TIFFCompressionValue.PACKBITS;
 
 /**

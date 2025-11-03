@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 /**

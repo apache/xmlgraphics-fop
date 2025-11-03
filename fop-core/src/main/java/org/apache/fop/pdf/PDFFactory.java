@@ -68,6 +68,8 @@ import org.apache.fop.fonts.type1.PFBData;
 import org.apache.fop.fonts.type1.PFBParser;
 import org.apache.fop.fonts.type1.Type1SubsetFile;
 
+// CSOFF: InnerAssignment
+
 /**
  * This class provides method to create and register PDF objects.
  */

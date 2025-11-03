@@ -20,7 +20,6 @@
 package org.apache.fop.render.pdf.extensions;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 

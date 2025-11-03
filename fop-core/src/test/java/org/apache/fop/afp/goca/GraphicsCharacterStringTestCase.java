@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.fop.afp.goca;
 
 import java.io.ByteArrayOutputStream;
@@ -21,7 +22,6 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.afp.fonts.CharacterSet;
