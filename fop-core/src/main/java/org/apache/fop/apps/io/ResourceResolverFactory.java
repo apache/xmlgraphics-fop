@@ -177,7 +177,7 @@ public final class ResourceResolverFactory {
         }
 
         private File createTempFile(String path) throws IOException {
-            File tempFile = Files.createTempFile(path, ".fop.tmp").toFile();
+            File tempFile = Files.createTempFile(path.replace("/", ""), ".fop.tmp").toFile();
             File oldFile = tempFiles.put(path, tempFile);
             if (oldFile != null) {
                 String errorMsg = oldFile.getAbsolutePath() + " has been already created for " + path;
