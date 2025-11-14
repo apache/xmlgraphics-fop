@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -176,7 +177,7 @@ public final class ResourceResolverFactory {
         }
 
         private File createTempFile(String path) throws IOException {
-            File tempFile = File.createTempFile(path, ".fop.tmp");
+            File tempFile = Files.createTempFile(path, ".fop.tmp").toFile();
             File oldFile = tempFiles.put(path, tempFile);
             if (oldFile != null) {
                 String errorMsg = oldFile.getAbsolutePath() + " has been already created for " + path;

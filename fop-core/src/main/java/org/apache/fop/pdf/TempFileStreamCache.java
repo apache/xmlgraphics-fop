@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.apache.commons.io.IOUtils;
 
@@ -47,8 +48,8 @@ public class TempFileStreamCache implements StreamCache {
      * @throws IOException if there is an IO error
      */
     public TempFileStreamCache() throws IOException {
-        tempFile = File.createTempFile("org.apache.fop.pdf.StreamCache-",
-                                       ".temp");
+        tempFile = Files.createTempFile("org.apache.fop.pdf.StreamCache-",
+                                       ".temp").toFile();
         tempFile.deleteOnExit();
     }
 
