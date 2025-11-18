@@ -244,17 +244,22 @@ public class PDFStructElem extends StructureHierarchyMember implements Structure
     }
 
     public void setTableAttributeColSpan(int colSpan) {
-        setTableAttributeRowColumnSpan("ColSpan", colSpan);
+        setTableAttributeRowColumnSpan("ColSpan", colSpan, Table.Scope.COLUMN);
     }
 
     public void setTableAttributeRowSpan(int rowSpan) {
-        setTableAttributeRowColumnSpan("RowSpan", rowSpan);
+        setTableAttributeRowColumnSpan("RowSpan", rowSpan, Table.Scope.ROW);
     }
 
-    private void setTableAttributeRowColumnSpan(String typeSpan, int span) {
+    private void setTableAttributeRowColumnSpan(String typeSpan, int span, Table.Scope scope) {
         PDFDictionary attribute = new PDFDictionary();
         attribute.put("O", Table.NAME);
         attribute.put(typeSpan, span);
+        if (this.getStructureType() == StandardStructureTypes.Table.THEAD
+                || this.getStructureType() == StandardStructureTypes.Table.TH) {
+            attribute.put("Scope", scope.getName());
+        }
+
         if (attributes == null) {
             attributes = new ArrayList<PDFDictionary>(2);
         }
