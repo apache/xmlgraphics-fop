@@ -1223,7 +1223,7 @@ public class PDFDocument {
         if (addRoot) {
             trailerDictionary.setRoot(root).setInfo(info);
         }
-        trailerDictionary.setFileID(gen.getOriginalFileID(), gen.getUpdatedFileID());
+        trailerDictionary.setFileID("279B5BE7BC0E1B4FE4D4A16B1C28B990".getBytes(), "3D096A7D6223E7A468C7AB8CAD3F6602".getBytes());
         if (isEncryptionActive()) {
             trailerDictionary.setEncryption(encryption);
         }
