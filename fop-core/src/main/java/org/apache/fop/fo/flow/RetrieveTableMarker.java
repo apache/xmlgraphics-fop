@@ -92,12 +92,14 @@ public class RetrieveTableMarker extends AbstractRetrieveMarker {
     protected int findAncestor(int ancestorID) {
         int found = 1;
         FONode temp = getParent();
+        boolean foundCell = false;
         while (temp != null) {
-            if (temp instanceof TableCell
-                    && (ancestorID == FO_TABLE_HEADER || ancestorID == FO_TABLE_FOOTER)) {
+            if (temp instanceof TableCell && (ancestorID == FO_TABLE_HEADER || ancestorID == FO_TABLE_FOOTER)
+                    && !foundCell) {
                 // note that if the retrieve-table-marker is not in a table-header/footer an exception is
                 // thrown, so no need to reset this flag in that case
                 ((TableCell) temp).flagAsHavingRetrieveTableMarker();
+                foundCell = true;
             }
             if (temp.getNameId() == ancestorID) {
                 return found;

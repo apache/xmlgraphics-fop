@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks markers (table in table).
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master page-width="8.5in" page-height="11in" master-name="Page">
+          <fo:region-body region-name="Body"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="PageSequence">
+          <fo:repeatable-page-master-reference master-reference="Page"/>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence format="1" id="TH_LastPage" initial-page-number="auto" force-page-count="auto" master-reference="PageSequence">
+        <fo:flow flow-name="Body">
+          <fo:block>
+            <fo:table width="100%" table-layout="fixed" border-collapse="separate">
+              <fo:table-column column-number="1" column-width="proportional-column-width(100)"/>
+              <fo:table-body>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:table width="100%" table-layout="fixed" border-collapse="separate">
+                      <fo:table-column column-number="1" column-width="proportional-column-width(100)"/>
+                      <fo:table-header>
+                        <fo:table-row>
+                          <fo:table-cell>
+                            <fo:block>Example <fo:retrieve-table-marker retrieve-class-name="header2Marker" retrieve-position-within-table="first-starting" retrieve-boundary-within-table="table"/>
+                            </fo:block>
+                          </fo:table-cell>
+                        </fo:table-row>
+                      </fo:table-header>
+                      <fo:table-footer>
+                        <fo:table-row>
+                          <fo:table-cell>
+                            <fo:block>
+                              <fo:retrieve-table-marker retrieve-class-name="footer2Marker" retrieve-position-within-table="last-ending" retrieve-boundary-within-table="table"/>
+                            </fo:block>
+                          </fo:table-cell>
+                        </fo:table-row>
+                      </fo:table-footer>
+                      <fo:table-body>
+                        <fo:table-row>
+                          <fo:table-cell>
+                            <fo:block line-height="0pt">
+                              <fo:marker marker-class-name="header2Marker">Continued</fo:marker>
+                            </fo:block>
+                            <fo:block line-height="0pt">
+                              <fo:marker marker-class-name="footer2Marker">Continued on Next Page</fo:marker>
+                            </fo:block>
+                          </fo:table-cell>
+                        </fo:table-row>
+                        <fo:table-row>
+                          <fo:table-cell>
+                            <fo:block>Line 1</fo:block>
+                          </fo:table-cell>
+                        </fo:table-row>
+                      </fo:table-body>
+                    </fo:table>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="1" xpath="count(//pageSequence)"/>
+    <eval expected="8" xpath="count(//word)"/>
+    <eval expected="Line" xpath="//word[1]"/>
+  </checks>
+</testcase>
