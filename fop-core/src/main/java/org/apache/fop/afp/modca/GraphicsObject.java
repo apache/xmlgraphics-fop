@@ -47,6 +47,7 @@ import org.apache.fop.afp.goca.GraphicsSetArcParameters;
 import org.apache.fop.afp.goca.GraphicsSetCharacterSet;
 import org.apache.fop.afp.goca.GraphicsSetCurrentPosition;
 import org.apache.fop.afp.goca.GraphicsSetFractionalLineWidth;
+import org.apache.fop.afp.goca.GraphicsSetLineEnd;
 import org.apache.fop.afp.goca.GraphicsSetLineType;
 import org.apache.fop.afp.goca.GraphicsSetLineWidth;
 import org.apache.fop.afp.goca.GraphicsSetPatternSymbol;
@@ -210,6 +211,10 @@ public class GraphicsObject extends AbstractDataObject {
             addObject(new GraphicsSetLineType(lineType));
             graphicsState.lineType = lineType;
         }
+    }
+
+    public void setLineEnd(byte lineEnd) {
+        addObject(new GraphicsSetLineEnd(lineEnd));
     }
 
     /**

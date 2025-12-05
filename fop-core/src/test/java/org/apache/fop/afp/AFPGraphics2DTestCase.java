@@ -134,7 +134,7 @@ public class AFPGraphics2DTestCase {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         go.writeToStream(bos);
         ByteArrayInputStream is = new ByteArrayInputStream(bos.toByteArray());
-        is.skip(17 + 9 + 14 + 6);
+        is.skip(17 + 9 + 14 + 8);
         int graphicsFilletMarker = 0x85;
         Assert.assertEquals(is.read(), graphicsFilletMarker);
         int sizeOfGraphicsFillet = 128;
@@ -152,5 +152,21 @@ public class AFPGraphics2DTestCase {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         go.writeToStream(bos);
         Assert.assertEquals(bos.size(), 17 + 17);
+    }
+
+    @Test
+    public void testDrawGraphicsLineEnd() throws IOException {
+        GraphicContext gc = new GraphicContext();
+        gc.setClip(new Rectangle(0, 0, 100, 100));
+        graphics2D.setGraphicContext(gc);
+        GraphicsObject go = new GraphicsObject(new Factory(), "test");
+        graphics2D.setGraphicsObject(go);
+        graphics2D.draw(new Area(new Ellipse2D.Double(0, 0, 100, 100)));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        go.writeToStream(bos);
+        ByteArrayInputStream is = new ByteArrayInputStream(bos.toByteArray());
+        is.skip(40);
+        Assert.assertEquals(is.read(), 0x1A);
+        Assert.assertEquals(is.read(), 1);
     }
 }

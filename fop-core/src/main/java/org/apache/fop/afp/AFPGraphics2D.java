@@ -59,6 +59,7 @@ import org.apache.xmlgraphics.java2d.StrokingTextHandler;
 import org.apache.xmlgraphics.java2d.TextHandler;
 import org.apache.xmlgraphics.util.UnitConv;
 
+import org.apache.fop.afp.goca.GraphicsSetLineEnd;
 import org.apache.fop.afp.goca.GraphicsSetLineType;
 import org.apache.fop.afp.modca.GraphicsObject;
 import org.apache.fop.afp.modca.ResourceObject;
@@ -316,6 +317,7 @@ public class AFPGraphics2D extends AbstractGraphics2D implements NativeImageHand
                 }
                 graphicsObj.setLineType(type);
             }
+            graphicsObj.setLineEnd(GraphicsSetLineEnd.FLAT);
         } else {
             LOG.warn("Unsupported Stroke: " + stroke.getClass().getName());
         }
