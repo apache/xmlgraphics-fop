@@ -158,8 +158,8 @@
   </profiles>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/</connection>
-    <url>scm:svn:https://svn.apache.org/repos/asf/xmlgraphics/fop/trunk/</url>
+    <connection>scm:git:https://github.com/apache/xmlgraphics-fop.git</connection>
+    <url>scm:git:https://github.com/apache/xmlgraphics-fop.git</url>
     <developerConnection></developerConnection>
   </scm>
 
