@@ -1,8 +1,6 @@
 package org.apache.fop.accessibility;
 
-import org.apache.pdfbox.cos.COSBase;
-import org.apache.pdfbox.cos.COSDictionary;
-import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.cos.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.COSObjectable;
@@ -11,8 +9,11 @@ import org.apache.pdfbox.pdmodel.documentinterchange.markedcontent.PDMarkedConte
 import org.apache.pdfbox.pdmodel.documentinterchange.taggedpdf.PDTableAttributeObject;
 import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionGoTo;
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
 import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.*;
 import org.apache.pdfbox.text.PDFMarkedContentExtractor;
 import org.apache.pdfbox.text.TextPosition;
 import org.w3c.dom.Document;
@@ -62,57 +63,52 @@ public class PDFConverter {
 
         PDStructureTreeRoot structureTreeRoot = pdf.getDocumentCatalog().getStructureTreeRoot();
         if (structureTreeRoot == null) {
-            // create minimal wrapper if PDF is untagged
-            Element untagged = doc.createElement("UntaggedDocument");
+            Element untagged = create("UntaggedDocument");
             doc.appendChild(untagged);
             return doc;
         }
 
-        String rootTag = getNodeTagName(structureTreeRoot);
-        if (rootTag == null || rootTag.isEmpty()) {
-            rootTag = "PDFStructure";
-        }
-        Element root = doc.createElement(rootTag);
+        Element root = create("PDFStructure");
         doc.appendChild(root);
 
-        for (Object kid : structureTreeRoot.getKids()) {
-            if (kid instanceof PDStructureElement || kid instanceof PDStructureNode) {
-                appendChild(root, (PDStructureNode) kid);
-            } else if (kid instanceof PDObjectReference) {
-                appendChild(root, (PDObjectReference) kid);
-            } else {
-                Element unknown = doc.createElement("UnknownKid");
-                unknown.setAttribute("class", kid == null ? "null" : kid.getClass().getName());
-                root.appendChild(unknown);
+        List<?> kids = structureTreeRoot.getKids();
+        if (kids != null) {
+            for (Object kid : kids) {
+                if (kid instanceof PDStructureNode) {
+                    appendStructureNode(root, (PDStructureNode) kid);
+                } else if (kid instanceof PDObjectReference) {
+                    appendChild(root, (PDObjectReference) kid);
+                } else {
+                    Element unknown = create("UnknownKid");
+                    unknown.setAttribute("class", kid == null ? "null" : kid.getClass().getName());
+                    root.appendChild(unknown);
+                }
             }
         }
-
         return doc;
     }
 
-    private void appendChild(Element parent, PDStructureNode node) throws IOException {
-        if (node == null) {
-            return;
-        }
-        String tag = getNodeTagName(node);
-        if (tag == null || tag.isEmpty()) {
-            tag = "Undefined";
-        }
-        Element el = doc.createElement(tag);
+    private void appendStructureNode(Element parent, PDStructureNode node) throws IOException {
+        if (node == null) return;
 
-        // If node is element, carry attributes
+        String tag = getNodeTagName(node);
+        if (tag == null || tag.isEmpty()) tag = "Undefined";
+        Element el = create(tag);
+
         if (node instanceof PDStructureElement) {
             setAttributes(el, (PDStructureElement) node);
         }
         parent.appendChild(el);
 
-        for (Object kid : node.getKids()) {
+        List<?> kids = node.getKids();
+        if (kids == null) return;
+        for (Object kid : kids) {
             if (kid instanceof PDStructureElement) {
-                appendChild(el, (PDStructureElement) kid);
+                appendStructureNode(el, (PDStructureElement) kid);
             } else if (kid instanceof PDObjectReference) {
                 appendChild(el, (PDObjectReference) kid);
             } else if (kid instanceof PDStructureNode) {
-                appendChild(el, (PDStructureNode) kid);
+                appendStructureNode(el, (PDStructureNode) kid);
             } else if (kid instanceof PDMarkedContentReference) {
                 appendChild(el, (PDMarkedContentReference) kid);
             } else if (kid instanceof COSObjectable) {
@@ -120,20 +116,19 @@ public class PDFConverter {
             } else if (kid instanceof Integer) {
                 appendAtomic(el, kid);
             } else {
-                Element unknown = doc.createElement("UnknownChild");
+                Element unknown = create("UnknownChild");
                 unknown.setAttribute("class", kid == null ? "null" : kid.getClass().getName());
                 el.appendChild(unknown);
             }
         }
     }
 
+
     private void appendChild(Element parent, PDMarkedContentReference ref) throws IOException {
-        Element contentEl = doc.createElement("content");
-        List<Node> contentNodes = getContent(ref);
-        if (contentNodes != null) {
-            for (Node n : contentNodes) {
-                contentEl.appendChild(n);
-            }
+        Element contentEl = create("content");
+        List<Node> nodes = getContent(ref);
+        if (nodes != null) {
+            for (Node n : nodes) contentEl.appendChild(n);
         } else {
             contentEl.setAttribute("empty", "true");
         }
@@ -141,130 +136,251 @@ public class PDFConverter {
     }
 
     private void appendChild(Element parent, COSObjectable obj) {
-        Element el = doc.createElement("Object");
+        Element el = create("Object");
         el.setAttribute("class", obj.getClass().getName());
         parent.appendChild(el);
     }
 
+    /**
+     * Handle PDObjectReference: resolve referenced object and produce semantic XML node(s).
+     */
     private void appendChild(Element parent, PDObjectReference ref) {
+        Object referenced;
         try {
-            Object referenced = ref.getReferencedObject();
-
-            if (referenced == null) {
-                Element missing = doc.createElement("ObjectRef");
-                missing.setAttribute("status", "unresolved");
-                parent.appendChild(missing);
-                return;
-            }
-
-            if (referenced instanceof COSObjectable) {
-
-                // check common types
-                if (referenced instanceof PDImageXObject) {
-                    PDImageXObject img = (PDImageXObject) referenced;
-                    Element imgEl = doc.createElement("ImageRef");
-                    imgEl.setAttribute("w", Integer.toString(img.getWidth()));
-                    imgEl.setAttribute("h", Integer.toString(img.getHeight()));
-                    // if possible add suffix/format
-                    String suffix = img.getSuffix();
-                    if (suffix != null) {
-                        imgEl.setAttribute("format", suffix);
-                    }
-                    parent.appendChild(imgEl);
-                    return;
-                } else if (referenced instanceof PDFormXObject) {
-                    PDFormXObject form = (PDFormXObject) referenced;
-                    Element formEl = doc.createElement("FormRef");
-                    formEl.setAttribute("resources", "" + (form.getResources() != null));
-                    parent.appendChild(formEl);
-                    return;
-                } else if (referenced instanceof PDAnnotation) {
-                    // Annotation (likely Link)
-                    PDAnnotation annot = (PDAnnotation) referenced;
-                    Element annotEl = doc.createElement("AnnotationRef");
-                    annotEl.setAttribute("subtype", annot.getSubtype());
-                    // If link, try to read action/URI
-                    if (annot instanceof PDAnnotationLink) {
-                        PDAnnotationLink link = (PDAnnotationLink) annot;
-                        try {
-                            if (link.getAction() != null && link.getAction().getCOSObject() instanceof COSDictionary) {
-                                COSDictionary a = link.getAction().getCOSObject();
-                                String uri = a.getString(COSName.URI);
-                                if (uri != null) {
-                                    annotEl.setAttribute("uri", uri);
-                                }
-                            }
-                        } catch (Exception e) {
-                            // ignore failures reading action
-                        }
-                    }
-                    parent.appendChild(annotEl);
-                    return;
-                } else {
-                    Element o = doc.createElement("ObjectRef");
-                    o.setAttribute("class", ref.getClass().getName());
-                    parent.appendChild(o);
-                    return;
-                }
-            } else if (referenced instanceof COSBase) {
-                COSBase base = (COSBase) referenced;
-                if (base instanceof COSDictionary) {
-                    COSDictionary dict = (COSDictionary) base;
-                    // try to detect annotation via /Subtype
-                    String subtype = dict.getNameAsString(COSName.SUBTYPE);
-                    if (subtype != null) {
-                        Element ann = doc.createElement("AnnotationRef");
-                        ann.setAttribute("subtype", subtype);
-                        // attempt to find action -> URI
-                        COSBase action = dict.getItem(COSName.A);
-                        if (action instanceof COSDictionary) {
-                            String uri = ((COSDictionary) action).getString(COSName.URI);
-                            if (uri != null) {
-                                ann.setAttribute("uri", uri);
-                            }
-                        }
-                        parent.appendChild(ann);
-                        return;
-                    }
-
-                    // fallback: output info about dict
-                    Element dictEl = doc.createElement("ObjectRef");
-                    dictEl.setAttribute("cosType", "COSDictionary");
-                    try {
-                        Set<COSName> keys = dict.keySet();
-                        if (!keys.isEmpty()) {
-                            StringBuilder sb = new StringBuilder();
-                            for (COSName k : keys) {
-                                if (sb.length() > 0) sb.append(' ');
-                                sb.append(k.getName());
-                            }
-                            dictEl.setAttribute("keys", sb.toString());
-                        }
-                    } catch (Throwable t) {
-                        // ignore
-                    }
-                    parent.appendChild(dictEl);
-                } else {
-                    Element baseEl = doc.createElement("ObjectRef");
-                    baseEl.setAttribute("cosClass", base.getClass().getSimpleName());
-                    parent.appendChild(baseEl);
-                }
-                return;
-            }
-
-            // final fallback
-            Element fallback = doc.createElement("ObjectRef");
-            fallback.setAttribute("type", referenced.getClass().getName());
-            parent.appendChild(fallback);
+            referenced = ref.getReferencedObject();
         } catch (Exception e) {
-            Element error = doc.createElement("ObjectRef");
-            error.setAttribute("error", e.getClass().getSimpleName());
-            error.setTextContent(e.getMessage());
-            parent.appendChild(error);
+            appendError(parent, "ref-resolution", e);
+            return;
+        }
+
+        if (referenced == null) {
+            parent.appendChild(simple("ObjectRef", "status", "unresolved"));
+            return;
+        }
+
+        // High-level PDFBox wrappers
+        if (referenced instanceof COSObjectable) {
+            if (referenced instanceof PDImageXObject) {
+                PDImageXObject img = (PDImageXObject) referenced;
+                parent.appendChild(imageNode(img));
+                return;
+            }
+            if (referenced instanceof PDFormXObject) {
+                PDFormXObject form = (PDFormXObject) referenced;
+                parent.appendChild(formNode(form));
+                return;
+            }
+            if (referenced instanceof PDAnnotation) {
+                PDAnnotation annot = (PDAnnotation) referenced;
+                parent.appendChild(annotationNode(annot));
+                return;
+            }
+            // fallback for other COSObjectable types
+            parent.appendChild(simple("ObjectRef", "class", referenced.getClass().getName()));
+            return;
+        }
+
+        // Low-level COS objects
+        if (referenced instanceof COSBase) {
+            COSBase base = (COSBase) referenced;
+            if (base instanceof COSDictionary) {
+                parent.appendChild(cosDictionaryNode((COSDictionary) base));
+                return;
+            }
+            parent.appendChild(simple("ObjectRef", "cosClass", base.getClass().getSimpleName()));
+            return;
+        }
+
+        // final fallback
+        parent.appendChild(simple("ObjectRef", "type", referenced.getClass().getName()));
+    }
+
+    /* -------------------------
+       Helpers: create nodes
+       ------------------------- */
+
+    private Element create(String name) {
+        return doc.createElement(name);
+    }
+
+    private Element simple(String name, String attr, String val) {
+        Element e = create(name);
+        e.setAttribute(attr, val == null ? "" : val);
+        return e;
+    }
+
+    private Element imageNode(PDImageXObject img) {
+        Element el = create("ImageRef");
+        el.setAttribute("width", Integer.toString(img.getWidth()));
+        el.setAttribute("height", Integer.toString(img.getHeight()));
+        if (img.getSuffix() != null) el.setAttribute("format", img.getSuffix());
+        return el;
+    }
+
+    private Element formNode(PDFormXObject form) {
+        Element el = create("FormRef");
+        el.setAttribute("hasResources", Boolean.toString(form.getResources() != null));
+        return el;
+    }
+
+    /* -------------------------
+       Annotation handling (Link: URI + GoTo)
+       ------------------------- */
+
+    private Element annotationNode(PDAnnotation annot) {
+        Element el = create("AnnotationRef");
+        el.setAttribute("subtype", annot.getSubtype() == null ? "Unknown" : annot.getSubtype());
+
+        if (annot instanceof PDAnnotationLink) {
+            PDAnnotationLink link = (PDAnnotationLink) annot;
+
+            // external URI
+            try {
+                if (link.getAction() instanceof PDActionURI) {
+                    PDActionURI a = (PDActionURI) link.getAction();
+                    if (a.getURI() != null) el.setAttribute("uri", a.getURI());
+                }
+            } catch (Exception ignored) {}
+
+            // internal GoTo
+            try {
+                if (link.getAction() instanceof PDActionGoTo) {
+                    PDActionGoTo go = (PDActionGoTo) link.getAction();
+                    Element destEl = safeDestinationNode(go);
+                    el.appendChild(destEl);
+                }
+            } catch (Exception e) {
+                appendError(el, "action-destination", e);
+            }
+        }
+
+        return el;
+    }
+
+    /* -------------------------
+       Destination handling
+       ------------------------- */
+
+    private Element safeDestinationNode(PDActionGoTo go) {
+        Element root = create("Destination");
+        try {
+            PDDestination dest = go.getDestination();
+            if (dest == null) {
+                root.setAttribute("status", "missing");
+                return root;
+            }
+            Element resolved = destinationNode(dest);
+            if (resolved != null) return resolved;
+            root.setAttribute("status", "unhandled");
+            return root;
+        } catch (IOException io) {
+            root.setAttribute("error", "IOException");
+            root.setTextContent(io.getMessage());
+            return root;
+        } catch (Exception e) {
+            root.setAttribute("error", e.getClass().getSimpleName());
+            root.setTextContent(e.getMessage());
+            return root;
         }
     }
 
-    // get content for a PDMarkedContentReference
+    /**
+     * Interpret PDDestination into XML. Handles named destinations and PDPageDestination (including XYZ).
+     */
+    private Element destinationNode(PDDestination dest) throws IOException {
+        if (dest == null) return null;
+
+        // Named destination
+        if (dest instanceof PDNamedDestination) {
+            PDNamedDestination nd = (PDNamedDestination) dest;
+            Element el = create("Destination");
+            el.setAttribute("type", "Named");
+            if (nd.getNamedDestination() != null) el.setAttribute("name", nd.getNamedDestination());
+            return el;
+        }
+
+        // Page destinations
+        if (dest instanceof PDPageDestination) {
+            PDPageDestination pd = (PDPageDestination) dest;
+            Element el = create("Destination");
+            el.setAttribute("type", pd.getClass().getSimpleName());
+
+            PDPage page = pd.getPage();
+            if (page != null) {
+                int pageIndex = findPageIndex(page);
+                if (pageIndex > 0) el.setAttribute("page", Integer.toString(pageIndex));
+            }
+
+            if (pd instanceof PDPageXYZDestination) {
+                PDPageXYZDestination xyz = (PDPageXYZDestination) pd;
+                if (xyz.getLeft() != -1) el.setAttribute("left", Float.toString(safeFloat(xyz.getLeft())));
+                if (xyz.getTop() != -1) el.setAttribute("top", Float.toString(safeFloat(xyz.getTop())));
+                if (xyz.getZoom() != -1) el.setAttribute("zoom", Float.toString(safeFloat(xyz.getZoom())));
+            }
+            return el;
+        }
+
+        // fallback: unknown destination type
+        Element el = create("Destination");
+        el.setAttribute("type", "Unknown");
+        el.setAttribute("class", dest.getClass().getName());
+        return el;
+    }
+
+    // Try to find page index (1-based) for a PDPage
+    private int findPageIndex(PDPage page) {
+        if (page == null) return -1;
+        try {
+            int idx = 0;
+            for (PDPage p : pdf.getPages()) {
+                idx++;
+                if (p == page) return idx;
+            }
+        } catch (Exception ignored) {}
+        return -1;
+    }
+
+    /* -------------------------
+       COSDictionary node creation
+       ------------------------- */
+
+    private Element cosDictionaryNode(COSDictionary dict) {
+        Element el = create("ObjectRef");
+        el.setAttribute("cosType", "COSDictionary");
+        String subtype = dict.getNameAsString(COSName.SUBTYPE);
+        if (subtype != null) el.setAttribute("subtype", subtype);
+
+        COSBase action = dict.getItem(COSName.A);
+        if (action instanceof COSDictionary) {
+            COSDictionary aDict = (COSDictionary) action;
+            String uri = aDict.getString(COSName.URI);
+            if (uri != null) el.setAttribute("uri", uri);
+            String s = aDict.getNameAsString(COSName.S);
+            if ("GoTo".equals(s)) el.setAttribute("internal", "true");
+        }
+
+        StringBuilder sb = new StringBuilder();
+        try {
+            for (COSName k : dict.keySet()) {
+                if (sb.length() > 0) sb.append(' ');
+                sb.append(k.getName());
+            }
+        } catch (Exception ignored) {}
+        el.setAttribute("keys", sb.toString());
+        return el;
+    }
+
+    private void appendError(Element parent, String where, Exception e) {
+        Element err = create("ObjectRef");
+        err.setAttribute("error", where);
+        if (e != null && e.getMessage() != null) err.setTextContent(e.getMessage());
+        parent.appendChild(err);
+    }
+
+    /* -------------------------
+       Marked content extraction
+       ------------------------- */
+
     private ArrayList<Node> getContent(PDMarkedContentReference ref) throws IOException {
         PDPage page = ref.getPage();
         if (page == null) {
@@ -276,9 +392,9 @@ public class PDFConverter {
             extractor.processPage(page);
             List<PDMarkedContent> contents = extractor.getMarkedContents();
             pageMap = new HashMap<>();
-            for (PDMarkedContent content : contents) {
-                ArrayList<Node> nodes = markedContentToNodes(content);
-                pageMap.put(content.getMCID(), nodes);
+            for (PDMarkedContent c : contents) {
+                ArrayList<Node> nodes = markedContentToNodes(c);
+                pageMap.put(c.getMCID(), nodes);
             }
             contentPageMap.put(page, pageMap);
         }
@@ -299,27 +415,24 @@ public class PDFConverter {
                     nodes.add(doc.createTextNode(textBuf.toString()));
                     textBuf.setLength(0);
                 }
-                Element form = doc.createElement("form");
-                nodes.add(form);
+                nodes.add(create("form"));
             } else if (o instanceof PDImageXObject) {
                 if (textBuf.length() > 0) {
                     nodes.add(doc.createTextNode(textBuf.toString()));
                     textBuf.setLength(0);
                 }
-                Element image = doc.createElement("image");
                 PDImageXObject im = (PDImageXObject) o;
+                Element image = create("image");
                 image.setAttribute("w", Integer.toString(im.getWidth()));
                 image.setAttribute("h", Integer.toString(im.getHeight()));
-                String suffix = im.getSuffix();
-                if (suffix != null) image.setAttribute("format", suffix);
+                if (im.getSuffix() != null) image.setAttribute("format", im.getSuffix());
                 nodes.add(image);
             } else {
-                // unknown content type -> annotate class
                 if (textBuf.length() > 0) {
                     nodes.add(doc.createTextNode(textBuf.toString()));
                     textBuf.setLength(0);
                 }
-                Element unknown = doc.createElement("contentObject");
+                Element unknown = create("contentObject");
                 unknown.setAttribute("class", o == null ? "null" : o.getClass().getName());
                 nodes.add(unknown);
             }
@@ -332,7 +445,7 @@ public class PDFConverter {
 
     // small helper for atomic MCID ints
     private void appendAtomic(Element parent, Object atomic) {
-        Element el = doc.createElement("atomic");
+        Element el = create("atomic");
         el.setAttribute("type", atomic == null ? "null" : atomic.getClass().getName());
         el.setTextContent(String.valueOf(atomic));
         parent.appendChild(el);
@@ -369,7 +482,6 @@ public class PDFConverter {
                 }
             }
         } catch (Exception e) {
-            // attribute read should not break whole conversion
             el.setAttribute("attrError", e.getClass().getSimpleName());
         }
     }
@@ -380,12 +492,11 @@ public class PDFConverter {
         }
     }
 
-    // Normalize tag name: ensure starts with letter, replace invalid chars with '_'
+    // Normalize tag name: ensure safe characters for XML element names
     private String normalizeTagName(String raw) {
         if (raw == null) return "undefined";
         String s = raw.trim();
         if (s.isEmpty()) return "undefined";
-        // make simple xml-name-safe: letters, digits, underscore, hyphen
         StringBuilder sb = new StringBuilder();
         for (char c : s.toCharArray()) {
             if (Character.isLetterOrDigit(c) || c == '_' || c == '-' || c == ':') {
@@ -405,7 +516,6 @@ public class PDFConverter {
             if (cos == null) return null;
             String s = cos.getNameAsString(COSName.S);
             if (s == null) {
-                // fallback to StandardStructureType if available
                 if (node instanceof PDStructureElement) {
                     PDStructureElement se = (PDStructureElement) node;
                     String std = se.getStandardStructureType();
@@ -417,6 +527,10 @@ public class PDFConverter {
         } catch (Exception e) {
             return "undefined";
         }
+    }
+
+    private float safeFloat(float f) {
+        return Float.isNaN(f) ? 0f : f;
     }
 
     /**
