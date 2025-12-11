@@ -305,12 +305,16 @@ public class PDFConverter {
             Element el = create("Destination");
             el.setAttribute("type", pd.getClass().getSimpleName());
 
-            PDPage page = pd.getPage();
-            if (page != null) {
-                int pageIndex = findPageIndex(page);
-                if (pageIndex > 0) el.setAttribute("page", Integer.toString(pageIndex));
+            int pageIndex = pd.retrievePageNumber();
+            if (pageIndex >= 0) {
+                el.setAttribute("page", Integer.toString(pageIndex + 1));
+            } else {
+                // fallback if retrievePageNumber() fails
+                PDPage page = pd.getPage();
+                int idx = findPageIndex(page);
+                if (idx > 0) el.setAttribute("page", Integer.toString(idx));
             }
-
+            
             if (pd instanceof PDPageXYZDestination) {
                 PDPageXYZDestination xyz = (PDPageXYZDestination) pd;
                 if (xyz.getLeft() != -1) el.setAttribute("left", Float.toString(safeFloat(xyz.getLeft())));
@@ -330,13 +334,11 @@ public class PDFConverter {
     // Try to find page index (1-based) for a PDPage
     private int findPageIndex(PDPage page) {
         if (page == null) return -1;
-        try {
-            int idx = 0;
-            for (PDPage p : pdf.getPages()) {
-                idx++;
-                if (p == page) return idx;
-            }
-        } catch (Exception ignored) {}
+        int idx = 0;
+        for (PDPage p : pdf.getPages()) {
+            if (p == page) return idx + 1;
+            idx++;
+        }
         return -1;
     }
 
