@@ -159,7 +159,7 @@
 
   <scm>
     <connection>scm:git:https://github.com/apache/xmlgraphics-fop.git</connection>
-    <url>scm:git:https://github.com/apache/xmlgraphics-fop.git</url>
+    <url>https://github.com/apache/xmlgraphics-fop.git</url>
     <developerConnection></developerConnection>
   </scm>
 
