@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -30,13 +31,16 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.junit.Assert;
 import org.junit.Test;
+import org.xml.sax.helpers.AttributesImpl;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.pdf.PDFLinearizationTestCase;
+import org.apache.fop.pdf.PDFStructElem;
+import org.apache.fop.pdf.StandardStructureTypes;
 
 public class PDFStructureTreeTestCase {
     @Test
@@ -65,16 +69,107 @@ public class PDFStructureTreeTestCase {
         for (StringBuilder sb : objs) {
             String obj = sb.toString();
             if (obj.contains("/Type /MCR")) {
-                Assert.assertEquals(obj, obj.split("/Pg ").length, 2);
+                assertEquals(obj, obj.split("/Pg ").length, 2);
                 count++;
             }
         }
-        Assert.assertEquals(count, 4);
+        assertEquals(count, 4);
+    }
+
+    @Test
+    public void testTableHeaderDuplicatedIfStaticRegionsPerPageTrue() throws Exception {
+        List<PDFStructElem> elems = getPDFStructElems("<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" "
+                + "font-family=\"arial\" font-size=\"16pt\" xml:lang=\"en\">\n"
+                + "  <fo:layout-master-set>\n"
+                + "    <fo:simple-page-master master-name=\"A5-Page\" page-width=\"148mm\" page-height=\"210mm\">\n"
+                + "      <fo:region-body background-color=\"#efefef\" margin=\"10mm\"/>\n"
+                + "    </fo:simple-page-master>\n"
+                + "    <fo:page-sequence-master master-name=\"A5\">\n"
+                + "      <fo:repeatable-page-master-alternatives>\n"
+                + "        <fo:conditional-page-master-reference master-reference=\"A5-Page\"/>\n"
+                + "      </fo:repeatable-page-master-alternatives>\n"
+                + "    </fo:page-sequence-master>\n"
+                + "  </fo:layout-master-set>\n"
+                + "  <fo:page-sequence master-reference=\"A5\">\n"
+                + "    <fo:flow flow-name=\"xsl-region-body\">\n"
+                + "      <fo:block>\n"
+                + "        <fo:block padding-bottom=\"160mm\">Table overflow</fo:block>\n"
+                + "        <fo:table table-layout=\"fixed\" width=\"100%\">\n"
+                + "          <fo:table-header>\n"
+                + "            <fo:table-row>\n"
+                + "              <fo:table-cell number-columns-spanned=\"2\">\n"
+                + "                <fo:block font-weight=\"bold\" font-style=\"italic\" text-align=\"left\" "
+                + "text-align-last=\"center\"> Table Title </fo:block>\n"
+                + "              </fo:table-cell>\n"
+                + "            </fo:table-row>\n"
+                + "          </fo:table-header>\n"
+                + "          <fo:table-body>\n"
+                + "            <fo:table-row>\n"
+                + "              <fo:table-cell>\n"
+                + "                <fo:block>Row 1 Column A</fo:block>\n"
+                + "              </fo:table-cell>\n"
+                + "              <fo:table-cell>\n"
+                + "                <fo:block>Row 1 Column B</fo:block>\n"
+                + "              </fo:table-cell>\n"
+                + "            </fo:table-row>\n"
+                + "            <fo:table-row>\n"
+                + "              <fo:table-cell>\n"
+                + "                <fo:block>Row 2 Column A</fo:block>\n"
+                + "              </fo:table-cell>\n"
+                + "              <fo:table-cell>\n"
+                + "                <fo:block>Row 2 Column B</fo:block>\n"
+                + "              </fo:table-cell>\n"
+                + "            </fo:table-row>\n"
+                + "            <fo:table-row>\n"
+                + "              <fo:table-cell>\n"
+                + "                <fo:block>Row 2 Column A</fo:block>\n"
+                + "              </fo:table-cell>\n"
+                + "              <fo:table-cell>\n"
+                + "                <fo:block>Row 2 Column B</fo:block>\n"
+                + "              </fo:table-cell>\n"
+                + "            </fo:table-row>\n"
+                + "            <fo:table-row>\n"
+                + "              <fo:table-cell>\n"
+                + "                <fo:block>Row 2 Column A</fo:block>\n"
+                + "              </fo:table-cell>\n"
+                + "              <fo:table-cell>\n"
+                + "                <fo:block>Row 2 Column B</fo:block>\n"
+                + "              </fo:table-cell>\n"
+                + "            </fo:table-row>\n"
+                + "          </fo:table-body>\n"
+                + "        </fo:table>\n"
+                + "      </fo:block>\n"
+                + "    </fo:flow>\n"
+                + "  </fo:page-sequence>\n"
+                + "</fo:root>");
+
+        int count = 0;
+        for (PDFStructElem elem : elems) {
+            if (elem.getStructureType().equals(StandardStructureTypes.Table.THEAD)) {
+                count++;
+            }
+        }
+
+        assertEquals("The static region per page conf must apply to static regions only", 1, count);
+    }
+
+    private List<PDFStructElem> getPDFStructElems(String fo) throws Exception {
+        FopFactory fopFactory = getFopFactory();
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        foToOutput(fo, fopFactory, userAgent);
+
+        PDFStructElem block = (PDFStructElem) userAgent
+                .getStructureTreeEventHandler().startNode("block", new AttributesImpl(), null);
+
+        return block.getDocument().getStructureTreeElements();
     }
 
     private ByteArrayOutputStream foToOutput(String fo) throws Exception {
         FopFactory fopFactory = getFopFactory();
-        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        return foToOutput(fo, fopFactory, fopFactory.newFOUserAgent());
+    }
+
+    private ByteArrayOutputStream foToOutput(String fo, FopFactory fopFactory, FOUserAgent userAgent) throws Exception {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Fop fop = fopFactory.newFop("application/pdf", userAgent, bos);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
