@@ -44,6 +44,7 @@ import org.apache.fop.Version;
 import org.apache.fop.accessibility.Accessibility;
 import org.apache.fop.accessibility.DummyStructureTreeEventHandler;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
+import org.apache.fop.afp.fonts.CharacterSetBuilder;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationException;
@@ -882,5 +883,13 @@ public class FOUserAgent {
 
     public boolean isLegacyFoWrapper() {
         return factory.isLegacyFoWrapper();
+    }
+
+    public CharacterSetBuilder getDoubleByteCharacterSetBuilder() {
+        return factory.getDoubleByteCharacterSetBuilder();
+    }
+
+    public CharacterSetBuilder getSingleByteCharacterSetBuilder() {
+        return factory.getSingleByteCharacterSetBuilder();
     }
 }

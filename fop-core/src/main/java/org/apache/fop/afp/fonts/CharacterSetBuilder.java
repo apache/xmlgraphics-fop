@@ -119,23 +119,6 @@ public abstract class CharacterSetBuilder {
     }
 
     /**
-     * Factory method for the single-byte implementation of AFPFontReader.
-     * @return AFPFontReader
-     */
-    public static CharacterSetBuilder getSingleByteInstance() {
-        return SingleByteLoader.getInstance();
-    }
-
-    /**
-     * Factory method for the double-byte (CID Keyed font (Type 0)) implementation of AFPFontReader.
-     * @return AFPFontReader
-     */
-    public static CharacterSetBuilder getDoubleByteInstance() {
-        return DoubleByteLoader.getInstance();
-    }
-
-
-    /**
      * Returns an InputStream to a given file path and filename
      *
      * @param accessor the resource accessor
@@ -667,31 +650,17 @@ public abstract class CharacterSetBuilder {
         }
     }
 
-    private static final class SingleByteLoader extends CharacterSetBuilder {
-
-        private static final SingleByteLoader INSTANCE = new SingleByteLoader();
-
-        private SingleByteLoader() {
+    public static final class SingleByteLoader extends CharacterSetBuilder {
+        public SingleByteLoader() {
             super();
-        }
-
-        private static SingleByteLoader getInstance() {
-            return INSTANCE;
         }
     }
 
     /**
      * Double-byte (CID Keyed font (Type 0)) implementation of AFPFontReader.
      */
-    private static final class DoubleByteLoader extends CharacterSetBuilder {
-
-        private static final DoubleByteLoader INSTANCE = new DoubleByteLoader();
-
-        private DoubleByteLoader() {
-        }
-
-        static DoubleByteLoader getInstance() {
-            return INSTANCE;
+    public static final class DoubleByteLoader extends CharacterSetBuilder {
+        public DoubleByteLoader() {
         }
 
         @Override

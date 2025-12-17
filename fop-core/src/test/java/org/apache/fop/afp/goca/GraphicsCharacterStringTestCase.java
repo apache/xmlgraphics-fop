@@ -18,6 +18,7 @@
 package org.apache.fop.afp.goca;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.Before;
@@ -26,6 +27,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.fonts.CharacterSetBuilder;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fonts.Typeface;
 
 public class GraphicsCharacterStringTestCase {
@@ -40,7 +42,8 @@ public class GraphicsCharacterStringTestCase {
 
     @Before
     public void setUp() throws Exception {
-        CharacterSetBuilder csb = CharacterSetBuilder.getSingleByteInstance();
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+        CharacterSetBuilder csb = fopFactory.newFOUserAgent().getSingleByteCharacterSetBuilder();
         CharacterSet cs1146 = csb.build("C0H200B0", "T1V10500", "Cp1146",
                 Class.forName("org.apache.fop.fonts.base14.Helvetica").asSubclass(Typeface.class)
                         .getDeclaredConstructor().newInstance(), null);

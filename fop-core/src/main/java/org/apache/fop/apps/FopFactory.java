@@ -40,6 +40,7 @@ import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.apache.xmlgraphics.image.loader.impl.AbstractImageSessionContext.FallbackResolver;
 import org.apache.xmlgraphics.util.UnitConv;
 
+import org.apache.fop.afp.fonts.CharacterSetBuilder;
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.configuration.Configuration;
@@ -92,6 +93,9 @@ public final class FopFactory implements ImageContext {
     private final Map<String, RendererConfig> rendererConfig;
 
     private HyphenationTreeCache hyphenationTreeCache;
+
+    private CharacterSetBuilder singleByteCharacterSetBuilder;
+    private CharacterSetBuilder doubleByteCharacterSetBuilder;
 
     private FopFactory(FopFactoryConfig config) {
         this.config = config;
@@ -506,5 +510,19 @@ public final class FopFactory implements ImageContext {
             hyphenationTreeCache = new HyphenationTreeCache();
         }
         return hyphenationTreeCache;
+    }
+
+    public CharacterSetBuilder getDoubleByteCharacterSetBuilder() {
+        if (doubleByteCharacterSetBuilder == null) {
+            doubleByteCharacterSetBuilder = new CharacterSetBuilder.DoubleByteLoader();
+        }
+        return doubleByteCharacterSetBuilder;
+    }
+
+    public CharacterSetBuilder getSingleByteCharacterSetBuilder() {
+        if (singleByteCharacterSetBuilder == null) {
+            singleByteCharacterSetBuilder = new CharacterSetBuilder.SingleByteLoader();
+        }
+        return singleByteCharacterSetBuilder;
     }
 }

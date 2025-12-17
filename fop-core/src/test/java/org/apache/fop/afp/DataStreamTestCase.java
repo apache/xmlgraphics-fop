@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,6 +38,7 @@ import org.apache.fop.afp.modca.InvokeMediumMap;
 import org.apache.fop.afp.modca.PageGroup;
 import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.afp.util.BinaryUtils;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.util.CharUtilities;
@@ -64,7 +66,8 @@ public class DataStreamTestCase {
         textInfo.setX(50);
         textInfo.setY(50);
         textInfo.setColor(Color.black);
-        CharacterSetBuilder csb = CharacterSetBuilder.getSingleByteInstance();
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+        CharacterSetBuilder csb = fopFactory.newFOUserAgent().getSingleByteCharacterSetBuilder();
         cs1146 = csb.build("C0H200B0", "T1V10500", "Cp1146",
                 Class.forName("org.apache.fop.fonts.base14.Helvetica").asSubclass(Typeface.class)
                         .getDeclaredConstructor().newInstance(), null);
