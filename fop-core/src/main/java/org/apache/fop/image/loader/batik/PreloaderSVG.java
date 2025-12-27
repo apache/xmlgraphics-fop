@@ -128,9 +128,7 @@ public class PreloaderSVG extends AbstractImagePreloader {
                             getParserName());
                     doc = factory.createSVGDocument(src.getSystemId(), in);
                 }
-                ImageInfo info = createImageInfo(uri, context, doc);
-
-                return info;
+                return createImageInfo(uri, context, doc);
             } catch (NoClassDefFoundError ncdfe) {
                 if (in != null) {
                     try {

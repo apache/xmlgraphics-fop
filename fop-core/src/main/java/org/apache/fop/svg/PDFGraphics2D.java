@@ -396,8 +396,7 @@ public class PDFGraphics2D extends AbstractGraphics2D implements NativeImageHand
      * @return the transformation matrix that established the basic user space for this document
      */
     protected AffineTransform getBaseTransform() {
-        AffineTransform at = new AffineTransform(paintingState.getTransform());
-        return at;
+        return new AffineTransform(paintingState.getTransform());
     }
 
     /**
