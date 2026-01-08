@@ -22,9 +22,11 @@ import java.awt.Rectangle;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.mockito.InOrder;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -34,6 +36,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.BorderProps.Mode;
+
 
 public class BorderPainterTestCase {
 
@@ -73,6 +76,10 @@ public class BorderPainterTestCase {
         tester.test();
     }
 
+    private void testOrientation(BorderPainterTester<?> tester) throws IOException {
+        tester.testOrientation();
+    }
+
     @Test (expected = IFException.class)
     public void drawBordersThrowsIFException() throws Exception {
         GraphicsPainter graphicsPainter = mock(GraphicsPainter.class);
@@ -87,6 +94,12 @@ public class BorderPainterTestCase {
         test(new DrawRectangularBordersTester(0, 0, 1000, 1000));
         test(new DrawRectangularBordersTester(0, 0, 1000, 1000).setBorderWidth(10)
                 .beforeBorder().setWidth(0).tester());
+    }
+
+    @Test
+    public void testDrawRectangularBordersOrientation() throws IOException {
+        testOrientation(new DrawRectangularBordersTester(0, 0, 1000, 1000)
+                .setBorderWidth(10).beforeBorder().setWidth(10).tester());
     }
 
     @Test
@@ -110,6 +123,12 @@ public class BorderPainterTestCase {
         test(new DrawRoundedBordersTester(0, 0, 100, 100).setBorderWidth(15).setCornerRadii(10)
                 .beforeBorder().setWidth(5).tester());
         test(new DrawRoundedBordersTester(0, 0, 60, 60).setBorderWidth(4).setCornerRadii(30));
+    }
+
+    @Test
+    public void drawRoundedBordersOrientation() throws Exception {
+        testOrientation(new DrawRoundedBordersTester(0, 0, 100, 100).setBorderWidth(15)
+                .setCornerRadii(10).beforeBorder().setWidth(5).tester());
     }
 
     @Test
@@ -244,7 +263,17 @@ public class BorderPainterTestCase {
             testMethod();
         }
 
+        public void testOrientation() throws IOException {
+            before = beforeBuilder.build();
+            after = afterBuilder.build();
+            end = endBuilder.build();
+            start = startBuilder.build();
+            testMethodOrientation();
+        }
+
         protected abstract void testMethod() throws IOException;
+
+        protected abstract void testMethodOrientation() throws IOException;
 
         protected static int numberOfNonZeroBorders(BorderProps first, BorderProps... borders) {
             int i = first.width == 0 ? 0 : 1;
@@ -339,6 +368,26 @@ public class BorderPainterTestCase {
             verifyDrawing();
         }
 
+        @Override
+        protected void testMethodOrientation() throws IOException {
+            sut.drawRoundedBorders(borderExtent, before, after, start, end);
+
+            InOrder inOrder = inOrder(graphicsPainter);
+
+            // orientation 0
+            inOrder.verify(graphicsPainter, times(0)).rotateCoordinates(0);
+            inOrder.verify(graphicsPainter).closePath();
+            // orientation 1
+            inOrder.verify(graphicsPainter).rotateCoordinates(Math.PI / 2d);
+            inOrder.verify(graphicsPainter).closePath();
+            // orientation 2
+            inOrder.verify(graphicsPainter).rotateCoordinates(Math.PI * 2 / 2d);
+            inOrder.verify(graphicsPainter).closePath();
+            // orientation 3
+            inOrder.verify(graphicsPainter).rotateCoordinates(Math.PI * 3 / 2d);
+            inOrder.verify(graphicsPainter).closePath();
+        }
+
         private void verifyDrawing() throws IOException {
             final int rectX = borderExtent.x;
             final int rectY = borderExtent.y;
@@ -398,6 +447,25 @@ public class BorderPainterTestCase {
         public void testMethod() throws IOException {
             sut.drawRoundedBorders(borderExtent, before, after, start, end);
             verifyDrawing();
+        }
+
+        public void testMethodOrientation() throws IOException {
+            sut.drawRoundedBorders(borderExtent, before, after, start, end);
+
+            InOrder inOrder = inOrder(graphicsPainter);
+
+            // orientation 1
+            inOrder.verify(graphicsPainter).rotateCoordinates(Math.PI / 2d);
+            inOrder.verify(graphicsPainter).closePath();
+            // orientation 3
+            inOrder.verify(graphicsPainter).rotateCoordinates(Math.PI * 3 / 2d);
+            inOrder.verify(graphicsPainter).closePath();
+            // orientation 0
+            inOrder.verify(graphicsPainter, times(0)).rotateCoordinates(0);
+            inOrder.verify(graphicsPainter).closePath();
+            // orientation 2
+            inOrder.verify(graphicsPainter).rotateCoordinates(Math.PI * 2 / 2d);
+            inOrder.verify(graphicsPainter).closePath();
         }
 
         private void verifyDrawing() throws IOException {
@@ -480,6 +548,11 @@ public class BorderPainterTestCase {
         public void testMethod() throws IOException {
             sut.clipBackground(borderExtent, before, after, start, end);
             verifyClipping();
+        }
+
+        @Override
+        protected void testMethodOrientation() throws IOException {
+            //not needed
         }
 
         private void verifyClipping() throws IOException {

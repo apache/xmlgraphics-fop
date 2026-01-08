@@ -317,11 +317,25 @@ public class BorderPainter {
         //Determine scale factor if any adjacent elliptic corners overlap
         double cornerCorrectionFactor = calculateCornerScaleCorrection(width, height, before, after, start,
                 end);
-        drawBorderSegment(start, before, end, 0, width, startx, starty, cornerCorrectionFactor);
-        drawBorderSegment(before, end, after, 1, height, startx + width, starty, cornerCorrectionFactor);
-        drawBorderSegment(end, after, start, 2, width, startx + width, starty + height,
-                cornerCorrectionFactor);
-        drawBorderSegment(after, start, before, 3, height, startx, starty + height, cornerCorrectionFactor);
+
+        if (hasRadius(before) || hasRadius(after) || hasRadius(start) || hasRadius(end)) {
+            drawBorderSegment(before, end, after, 1, height, startx + width, starty, cornerCorrectionFactor);
+            drawBorderSegment(after, start, before, 3, height, startx, starty + height, cornerCorrectionFactor);
+
+            drawBorderSegment(start, before, end, 0, width, startx, starty, cornerCorrectionFactor);
+            drawBorderSegment(end, after, start, 2, width, startx + width, starty + height,
+                    cornerCorrectionFactor);
+        } else {
+            drawBorderSegment(start, before, end, 0, width, startx, starty, cornerCorrectionFactor);
+            drawBorderSegment(before, end, after, 1, height, startx + width, starty, cornerCorrectionFactor);
+            drawBorderSegment(end, after, start, 2, width, startx + width, starty + height,
+                    cornerCorrectionFactor);
+            drawBorderSegment(after, start, before, 3, height, startx, starty + height, cornerCorrectionFactor);
+        }
+    }
+
+    private boolean hasRadius(BorderSegment segment) {
+        return segment.getRadiusStart() != 0 || segment.getRadiusEnd() != 0;
     }
 
     private void drawBorderSegment(BorderSegment start, BorderSegment before, BorderSegment end,
