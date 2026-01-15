@@ -1,5 +1,6 @@
 package org.apache.fop.tagging;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
@@ -21,6 +22,8 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.apache.pdfbox.text.PDFMarkedContentExtractor;
 import org.apache.pdfbox.text.TextPosition;
+
+import org.bouncycastle.util.io.Streams;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -30,6 +33,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -571,8 +576,9 @@ public class PDFConverter {
             System.err.println("Resource not found: " + source);
             return;
         }
-        pdf = PDDocument.load(in);
-
+        ByteArrayOutputStream inputBytes = new ByteArrayOutputStream();
+        Streams.pipeAll(in, inputBytes);
+        pdf = Loader.loadPDF(inputBytes.toByteArray());
 
         PDFConverter pc = PDFConverter.newInstance(pdf);
         File out = new File(Paths.get(source).getFileName() + ".xml");

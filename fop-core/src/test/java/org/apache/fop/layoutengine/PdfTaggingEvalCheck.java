@@ -17,33 +17,36 @@
 
 /* $Id$ */
 
-package org.apache.fop.intermediate;
+package org.apache.fop.layoutengine;
 
-import org.apache.fop.layoutengine.IFEvalCheck;
-import org.apache.fop.layoutengine.IFTrueCheck;
-import org.w3c.dom.Element;
-
-import org.apache.fop.check.ChecksFactory;
+import org.apache.fop.tagging.PdfTaggingCheck;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
- * A factory class for creating {@link IFCheck} instances.
+ * Simple check that requires an XPath expression to evaluate to true.
  */
-final class IFChecksFactory extends ChecksFactory<IFCheck> {
+public class PdfTaggingEvalCheck implements PdfTaggingCheck {
 
-    IFChecksFactory() {
-        registerCheckFactory("true", new CheckFactory<IFCheck>() {
+    private final EvalCheck evalCheck;
 
-            public IFCheck createCheck(Element element) {
-                return new IFTrueCheck(element);
-            }
-
-        });
-        registerCheckFactory("eval", new CheckFactory<IFCheck>() {
-
-            public IFCheck createCheck(Element element) {
-                return new IFEvalCheck(element);
-            }
-
-        });
+    /**
+     * Creates a new instance from a DOM node.
+     * @param node DOM node that defines this check
+     */
+    public PdfTaggingEvalCheck(final Node node) {
+        evalCheck = new EvalCheck(node);
     }
+
+    /** {@inheritDoc} */
+    public void check(Document pdfTagging) {
+        evalCheck.doCheck(pdfTagging);
+    }
+
+
+    /** {@inheritDoc} */
+    public String toString() {
+        return evalCheck.toString();
+    }
+
 }

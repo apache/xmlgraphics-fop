@@ -17,31 +17,31 @@
 
 /* $Id$ */
 
-package org.apache.fop.intermediate;
-
-import org.apache.fop.layoutengine.IFEvalCheck;
-import org.apache.fop.layoutengine.IFTrueCheck;
-import org.w3c.dom.Element;
+package org.apache.fop.tagging;
 
 import org.apache.fop.check.ChecksFactory;
+import org.apache.fop.intermediate.IFCheck;
+import org.apache.fop.layoutengine.PdfTaggingEvalCheck;
+import org.apache.fop.layoutengine.PdfTaggingTrueCheck;
+import org.w3c.dom.Element;
 
 /**
  * A factory class for creating {@link IFCheck} instances.
  */
-final class IFChecksFactory extends ChecksFactory<IFCheck> {
+final class PdfTaggingChecksFactory extends ChecksFactory<PdfTaggingCheck> {
 
-    IFChecksFactory() {
-        registerCheckFactory("true", new CheckFactory<IFCheck>() {
+    PdfTaggingChecksFactory() {
+        registerCheckFactory("true", new CheckFactory<PdfTaggingCheck>() {
 
-            public IFCheck createCheck(Element element) {
-                return new IFTrueCheck(element);
+            public PdfTaggingCheck createCheck(Element element) {
+                return new PdfTaggingTrueCheck(element);
             }
 
         });
-        registerCheckFactory("eval", new CheckFactory<IFCheck>() {
+        registerCheckFactory("eval", new CheckFactory<PdfTaggingCheck>() {
 
-            public IFCheck createCheck(Element element) {
-                return new IFEvalCheck(element);
+            public PdfTaggingCheck createCheck(Element element) {
+                return new PdfTaggingEvalCheck(element);
             }
 
         });

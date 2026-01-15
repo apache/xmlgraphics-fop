@@ -19,25 +19,18 @@
 
 package org.apache.fop.layoutengine;
 
-import java.util.Iterator;
-
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
+import org.apache.fop.util.XMLConstants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import org.apache.fop.intermediate.IFCheck;
-import org.apache.fop.util.XMLConstants;
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.xpath.*;
+import java.util.Iterator;
 
 /**
  * Simple check that requires an XPath expression to evaluate to true.
  */
-public class EvalCheck implements LayoutEngineCheck, IFCheck {
+public class EvalCheck {
 
     private String expected;
     private String xpath;
@@ -81,7 +74,7 @@ public class EvalCheck implements LayoutEngineCheck, IFCheck {
         doCheck(intermediate);
     }
 
-    private void doCheck(Document doc) {
+    void doCheck(Document doc) {
         String actual;
         try {
             XPath xPathAPI = XPathFactory.newInstance().newXPath();

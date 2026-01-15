@@ -27,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import org.apache.commons.logging.Log;
@@ -73,4 +74,9 @@ public class DefaultConfigurationBuilder {
             throw new ConfigurationException("xml parse error", e);
         }
     }
+
+    public static DefaultConfiguration buildFromElement(Element cfgNode) throws ConfigurationException {
+        return new DefaultConfiguration(cfgNode);
+    }
+
 }

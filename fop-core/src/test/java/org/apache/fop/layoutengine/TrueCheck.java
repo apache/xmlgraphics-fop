@@ -19,24 +19,18 @@
 
 package org.apache.fop.layoutengine;
 
-import java.util.Iterator;
-
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import org.apache.fop.intermediate.IFCheck;
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.xpath.*;
+import java.util.Iterator;
+
 
 /**
  * Simple check that requires an XPath expression to evaluate to true.
  */
-public class TrueCheck implements LayoutEngineCheck, IFCheck {
+public class TrueCheck {
 
     private String xpath;
     private String failureMessage;
@@ -65,17 +59,7 @@ public class TrueCheck implements LayoutEngineCheck, IFCheck {
         };
     }
 
-    /** {@inheritDoc} */
-    public void check(LayoutResult result) {
-        doCheck(result.getAreaTree());
-    }
-
-    /** {@inheritDoc} */
-    public void check(Document intermediate) {
-        doCheck(intermediate);
-    }
-
-    private void doCheck(Document doc) {
+    void doCheck(Document doc) {
         boolean res;
         try {
             XPath xPathAPI = XPathFactory.newInstance().newXPath();

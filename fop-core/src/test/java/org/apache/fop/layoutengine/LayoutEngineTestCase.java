@@ -19,47 +19,9 @@
 
 package org.apache.fop.layoutengine;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.TransformerHandler;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.apache.fop.DebugHelper;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.FormattingResults;
+import org.apache.fop.tagging.PDFConverter;
+import org.apache.fop.apps.*;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.AreaTreeParser;
 import org.apache.fop.area.RenderPagesModel;
@@ -68,6 +30,7 @@ import org.apache.fop.events.EventListener;
 import org.apache.fop.events.model.EventSeverity;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.intermediate.IFTester;
+import org.apache.fop.tagging.PdfTaggingTester;
 import org.apache.fop.intermediate.TestAssistant;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.render.intermediate.IFContext;
@@ -76,6 +39,29 @@ import org.apache.fop.render.intermediate.IFSerializer;
 import org.apache.fop.render.xml.XMLRenderer;
 import org.apache.fop.util.ConsoleEventListenerForTests;
 import org.apache.fop.util.DelegatingContentHandler;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.w3c.dom.*;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.TransformerHandler;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 /**
  * Class for testing the FOP's layout engine using testcases specified in XML
@@ -111,6 +97,7 @@ public class LayoutEngineTestCase {
     private LayoutEngineChecksFactory layoutEngineChecksFactory = new LayoutEngineChecksFactory();
 
     private IFTester ifTester;
+    private PdfTaggingTester pdfTaggingTester;
     private File testFile;
 
     private TransformerFactory tfactory = TransformerFactory.newInstance();
@@ -122,6 +109,7 @@ public class LayoutEngineTestCase {
      */
     public LayoutEngineTestCase(File testFile) {
         this.ifTester = new IFTester(tfactory, areaTreeBackupDir);
+        this.pdfTaggingTester = new PdfTaggingTester(tfactory, areaTreeBackupDir);
         this.testFile = testFile;
     }
 
@@ -244,7 +232,7 @@ public class LayoutEngineTestCase {
      * @throws TransformerException if a problem occurs in XSLT/JAXP
      */
     protected void checkAll(FopFactory fopFactory, File testFile, LayoutResult result,
-            EventsChecker eventsChecker) throws TransformerException {
+            EventsChecker eventsChecker) throws TransformerException, ParserConfigurationException, IOException, FOPException {
         Element testRoot = testAssistant.getTestRoot(testFile);
 
         NodeList nodes;
@@ -253,6 +241,14 @@ public class LayoutEngineTestCase {
         if (nodes.getLength() > 0) {
             Element atChecks = (Element)nodes.item(0);
             doATChecks(atChecks, result);
+        }
+
+        nodes = testRoot.getElementsByTagName("pdf-tagging-checks");
+        if (nodes.getLength() > 0) {
+            PDDocument pdf = generatePdf(testFile);
+            Document pdfTagging = PDFConverter.newInstance(pdf).asDom();
+            Element psChecks = (Element)nodes.item(0);
+            pdfTaggingTester.doPdfTaggingChecks(testFile.getName(), psChecks, pdfTagging);
         }
 
         //IF tests only when checks are available
@@ -269,6 +265,28 @@ public class LayoutEngineTestCase {
             doEventChecks(eventChecks, eventsChecker);
         }
         eventsChecker.emitUncheckedEvents();
+    }
+
+    private PDDocument generatePdf(File testFile) throws TransformerException, FOPException, IOException {
+        Document testDoc = testAssistant.loadTestCase(testFile);
+        FopFactory fopFactory = testAssistant.getFopFactory(testDoc);
+        FOUserAgent userAgent = fopFactory.newFOUserAgent();
+
+        ByteArrayOutputStream pdfOut = new ByteArrayOutputStream();
+        Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, pdfOut);
+
+        Transformer foTransformer = testAssistant.getTestcase2FOStylesheet().newTransformer();
+        DOMResult foResult = new DOMResult();
+        foTransformer.transform(new DOMSource(testDoc), foResult);
+
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Source src = new DOMSource(
+                ((Document) foResult.getNode()).getDocumentElement());
+        Result res = new SAXResult(fop.getDefaultHandler());
+        transformer.transform(src, res);
+
+        return Loader.loadPDF(pdfOut.toByteArray());
+
     }
 
     private Document createIF(FopFactory fopFactory, File testFile, Document areaTreeXML)

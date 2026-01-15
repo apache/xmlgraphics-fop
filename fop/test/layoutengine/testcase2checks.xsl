@@ -26,6 +26,7 @@
     <xsl:apply-templates select="checks"/>
     <xsl:apply-templates select="if-checks"/>
     <xsl:apply-templates select="event-checks"/>
+    <xsl:apply-templates select="pdf-tagging-checks"/>
   </checks>
 </xsl:template>
 
@@ -34,6 +35,12 @@
     <xsl:copy-of select="$basic-checks" />
     <xsl:copy-of select="*" />
   </at-checks>
+</xsl:template>
+
+<xsl:template match="pdf-tagging-checks">
+  <pdf-tagging-checks>
+    <xsl:copy-of select="*"/>
+  </pdf-tagging-checks>
 </xsl:template>
 
 <xsl:template match="if-checks">

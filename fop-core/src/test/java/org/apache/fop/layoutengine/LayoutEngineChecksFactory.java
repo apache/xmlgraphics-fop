@@ -32,14 +32,14 @@ public final class LayoutEngineChecksFactory extends ChecksFactory<LayoutEngineC
         registerCheckFactory("true", new CheckFactory<LayoutEngineCheck>() {
 
             public LayoutEngineCheck createCheck(Element element) {
-                return new TrueCheck(element);
+                return new IFTrueCheck(element);
             }
 
         });
         registerCheckFactory("eval", new CheckFactory<LayoutEngineCheck>() {
 
             public LayoutEngineCheck createCheck(Element element) {
-                return new EvalCheck(element);
+                return new IFEvalCheck(element);
             }
 
         });

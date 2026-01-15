@@ -48,6 +48,9 @@ import org.apache.fop.apps.EnvironmentalProfileFactory;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.io.ResourceResolverFactory;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.ConfigurationException;
+import org.apache.fop.configuration.DefaultConfigurationBuilder;
 
 /**
  * Helper class for running FOP tests.
@@ -57,7 +60,8 @@ public class TestAssistant {
     // configure fopFactory as desired
     protected final File testDir = new File("test/layoutengine/standard-testcases");
 
-    private SAXTransformerFactory tfactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+    private final SAXTransformerFactory tfactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+    private final XPathFactory xpathFactory = XPathFactory.newInstance();
 
     private DocumentBuilderFactory domBuilderFactory;
 
@@ -129,7 +133,25 @@ public class TestAssistant {
         builder.setLegacySkipPagePositionOnly(isLegacySkipPagePositionOnly(testDoc));
         builder.setLegacyLastPageChangeIPD(isLegacyLastPageChangeIPD(testDoc));
         builder.setLegacyFoWrapper(isLegacyFoWrapper(testDoc));
+        //Optionally embedded config Overrides single settings
+        applyEmbeddedFopConfig(builder, testDoc);
         return builder.build();
+    }
+
+    private void applyEmbeddedFopConfig(FopFactoryBuilder builder, Document testDoc) {
+        XPath xPath = xpathFactory.newXPath();
+        try {
+            //You can use an embedded FOP XML Configuration under the "cfg" tag.
+            Element fopConfigNode = (Element)xPath.evaluate("/testcase/cfg/fop", testDoc, XPathConstants.NODE);
+            if (fopConfigNode != null) {
+                Configuration cfg = DefaultConfigurationBuilder.buildFromElement(fopConfigNode);
+                builder.setConfiguration(cfg);
+            }
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException("Error while evaluating XPath expression", e);
+        } catch (ConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private boolean isBase14KerningEnabled(Document testDoc) {
@@ -160,7 +182,7 @@ public class TestAssistant {
     }
 
     private String eval(Document doc, String xpath) throws XPathExpressionException {
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = xpathFactory.newXPath();
         return (String) xPath.compile(xpath).evaluate(doc, XPathConstants.STRING);
     }
 
