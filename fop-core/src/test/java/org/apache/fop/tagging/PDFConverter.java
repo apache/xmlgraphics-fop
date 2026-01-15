@@ -21,7 +21,6 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
 import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.apache.pdfbox.text.PDFMarkedContentExtractor;
 import org.apache.pdfbox.text.TextPosition;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -31,21 +30,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Generates a custom PDF-tag-tree from a PDF
- *
- * <p>
- *     The tag tree is used in some tests.
- * </p>
- */
 public class PDFConverter {
 
     private final PDDocument pdf;
@@ -564,5 +557,29 @@ public class PDFConverter {
         Result output = new StreamResult(file);
         transformer.transform(new DOMSource(d), output);
     }
+
+    public static void main(String[] args) throws Exception {
+        if (args.length == 0) {
+            System.err.println("Usage: PDFConverter <pdf-resource-or-file>");
+            System.exit(1);
+        }
+        String source = args[0];
+        PDDocument pdf;
+
+        InputStream in = PDFConverter.class.getResourceAsStream("/" + source);
+        if (in == null) {
+            System.err.println("Resource not found: " + source);
+            return;
+        }
+        pdf = PDDocument.load(in);
+
+
+        PDFConverter pc = PDFConverter.newInstance(pdf);
+        File out = new File(Paths.get(source).getFileName() + ".xml");
+        pc.dropDom(out);
+        pdf.close();
+        System.out.println("Wrote: " + out.getAbsolutePath());
+    }
+
 
 }
