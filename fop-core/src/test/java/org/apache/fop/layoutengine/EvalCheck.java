@@ -74,7 +74,7 @@ public class EvalCheck {
         doCheck(intermediate);
     }
 
-    void doCheck(Document doc) {
+    public void doCheck(Document doc) {
         String actual;
         try {
             XPath xPathAPI = XPathFactory.newInstance().newXPath();

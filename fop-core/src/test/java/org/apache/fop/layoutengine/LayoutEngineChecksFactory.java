@@ -19,6 +19,8 @@
 
 package org.apache.fop.layoutengine;
 
+import org.apache.fop.intermediate.IFEvalCheck;
+import org.apache.fop.intermediate.IFTrueCheck;
 import org.w3c.dom.Element;
 
 import org.apache.fop.check.ChecksFactory;

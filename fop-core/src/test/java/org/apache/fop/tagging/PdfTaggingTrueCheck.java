@@ -17,16 +17,17 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutengine;
+package org.apache.fop.tagging;
 
-import org.apache.fop.intermediate.IFCheck;
+import org.apache.fop.layoutengine.LayoutResult;
+import org.apache.fop.layoutengine.TrueCheck;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 /**
  * Simple check that requires an XPath expression to evaluate to true.
  */
-public class IFTrueCheck implements LayoutEngineCheck, IFCheck {
+public class PdfTaggingTrueCheck implements PdfTaggingCheck {
 
     final TrueCheck trueCheck;
 
@@ -34,7 +35,7 @@ public class IFTrueCheck implements LayoutEngineCheck, IFCheck {
      * Creates a new instance from a DOM node.
      * @param node DOM node that defines this check
      */
-    public IFTrueCheck(final Node node) {
+    public PdfTaggingTrueCheck(final Node node) {
         this.trueCheck = new TrueCheck(node);
     }
 
@@ -44,8 +45,8 @@ public class IFTrueCheck implements LayoutEngineCheck, IFCheck {
     }
 
     /** {@inheritDoc} */
-    public void check(Document intermediate) {
-        trueCheck.doCheck(intermediate);
+    public void check(Document pdfTagging) {
+        trueCheck.doCheck(pdfTagging);
     }
 
 

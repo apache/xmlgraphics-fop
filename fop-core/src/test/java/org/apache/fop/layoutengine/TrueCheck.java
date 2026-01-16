@@ -59,7 +59,7 @@ public class TrueCheck {
         };
     }
 
-    void doCheck(Document doc) {
+    public void doCheck(Document doc) {
         boolean res;
         try {
             XPath xPathAPI = XPathFactory.newInstance().newXPath();

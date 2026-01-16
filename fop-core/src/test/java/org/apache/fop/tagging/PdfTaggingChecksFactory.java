@@ -21,8 +21,6 @@ package org.apache.fop.tagging;
 
 import org.apache.fop.check.ChecksFactory;
 import org.apache.fop.intermediate.IFCheck;
-import org.apache.fop.layoutengine.PdfTaggingEvalCheck;
-import org.apache.fop.layoutengine.PdfTaggingTrueCheck;
 import org.w3c.dom.Element;
 
 /**

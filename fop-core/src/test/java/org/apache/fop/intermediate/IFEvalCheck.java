@@ -17,16 +17,18 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutengine;
+package org.apache.fop.intermediate;
 
-import org.apache.fop.tagging.PdfTaggingCheck;
+import org.apache.fop.layoutengine.EvalCheck;
+import org.apache.fop.layoutengine.LayoutEngineCheck;
+import org.apache.fop.layoutengine.LayoutResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 /**
  * Simple check that requires an XPath expression to evaluate to true.
  */
-public class PdfTaggingEvalCheck implements PdfTaggingCheck {
+public class IFEvalCheck implements LayoutEngineCheck, IFCheck {
 
     private final EvalCheck evalCheck;
 
@@ -34,13 +36,18 @@ public class PdfTaggingEvalCheck implements PdfTaggingCheck {
      * Creates a new instance from a DOM node.
      * @param node DOM node that defines this check
      */
-    public PdfTaggingEvalCheck(final Node node) {
+    public IFEvalCheck(final Node node) {
         evalCheck = new EvalCheck(node);
     }
 
     /** {@inheritDoc} */
-    public void check(Document pdfTagging) {
-        evalCheck.doCheck(pdfTagging);
+    public void check(LayoutResult result) {
+        evalCheck.doCheck(result.getAreaTree());
+    }
+
+    /** {@inheritDoc} */
+    public void check(Document intermediate) {
+        evalCheck.doCheck(intermediate);
     }
 
 

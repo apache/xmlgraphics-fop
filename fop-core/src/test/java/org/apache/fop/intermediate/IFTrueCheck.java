@@ -17,41 +17,43 @@
 
 /* $Id$ */
 
-package org.apache.fop.layoutengine;
+package org.apache.fop.intermediate;
 
-import org.apache.fop.intermediate.IFCheck;
+import org.apache.fop.layoutengine.LayoutEngineCheck;
+import org.apache.fop.layoutengine.LayoutResult;
+import org.apache.fop.layoutengine.TrueCheck;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 /**
  * Simple check that requires an XPath expression to evaluate to true.
  */
-public class IFEvalCheck implements LayoutEngineCheck, IFCheck {
+public class IFTrueCheck implements LayoutEngineCheck, IFCheck {
 
-    private final EvalCheck evalCheck;
+    final TrueCheck trueCheck;
 
     /**
      * Creates a new instance from a DOM node.
      * @param node DOM node that defines this check
      */
-    public IFEvalCheck(final Node node) {
-        evalCheck = new EvalCheck(node);
+    public IFTrueCheck(final Node node) {
+        this.trueCheck = new TrueCheck(node);
     }
 
     /** {@inheritDoc} */
     public void check(LayoutResult result) {
-        evalCheck.doCheck(result.getAreaTree());
+        trueCheck.doCheck(result.getAreaTree());
     }
 
     /** {@inheritDoc} */
     public void check(Document intermediate) {
-        evalCheck.doCheck(intermediate);
+        trueCheck.doCheck(intermediate);
     }
 
 
     /** {@inheritDoc} */
     public String toString() {
-        return evalCheck.toString();
+        return trueCheck.toString();
     }
 
 }
