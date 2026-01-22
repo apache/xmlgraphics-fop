@@ -22,8 +22,10 @@ package org.apache.fop.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test case for {@link PDFDocument}
@@ -57,5 +59,12 @@ public class PDFDocumentTestCase {
         String fullString = textBuffer.toString();
         PDFDocument.flushTextBuffer(textBuffer, out);
         assertEquals(fullString, out.toString());
+    }
+
+    @Test
+    public void testImageWithNoKey() {
+        PDFImage image = mock(PDFImage.class);
+        PDFImageXObject xObject = new PDFDocument("").addImage(null, image);
+        Assert.assertNotNull(xObject);
     }
 }

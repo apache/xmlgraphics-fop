@@ -124,8 +124,11 @@ public class ImageRenderedAdapter extends AbstractImageAdapter {
             doc.getProfile().verifyTransparencyAllowed(image.getInfo().getOriginalURI());
             //TODO Implement code to combine image with background color if transparency is not
             //allowed (need BufferedImage support for that)
-
-            AlphaRasterImage alphaImage = new AlphaRasterImage("Mask:" + getKey(), ri);
+            String key = null;
+            if (getKey() != null) {
+                key = "Mask:" + getKey();
+            }
+            AlphaRasterImage alphaImage = new AlphaRasterImage(key, ri);
             this.softMask = doc.addImage(null, alphaImage).makeReference();
         }
     }

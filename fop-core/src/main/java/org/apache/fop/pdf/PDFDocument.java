@@ -830,16 +830,18 @@ public class PDFDocument {
      */
     public PDFXObject getXObject(String key) {
         Object xObj = xObjectsMapFast.get(key);
-        if (xObj != null) {
+        if (xObj != null || key == null) {
             return (PDFXObject) xObj;
         }
         return xObjectsMap.get(toHashCode(key));
     }
 
     private void putXObject(String key, PDFXObject pdfxObject) {
-        xObjectsMapFast.clear();
-        xObjectsMapFast.put(key, pdfxObject);
-        xObjectsMap.put(toHashCode(key), pdfxObject);
+        if (key != null) {
+            xObjectsMapFast.clear();
+            xObjectsMapFast.put(key, pdfxObject);
+            xObjectsMap.put(toHashCode(key), pdfxObject);
+        }
     }
 
     private String toHashCode(String key) {
