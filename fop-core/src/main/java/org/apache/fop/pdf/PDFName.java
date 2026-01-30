@@ -22,6 +22,7 @@ package org.apache.fop.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.output.CountingOutputStream;
 
@@ -56,14 +57,16 @@ public class PDFName extends PDFObject implements Serializable {
         if (name.startsWith("/")) {
             skipFirst = true;
         }
-        for (int i = (skipFirst ? 1 : 0), c = name.length(); i < c; i++) {
-            char ch = name.charAt(i);
 
-            if (ch < 33 || ch > 126 || ESCAPED_NAME_CHARS.indexOf(ch) >= 0) {
-                sb.append('#');
-                toHex(ch, sb);
+        name = name.substring(skipFirst ? 1 : 0);
+
+        byte[] nameBytes = name.getBytes(StandardCharsets.UTF_8);
+        for (byte nameByte : nameBytes) {
+            int currentChar = nameByte & 255;
+            if (currentChar < 33 || currentChar > 126 || ESCAPED_NAME_CHARS.indexOf(currentChar) >= 0) {
+                toHex(currentChar, sb);
             } else {
-                sb.append(ch);
+                sb.append((char)nameByte);
             }
         }
         return sb.toString();
@@ -73,13 +76,10 @@ public class PDFName extends PDFObject implements Serializable {
         = {'0', '1', '2', '3', '4', '5', '6', '7',
            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-    private static void toHex(char ch, StringBuilder sb) {
-        if (ch >= 256) {
-            throw new IllegalArgumentException(
-                    "Only 8-bit characters allowed by this implementation");
-        }
-        sb.append(DIGITS[ch >>> 4 & 0x0F]);
-        sb.append(DIGITS[ch & 0x0F]);
+    private static void toHex(int currentChar, StringBuilder sb) {
+        sb.append('#');
+        sb.append(DIGITS[currentChar >>> 4 & 0x0F]);
+        sb.append(DIGITS[currentChar & 0x0F]);
     }
 
     /** {@inheritDoc} */

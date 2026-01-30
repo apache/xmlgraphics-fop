@@ -21,6 +21,7 @@ package org.apache.fop.pdf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -65,6 +66,9 @@ public class PDFNameTestCase extends PDFObjectTestCase {
         assertEquals("/Test", PDFName.escapeName("/Test"));
         // Test with a space in the middle
         assertEquals("/Test#20test", PDFName.escapeName("Test test"));
+        // Test with chars whose index are over 256
+        assertEquals("/BCDEEE+#EF#BC#AD#EF#BC#B3#20#E3#82#B4#E3#82#B7#E3#83#83#E3#82#AF",
+                PDFName.escapeName("BCDEEE+ＭＳ ゴシック"));
         // Test that all chars apart from ASCII '!' --> '~' are escaped
         nonEscapedCharactersTests();
         escapedCharactersTests();
@@ -76,11 +80,17 @@ public class PDFNameTestCase extends PDFObjectTestCase {
             str += Integer.toHexString(i & 0x0f).toUpperCase();
             assertEquals("/#" + str, PDFName.escapeName(String.valueOf(i)));
         }
-        for (char i = '~' + 1; i < 256; i++) {
-            String str = Integer.toHexString(i >>> 4 & 0x0f).toUpperCase();
-            str += Integer.toHexString(i & 0x0f).toUpperCase();
-            assertEquals("/#" + str, PDFName.escapeName(String.valueOf(i)));
+        for (char i = 128; i < 256; i++) {
+            byte[] bytes = String.valueOf(i).getBytes(StandardCharsets.UTF_8);
+            StringBuilder str = new StringBuilder("/");
+            for (byte b : bytes) {
+                str.append("#");
+                str.append(Integer.toHexString(b >>> 4 & 0x0f).toUpperCase());
+                str.append(Integer.toHexString(b & 0x0f).toUpperCase());
+            }
+            assertEquals(str.toString(), PDFName.escapeName(String.valueOf(i)));
         }
+
         checkCharacterIsEscaped('#');
         checkCharacterIsEscaped('%');
         checkCharacterIsEscaped('(');
