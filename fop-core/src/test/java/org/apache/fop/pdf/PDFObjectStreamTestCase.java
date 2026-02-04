@@ -37,7 +37,7 @@ public class PDFObjectStreamTestCase {
     public void testObjectStreamsEnabled() throws IOException {
         PDFDocument doc = new PDFDocument("");
         String out = buildObjectStreamsPDF(doc);
-        Assert.assertTrue(out.contains("<<\n  /Type /ObjStm\n  /N 3\n  /First 15\n  /Length 260\n>>\n"
+        Assert.assertTrue(out, out.contains("<<\n  /Type /ObjStm\n  /N 3\n  /First 15\n  /Length 260\n>>\n"
                 + "stream\n8 0\n9 52\n4 121\n<<\n/Producer"));
     }
 
@@ -46,7 +46,7 @@ public class PDFObjectStreamTestCase {
         PDFDocument doc = new PDFDocument("");
         doc.setEncryption(new PDFEncryptionParams());
         String out = buildObjectStreamsPDF(doc);
-        Assert.assertTrue(out.contains("<<\n  /Type /ObjStm\n  /N 3\n  /First 16\n  /Length"));
+        Assert.assertTrue(out, out.contains("<<\n  /Type /ObjStm\n  /N 3\n  /First 16\n  /Length"));
     }
 
     private String buildObjectStreamsPDF(PDFDocument doc) throws IOException {
