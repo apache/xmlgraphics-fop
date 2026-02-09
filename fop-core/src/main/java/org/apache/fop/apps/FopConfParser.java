@@ -209,6 +209,14 @@ public class FopConfParser {
             }
         }
 
+        if (cfg.getChild("image-cache", false) != null) {
+            try {
+                fopFactoryBuilder.setImageCache(cfg.getChild("image-cache").getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(LOG, e, false);
+            }
+        }
+
         // base definitions for relative path resolution
         if (cfg.getChild("base", false) != null) {
             try {

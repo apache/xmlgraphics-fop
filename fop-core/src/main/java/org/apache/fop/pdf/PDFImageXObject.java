@@ -23,6 +23,7 @@ package org.apache.fop.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.ref.SoftReference;
 import java.util.Set;
 import java.util.UUID;
 
@@ -42,6 +43,7 @@ import java.util.UUID;
 public class PDFImageXObject extends PDFXObject {
 
     private PDFImage pdfimage;
+    private SoftReference<PDFImage> softReferencePdfimage;
 
     /**
      * create an XObject with the given number and name and load the
@@ -54,6 +56,7 @@ public class PDFImageXObject extends PDFXObject {
         super();
         put("Name", new PDFName("Im" + xnumber));
         pdfimage = img;
+        softReferencePdfimage = new SoftReference<>(img);
     }
 
     /**
@@ -67,7 +70,7 @@ public class PDFImageXObject extends PDFXObject {
     public int output(OutputStream stream) throws IOException {
         if (getDocument().getProfile().isPDFVTActive()) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            pdfimage.outputContents(baos);
+            pdfimage.outputImageData(baos);
             put("GTS_XID", "uuid:" + UUID.nameUUIDFromBytes(baos.toByteArray()));
         }
         int length = super.output(stream);
@@ -150,7 +153,7 @@ public class PDFImageXObject extends PDFXObject {
 
     /** {@inheritDoc} */
     protected void outputRawStreamData(OutputStream out) throws IOException {
-        pdfimage.outputContents(out);
+        pdfimage.outputImageData(out);
     }
 
     /** {@inheritDoc} */
@@ -172,6 +175,14 @@ public class PDFImageXObject extends PDFXObject {
      */
     protected String getDefaultFilterName() {
         return pdfimage.getFilterHint();
+    }
+
+    /**
+     * Returns the associated PDFImage.
+     * @return the PDFImage associated with this XObject
+     */
+    public PDFImage getPDFImage() {
+        return softReferencePdfimage.get();
     }
 
     /** {@inheritDoc} */

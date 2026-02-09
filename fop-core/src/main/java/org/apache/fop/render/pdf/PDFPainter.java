@@ -48,6 +48,9 @@ import org.apache.fop.fonts.SingleByteFont;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFDictionary;
+import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.pdf.PDFImage;
+import org.apache.fop.pdf.PDFImageXObject;
 import org.apache.fop.pdf.PDFName;
 import org.apache.fop.pdf.PDFNumber;
 import org.apache.fop.pdf.PDFStructElem;
@@ -66,6 +69,7 @@ import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.Direction;
 import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.util.ImageObjectCache;
 
 /**
  * IFPainter implementation that produces PDF.
@@ -166,8 +170,16 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
     }
 
     /** {@inheritDoc} */
-    public void drawImage(String uri, Rectangle rect)
-            throws IFException {
+    public void drawImage(String uri, Rectangle rect) throws IFException {
+        if (hasCachedImage(uri)) {
+            drawCachedImage(uri, rect);
+        } else {
+            drawUncachedImage(uri, rect);
+            cacheImageObjects(uri);
+        }
+    }
+
+    private void drawUncachedImage(String uri, Rectangle rect) throws IFException {
         PDFXObject xobject = getDocumentHandler().getPDFDocument().getXObject(uri);
         addStructTreeBBox(rect);
         if (xobject != null) {
@@ -180,6 +192,64 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
             }
         } else {
             drawImageUsingURI(uri, rect);
+            if (!getDocumentHandler().getPDFDocument().isLinearizationEnabled()) {
+                flushPDFDoc();
+            }
+        }
+    }
+
+    private void cacheImageObjects(String uri) {
+        ImageObjectCache cache = getUserAgent().getImageObjectCache();
+        PDFDocument pdfDoc = this.getDocumentHandler().getPDFDocument();
+        PDFXObject pdfXObject = pdfDoc.getXObject(uri);
+        if (pdfXObject != null && pdfXObject instanceof PDFImageXObject) {
+            PDFImageXObject imageObject = (PDFImageXObject) pdfXObject;
+            String pdfCacheKey = "PDF:" + uri;
+            cache.putImage(pdfCacheKey, imageObject.getPDFImage());
+        }
+        String maskUri = "Mask:" + uri;
+        PDFXObject pdfXObjectMask = pdfDoc.getXObject(maskUri);
+        if (pdfXObjectMask != null && pdfXObjectMask instanceof PDFImageXObject) {
+            PDFImageXObject imageObject = (PDFImageXObject) pdfXObjectMask;
+            String pdfMaskCacheKey = "PDF:" + maskUri;
+            cache.putImage(pdfMaskCacheKey, imageObject.getPDFImage());
+        }
+    }
+
+    private boolean hasCachedImage(String uri) {
+        String pdfCacheKey = "PDF:" + uri;
+        PDFImage pdfImage = (PDFImage) getUserAgent().getImageObjectCache().getImage(pdfCacheKey);
+        return (pdfImage != null);
+    }
+
+    private void drawCachedImage(String uri, Rectangle rect) throws IFException {
+        PDFXObject xobject = getDocumentHandler().getPDFDocument().getXObject(uri);
+        if (xobject != null) {
+            drawUncachedImage(uri, rect);
+        } else {
+            ImageObjectCache cache = getUserAgent().getImageObjectCache();
+            // check for mask
+            String pdfCacheKey = "PDF:" + uri;
+            String pdfMaskCacheKey = "PDF:Mask:" + uri;
+            addStructTreeBBox(rect);
+            PDFImage maskPDFImage = (PDFImage) cache.getImage(pdfMaskCacheKey);
+            if (maskPDFImage != null) {
+                generator.getDocument().addImage(generator.getResourceContext(), maskPDFImage);
+            }
+            PDFImage pdfImage = (PDFImage) cache.getImage(pdfCacheKey);
+            PDFXObject xobj = generator.getDocument().addImage(generator.getResourceContext(), pdfImage);
+
+            float x = (float) rect.getX() / 1000f;
+            float y = (float) rect.getY() / 1000f;
+            float w = (float) rect.getWidth() / 1000f;
+            float h = (float) rect.getHeight() / 1000f;
+            if (accessEnabled) {
+                PDFStructElem structElem = (PDFStructElem) getContext().getStructureTreeElement();
+                prepareImageMCID(structElem);
+                generator.placeImage(x, y, w, h, xobj, imageMCI.tag, imageMCI.mcid);
+            } else {
+                generator.placeImage(x, y, w, h, xobj);
+            }
             if (!getDocumentHandler().getPDFDocument().isLinearizationEnabled()) {
                 flushPDFDoc();
             }

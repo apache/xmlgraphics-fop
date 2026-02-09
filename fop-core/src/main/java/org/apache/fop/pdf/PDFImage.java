@@ -22,11 +22,13 @@ package org.apache.fop.pdf;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.fop.util.ImageObject;
+
 /**
  * Interface for a PDF image.
  * This is used for inserting an image into PDF.
  */
-public interface PDFImage {
+public interface PDFImage extends ImageObject {
 
     /**
      * Key to look up XObject.
@@ -157,6 +159,13 @@ public interface PDFImage {
      * @return the filter setup hint
      */
     String getFilterHint();
+
+    /**
+     * Writes a possibly previously cached stream of bytes that represent the image.
+     * @param out OutputStream to write to
+     * @throws IOException if issues happen when writing the stream
+     */
+    void outputImageData(OutputStream out) throws IOException;
 
     /**
      * Indicates whether multiple image filters are allowed; this is implemented because Adobe

@@ -172,6 +172,11 @@ public final class FopFactoryBuilder {
         return this;
     }
 
+    public FopFactoryBuilder setImageCache(boolean b) {
+        fopFactoryConfigBuilder.setImageCache(b);
+        return this;
+    }
+
     /**
      * Sets the {@link LayoutManagerMaker} so that users can configure how FOP creates
      * {@link org.apache.fop.layoutmgr.LayoutManager}s.
@@ -392,6 +397,8 @@ public final class FopFactoryBuilder {
 
         private boolean keepEmptyTags = true;
 
+        private boolean imageCache = true;
+
         private LayoutManagerMaker layoutManagerMaker;
 
         private URI baseURI;
@@ -466,6 +473,10 @@ public final class FopFactoryBuilder {
 
         public boolean isKeepEmptyTags() {
             return keepEmptyTags;
+        }
+
+        public boolean isImageCacheEnabled() {
+            return imageCache;
         }
 
         /** {@inheritDoc} */
@@ -601,6 +612,8 @@ public final class FopFactoryBuilder {
 
         void setKeepEmptyTags(boolean b);
 
+        void setImageCache(boolean b);
+
         void setLayoutManagerMakerOverride(LayoutManagerMaker lmMaker);
 
         void setBaseURI(URI baseURI);
@@ -666,6 +679,10 @@ public final class FopFactoryBuilder {
         }
 
         public void setKeepEmptyTags(boolean b) {
+            throwIllegalStateException();
+        }
+
+        public void setImageCache(boolean b) {
             throwIllegalStateException();
         }
 
@@ -782,6 +799,10 @@ public final class FopFactoryBuilder {
 
         public void setKeepEmptyTags(boolean b) {
             config.keepEmptyTags = b;
+        }
+
+        public void setImageCache(boolean b) {
+            config.imageCache = b;
         }
 
         public void setLayoutManagerMakerOverride(LayoutManagerMaker lmMaker) {

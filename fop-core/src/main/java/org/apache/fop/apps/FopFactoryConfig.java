@@ -77,6 +77,8 @@ public interface FopFactoryConfig {
 
     boolean isKeepEmptyTags();
 
+    boolean isImageCacheEnabled();
+
     /**
      * Returns the overriding LayoutManagerMaker instance, if any.
      * @return the overriding LayoutManagerMaker or null

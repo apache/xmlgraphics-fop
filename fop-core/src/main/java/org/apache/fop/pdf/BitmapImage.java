@@ -40,6 +40,8 @@ public class BitmapImage implements PDFImage {
     private PDFFilter pdfFilter;
     private boolean multipleFiltersAllowed = true;
 
+    private ImageObjectStream imageObjectStream;
+
     /**
      * Create a bitmap image.
      * Creates a new bitmap image with the given data.
@@ -215,6 +217,14 @@ public class BitmapImage implements PDFImage {
 
     public void setPDFFilter(PDFFilter pdfFilter) {
         this.pdfFilter = pdfFilter;
+    }
+
+    /** {@inheritDoc} */
+    public void outputImageData(OutputStream out) throws IOException {
+        if (imageObjectStream == null) {
+            imageObjectStream = new ImageObjectStream(this);
+        }
+        imageObjectStream.outputImageData(out);
     }
 
     /** {@inheritDoc} */

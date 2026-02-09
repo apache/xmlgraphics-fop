@@ -41,6 +41,8 @@ public class AlphaRasterImage implements PDFImage {
     private Raster alpha;
     private String key;
 
+    private ImageObjectStream imageObjectStream;
+
     /**
      * Create a alpha channel image.
      * Creates a new bitmap image with the given data.
@@ -248,6 +250,13 @@ public class AlphaRasterImage implements PDFImage {
     }
 
     /** {@inheritDoc} */
+    public void outputImageData(OutputStream out) throws IOException {
+        if (imageObjectStream == null) {
+            imageObjectStream = new ImageObjectStream(this);
+        }
+        imageObjectStream.outputImageData(out);
+    }
+
     public boolean multipleFiltersAllowed() {
         return true;
     }

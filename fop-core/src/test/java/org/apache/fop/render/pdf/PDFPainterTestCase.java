@@ -42,17 +42,26 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.endsWith;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.apache.xmlgraphics.image.loader.Image;
+import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageException;
+import org.apache.xmlgraphics.image.loader.ImageFlavor;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
+import org.apache.xmlgraphics.image.loader.ImageManager;
+import org.apache.xmlgraphics.image.loader.ImageSessionContext;
+import org.apache.xmlgraphics.image.loader.spi.ImageImplRegistry;
 import org.apache.xmlgraphics.java2d.color.ColorSpaces;
 import org.apache.xmlgraphics.java2d.color.ColorWithAlternatives;
 
@@ -69,18 +78,25 @@ import org.apache.fop.fonts.base14.Helvetica;
 import org.apache.fop.fonts.truetype.SVGGlyphData;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFFilterList;
+import org.apache.fop.pdf.PDFImage;
+import org.apache.fop.pdf.PDFImageXObject;
 import org.apache.fop.pdf.PDFPage;
 import org.apache.fop.pdf.PDFProfile;
+import org.apache.fop.pdf.PDFResourceContext;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFStructElem;
 import org.apache.fop.pdf.PDFTextUtil;
 import org.apache.fop.pdf.PDFUAMode;
+import org.apache.fop.pdf.PDFXObject;
 import org.apache.fop.pdf.StandardStructureTypes;
+import org.apache.fop.render.ImageHandler;
+import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.util.CharUtilities;
+import org.apache.fop.util.ImageObjectCache;
 
 public class PDFPainterTestCase {
 
@@ -99,6 +115,9 @@ public class PDFPainterTestCase {
     private FOUserAgent foUserAgent;
     private PDFContentGenerator pdfContentGenerator;
     private PDFDocumentHandler pdfDocumentHandler;
+
+    private PDFLogicalStructureHandler handler;
+
     private PDFPainter pdfPainter;
     private PDFStructElem elem = new PDFStructElem();
 
@@ -123,7 +142,7 @@ public class PDFPainterTestCase {
         mockFOUserAgent(accessibility);
         mockPDFContentGenerator();
         mockPDFDocumentHandler();
-        PDFLogicalStructureHandler handler = mock(PDFLogicalStructureHandler.class);
+        handler = mock(PDFLogicalStructureHandler.class);
         pdfPainter = new PDFPainter(pdfDocumentHandler, handler);
     }
 
@@ -145,12 +164,86 @@ public class PDFPainterTestCase {
         when(ifContext.getStructureTreeElement()).thenReturn(elem);
     }
 
+    @Test
+    public void testDrawCachedImage() throws IFException {
+        createPDFPainter(false);
+        String uri = "image.xxx";
+        String pdfCacheKey = "PDF:" + uri;
+        int x = 0;
+        int y = 0;
+        int w = 200;
+        int h = 50;
+        Rectangle rect = new Rectangle(x, y, w * 1000, h * 1000);
+        ImageObjectCache objCache = createMockImageObjectCache();
+        PDFDocument pdfDoc = createMockPDFDocument();
+        PDFImage pdfImage = mock(PDFImage.class);
+        PDFImageXObject pdfImageXObj = mock(PDFImageXObject.class);
+        when(objCache.getImage(pdfCacheKey)).thenReturn(pdfImage);
+        when(pdfDoc.getXObject(uri)).thenReturn(null);
+        PDFResourceContext pdfContext = mock(PDFResourceContext.class);
+        when(pdfContentGenerator.getResourceContext()).thenReturn(pdfContext);
+        when(pdfDoc.addImage(pdfContext, pdfImage)).thenReturn(pdfImageXObj);
+        PDFXObject xobj = pdfImageXObj;
+        pdfPainter.drawImage(uri, rect);
+        verify(pdfContentGenerator).placeImage(x * 1f, y * 1f, w * 1f, h * 1f, xobj);
+    }
+
     private PDFDocument createMockPDFDocument() {
         PDFDocument pdfDoc = mock(PDFDocument.class);
         when(pdfContentGenerator.getDocument()).thenReturn(pdfDoc);
         when(pdfDocumentHandler.getPDFDocument()).thenReturn(pdfDoc);
         when(pdfDoc.getProfile()).thenReturn(new PDFProfile(pdfDoc));
         return pdfDoc;
+    }
+
+    private ImageObjectCache createMockImageObjectCache() {
+        ImageObjectCache objCache = mock(ImageObjectCache.class);
+        when(foUserAgent.getImageObjectCache()).thenReturn(objCache);
+        return objCache;
+    }
+
+    @Test
+    public void testCacheImageObjects() throws IFException, ImageException, IOException {
+        createPDFPainter(true);
+        String uri = "image.xxx";
+        String pdfCacheKey = "PDF:" + uri;
+        Rectangle rect = new Rectangle(0, 0, 1, 1);
+        ImageObjectCache objCache = createMockImageObjectCache();
+        PDFDocument pdfDoc = createMockPDFDocument();
+        PDFImageXObject pdfImageXObj = mock(PDFImageXObject.class);
+        PDFImage pdfImage = mock(PDFImage.class);
+        when(pdfDoc.getXObject(uri)).thenReturn(null).thenReturn(pdfImageXObj);
+        when(pdfImageXObj.getPDFImage()).thenReturn(pdfImage);
+        ImageManager imageManager = mock(ImageManager.class);
+        when(foUserAgent.getImageManager()).thenReturn(imageManager);
+        ImageSessionContext imageSessionContext = mock(ImageSessionContext.class);
+        when(foUserAgent.getImageSessionContext()).thenReturn(imageSessionContext);
+        ImageContext imageContext = mock(ImageContext.class);
+        when(imageSessionContext.getParentContext()).thenReturn(imageContext);
+        when(imageContext.getSourceResolution()).thenReturn(72f);
+        when(imageSessionContext.getTargetResolution()).thenReturn(240f);
+        ImageInfo imageInfo = mock(ImageInfo.class);
+        when(imageManager.getImageInfo(uri, imageSessionContext)).thenReturn(imageInfo);
+        when(imageInfo.getMimeType()).thenReturn("application/pdf");
+        ImageHandlerRegistry imageHandlerRegistry = mock(ImageHandlerRegistry.class);
+        when(foUserAgent.getImageHandlerRegistry()).thenReturn(imageHandlerRegistry);
+        ImageFlavor imageFlavor = mock(ImageFlavor.class);
+        ImageFlavor[] flavors = {imageFlavor};
+        when(imageHandlerRegistry.getSupportedFlavors(any(RenderingContext.class), nullable(Image.class)))
+                .thenReturn(flavors);
+        Map<String, Boolean> customObjects = new HashMap<String, Boolean>();
+        when(imageInfo.getCustomObjects()).thenReturn(customObjects);
+        Image image = mock(Image.class);
+        when(imageManager.getImage(eq(imageInfo), eq(flavors), any(HashMap.class), eq(imageSessionContext)))
+                .thenReturn(image);
+        ImageImplRegistry imageRegistry = mock(ImageImplRegistry.class);
+        when(imageManager.getRegistry()).thenReturn(imageRegistry);
+        ImageHandler imageHandler = mock(ImageHandler.class);
+        when(imageHandlerRegistry.getHandler(any(RenderingContext.class), eq(image)))
+                .thenReturn(imageHandler);
+        pdfPainter.drawImage(uri, rect);
+        verify(handler, never()).addImageContentItem(elem);
+        verify(objCache).putImage(pdfCacheKey, pdfImage);
     }
 
     @Test
@@ -389,11 +482,27 @@ public class PDFPainterTestCase {
     }
 
     @Test
-    public void testPDFUAImage() throws IOException, IFException {
-        String output = defaultTestPDFUAImage(new Dimension(), new Rectangle(),
-                Collections.singletonList(new AffineTransform()));
-        assertTrue("The page dimensions and the image position is not set",
-                output.contains("/BBox [0 0 0 0]"));
+    public void testPDFUAImage() throws IFException, IOException {
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+        for (int i = 0; i < 2; i++) {
+            foUserAgent = fopFactory.newFOUserAgent();
+            foUserAgent.setAccessibility(true);
+            pdfDocumentHandler = new PDFDocumentHandler(new IFContext(foUserAgent));
+            pdfDocumentHandler.getStructureTreeEventHandler();
+            pdfDocumentHandler.setResult(new StreamResult(new ByteArrayOutputStream()));
+            pdfDocumentHandler.startDocument();
+            pdfDocumentHandler.startPage(0, "", "", new Dimension());
+            PDFDocument doc = pdfDocumentHandler.getPDFDocument();
+            doc.getProfile().setPDFUAMode(PDFUAMode.PDFUA_1);
+            doc.getInfo().setTitle("a");
+            PDFLogicalStructureHandler structureHandler = new PDFLogicalStructureHandler(doc);
+            structureHandler.startPage(new PDFPage(new PDFResources(doc), 0,
+                    new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()));
+            PDFPainter pdfPainter = new PDFPainter(pdfDocumentHandler, structureHandler);
+            pdfPainter.getContext().setLanguage(Locale.US);
+            Assert.assertTrue(drawImage(doc, pdfPainter, new Rectangle()).contains("/BBox [0 0 0 0]"));
+            Assert.assertTrue(drawImage(doc, pdfPainter, new Rectangle()).contains("/BBox [0 0 0 0]"));
+        }
     }
 
     @Test
@@ -490,15 +599,15 @@ public class PDFPainterTestCase {
 
         ifContext.setLanguage(Locale.US);
 
-        drawImage(doc, pdfPainter, ifContext, rectangle);
-        return drawImage(doc, pdfPainter, ifContext, rectangle);
+        drawImage(doc, pdfPainter, rectangle);
+        return drawImage(doc, pdfPainter, rectangle);
     }
 
-    private String drawImage(PDFDocument doc, PDFPainter pdfPainter, IFContext ifContext, Rectangle rectangle)
+    private String drawImage(PDFDocument doc, PDFPainter pdfPainter, Rectangle rectangle)
         throws IOException, IFException {
         PDFStructElem structElem = new PDFStructElem(doc.getRoot(), StandardStructureTypes.InlineLevelStructure.NOTE);
         structElem.setDocument(doc);
-        ifContext.setStructureTreeElement(structElem);
+        pdfPainter.getContext().setStructureTreeElement(structElem);
         pdfPainter.drawImage("test/resources/images/cmyk.jpg", rectangle);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         structElem.output(bos);

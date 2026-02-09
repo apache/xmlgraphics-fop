@@ -56,6 +56,8 @@ import org.apache.fop.render.RendererFactory;
 import org.apache.fop.render.XMLHandlerRegistry;
 import org.apache.fop.util.ColorSpaceCache;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
+import org.apache.fop.util.ImageObjectCache;
+import org.apache.fop.util.ImageObjectCacheImpl;
 
 /**
  * Factory class which instantiates new Fop and FOUserAgent instances. This
@@ -86,6 +88,7 @@ public final class FopFactory implements ImageContext {
 
     private final ColorSpaceCache colorSpaceCache;
 
+    private final ImageObjectCache imageObjectCache;
     private final FopFactoryConfig config;
 
     private final InternalResourceResolver resolver;
@@ -103,6 +106,11 @@ public final class FopFactory implements ImageContext {
                 config.getResourceResolver());
         this.elementMappingRegistry = new ElementMappingRegistry(this);
         this.colorSpaceCache = new ColorSpaceCache(resolver);
+        if (config.isImageCacheEnabled()) {
+            this.imageObjectCache = new ImageObjectCacheImpl();
+        } else {
+            this.imageObjectCache = new ImageObjectCache();
+        }
         this.rendererFactory = new RendererFactory(config.preferRenderer());
         this.xmlHandlers = new XMLHandlerRegistry();
         this.imageHandlers = new ImageHandlerRegistry();
@@ -493,6 +501,14 @@ public final class FopFactory implements ImageContext {
     /** @see FopFactoryConfig#getFallbackResolver() */
     FallbackResolver getFallbackResolver() {
         return config.getFallbackResolver();
+    }
+
+    /**
+     * Returns the ImageObjectCache for this instance.
+     * @return the image object cache
+     */
+    public ImageObjectCache getImageObjectCache() {
+        return this.imageObjectCache;
     }
 
     /**

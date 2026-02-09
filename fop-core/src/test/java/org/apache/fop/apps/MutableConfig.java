@@ -61,6 +61,10 @@ public final class MutableConfig implements FopFactoryConfig {
         return delegate.isKeepEmptyTags();
     }
 
+    public boolean isImageCacheEnabled() {
+        return delegate.isImageCacheEnabled();
+    }
+
     public LayoutManagerMaker getLayoutManagerMakerOverride() {
         return delegate.getLayoutManagerMakerOverride();
     }

@@ -69,6 +69,7 @@ import org.apache.fop.render.XMLHandlerRegistry;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.util.ColorSpaceCache;
 import org.apache.fop.util.ContentHandlerFactoryRegistry;
+import org.apache.fop.util.ImageObjectCache;
 
 /**
  * This is the user agent for FOP.
@@ -825,6 +826,11 @@ public class FOUserAgent {
     /** @return the image handler registry */
     public ImageHandlerRegistry getImageHandlerRegistry() {
         return factory.getImageHandlerRegistry();
+    }
+
+    /** @return the image object cache */
+    public ImageObjectCache getImageObjectCache() {
+        return factory.getImageObjectCache();
     }
 
     /** @return the color space cache */

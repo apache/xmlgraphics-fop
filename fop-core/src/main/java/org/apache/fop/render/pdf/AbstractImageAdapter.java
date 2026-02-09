@@ -18,12 +18,14 @@
 /* $Id$ */
 
 package org.apache.fop.render.pdf;
+
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.image.DataBufferByte;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
@@ -36,6 +38,7 @@ import org.apache.xmlgraphics.image.loader.impl.ImageRawPNG;
 import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil;
 
+import org.apache.fop.pdf.ImageObjectStream;
 import org.apache.fop.pdf.PDFArray;
 import org.apache.fop.pdf.PDFColor;
 import org.apache.fop.pdf.PDFConformanceException;
@@ -63,6 +66,8 @@ public abstract class AbstractImageAdapter implements PDFImage {
     private PDFICCStream pdfICCStream;
 
     private static final int MAX_HIVAL = 255;
+
+    private ImageObjectStream imageObjectStream;
 
     private boolean multipleFiltersAllowed = true;
 
@@ -338,6 +343,13 @@ public abstract class AbstractImageAdapter implements PDFImage {
     }
 
     /** {@inheritDoc} */
+    public void outputImageData(OutputStream out) throws IOException {
+        if (imageObjectStream == null) {
+            imageObjectStream = new ImageObjectStream(this);
+        }
+        imageObjectStream.outputImageData(out);
+    }
+
     public boolean multipleFiltersAllowed() {
         return multipleFiltersAllowed;
     }
