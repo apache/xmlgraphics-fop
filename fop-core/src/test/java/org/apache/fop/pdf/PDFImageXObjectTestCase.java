@@ -21,7 +21,10 @@ package org.apache.fop.pdf;
 
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -100,5 +103,13 @@ public class PDFImageXObjectTestCase {
         if (obj != null && obj instanceof PDFArray) {
             assertEquals(2, ((PDFArray) obj).length());
         }
+    }
+
+    @Test
+    public void testImageNotDeleted() throws IOException {
+        PDFImageXObject imageXObject = new PDFImageXObject(0, new BitmapImage("", 0, 0, new byte[0], null));
+        imageXObject.setDocument(new PDFDocument(""));
+        imageXObject.output(new ByteArrayOutputStream());
+        Assert.assertNotNull(imageXObject.getPDFImage());
     }
 }
