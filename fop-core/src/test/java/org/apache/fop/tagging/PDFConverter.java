@@ -1,4 +1,48 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* $Id$ */
+
 package org.apache.fop.tagging;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.bouncycastle.util.io.Streams;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSBase;
@@ -7,7 +51,13 @@ import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.COSObjectable;
-import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.*;
+import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDAttributeObject;
+import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDMarkedContentReference;
+import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDObjectReference;
+import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDStructureElement;
+import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDStructureNode;
+import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDStructureTreeRoot;
+import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.Revisions;
 import org.apache.pdfbox.pdmodel.documentinterchange.markedcontent.PDMarkedContent;
 import org.apache.pdfbox.pdmodel.documentinterchange.taggedpdf.PDTableAttributeObject;
 import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
@@ -23,34 +73,12 @@ import org.apache.pdfbox.pdmodel.interactive.documentnavigation.destination.PDPa
 import org.apache.pdfbox.text.PDFMarkedContentExtractor;
 import org.apache.pdfbox.text.TextPosition;
 
-import org.bouncycastle.util.io.Streams;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class PDFConverter {
 
     private final PDDocument pdf;
     private final TransformerFactory transformerFactory;
-    private Document doc;
-
     private final Map<PDPage, Map<Integer, ArrayList<Node>>> contentPageMap = new HashMap<>();
+    private Document doc;
 
     protected PDFConverter(PDDocument pdf) {
         this.pdf = pdf;
@@ -59,6 +87,30 @@ public class PDFConverter {
 
     public static PDFConverter newInstance(PDDocument pdf) {
         return new PDFConverter(pdf);
+    }
+
+    public static void main(String[] args) throws Exception {
+        if (args.length == 0) {
+            System.err.println("Usage: PDFConverter <pdf-resource-or-file>");
+            System.exit(1);
+        }
+        String source = args[0];
+        PDDocument pdf;
+
+        InputStream in = PDFConverter.class.getResourceAsStream("/" + source);
+        if (in == null) {
+            System.err.println("Resource not found: " + source);
+            return;
+        }
+        ByteArrayOutputStream inputBytes = new ByteArrayOutputStream();
+        Streams.pipeAll(in, inputBytes);
+        pdf = Loader.loadPDF(inputBytes.toByteArray());
+
+        PDFConverter pc = PDFConverter.newInstance(pdf);
+        File out = new File(Paths.get(source).getFileName() + ".xml");
+        pc.dropDom(out);
+        pdf.close();
+        System.out.println("Wrote: " + out.getAbsolutePath());
     }
 
     /**
@@ -103,10 +155,14 @@ public class PDFConverter {
     }
 
     private void appendStructureNode(Element parent, PDStructureNode node) throws IOException {
-        if (node == null) return;
+        if (node == null) {
+            return;
+        }
 
         String tag = getNodeTagName(node);
-        if (tag == null || tag.isEmpty()) tag = "Undefined";
+        if (tag == null || tag.isEmpty()) {
+            tag = "Undefined";
+        }
         Element el = create(tag);
 
         if (node instanceof PDStructureElement) {
@@ -115,7 +171,9 @@ public class PDFConverter {
         parent.appendChild(el);
 
         List<?> kids = node.getKids();
-        if (kids == null) return;
+        if (kids == null) {
+            return;
+        }
         for (Object kid : kids) {
             if (kid instanceof PDStructureElement) {
                 appendStructureNode(el, (PDStructureElement) kid);
@@ -137,12 +195,13 @@ public class PDFConverter {
         }
     }
 
-
     private void appendChild(Element parent, PDMarkedContentReference ref) throws IOException {
         Element contentEl = create("content");
         List<Node> nodes = getContent(ref);
         if (nodes != null) {
-            for (Node n : nodes) contentEl.appendChild(n);
+            for (Node n : nodes) {
+                contentEl.appendChild(n);
+            }
         } else {
             contentEl.setAttribute("empty", "true");
         }
@@ -154,6 +213,10 @@ public class PDFConverter {
         el.setAttribute("class", obj.getClass().getName());
         parent.appendChild(el);
     }
+
+    /* -------------------------
+       Helpers: create nodes
+       ------------------------- */
 
     /**
      * Handle PDObjectReference: resolve referenced object and produce semantic XML node(s).
@@ -209,10 +272,6 @@ public class PDFConverter {
         parent.appendChild(simple("ObjectRef", "type", referenced.getClass().getName()));
     }
 
-    /* -------------------------
-       Helpers: create nodes
-       ------------------------- */
-
     private Element create(String name) {
         return doc.createElement(name);
     }
@@ -227,9 +286,15 @@ public class PDFConverter {
         Element el = create("ImageRef");
         el.setAttribute("width", Integer.toString(img.getWidth()));
         el.setAttribute("height", Integer.toString(img.getHeight()));
-        if (img.getSuffix() != null) el.setAttribute("format", img.getSuffix());
+        if (img.getSuffix() != null) {
+            el.setAttribute("format", img.getSuffix());
+        }
         return el;
     }
+
+    /* -------------------------
+       Annotation handling (Link: URI + GoTo)
+       ------------------------- */
 
     private Element formNode(PDFormXObject form) {
         Element el = create("FormRef");
@@ -238,7 +303,7 @@ public class PDFConverter {
     }
 
     /* -------------------------
-       Annotation handling (Link: URI + GoTo)
+       Destination handling
        ------------------------- */
 
     private Element annotationNode(PDAnnotation annot) {
@@ -252,9 +317,13 @@ public class PDFConverter {
             try {
                 if (link.getAction() instanceof PDActionURI) {
                     PDActionURI a = (PDActionURI) link.getAction();
-                    if (a.getURI() != null) el.setAttribute("uri", a.getURI());
+                    if (a.getURI() != null) {
+                        el.setAttribute("uri", a.getURI());
+                    }
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+                // ignore exception
+            }
 
             // internal GoTo
             try {
@@ -271,10 +340,6 @@ public class PDFConverter {
         return el;
     }
 
-    /* -------------------------
-       Destination handling
-       ------------------------- */
-
     private Element safeDestinationNode(PDActionGoTo go) {
         Element root = create("Destination");
         try {
@@ -284,7 +349,9 @@ public class PDFConverter {
                 return root;
             }
             Element resolved = destinationNode(dest);
-            if (resolved != null) return resolved;
+            if (resolved != null) {
+                return resolved;
+            }
             root.setAttribute("status", "unhandled");
             return root;
         } catch (IOException io) {
@@ -302,14 +369,18 @@ public class PDFConverter {
      * Interpret PDDestination into XML. Handles named destinations and PDPageDestination (including XYZ).
      */
     private Element destinationNode(PDDestination dest) throws IOException {
-        if (dest == null) return null;
+        if (dest == null) {
+            return null;
+        }
 
         // Named destination
         if (dest instanceof PDNamedDestination) {
             PDNamedDestination nd = (PDNamedDestination) dest;
             Element el = create("Destination");
             el.setAttribute("type", "Named");
-            if (nd.getNamedDestination() != null) el.setAttribute("name", nd.getNamedDestination());
+            if (nd.getNamedDestination() != null) {
+                el.setAttribute("name", nd.getNamedDestination());
+            }
             return el;
         }
 
@@ -326,14 +397,22 @@ public class PDFConverter {
                 // fallback if retrievePageNumber() fails
                 PDPage page = pd.getPage();
                 int idx = findPageIndex(page);
-                if (idx > 0) el.setAttribute("page", Integer.toString(idx));
+                if (idx > 0) {
+                    el.setAttribute("page", Integer.toString(idx));
+                }
             }
-            
+
             if (pd instanceof PDPageXYZDestination) {
                 PDPageXYZDestination xyz = (PDPageXYZDestination) pd;
-                if (xyz.getLeft() != -1) el.setAttribute("left", Float.toString(safeFloat(xyz.getLeft())));
-                if (xyz.getTop() != -1) el.setAttribute("top", Float.toString(safeFloat(xyz.getTop())));
-                if (xyz.getZoom() != -1) el.setAttribute("zoom", Float.toString(safeFloat(xyz.getZoom())));
+                if (xyz.getLeft() != -1) {
+                    el.setAttribute("left", Float.toString(safeFloat(xyz.getLeft())));
+                }
+                if (xyz.getTop() != -1) {
+                    el.setAttribute("top", Float.toString(safeFloat(xyz.getTop())));
+                }
+                if (xyz.getZoom() != -1) {
+                    el.setAttribute("zoom", Float.toString(safeFloat(xyz.getZoom())));
+                }
             }
             return el;
         }
@@ -345,57 +424,73 @@ public class PDFConverter {
         return el;
     }
 
+    /* -------------------------
+       COSDictionary node creation
+       ------------------------- */
+
     // Try to find page index (1-based) for a PDPage
     private int findPageIndex(PDPage page) {
-        if (page == null) return -1;
+        if (page == null) {
+            return -1;
+        }
         int idx = 0;
         for (PDPage p : pdf.getPages()) {
-            if (p == page) return idx + 1;
+            if (p == page) {
+                return idx + 1;
+            }
             idx++;
         }
         return -1;
     }
 
-    /* -------------------------
-       COSDictionary node creation
-       ------------------------- */
-
     private Element cosDictionaryNode(COSDictionary dict) {
         Element el = create("ObjectRef");
         el.setAttribute("cosType", "COSDictionary");
         String subtype = dict.getNameAsString(COSName.SUBTYPE);
-        if (subtype != null) el.setAttribute("subtype", subtype);
+        if (subtype != null) {
+            el.setAttribute("subtype", subtype);
+        }
 
         COSBase action = dict.getItem(COSName.A);
         if (action instanceof COSDictionary) {
             COSDictionary aDict = (COSDictionary) action;
             String uri = aDict.getString(COSName.URI);
-            if (uri != null) el.setAttribute("uri", uri);
+            if (uri != null) {
+                el.setAttribute("uri", uri);
+            }
             String s = aDict.getNameAsString(COSName.S);
-            if ("GoTo".equals(s)) el.setAttribute("internal", "true");
+            if ("GoTo".equals(s)) {
+                el.setAttribute("internal", "true");
+            }
         }
 
         StringBuilder sb = new StringBuilder();
         try {
             for (COSName k : dict.keySet()) {
-                if (sb.length() > 0) sb.append(' ');
+                if (sb.length() > 0) {
+                    sb.append(' ');
+                }
                 sb.append(k.getName());
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            // ignore exception
+        }
         el.setAttribute("keys", sb.toString());
         return el;
-    }
-
-    private void appendError(Element parent, String where, Exception e) {
-        Element err = create("ObjectRef");
-        err.setAttribute("error", where);
-        if (e != null && e.getMessage() != null) err.setTextContent(e.getMessage());
-        parent.appendChild(err);
     }
 
     /* -------------------------
        Marked content extraction
        ------------------------- */
+
+    private void appendError(Element parent, String where, Exception e) {
+        Element err = create("ObjectRef");
+        err.setAttribute("error", where);
+        if (e != null && e.getMessage() != null) {
+            err.setTextContent(e.getMessage());
+        }
+        parent.appendChild(err);
+    }
 
     private ArrayList<Node> getContent(PDMarkedContentReference ref) throws IOException {
         PDPage page = ref.getPage();
@@ -441,7 +536,9 @@ public class PDFConverter {
                 Element image = create("image");
                 image.setAttribute("w", Integer.toString(im.getWidth()));
                 image.setAttribute("h", Integer.toString(im.getHeight()));
-                if (im.getSuffix() != null) image.setAttribute("format", im.getSuffix());
+                if (im.getSuffix() != null) {
+                    image.setAttribute("format", im.getSuffix());
+                }
                 nodes.add(image);
             } else {
                 if (textBuf.length() > 0) {
@@ -492,8 +589,10 @@ public class PDFConverter {
                 PDAttributeObject tAttr = tagAttr.getObject(i);
                 if (tAttr instanceof PDTableAttributeObject) {
                     PDTableAttributeObject tableAttr = (PDTableAttributeObject) tAttr;
-                    setAttribute(el, "ColSpan", tableAttr.getColSpan() > 1 ? Integer.toString(tableAttr.getColSpan()) : null);
-                    setAttribute(el, "RowSpan", tableAttr.getRowSpan() > 1 ? Integer.toString(tableAttr.getRowSpan()) : null);
+                    setAttribute(el, "ColSpan",
+                            tableAttr.getColSpan() > 1 ? Integer.toString(tableAttr.getColSpan()) : null);
+                    setAttribute(el, "RowSpan",
+                            tableAttr.getRowSpan() > 1 ? Integer.toString(tableAttr.getRowSpan()) : null);
                     setAttribute(el, "Scope", tableAttr.getScope());
                 }
             }
@@ -510,9 +609,13 @@ public class PDFConverter {
 
     // Normalize tag name: ensure safe characters for XML element names
     private String normalizeTagName(String raw) {
-        if (raw == null) return "undefined";
+        if (raw == null) {
+            return "undefined";
+        }
         String s = raw.trim();
-        if (s.isEmpty()) return "undefined";
+        if (s.isEmpty()) {
+            return "undefined";
+        }
         StringBuilder sb = new StringBuilder();
         for (char c : s.toCharArray()) {
             if (Character.isLetterOrDigit(c) || c == '_' || c == '-' || c == ':') {
@@ -527,15 +630,21 @@ public class PDFConverter {
     // Try to extract a tag name for PDStructureNode (S entry in COS)
     private String getNodeTagName(PDStructureNode node) {
         try {
-            if (node == null) return null;
+            if (node == null) {
+                return null;
+            }
             COSDictionary cos = node.getCOSObject();
-            if (cos == null) return null;
+            if (cos == null) {
+                return null;
+            }
             String s = cos.getNameAsString(COSName.S);
             if (s == null) {
                 if (node instanceof PDStructureElement) {
                     PDStructureElement se = (PDStructureElement) node;
                     String std = se.getStandardStructureType();
-                    if (std != null) return normalizeTagName(std);
+                    if (std != null) {
+                        return normalizeTagName(std);
+                    }
                 }
                 return null;
             }
@@ -562,30 +671,5 @@ public class PDFConverter {
         Result output = new StreamResult(file);
         transformer.transform(new DOMSource(d), output);
     }
-
-    public static void main(String[] args) throws Exception {
-        if (args.length == 0) {
-            System.err.println("Usage: PDFConverter <pdf-resource-or-file>");
-            System.exit(1);
-        }
-        String source = args[0];
-        PDDocument pdf;
-
-        InputStream in = PDFConverter.class.getResourceAsStream("/" + source);
-        if (in == null) {
-            System.err.println("Resource not found: " + source);
-            return;
-        }
-        ByteArrayOutputStream inputBytes = new ByteArrayOutputStream();
-        Streams.pipeAll(in, inputBytes);
-        pdf = Loader.loadPDF(inputBytes.toByteArray());
-
-        PDFConverter pc = PDFConverter.newInstance(pdf);
-        File out = new File(Paths.get(source).getFileName() + ".xml");
-        pc.dropDom(out);
-        pdf.close();
-        System.out.println("Wrote: " + out.getAbsolutePath());
-    }
-
 
 }

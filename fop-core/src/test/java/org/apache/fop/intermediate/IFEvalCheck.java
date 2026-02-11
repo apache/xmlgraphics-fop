@@ -19,11 +19,12 @@
 
 package org.apache.fop.intermediate;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
 import org.apache.fop.layoutengine.EvalCheck;
 import org.apache.fop.layoutengine.LayoutEngineCheck;
 import org.apache.fop.layoutengine.LayoutResult;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 /**
  * Simple check that requires an XPath expression to evaluate to true.
@@ -34,24 +35,31 @@ public class IFEvalCheck implements LayoutEngineCheck, IFCheck {
 
     /**
      * Creates a new instance from a DOM node.
+     *
      * @param node DOM node that defines this check
      */
     public IFEvalCheck(final Node node) {
         evalCheck = new EvalCheck(node);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void check(LayoutResult result) {
         evalCheck.doCheck(result.getAreaTree());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void check(Document intermediate) {
         evalCheck.doCheck(intermediate);
     }
 
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String toString() {
         return evalCheck.toString();
     }

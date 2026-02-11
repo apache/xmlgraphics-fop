@@ -19,32 +19,39 @@
 
 package org.apache.fop.tagging;
 
-import org.apache.fop.layoutengine.EvalCheck;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
+import org.apache.fop.layoutengine.EvalCheck;
 
 /**
  * Simple check that requires an XPath expression to evaluate to true.
  */
-public class PdfTaggingEvalCheck implements PdfTaggingCheck {
+public class
+PdfTaggingEvalCheck implements PdfTaggingCheck {
 
     private final EvalCheck evalCheck;
 
     /**
      * Creates a new instance from a DOM node.
+     *
      * @param node DOM node that defines this check
      */
     public PdfTaggingEvalCheck(final Node node) {
         evalCheck = new EvalCheck(node);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void check(Document pdfTagging) {
         evalCheck.doCheck(pdfTagging);
     }
 
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String toString() {
         return evalCheck.toString();
     }

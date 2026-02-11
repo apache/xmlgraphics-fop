@@ -19,13 +19,19 @@
 
 package org.apache.fop.layoutengine;
 
-import org.apache.fop.util.XMLConstants;
+import java.util.Iterator;
+
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.*;
-import java.util.Iterator;
+import org.apache.fop.util.XMLConstants;
 
 /**
  * Simple check that requires an XPath expression to evaluate to true.
@@ -39,6 +45,7 @@ public class EvalCheck {
 
     /**
      * Creates a new instance from a DOM node.
+     *
      * @param node DOM node that defines this check
      */
     public EvalCheck(final Node node) {
@@ -55,21 +62,27 @@ public class EvalCheck {
                 }
                 return node.lookupNamespaceURI(prefix);
             }
+
             public Iterator getPrefixes(String val) {
                 return null;
             }
+
             public String getPrefix(String uri) {
                 return null;
             }
         };
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void check(LayoutResult result) {
         doCheck(result.getAreaTree());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void check(Document intermediate) {
         doCheck(intermediate);
     }
@@ -90,18 +103,20 @@ public class EvalCheck {
             if (Math.abs(v1 - v2) > tolerance) {
                 throw new AssertionError(
                         "Expected XPath expression to evaluate to '" + expected + "', but got '"
-                        + actual + "' (" + this + ", outside tolerance)");
+                                + actual + "' (" + this + ", outside tolerance)");
             }
         } else {
             if (!expected.equals(actual)) {
                 throw new AssertionError(
                         "Expected XPath expression to evaluate to '" + expected + "', but got '"
-                        + actual + "' (" + this + ")");
+                                + actual + "' (" + this + ")");
             }
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String toString() {
         return "XPath: " + xpath;
     }

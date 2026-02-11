@@ -19,14 +19,19 @@
 
 package org.apache.fop.tagging;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.util.List;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Does tests on the intermediate format.
@@ -43,8 +48,8 @@ public class PdfTaggingTester {
      * Main constructor.
      *
      * @param transformerFactory the factory used to serialize the intermediate format files
-     * @param backupDir an optional directory in which to write the serialized
-     * IF files (may be null)
+     * @param backupDir          an optional directory in which to write the serialized
+     *                           IF files (may be null)
      */
     public PdfTaggingTester(TransformerFactory transformerFactory, File backupDir) {
         this.tfactory = transformerFactory;
@@ -53,8 +58,9 @@ public class PdfTaggingTester {
 
     /**
      * Runs the PDF tagging checks.
-     * @param testName the name of the test case
-     * @param checksRoot the root element containing the PDF tagging checks
+     *
+     * @param testName           the name of the test case
+     * @param checksRoot         the root element containing the PDF tagging checks
      * @param pdfTaggingDocument the PDF tagging XML
      * @throws TransformerException if an error occurs while transforming the content
      */

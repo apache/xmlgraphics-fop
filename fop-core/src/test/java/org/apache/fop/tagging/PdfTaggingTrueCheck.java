@@ -19,10 +19,11 @@
 
 package org.apache.fop.tagging;
 
-import org.apache.fop.layoutengine.LayoutResult;
-import org.apache.fop.layoutengine.TrueCheck;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
+import org.apache.fop.layoutengine.LayoutResult;
+import org.apache.fop.layoutengine.TrueCheck;
 
 /**
  * Simple check that requires an XPath expression to evaluate to true.
@@ -33,24 +34,31 @@ public class PdfTaggingTrueCheck implements PdfTaggingCheck {
 
     /**
      * Creates a new instance from a DOM node.
+     *
      * @param node DOM node that defines this check
      */
     public PdfTaggingTrueCheck(final Node node) {
         this.trueCheck = new TrueCheck(node);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void check(LayoutResult result) {
         trueCheck.doCheck(result.getAreaTree());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public void check(Document pdfTagging) {
         trueCheck.doCheck(pdfTagging);
     }
 
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String toString() {
         return trueCheck.toString();
     }

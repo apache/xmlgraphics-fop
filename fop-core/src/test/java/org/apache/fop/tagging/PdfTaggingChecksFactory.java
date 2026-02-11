@@ -19,12 +19,12 @@
 
 package org.apache.fop.tagging;
 
-import org.apache.fop.check.ChecksFactory;
-import org.apache.fop.intermediate.IFCheck;
 import org.w3c.dom.Element;
 
+import org.apache.fop.check.ChecksFactory;
+
 /**
- * A factory class for creating {@link IFCheck} instances.
+ * A factory class for creating {@link org.apache.fop.intermediate.IFCheck} instances.
  */
 final class PdfTaggingChecksFactory extends ChecksFactory<PdfTaggingCheck> {
 

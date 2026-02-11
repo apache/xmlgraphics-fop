@@ -19,12 +19,17 @@
 
 package org.apache.fop.layoutengine;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import java.util.Iterator;
 
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.*;
-import java.util.Iterator;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 
 /**
@@ -38,6 +43,7 @@ public class TrueCheck {
 
     /**
      * Creates a new instance from a DOM node.
+     *
      * @param node DOM node that defines this check
      */
     public TrueCheck(final Node node) {
@@ -50,9 +56,11 @@ public class TrueCheck {
             public String getNamespaceURI(String prefix) {
                 return node.lookupNamespaceURI(prefix);
             }
+
             public Iterator getPrefixes(String val) {
                 return null;
             }
+
             public String getPrefix(String uri) {
                 return null;
             }
@@ -75,13 +83,15 @@ public class TrueCheck {
             } else {
                 throw new AssertionError(
                         "Expected XPath expression to evaluate to 'true', but got '"
-                        + res + "' (" + this + ")");
+                                + res + "' (" + this + ")");
             }
         }
 
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public String toString() {
         return "XPath: " + xpath;
     }

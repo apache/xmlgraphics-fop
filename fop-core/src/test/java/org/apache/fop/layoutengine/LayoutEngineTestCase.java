@@ -19,9 +19,53 @@
 
 package org.apache.fop.layoutengine;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.sax.TransformerHandler;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+
 import org.apache.fop.DebugHelper;
-import org.apache.fop.tagging.PDFConverter;
-import org.apache.fop.apps.*;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FormattingResults;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.area.AreaTreeModel;
 import org.apache.fop.area.AreaTreeParser;
 import org.apache.fop.area.RenderPagesModel;
@@ -30,38 +74,16 @@ import org.apache.fop.events.EventListener;
 import org.apache.fop.events.model.EventSeverity;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.intermediate.IFTester;
-import org.apache.fop.tagging.PdfTaggingTester;
 import org.apache.fop.intermediate.TestAssistant;
 import org.apache.fop.layoutmgr.ElementListObserver;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFRenderer;
 import org.apache.fop.render.intermediate.IFSerializer;
 import org.apache.fop.render.xml.XMLRenderer;
+import org.apache.fop.tagging.PDFConverter;
+import org.apache.fop.tagging.PdfTaggingTester;
 import org.apache.fop.util.ConsoleEventListenerForTests;
 import org.apache.fop.util.DelegatingContentHandler;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-import org.w3c.dom.*;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.TransformerHandler;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
-import static org.junit.Assert.*;
 
 /**
  * Class for testing the FOP's layout engine using testcases specified in XML
@@ -70,6 +92,22 @@ import static org.junit.Assert.*;
 @RunWith(Parameterized.class)
 public class LayoutEngineTestCase {
     private static File areaTreeBackupDir;
+    private TestAssistant testAssistant = new TestAssistant();
+    private LayoutEngineChecksFactory layoutEngineChecksFactory = new LayoutEngineChecksFactory();
+    private IFTester ifTester;
+    private PdfTaggingTester pdfTaggingTester;
+    private File testFile;
+    private TransformerFactory tfactory = TransformerFactory.newInstance();
+    /**
+     * Constructs a new instance.
+     *
+     * @param testFile the test file
+     */
+    public LayoutEngineTestCase(File testFile) {
+        this.ifTester = new IFTester(tfactory, areaTreeBackupDir);
+        this.pdfTaggingTester = new PdfTaggingTester(tfactory, areaTreeBackupDir);
+        this.testFile = testFile;
+    }
 
     @BeforeClass
     public static void makeDirAndRegisterDebugHelper() throws IOException {
@@ -92,32 +130,12 @@ public class LayoutEngineTestCase {
         return LayoutEngineTestUtils.getLayoutTestFiles();
     }
 
-    private TestAssistant testAssistant = new TestAssistant();
-
-    private LayoutEngineChecksFactory layoutEngineChecksFactory = new LayoutEngineChecksFactory();
-
-    private IFTester ifTester;
-    private PdfTaggingTester pdfTaggingTester;
-    private File testFile;
-
-    private TransformerFactory tfactory = TransformerFactory.newInstance();
-
-    /**
-     * Constructs a new instance.
-     *
-     * @param testFile the test file
-     */
-    public LayoutEngineTestCase(File testFile) {
-        this.ifTester = new IFTester(tfactory, areaTreeBackupDir);
-        this.pdfTaggingTester = new PdfTaggingTester(tfactory, areaTreeBackupDir);
-        this.testFile = testFile;
-    }
-
     /**
      * Runs a single layout engine test case.
-     * @throws TransformerException In case of an XSLT/JAXP problem
-     * @throws IOException In case of an I/O problem
-     * @throws SAXException In case of a problem during SAX processing
+     *
+     * @throws TransformerException         In case of an XSLT/JAXP problem
+     * @throws IOException                  In case of an I/O problem
+     * @throws SAXException                 In case of a problem during SAX processing
      * @throws ParserConfigurationException In case of a problem with the XML parser setup
      */
     @Test
@@ -161,7 +179,7 @@ public class LayoutEngineTestCase {
             ElementListObserver.removeObserver(elCollector);
         }
 
-        Document doc = (Document)domres.getNode();
+        Document doc = (Document) domres.getNode();
         if (areaTreeBackupDir != null) {
             testAssistant.saveDOM(doc,
                     new File(areaTreeBackupDir, testFile.getName() + ".at.xml"));
@@ -171,75 +189,24 @@ public class LayoutEngineTestCase {
         checkAll(effFactory, testFile, result, eventsChecker);
     }
 
-    private static class EventsChecker implements EventListener {
-
-        private final List<Event> events = new ArrayList<Event>();
-
-        private final EventListener defaultListener;
-
-        /**
-         * @param fallbackListener the listener to which this class will pass through
-         * events that are not being checked
-         */
-        public EventsChecker(EventListener fallbackListener) {
-            this.defaultListener = fallbackListener;
-        }
-
-        public void processEvent(Event event) {
-            events.add(event);
-        }
-
-        public void checkEvent(String expectedKey, Map<String, String> expectedParams) {
-            boolean eventFound = false;
-            for (Iterator<Event> iter = events.iterator(); !eventFound && iter.hasNext();) {
-                Event event = iter.next();
-                if (event.getEventKey().equals(expectedKey)) {
-                    eventFound = true;
-                    iter.remove();
-                    checkParameters(event, expectedParams);
-                }
-            }
-            if (!eventFound) {
-                fail("Event did not occur but was expected to: " + expectedKey + expectedParams);
-            }
-        }
-
-        private void checkParameters(Event event, Map<String, String> expectedParams) {
-            Map<String, Object> actualParams = event.getParams();
-            for (Map.Entry<String, String> expectedParam : expectedParams.entrySet()) {
-                assertTrue("Event \"" + event.getEventKey()
-                        + "\" is missing parameter \"" + expectedParam.getKey() + '"',
-                        actualParams.containsKey(expectedParam.getKey()));
-                assertEquals("Event \"" + event.getEventKey()
-                        + "\" has wrong value for parameter \"" + expectedParam.getKey() + "\";",
-                        actualParams.get(expectedParam.getKey()).toString(),
-                        expectedParam.getValue());
-            }
-        }
-
-        public void emitUncheckedEvents() {
-            for (Event event : events) {
-                defaultListener.processEvent(event);
-            }
-        }
-    }
-
     /**
      * Perform all checks on the area tree and, optionally, on the intermediate format.
+     *
      * @param fopFactory the FOP factory
-     * @param testFile Test case XML file
-     * @param result The layout results
+     * @param testFile   Test case XML file
+     * @param result     The layout results
      * @throws TransformerException if a problem occurs in XSLT/JAXP
      */
     protected void checkAll(FopFactory fopFactory, File testFile, LayoutResult result,
-            EventsChecker eventsChecker) throws TransformerException, ParserConfigurationException, IOException, FOPException {
+                            EventsChecker eventsChecker)
+            throws TransformerException, ParserConfigurationException, IOException, FOPException {
         Element testRoot = testAssistant.getTestRoot(testFile);
 
         NodeList nodes;
         //AT tests only when checks are available
         nodes = testRoot.getElementsByTagName("at-checks");
         if (nodes.getLength() > 0) {
-            Element atChecks = (Element)nodes.item(0);
+            Element atChecks = (Element) nodes.item(0);
             doATChecks(atChecks, result);
         }
 
@@ -247,14 +214,14 @@ public class LayoutEngineTestCase {
         if (nodes.getLength() > 0) {
             PDDocument pdf = generatePdf(testFile);
             Document pdfTagging = PDFConverter.newInstance(pdf).asDom();
-            Element psChecks = (Element)nodes.item(0);
+            Element psChecks = (Element) nodes.item(0);
             pdfTaggingTester.doPdfTaggingChecks(testFile.getName(), psChecks, pdfTagging);
         }
 
         //IF tests only when checks are available
         nodes = testRoot.getElementsByTagName("if-checks");
         if (nodes.getLength() > 0) {
-            Element ifChecks = (Element)nodes.item(0);
+            Element ifChecks = (Element) nodes.item(0);
             Document ifDocument = createIF(fopFactory, testFile, result.getAreaTree());
             ifTester.doIFChecks(testFile.getName(), ifChecks, ifDocument);
         }
@@ -328,7 +295,7 @@ public class LayoutEngineTestCase {
             Transformer transformer = tfactory.newTransformer();
             transformer.transform(new DOMSource(areaTreeXML), new SAXResult(proxy));
 
-            return (Document)result.getNode();
+            return (Document) result.getNode();
         } catch (Exception e) {
             throw new TransformerException(
                     "Error while generating intermediate format file: " + e.getMessage(), e);
@@ -372,6 +339,59 @@ public class LayoutEngineTestCase {
                 throw new RuntimeException("An event element must have a \"key\" attribute");
             }
             eventsChecker.checkEvent(key, params);
+        }
+    }
+
+    private static class EventsChecker implements EventListener {
+
+        private final List<Event> events = new ArrayList<Event>();
+
+        private final EventListener defaultListener;
+
+        /**
+         * @param fallbackListener the listener to which this class will pass through
+         *                         events that are not being checked
+         */
+        public EventsChecker(EventListener fallbackListener) {
+            this.defaultListener = fallbackListener;
+        }
+
+        public void processEvent(Event event) {
+            events.add(event);
+        }
+
+        public void checkEvent(String expectedKey, Map<String, String> expectedParams) {
+            boolean eventFound = false;
+            for (Iterator<Event> iter = events.iterator(); !eventFound && iter.hasNext(); ) {
+                Event event = iter.next();
+                if (event.getEventKey().equals(expectedKey)) {
+                    eventFound = true;
+                    iter.remove();
+                    checkParameters(event, expectedParams);
+                }
+            }
+            if (!eventFound) {
+                fail("Event did not occur but was expected to: " + expectedKey + expectedParams);
+            }
+        }
+
+        private void checkParameters(Event event, Map<String, String> expectedParams) {
+            Map<String, Object> actualParams = event.getParams();
+            for (Map.Entry<String, String> expectedParam : expectedParams.entrySet()) {
+                assertTrue("Event \"" + event.getEventKey()
+                                + "\" is missing parameter \"" + expectedParam.getKey() + '"',
+                        actualParams.containsKey(expectedParam.getKey()));
+                assertEquals("Event \"" + event.getEventKey()
+                                + "\" has wrong value for parameter \"" + expectedParam.getKey() + "\";",
+                        actualParams.get(expectedParam.getKey()).toString(),
+                        expectedParam.getValue());
+            }
+        }
+
+        public void emitUncheckedEvents() {
+            for (Event event : events) {
+                defaultListener.processEvent(event);
+            }
         }
     }
 
