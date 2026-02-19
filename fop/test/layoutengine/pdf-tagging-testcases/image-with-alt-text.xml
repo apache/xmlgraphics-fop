@@ -42,7 +42,7 @@
                 <fo:flow flow-name="xsl-region-body">
 
                     <fo:block>
-                        <fo:external-graphic src="url('test.png')" fox:alt-text="A test image used for accessibility."/>
+                        <fo:external-graphic src="../resources/images/bgimg300dpi.jpg" fox:alt-text="A test image used for accessibility."/>
                     </fo:block>
 
                 </fo:flow>
