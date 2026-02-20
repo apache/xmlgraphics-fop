@@ -377,6 +377,10 @@ public final class FopFactory implements ImageContext {
         return config.isAccessibilityEnabled();
     }
 
+    boolean isDefaultTaggingEnabled() {
+        return config.isDefaultTaggingEnabled();
+    }
+
     boolean isStaticRegionsPerPageForAccessibility() {
         return config.isStaticRegionsPerPageForAccessibility();
     }

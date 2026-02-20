@@ -39,6 +39,8 @@ public final class Accessibility {
      */
     public static final String ROLE_ARTIFACT = "artifact";
 
+    public static final String DEFAULT_TAGGING = "default-tagging";
+
     private Accessibility() { }
 
 }

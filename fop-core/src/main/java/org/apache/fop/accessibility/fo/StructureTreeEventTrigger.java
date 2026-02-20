@@ -20,6 +20,7 @@
 package org.apache.fop.accessibility.fo;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
@@ -30,6 +31,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.accessibility.StructureTreeEventHandler;
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.FOEventHandler;
 import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FOText;
@@ -106,7 +108,9 @@ class StructureTreeEventTrigger extends FOEventHandler {
 
     }
 
-    public StructureTreeEventTrigger(StructureTreeEventHandler structureTreeEventHandler) {
+    public StructureTreeEventTrigger(StructureTreeEventHandler structureTreeEventHandler,
+            FOUserAgent foUserAgent) {
+        super(foUserAgent);
         this.structureTreeEventHandler = structureTreeEventHandler;
     }
 
@@ -496,6 +500,7 @@ class StructureTreeEventTrigger extends FOEventHandler {
         endElement(foText);
     }
 
+    private LinkedList<Boolean> tagged = new LinkedList<Boolean>();
 
     private StructureTreeElement startElement(FONode node) {
         AttributesImpl attributes = new AttributesImpl();
@@ -521,6 +526,7 @@ class StructureTreeEventTrigger extends FOEventHandler {
         node.setStructureTreeElement(
                 structureTreeEventHandler.startReferencedNode(localName, attributes,
                         node.getParent().getStructureTreeElement()));
+        tagged.addFirst(Boolean.TRUE);
     }
 
     private void startElementWithIDAndAltText(FObj node, String altText) {
@@ -532,6 +538,7 @@ class StructureTreeEventTrigger extends FOEventHandler {
         node.setStructureTreeElement(
                 structureTreeEventHandler.startImageNode(localName, attributes,
                         node.getParent().getStructureTreeElement()));
+        tagged.addFirst(Boolean.TRUE);
     }
 
     private StructureTreeElement startElement(FONode node, AttributesImpl attributes) {
@@ -539,8 +546,18 @@ class StructureTreeEventTrigger extends FOEventHandler {
         if (node instanceof CommonAccessibilityHolder) {
             addRole((CommonAccessibilityHolder) node, attributes);
         }
-        return structureTreeEventHandler.startNode(localName, attributes,
+
+        String roleFromAttributes = attributes.getValue("role");
+        if (!foUserAgent.isDefaultTaggingEnabled() && roleFromAttributes == null) {
+            tagged.addFirst(Boolean.FALSE);
+            return null;
+        }
+
+        StructureTreeElement element = structureTreeEventHandler.startNode(localName, attributes,
                 node.getParent().getStructureTreeElement());
+        tagged.addFirst(Boolean.TRUE);
+
+        return element;
     }
 
     private void addNoNamespaceAttribute(AttributesImpl attributes, String name, String value) {
@@ -562,8 +579,11 @@ class StructureTreeEventTrigger extends FOEventHandler {
     }
 
     private void endElement(FONode node) {
-        String localName = node.getLocalName();
-        structureTreeEventHandler.endNode(localName);
+        if (tagged.getFirst().booleanValue()) {
+            String localName = node.getLocalName();
+            structureTreeEventHandler.endNode(localName);
+        }
+        tagged.removeFirst();
     }
 
 }

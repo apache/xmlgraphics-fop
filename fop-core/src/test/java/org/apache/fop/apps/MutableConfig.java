@@ -52,6 +52,10 @@ public final class MutableConfig implements FopFactoryConfig {
         return delegate.isAccessibilityEnabled();
     }
 
+    public boolean isDefaultTaggingEnabled() {
+        return delegate.isDefaultTaggingEnabled();
+    }
+
 
     public boolean isStaticRegionsPerPageForAccessibility() {
         return delegate.isStaticRegionsPerPageForAccessibility();

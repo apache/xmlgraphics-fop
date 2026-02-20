@@ -208,6 +208,15 @@ public class FopConfParser {
             }
         }
 
+        if (cfg.getChild("default-tagging", false) != null) {
+            try {
+                fopFactoryBuilder.setDefaultTagging(cfg.getChild("default-tagging").getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(LOG, e, false);
+            }
+        }
+
+
         // base definitions for relative path resolution
         if (cfg.getChild("base", false) != null) {
             try {

@@ -162,6 +162,11 @@ public final class FopFactoryBuilder {
         return this;
     }
 
+    public FopFactoryBuilder setDefaultTagging(boolean enableDefaultTagging) {
+        fopFactoryConfigBuilder.setDefaultTagging(enableDefaultTagging);
+        return this;
+    }
+
     public FopFactoryBuilder setStaticRegionsPerPageForAccessibility(boolean staticRegionsPerPageForAccessibility) {
         fopFactoryConfigBuilder.setStaticRegionsPerPageForAccessibility(staticRegionsPerPageForAccessibility);
         return this;
@@ -383,6 +388,8 @@ public final class FopFactoryBuilder {
 
         private boolean accessibility;
 
+        private boolean defaultTagging = true;
+
         private boolean staticRegionsPerPageForAccessibility;
 
         private boolean keepEmptyTags = true;
@@ -451,6 +458,10 @@ public final class FopFactoryBuilder {
         /** {@inheritDoc} */
         public boolean isAccessibilityEnabled() {
             return accessibility;
+        }
+
+        public boolean isDefaultTaggingEnabled() {
+            return defaultTagging;
         }
 
         public boolean isStaticRegionsPerPageForAccessibility() {
@@ -586,6 +597,8 @@ public final class FopFactoryBuilder {
 
         void setAccessibility(boolean enableAccessibility);
 
+        void setDefaultTagging(boolean enableDefaultTagging);
+
         void setStaticRegionsPerPageForAccessibility(boolean staticRegionsPerPageForAccessibility);
 
         void setKeepEmptyTags(boolean b);
@@ -645,6 +658,10 @@ public final class FopFactoryBuilder {
         }
 
         public void setAccessibility(boolean enableAccessibility) {
+            throwIllegalStateException();
+        }
+
+        public void setDefaultTagging(boolean enableDefaultTagging) {
             throwIllegalStateException();
         }
 
@@ -757,6 +774,10 @@ public final class FopFactoryBuilder {
 
         public void setAccessibility(boolean enableAccessibility) {
             config.accessibility = enableAccessibility;
+        }
+
+        public void setDefaultTagging(boolean enableDefaultTagging) {
+            config.defaultTagging = enableDefaultTagging;
         }
 
         public void setStaticRegionsPerPageForAccessibility(boolean staticRegionsPerPageForAccessibility) {

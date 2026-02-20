@@ -149,6 +149,7 @@ public class FOUserAgent {
         this.resourceResolver = resourceResolver;
         setTargetResolution(factory.getTargetResolution());
         setAccessibility(factory.isAccessibilityEnabled());
+        setDefaultTagging(factory.isDefaultTaggingEnabled());
         setStaticRegionsPerPageForAccessibility(factory.isStaticRegionsPerPageForAccessibility());
         setKeepEmptyTags(factory.isKeepEmptyTags());
         imageSessionContext = new AbstractImageSessionContext(factory.getFallbackResolver()) {
@@ -725,6 +726,28 @@ public class FOUserAgent {
             return enabled;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Activates default tagging (for output formats that support it).
+     * @param defaultTagging <code>true</code> to enable default tagging
+     */
+
+    public void setDefaultTagging(boolean defaultTagging) {
+        getRendererOptions().put(Accessibility.DEFAULT_TAGGING, defaultTagging);
+    }
+
+    /**
+     * Check if default tagging is enabled.
+     * @return true if default tagging is enabled
+     */
+    public boolean isDefaultTaggingEnabled() {
+        Boolean enabled = (Boolean)this.getRendererOptions().get(Accessibility.DEFAULT_TAGGING);
+        if (enabled != null) {
+            return enabled;
+        } else {
+            return true;
         }
     }
 

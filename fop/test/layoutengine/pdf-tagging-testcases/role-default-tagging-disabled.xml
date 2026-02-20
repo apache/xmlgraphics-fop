@@ -1,0 +1,68 @@
+<testcase>
+    <info>
+        <p>
+            Check pdf structure for basic tags and table
+        </p>
+    </info>
+    <cfg>
+        <fop version="1.0">
+            <accessibility>true</accessibility>
+            <default-tagging>false</default-tagging>
+        </fop>
+    </cfg>
+    <fo>
+        <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+                 xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+
+            <fo:layout-master-set>
+                <fo:simple-page-master master-name="A4" margin="2cm">
+                    <fo:region-body/>
+                </fo:simple-page-master>
+            </fo:layout-master-set>
+
+            <fo:page-sequence master-reference="A4">
+                <fo:flow flow-name="xsl-region-body">
+                    <fo:block role="H1">
+                        <fo:block role="none">Accessibility Test — Headline 1</fo:block>
+                        <fo:block role="H2">This is an accessible paragraph.</fo:block>
+                    </fo:block>
+                    <fo:block>
+                        <fo:table>
+                            <fo:table-column/>
+                            <fo:table-column/>
+
+                            <fo:table-header>
+                                <fo:table-row>
+                                    <fo:table-cell role="TD">
+                                        <fo:block>Header A</fo:block>
+                                    </fo:table-cell>
+                                    <fo:table-cell role="TD">
+                                        <fo:block>Header B</fo:block>
+                                    </fo:table-cell>
+                                </fo:table-row>
+                            </fo:table-header>
+
+                            <fo:table-body>
+                                <fo:table-row>
+                                    <fo:table-cell>
+                                        <fo:block>Value A1</fo:block>
+                                    </fo:table-cell>
+                                    <fo:table-cell>
+                                        <fo:block>Value B1</fo:block>
+                                    </fo:table-cell>
+                                </fo:table-row>
+                            </fo:table-body>
+
+                        </fo:table>
+
+                    </fo:block>
+                </fo:flow>
+            </fo:page-sequence>
+        </fo:root>
+    </fo>
+    <pdf-tagging-checks>
+        <eval expected="Accessibility Test — Headline 1" xpath="//H1/content"/>
+        <eval expected="This is an accessible paragraph." xpath="//H1/H2/content"/>
+        <eval expected="2" xpath="count(//TD)"/>
+    </pdf-tagging-checks>
+</testcase>

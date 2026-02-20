@@ -144,7 +144,8 @@ public class FO2StructureTreeConverter extends DelegatingFOEventHandler {
     public FO2StructureTreeConverter(StructureTreeEventHandler structureTreeEventHandler,
             FOEventHandler delegate) {
         super(delegate);
-        this.structureTreeEventTrigger = new StructureTreeEventTrigger(structureTreeEventHandler);
+        this.structureTreeEventTrigger = new StructureTreeEventTrigger(structureTreeEventHandler,
+                delegate.getUserAgent());
         this.converter = structureTreeEventTrigger;
     }
 

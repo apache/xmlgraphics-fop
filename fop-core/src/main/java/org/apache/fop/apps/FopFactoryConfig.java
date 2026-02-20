@@ -68,6 +68,8 @@ public interface FopFactoryConfig {
      */
     boolean isAccessibilityEnabled();
 
+    boolean isDefaultTaggingEnabled();
+
     boolean isStaticRegionsPerPageForAccessibility();
 
     boolean isKeepEmptyTags();
