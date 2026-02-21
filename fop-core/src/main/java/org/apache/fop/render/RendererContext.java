@@ -109,8 +109,7 @@ public class RendererContext {
      * @return the generic renderer context wrapper
      */
     public static RendererContextWrapper wrapRendererContext(RendererContext context) {
-        RendererContextWrapper wrapper = new RendererContextWrapper(context);
-        return wrapper;
+        return new RendererContextWrapper(context);
     }
 
     /** {@inheritDoc} **/

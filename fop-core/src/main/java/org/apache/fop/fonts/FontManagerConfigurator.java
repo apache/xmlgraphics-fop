@@ -156,9 +156,8 @@ public class FontManagerConfigurator {
                 continue;
             }
         }
-        FontTriplet.Matcher orMatcher = new OrFontTripletMatcher(
+        return new OrFontTripletMatcher(
                 matcherList.toArray(new FontTriplet.Matcher[matcherList.size()]));
-        return orMatcher;
     }
 
     /**
@@ -174,9 +173,8 @@ public class FontManagerConfigurator {
         for (String fontFamily : fontFamilies) {
                 matcherList.add(new FontFamilyRegExFontTripletMatcher(fontFamily));
         }
-        FontTriplet.Matcher orMatcher = new OrFontTripletMatcher(
+        return new OrFontTripletMatcher(
                 matcherList.toArray(new FontTriplet.Matcher[matcherList.size()]));
-        return orMatcher;
     }
 
     private static class OrFontTripletMatcher implements FontTriplet.Matcher {
