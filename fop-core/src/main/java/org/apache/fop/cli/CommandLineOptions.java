@@ -394,6 +394,8 @@ public class CommandLineOptions {
                 getPDFEncryptionParams().setAllowAssembleDocument(false);
             } else if (args[i].equals("-noprinthq")) {
                 getPDFEncryptionParams().setAllowPrintHq(false);
+            } else if (args[i].equals("-nodefaulttagging")) {
+                this.renderingOptions.put(Accessibility.DEFAULT_TAGGING, Boolean.FALSE);
             } else if (args[i].equals("-version")) {
                 printVersion();
                 return false;
@@ -1215,6 +1217,7 @@ public class CommandLineOptions {
             + "  -noprinthq        PDF file will be encrypted without"
             + " print high quality permission\n"
             + "  -a                enables accessibility features (Tagged PDF etc., default off)\n"
+            + "  -nodefaulttagging disables default tagging for elements without role attribute (default off)\n"
             + "  -pdfprofile prof  PDF file will be generated with the specified profile\n"
             + "                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)\n\n"
             + "  -conserve         enable memory-conservation policy (trades memory-consumption"
