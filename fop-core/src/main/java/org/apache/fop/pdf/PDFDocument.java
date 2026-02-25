@@ -27,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -1043,26 +1042,30 @@ public class PDFDocument {
      * @throws IOException if there is an exception writing to the output stream
      */
     public void output(OutputStream stream) throws IOException {
+        output(stream, objects);
+    }
+
+    private void output(OutputStream stream, List<? extends PDFObject> objs) throws IOException {
         outputStarted = true;
         //Write out objects until the list is empty. This approach (used with a
         //LinkedList) allows for output() methods to create and register objects
         //on the fly even during serialization.
 
         if (objectStreamsEnabled) {
-            List<PDFObject> indirectObjects = new ArrayList<>();
-            while (objects.size() > 0) {
-                PDFObject object = objects.remove(0);
+            List indirectObjects = new ArrayList<>();
+            while (!objs.isEmpty()) {
+                PDFObject object = objs.remove(0);
                 if (object.supportsObjectStream()) {
                     addToObjectStream(object);
                 } else {
                     indirectObjects.add(object);
                 }
             }
-            objects.addAll(indirectObjects);
+            objs.addAll(indirectObjects);
         }
 
-        while (objects.size() > 0) {
-            PDFObject object = objects.remove(0);
+        while (!objs.isEmpty()) {
+            PDFObject object = objs.remove(0);
             streamIndirectObject(object, stream);
         }
     }
@@ -1097,13 +1100,6 @@ public class PDFDocument {
         int len = outputIndirectObject(o, stream);
         this.position += len;
         return len;
-    }
-
-    private void streamIndirectObjects(Collection<? extends PDFObject> objects, OutputStream stream)
-            throws IOException {
-        for (PDFObject o : objects) {
-            streamIndirectObject(o, stream);
-        }
     }
 
     private void recordObjectOffset(PDFObject object) {
@@ -1174,6 +1170,7 @@ public class PDFDocument {
     public void outputTrailer(OutputStream stream) throws IOException {
         createDestinations();
         output(stream);
+        objects = trailerObjects;
         outputTrailerObjectsAndXref(stream);
     }
 
@@ -1203,7 +1200,7 @@ public class PDFDocument {
             }
             trailerOutputHelper.outputStructureTreeElements(stream);
         }
-        streamIndirectObjects(trailerObjects, stream);
+        output(stream, trailerObjects);
         TrailerDictionary trailerDictionary = createTrailerDictionary(true);
         long startxref = trailerOutputHelper.outputCrossReferenceObject(stream, trailerDictionary, 0,
                 indirectObjectOffsets.size(), indirectObjectOffsets.size());
@@ -1267,7 +1264,7 @@ public class PDFDocument {
 
         public void outputStructureTreeElements(OutputStream stream)
                 throws IOException {
-            streamIndirectObjects(structureTreeElements, stream);
+            output(stream, structureTreeElements);
         }
 
         public long outputCrossReferenceObject(OutputStream stream,
