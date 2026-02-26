@@ -64,7 +64,11 @@ public class SVGGlyphData {
 
     private String updateTransform(String svg, int height)
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
-        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
         InputSource inputSource = new InputSource();
         inputSource.setCharacterStream(new StringReader(svg));
         Document doc = documentBuilder.parse(inputSource);
