@@ -1520,7 +1520,7 @@ public class RTFHandler extends FOEventHandler {
         ColumnSetup columnSetup = new ColumnSetup(tab);
         //int sumOfColumns = columnSetup.getSumOfColumnWidths(percentManager);
         float tableWidth = percentManager.getBaseLength(LengthBase.CONTAINING_BLOCK_WIDTH, tab);
-        float tableUnit = columnSetup.computeTableUnit(percentManager, Math.round(tableWidth));
+        float tableUnit = columnSetup.computeTableUnit(percentManager, Math.round(tableWidth), null);
         percentManager.setTableUnit(tab, Math.round(tableUnit));
 
     }
