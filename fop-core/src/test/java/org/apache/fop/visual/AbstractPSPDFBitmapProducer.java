@@ -148,8 +148,7 @@ public abstract class AbstractPSPDFBitmapProducer extends AbstractBitmapProducer
                 }
 
                 convert(tempOut, tempPNG, context);
-                BufferedImage img = BitmapComparator.getImage(tempPNG);
-                return img;
+                return BitmapComparator.getImage(tempPNG);
             } finally {
                 if (deleteTempFiles) {
                     if (!tempOut.delete()) {

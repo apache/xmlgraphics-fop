@@ -229,8 +229,7 @@ public class TestAssistant {
             throws IOException {
         try {
             DocumentBuilder builder = domBuilderFactory.newDocumentBuilder();
-            Document testDoc = builder.parse(testFile);
-            return testDoc;
+            return builder.parse(testFile);
         } catch (Exception e) {
             throw new IOException("Error while loading test case: " + e.getMessage());
         }

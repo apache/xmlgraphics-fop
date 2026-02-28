@@ -174,9 +174,8 @@ public class Java2DPainter extends AbstractIFPainter<IFDocumentHandler> {
 
     /** {@inheritDoc} */
     protected RenderingContext createRenderingContext() {
-        Java2DRenderingContext java2dContext = new Java2DRenderingContext(
+        return new Java2DRenderingContext(
                 getUserAgent(), g2dState.getGraph(), getFontInfo());
-        return java2dContext;
     }
 
     /** {@inheritDoc} */

@@ -205,8 +205,7 @@ public final class FopFactory implements ImageContext {
      * @return the newly created FOUserAgent instance initialized with default values
      */
     public FOUserAgent newFOUserAgent() {
-        FOUserAgent userAgent = new FOUserAgent(this, resolver);
-        return userAgent;
+        return new FOUserAgent(this, resolver);
     }
 
     boolean isComplexScriptFeaturesEnabled() {

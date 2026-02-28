@@ -145,8 +145,7 @@ public class GSUBTestCase implements ScriptContextTester, GlyphContextTester {
         String pn = findTTXPath(fid);
         assertTrue(pn != null);
         try {
-            TTXFile tf = TTXFile.getFromCache(pn);
-            return tf;
+            return TTXFile.getFromCache(pn);
         } catch (Exception e) {
             fail(e.getMessage());
             return null;

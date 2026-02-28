@@ -35,8 +35,7 @@ public class PCLRendererContext extends RendererContext.RendererContextWrapper {
      * @return the PCL-specific renderer context wrapper
      */
     public static PCLRendererContext wrapRendererContext(RendererContext context) {
-        PCLRendererContext pcli = new PCLRendererContext(context);
-        return pcli;
+        return new PCLRendererContext(context);
     }
 
     /**

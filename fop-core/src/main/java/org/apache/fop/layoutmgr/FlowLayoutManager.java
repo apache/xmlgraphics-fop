@@ -413,8 +413,7 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
      */
     @Override
     public int getContentAreaIPD() {
-        int flowIPD = getPSLM().getCurrentColumnWidth();
-        return flowIPD;
+        return getPSLM().getCurrentColumnWidth();
     }
 
     /**

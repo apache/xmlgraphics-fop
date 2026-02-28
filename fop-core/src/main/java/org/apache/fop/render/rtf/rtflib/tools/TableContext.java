@@ -124,8 +124,7 @@ public class TableContext implements ITableColumnsInfo {
      * @return true, if it's the first of multiple spanning columns
      */
     public boolean getFirstSpanningCol() {
-        Boolean b = (Boolean) colFirstSpanningCol.get(colIndex);
-        return b;
+        return (Boolean) colFirstSpanningCol.get(colIndex);
     }
 
     /**
