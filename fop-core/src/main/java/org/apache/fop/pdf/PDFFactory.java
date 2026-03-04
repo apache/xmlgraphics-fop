@@ -593,7 +593,7 @@ public class PDFFactory {
             if (filename == null) {
                 filename = uri.getSchemeSpecificPart();
             }
-            if (scheme == null && filename.toLowerCase().endsWith(".pdf")) {
+            if (scheme == null && filename.toLowerCase().endsWith(".pdf") && !document.isForceUriBasicLink()) {
                 scheme = "file";
             }
             if (scheme == null) {

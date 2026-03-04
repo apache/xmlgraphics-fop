@@ -331,9 +331,7 @@ public class PDFFactoryTestCase {
         }
 
         PDFFactory pdfFactory = new PDFFactory(doc);
-        PDFAction action = pdfFactory.getExternalAction("a", false, originalAltText);
-        action.setObjectNumber(1);
-        action.setDocument(doc);
+        PDFAction action = createPDFAction(pdfFactory, doc, "a", originalAltText);
 
         PDFLink link = pdfFactory.makeLink(new Rectangle(), "a", 0, 0);
         link.setAction(action);
@@ -349,5 +347,45 @@ public class PDFFactoryTestCase {
         } else {
             return originalAltText;
         }
+    }
+
+    @Test
+    public void testExternalActionDefaultBehaviour() throws IOException {
+        ByteArrayOutputStream bos = getOutputFromPdfAction("a.pdf", false);
+        assertTrue("Must use GoToRemote when flag is false", bos.toString().contains("/S /GoToR"));
+    }
+
+    @Test
+    public void testExternalActionForceUriBasicLinkBehaviour() throws IOException {
+        ByteArrayOutputStream bos = getOutputFromPdfAction("a.pdf", true);
+        assertTrue("Must use URI when flag is true", bos.toString().contains("/URI (a.pdf)"));
+    }
+
+    @Test
+    public void testExternalActionNonPdf() throws IOException {
+        ByteArrayOutputStream legacyBos = getOutputFromPdfAction("a.png", true);
+        ByteArrayOutputStream defaultBos = getOutputFromPdfAction("a.png", false);
+
+        assertEquals("Both legacy and default behaviour should use URI for non-PDF files",
+                legacyBos.toString(), defaultBos.toString());
+    }
+
+    private ByteArrayOutputStream getOutputFromPdfAction(String fileName, boolean forceUriBasicLink)
+        throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        PDFDocument doc = new PDFDocument("");
+        doc.setForceUriBasicLink(forceUriBasicLink);
+
+        createPDFAction(new PDFFactory(doc), doc, fileName, "").output(bos);
+
+        return bos;
+    }
+
+    private PDFAction createPDFAction(PDFFactory pdfFactory, PDFDocument doc, String fileName, String originalAltText) {
+        PDFAction action = pdfFactory.getExternalAction(fileName, false, originalAltText);
+        action.setObjectNumber(1);
+        action.setDocument(doc);
+
+        return action;
     }
 }

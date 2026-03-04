@@ -636,6 +636,7 @@ class PDFRenderingUtil {
         pdfDoc.setLinearizationEnabled(rendererConfig.getLinearizationEnabled());
         pdfDoc.setFormXObjectEnabled(rendererConfig.getFormXObjectEnabled());
         pdfDoc.setObjectStreamsEnabled(rendererConfig.getObjectStreamsEnabled());
+        pdfDoc.setForceUriBasicLink(rendererConfig.getForceUriBasicLinkEnabled());
 
         return this.pdfDoc;
     }

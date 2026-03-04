@@ -58,6 +58,7 @@ import static org.apache.fop.render.pdf.PDFEncryptionOption.OWNER_PASSWORD;
 import static org.apache.fop.render.pdf.PDFEncryptionOption.USER_PASSWORD;
 import static org.apache.fop.render.pdf.PDFRendererOption.DISABLE_SRGB_COLORSPACE;
 import static org.apache.fop.render.pdf.PDFRendererOption.FILTER_LIST;
+import static org.apache.fop.render.pdf.PDFRendererOption.FORCE_URI_BASIC_LINK;
 import static org.apache.fop.render.pdf.PDFRendererOption.FORM_XOBJECT;
 import static org.apache.fop.render.pdf.PDFRendererOption.LINEARIZATION;
 import static org.apache.fop.render.pdf.PDFRendererOption.MERGE_FONTS;
@@ -157,6 +158,7 @@ public final class PDFRendererConfig implements RendererConfig {
                 parseAndPut(LINEARIZATION, cfg);
                 parseAndPut(FORM_XOBJECT, cfg);
                 parseAndPut(OBJECT_STREAMS, cfg);
+                parseAndPut(FORCE_URI_BASIC_LINK, cfg);
                 parseAndPut(VERSION, cfg);
                 configureSignParams(cfg);
             } catch (ConfigurationException e) {

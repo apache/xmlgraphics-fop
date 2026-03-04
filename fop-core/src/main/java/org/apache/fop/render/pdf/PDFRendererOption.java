@@ -127,6 +127,12 @@ public enum PDFRendererOption implements RendererConfigOption {
         Object deserialize(String value) {
             throw new UnsupportedOperationException();
         }
+    },
+    FORCE_URI_BASIC_LINK("force-uri-basic-link", false) {
+        @Override
+        Boolean deserialize(String value) {
+            return Boolean.valueOf(value);
+        }
     };
 
     private final String name;

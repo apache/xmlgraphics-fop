@@ -191,6 +191,8 @@ public class PDFDocument {
 
     private boolean objectStreamsEnabled;
 
+    private boolean forceUriBasicLink;
+
     /**
      * Creates an empty PDF document.
      *
@@ -1334,5 +1336,13 @@ public class PDFDocument {
 
     public int getObjectCount() {
         return objectcount;
+    }
+
+    public boolean isForceUriBasicLink() {
+        return forceUriBasicLink;
+    }
+
+    public void setForceUriBasicLink(boolean forceUriBasicLink) {
+        this.forceUriBasicLink = forceUriBasicLink;
     }
 }
