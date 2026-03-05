@@ -1,0 +1,49 @@
+<?xml version="1.0" standalone="no"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<testcase>
+  <info>
+    <p>
+      This test checks that IDs coming from images properly appear in the IF output.
+    </p>
+  </info>
+  <fo>
+      <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+          <fo:layout-master-set>
+              <fo:simple-page-master master-name="sample">
+                  <fo:region-body/>
+              </fo:simple-page-master>
+          </fo:layout-master-set>
+          <fo:page-sequence master-reference="sample">
+              <fo:flow flow-name="xsl-region-body">
+                  <fo:block font-size="large" font-style="italic">Testing SVG images, there should be no NPE</fo:block>
+                  <fo:block>
+                      <fo:block> This is a SVG with its size in em: <fo:instream-foreign-object>
+                          <svg class="hazardsymbol" height="5em" version="1.1" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+                              <rect fill="red" height="600" rx="10" ry="10" stroke="black" stroke-width="5" width="600" x="0" y="0"/>
+                          </svg>
+                      </fo:instream-foreign-object>
+                      </fo:block>
+                  </fo:block>
+              </fo:flow>
+          </fo:page-sequence>
+      </fo:root>
+  </fo>
+  <if-checks xmlns:if="http://xmlgraphics.apache.org/fop/intermediate">
+    <eval expected="5em" xpath="//if:page-sequence/descendant::*[local-name() = 'svg'][1]/@height"/>
+  </if-checks>
+</testcase>

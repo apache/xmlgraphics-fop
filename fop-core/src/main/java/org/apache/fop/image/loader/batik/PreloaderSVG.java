@@ -34,11 +34,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
+import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.anim.dom.SVGOMDocument;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.DefaultFontFamilyResolver;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.bridge.UserAgent;
+import org.apache.batik.css.engine.CSSEngine;
 
 import org.apache.xmlgraphics.image.loader.ImageContext;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
@@ -172,6 +174,15 @@ public class PreloaderSVG extends AbstractImagePreloader {
 
             };
             BridgeContext ctx = new BridgeContext(userAg);
+            if (doc instanceof SVGOMDocument) {
+                SVGOMDocument document = (SVGOMDocument) doc;
+                CSSEngine eng = document.getCSSEngine();
+                if (eng == null) {
+                    SVGDOMImplementation impl = (SVGDOMImplementation) document.getImplementation();
+                    impl.createCSSEngine(document, ctx);
+                }
+            }
+
             UnitProcessor.Context uctx = UnitProcessor.createContext(ctx, e);
 
             String s;
