@@ -52,6 +52,7 @@ public class PDFSigningTestCase {
                 + "  /T (Signature1)\n"
                 + "  /TU (Signature1)\n"
                 + "  /Rect [0 0 0 0]"));
+        Assert.assertFalse(out.toString().contains("/DigestMethod"));
     }
 
     @Test

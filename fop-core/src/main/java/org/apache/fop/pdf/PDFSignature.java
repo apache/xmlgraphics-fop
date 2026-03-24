@@ -76,7 +76,6 @@ public class PDFSignature {
         SigRef() {
             put("Type", new PDFName("SigRef"));
             put("TransformMethod", new PDFName("DocMDP"));
-            put("DigestMethod", new PDFName("SHA1"));
             put("TransformParams", new TransformParams());
         }
     }
