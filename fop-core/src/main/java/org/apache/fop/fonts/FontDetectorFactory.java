@@ -21,6 +21,7 @@ package org.apache.fop.fonts;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -91,12 +92,22 @@ public final class FontDetectorFactory {
                 // is a directory but don't recurse
                 FontFileFinder fontFileFinder = new FontFileFinder(eventListener);
                 URI fontBaseURI = fontManager.getResourceResolver().getBaseURI();
-                File fontBase = FileUtils.toFile(fontBaseURI.toURL());
-                if (fontBase != null) {
-                    List<URL> fontURLList = fontFileFinder.find(fontBase);
-                    fontAdder.add(fontURLList, fontInfoList);
+                URL url = null;
+                try {
+                    url = fontBaseURI.toURL();
+                } catch (MalformedURLException e) {
+                    log.warn("Unable to detect fonts in font base directory, unknown font base URL: "
+                            + fontBaseURI, e);
+                }
 
-                    //Can only use the font base URL if it's a file URL
+                if (url != null) {
+                    File fontBase = FileUtils.toFile(url);
+                    if (fontBase != null) {
+                        List<URL> fontURLList = fontFileFinder.find(fontBase);
+                        fontAdder.add(fontURLList, fontInfoList);
+
+                        //Can only use the font base URL if it's a file URL
+                    }
                 }
 
                 // native o/s font directory finding
