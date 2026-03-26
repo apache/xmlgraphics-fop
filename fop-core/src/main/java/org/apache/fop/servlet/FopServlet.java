@@ -26,9 +26,11 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URL;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
@@ -97,6 +99,11 @@ public class FopServlet extends HttpServlet {
     public void init() throws ServletException {
         this.uriResolver = new ServletContextURIResolver(getServletContext());
         this.transFactory = TransformerFactory.newInstance();
+        try {
+            transFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (TransformerConfigurationException e) {
+            throw new ServletException(e);
+        }
         transFactory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalDTD", "");
         transFactory.setAttribute("http://javax.xml.XMLConstants/property/accessExternalStylesheet", "");
         this.transFactory.setURIResolver(this.uriResolver);
