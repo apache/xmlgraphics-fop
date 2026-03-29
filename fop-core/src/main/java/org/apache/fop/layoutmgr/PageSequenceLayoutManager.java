@@ -337,8 +337,7 @@ public class PageSequenceLayoutManager extends AbstractPageSequenceLayoutManager
 
     private List<List<KnuthElement>> getTableFootnotes(List<List<KnuthElement>> tableFootnotes) {
         if (tableFootnotes == null) {
-            List<List<KnuthElement>> emptyList = Collections.emptyList();
-            return emptyList;
+            return Collections.emptyList();
         } else {
             return tableFootnotes;
         }
