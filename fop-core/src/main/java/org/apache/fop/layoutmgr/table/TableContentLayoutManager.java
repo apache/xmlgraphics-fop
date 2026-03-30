@@ -19,23 +19,29 @@
 
 package org.apache.fop.layoutmgr.table;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
+import org.apache.fop.fo.FONode;
 import org.apache.fop.fo.FObj;
 import org.apache.fop.fo.flow.Marker;
 import org.apache.fop.fo.flow.table.EffRow;
+import org.apache.fop.fo.flow.table.GridUnit;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableBody;
+import org.apache.fop.fo.flow.table.TableColumn;
 import org.apache.fop.fo.flow.table.TablePart;
 import org.apache.fop.layoutmgr.BreakElement;
 import org.apache.fop.layoutmgr.ElementListUtils;
@@ -53,6 +59,7 @@ import org.apache.fop.layoutmgr.PageBreaker;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceResolver.SpaceHandlingBreakPosition;
+import org.apache.fop.traits.MinOptMax;
 import org.apache.fop.util.BreakUtil;
 
 /**
@@ -76,6 +83,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
     private int usedBPD;
 
     private TableStepper stepper;
+
+    private final Map<TableColumn, MinOptMax> baseLength = new HashMap<TableColumn, MinOptMax>();
 
     private boolean headerIsBeingRepeated;
     private boolean  atLeastOnce;
@@ -137,6 +146,272 @@ public class TableContentLayoutManager implements PercentBaseContext {
     }
 
     /**
+     * assigns a {@link MinOptMax} object to a specific {@link TableColumn}
+     * @param key a {@link TableColumn}
+     * @param mom a {@link MinOptMax} representing the width requirements of the <code>key</code>
+     */
+    public void setBaseLength(TableColumn key, MinOptMax mom) {
+        this.baseLength.put(key, mom);
+    }
+
+    /**
+     * returns the {@link MinOptMax} assigned to a table's {@link TableColumn}.
+     * @param key a {@link TableColumn}
+     * @return {@link MinOptMax} object representing the minimal, optimal and maximum width required for the
+     * <code>key</code>
+     */
+    public final MinOptMax getBaseLength(final FObj key) {
+        return this.baseLength.get(key);
+    }
+
+    /**
+     * Compute and set a set of {@link MinOptMax} widths for a {@link PrimaryGridUnit} (PGU).
+     * Now also covers PGUs spanning multiple columns. However, if such a PGU is encountered
+     * in the first row already, the table requires a second determination run.
+     * @param primary
+     * @return
+     */
+    private boolean setBaseLength(final PrimaryGridUnit primary, LayoutContext context) {
+        final Table table = this.tableLM.getTable();
+        final int index = primary.getColIndex();
+        final int n = index + primary.getCell().getNumberColumnsSpanned();
+        final TableColumn key = table.getColumn(index);
+
+        int availableSpanWidth = 0;
+        int minSpanWidth = 0;
+
+        int min;
+        int span;
+
+        // calculate width (min and opt) of all columns spanned by primary
+        for (int i = index; i < n; i++) {
+            final TableColumn column = table.getColumn(i);
+            span = column.getColumnWidth().getValue(this.tableLM);
+            availableSpanWidth += span;
+
+            min = span;
+            if (column.isAutoLayout()) {
+                final MinOptMax length = getBaseLength(column);
+                if (length != null) {
+                    min = length.getMin();
+                }
+            }
+            minSpanWidth += min;
+        }
+
+        // retrieve the maximum width of the cell's content - problematic if col-span >1 for a static first column?
+        int ipd = primary.getCellLM().getRefIPD();
+
+        // retrieve the minimum width of the cell's content - also works for cells spanning columns
+        int minIPD = primary.getCellLM().getMinimumIPD();
+
+        final MinOptMax length = getBaseLength(key);
+        if ((availableSpanWidth == 0) || (length == null)) {
+            // TODO: remove the following IF as soon as the computation of minIPD is corrected
+            if (minIPD > ipd) {    // happens e.g. for cells containing a space: ipd=0, minIPD=len(" ")
+                ipd = minIPD;
+            }
+            // |_____c1_____|   <- width for both:    minSpanWidth <= optimal <= availableSpanWidth
+            // |__c2__||___c3___| <- width for spanning cell: minIPD <= optimal <= ipd
+            MinOptMax initialMinOptMax = MinOptMax.getInstance(minIPD, ipd, ipd);
+            this.baseLength.put(key, initialMinOptMax);
+        } else {
+            if (index == n - 1) {    // a primary without col-span > 1
+                if ((availableSpanWidth < ipd) || (length.getMin() < minIPD)) { // cell needs more space
+
+                    if (minIPD > ipd) {
+                        ipd = minIPD; // See: fop/test/layoutengine/standard-testcases/table-layout_auto_simple_nested.xml
+                    }
+
+                    MinOptMax possibleWidths =
+                            MinOptMax.getInstance(
+                                    Math.max(length.getMin(), minIPD),
+                                    Math.max(length.getOpt(), ipd),
+                                    Math.max(length.getMax(), ipd)
+                            );
+                    return length == this.baseLength.put(key, possibleWidths);
+                }
+            } else {
+                // this primary spans multiple columns which may have to be resized!
+                // |__c1__||__c2__|   <- width for both:    minSpanWidth <= optimal <= availableSpanWidth
+                // |__c3 (span=2)___| <- width for spanning cell: minIPD <= optimal <= ipd
+                // thus, if any of the following booleans are true, the spanned columns need to be widened!
+                boolean isNotSufficientForMinIPD = minSpanWidth < minIPD;    // overflow even after linebreaks
+                boolean isNotSufficientForIPD = availableSpanWidth < ipd;    // overflow because of more content
+
+                if (isNotSufficientForMinIPD || isNotSufficientForIPD) {
+                    // columns spanned by the primary do not offer enough width and, thus, need to
+                    // be widened.
+
+                    // first step: ignore static columns which cannot be resized
+                    // this includes removing their width from the widths to process
+                    List<TableColumn> columnsToWiden = new ArrayList<>();
+                    for (Iterator iter = table.getColumns().subList(index, n).iterator(); iter.hasNext();) {
+                        TableColumn column = (TableColumn)iter.next();
+                        if (column.isAutoLayout()) {    // column can be resized
+                            int width = column.getColumnWidth().getValue(this.tableLM);
+
+                            if (tableLM.getPossibleWidths(column, context) == null) {
+                                // ignore columns without PrimaryGridUnits
+                            } else {
+                                columnsToWiden.add(column);
+                            }
+                        } else {    // column is static and cannot be resized
+                            int width = column.getColumnWidth().getValue(this.tableLM);
+                            availableSpanWidth -= width;
+                            minSpanWidth -= width;
+                            ipd -= width;
+                            minIPD -= width;
+                        }
+                    }
+
+                    // true if only static columns are spanned -> no columns left to resize!
+                    if (columnsToWiden.isEmpty()) {
+                        LOG.warn("No columns to resize to fit a table-cell spanning these columns, expect overflows");
+                        return false;
+                    }
+
+                    // minimal width reserved by the spanned columns insufficient -> resize
+                    if (minSpanWidth < minIPD) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.warn("Cell (" + primary.getColIndex() + "," + primary.getRowIndex() + ") spanning "
+                                    + primary.getCell().getNumberColumnsSpanned() + " columns requires at least "
+                                    + minIPD + " -> widening MIN/OPT/MAX its spanned columns: " + columnsToWiden);
+                        }
+
+                        int totalIncrease = increaseMinimumWidthOfSpannedColumns(columnsToWiden, minSpanWidth, minIPD, context);
+                        // resizing the columns led to additional space being reserved by these columns!
+                        availableSpanWidth += totalIncrease;
+                    }
+
+                    // maximum width reserved by the spanned columns insufficient -> resize
+                    if (availableSpanWidth < ipd) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.warn("Cell (" + primary.getColIndex() + "," + primary.getRowIndex() + ") spanning "
+                                    + primary.getCell().getNumberColumnsSpanned() + " columns requires up to "
+                                    + ipd + " -> widening OPT/MAX of its spanned columns: " + columnsToWiden);
+                        }
+                        increaseOptimalWidthOfSpannedColumns(columnsToWiden, availableSpanWidth, ipd);
+                    }
+                }
+
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Takes a set of columns (minSpanWidthOfSpannedCells = sum of their minIPDs) which are spanned
+     * by the cell we are currently processing. Since this current cell requires a wider minIPD than
+     * all spanned columns combined, this method increases the min. width of these columns proportionally
+     * in such a way that the sum of their min. widths is >= the minIPD of the current cell.<br>
+     * Please note that for each column, all three values of its {@link MinOptMax} are increased accordingly.
+     * After all columns were processed and widened, the sum of additional space reserved by these columns
+     * is returned.
+     * @param columnsToWiden set of non-static columns which can be resized
+     * @param minSpanWidthOfSpannedCells sum of the minIPDs of the columns in columnsToWiden
+     * @param minIPD minimal width required by the current cell
+     * @param context
+     * @return the total amount of width which was added to the columns in columnsToWiden
+     */
+    private int increaseMinimumWidthOfSpannedColumns(List columnsToWiden, int minSpanWidthOfSpannedCells, int minIPD, LayoutContext context) {
+        int totalIncrease = 0;
+
+        for (Iterator iter = columnsToWiden.iterator(); iter.hasNext();) {
+            final TableColumn column = (TableColumn) iter.next();
+            MinOptMax length = tableLM.getPossibleWidths(column, context);
+
+            // calculate factor for increase of width
+            double factor = (double)length.getMin() / minSpanWidthOfSpannedCells;
+
+            // how much more space is required to display the spanning cell
+            int totalMissingMinSpace = minIPD - minSpanWidthOfSpannedCells;
+
+            int increaseForMinimum = (int) Math.ceil(factor * totalMissingMinSpace);
+
+            MinOptMax newMom =
+                    MinOptMax.getInstance(
+                            length.getMin() + increaseForMinimum,
+                            length.getOpt() + increaseForMinimum,
+                            length.getMax() + increaseForMinimum
+                    );
+            setBaseLength(column, newMom);
+            totalIncrease += increaseForMinimum;
+        }
+        return totalIncrease;
+    }
+
+    /**
+     * takes a set of columns (<b>columnsToWiden</b>) spanned by one cell (represented via a
+     * {@link PrimaryGridUnit}) and increases their minimum width value (in case the spanning cell's
+     * minIPD is bigger than the sum of
+     * goes through a subset of the columns
+     * @param columnsToWiden
+     * @param availableWidth
+     * @param requiredWidth
+     * @return
+     */
+    private boolean increaseOptimalWidthOfSpannedColumns(List columnsToWiden, int availableWidth, int requiredWidth) {
+        for (Iterator iter = columnsToWiden.iterator(); iter.hasNext();) {
+            final TableColumn column = (TableColumn) iter.next();
+            MinOptMax length = getBaseLength(column);
+
+            // calculate factor for increase of width
+            double factor = (double) length.getOpt() / availableWidth;
+
+            // how much more space is required to display the spanning cell
+            int totalMissingMaxSpace = requiredWidth - availableWidth;
+
+            // ensure the content will fit by getting the ceiling of the product
+            int increase = (int) Math.ceil(factor * totalMissingMaxSpace);
+            MinOptMax newMom =
+                    MinOptMax.getInstance(
+                            length.getMin(),
+                            length.getOpt() + increase,
+                            length.getMax() + increase
+                    );
+            setBaseLength(column, newMom);
+        }
+        return false;
+    }
+
+    private boolean setBaseLength(final TableContentPosition position, LayoutContext context) {
+        boolean done = false;
+        final EffRow row = position.getRow();
+        final Iterator grid = row.getGridUnits().iterator();
+
+        while (grid.hasNext()) {
+            final GridUnit unit = (GridUnit) grid.next();
+
+            if (unit instanceof PrimaryGridUnit) {
+                done = setBaseLength((PrimaryGridUnit) unit, context) || done;
+            }
+        }
+
+        return done;
+    }
+
+    private boolean setBaseLength(final Iterator content,LayoutContext context) {
+        boolean done = false;
+
+        while (content.hasNext()) {
+            final ListElement element = (ListElement) content.next();
+            final Position position = element.getPosition();
+
+            if (position instanceof TableContentPosition) {
+                done = setBaseLength((TableContentPosition) position, context) || done;
+            }
+        }
+
+        return done;
+    }
+
+    private boolean setBaseLength(final List content, LayoutContext context) {
+        final Table table = this.tableLM.getTable();
+        return table.isAutoLayout() && setBaseLength(content.iterator(), context);
+    }
+
+    /**
      * Get a sequence of KnuthElements representing the content
      * of the node assigned to the LM.
      *
@@ -157,6 +432,18 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (headerIter != null && headerList == null) {
             this.headerList = getKnuthElementsForRowIterator(
                     headerIter, context, alignment, TableRowIterator.HEADER);
+
+            setBaseLength(this.headerList, context);
+            /* NOT sure why we need to recreate header iterator, this can lead to an endless loop since we get the same
+               table over and over again!
+            if (setBaseLength(this.headerList, context)) {
+                final Table table = this.tableLM.getTable();
+                this.headerIter = new TableRowIterator(table, TableRowIterator.HEADER);
+                this.headerList = null;
+                return getNextKnuthElements(context, alignment);
+            }
+            */
+
             this.headerNetHeight
                     = ElementListUtils.calcContentLength(this.headerList);
             if (LOG.isDebugEnabled()) {
@@ -189,6 +476,24 @@ public class TableContentLayoutManager implements PercentBaseContext {
         if (footerIter != null && footerList == null) {
             this.footerList = getKnuthElementsForRowIterator(
                     footerIter, context, alignment, TableRowIterator.FOOTER);
+
+            setBaseLength(this.footerList, context);
+            /* NOT sure why we need to recreate footer iterator, this can lead to an endless loop since we get the same
+               table over and over again!
+            if (setBaseLength(this.footerList, context)) {
+                final Table table = this.tableLM.getTable();
+
+                if (this.headerIter != null) {
+                    this.headerIter = new TableRowIterator(table, TableRowIterator.HEADER);
+                    this.headerList = null;
+                }
+
+                this.footerIter = new TableRowIterator(table, TableRowIterator.FOOTER);
+                this.footerList = null;
+                return getNextKnuthElements(context, alignment);
+            }
+            */
+
             this.footerNetHeight
                     = ElementListUtils.calcContentLength(this.footerList);
             if (LOG.isDebugEnabled()) {
@@ -211,6 +516,29 @@ public class TableContentLayoutManager implements PercentBaseContext {
         }
         returnList.addAll(getKnuthElementsForRowIterator(
                 bodyIter, context, alignment, TableRowIterator.BODY));
+
+        setBaseLength(returnList, context);
+        /* NOT sure why we need to recreate table iterators, this can lead to an endless loop since we get the same
+           table over and over again!
+           causes java.lang.StackOverflowError: see fop/test/layoutengine/standard-testcases/table-layout_auto_nested_2.xml
+        if (setBaseLength(returnList, context)) {
+            final Table table = this.tableLM.getTable();
+
+            if (this.headerIter != null) {
+                this.headerIter = new TableRowIterator(table, TableRowIterator.HEADER);
+                this.headerList = null;
+            }
+
+            if (this.footerIter != null) {
+                this.footerIter = new TableRowIterator(table, TableRowIterator.FOOTER);
+                this.footerList = null;
+            }
+
+            this.bodyIter = new TableRowIterator(table, TableRowIterator.BODY);
+            return getNextKnuthElements(context, alignment);
+        }
+           */
+
         if (headerAsFirst != null) {
             int insertionPoint = 0;
             if (returnList.size() > 0 && returnList.getFirst().isForcedBreak()) {
@@ -514,7 +842,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
              * TableStepper haven't been removed yet.
              */
             if (pos instanceof TableContentPosition) {
-                lst.add((TableContentPosition) pos);
+                lst.add(pos);
             }
         }
         addTablePartAreas(lst, painter, part, true, true, true, lastOnPage);
@@ -599,6 +927,126 @@ public class TableContentLayoutManager implements PercentBaseContext {
      */
     public int getBaseLength(int lengthBase, FObj fobj) {
         return tableLM.getBaseLength(lengthBase, fobj);
+    }
+
+    /**
+     * essentially, do the same things as {@link TableContentLayoutManager#getNextKnuthElements(LayoutContext, int)},
+     * but only do the bare minimum required to get the {@link MinOptMax} values for each column of the
+     * table with automatic layout. Thus, this computation must not have any side effects on the/any
+     * subsequent call to {@link TableContentLayoutManager#getNextKnuthElements(LayoutContext, int)}.
+     * @param context
+     * @param alignment
+     */
+    public void determineAutoLayoutWidths(LayoutContext context, int alignment) {
+        List<PrimaryGridUnit> colspanningPGUs = new LinkedList<PrimaryGridUnit>();
+        Table table = getTableLM().getTable();
+
+        TableRowIterator tempbodyIter = new TableRowIterator(table, TableRowIterator.BODY);
+        TableRowIterator tempheaderIter = null;
+        TableRowIterator tempfooterIter = null;
+
+        if (table.getTableHeader() != null) {
+            tempheaderIter = new TableRowIterator(table, TableRowIterator.HEADER);
+            iterateOverTableRows(tempheaderIter, context, alignment, TableRowIterator.HEADER, colspanningPGUs);
+        }
+
+        iterateOverTableRows(tempbodyIter, context, alignment, TableRowIterator.BODY, colspanningPGUs);
+
+        if (table.getTableFooter() != null) {
+            tempfooterIter = new TableRowIterator(table, TableRowIterator.FOOTER);
+            iterateOverTableRows(tempfooterIter, context, alignment, TableRowIterator.FOOTER, colspanningPGUs);
+        }
+
+        for (PrimaryGridUnit primary : colspanningPGUs) {
+            determineWidthOfPrimary(primary, context, alignment);
+        }
+    }
+
+    /**
+     * To be used only during the preprocessing run which determines the dimensions of Tables with table-layout="auto".
+     * Iterates over all rows of the provided iterator (either for the header, footer or body of a table depending
+     * on the parameter <code>bodyType</code>). For each row, the contained {@link PrimaryGridUnit}s are taken to
+     * determine their widths based on their content. These widths are then propagated to the individual
+     * {@link TableColumn}s via {@link #setBaseLength(PrimaryGridUnit)}. Afterwards, the {@link PrimaryGridUnit}'s
+     * elements reset so that they are properly processed during the rendering run (this is necessary since the
+     * dimensions obtained for a column are still subject to changes). <br>
+     * Based on
+     * {@link TableContentLayoutManager#getKnuthElementsForRowIterator(TableRowIterator, LayoutContext, int, int)}
+     * However, since we are only interested in the widths of the contained PGUs, most of the original method was
+     * removed.
+     * @param iter Iterator providing access to rows which belong either to the table's body, header or footer
+     * @param context layout context
+     * @param alignment
+     * @param bodyType indicates which part of a table is processed (actually not required)
+     */
+    private void iterateOverTableRows(TableRowIterator iter,    // returns indiv. rows
+                                      LayoutContext context, int alignment, int bodyType,
+                                      List<PrimaryGridUnit> colspanningPGUs) {
+        EffRow[] rowGroup;
+        while ((rowGroup = iter.getNextRowGroup()) != null) {
+            //RowGroupLayoutManager rowGroupLM = new RowGroupLayoutManager(getTableLM(), rowGroup,
+            //        null);    // the actual tablestepper might lead to undesired side effects!
+            /**
+             * based on RowGroupLayoutManager#createElementsForRowGroup
+             * initializes the PGUs of one row at a time
+             */
+            for (EffRow row : rowGroup) {
+                for (GridUnit gu : row.getGridUnits()) {
+                    if (gu.isPrimary()) {
+                        PrimaryGridUnit primary = gu.getPrimary();
+
+                        // during this iteration, the width of PGUs in entries which span multiple columns
+                        // cannot be determined
+                        if (primary.getCell().getNumberColumnsSpanned() > 1) {
+                            LOG.debug("Will revisit later");
+                            colspanningPGUs.add(primary);
+                        } else {
+                            determineWidthOfPrimary(primary, context, alignment);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void determineWidthOfPrimary(PrimaryGridUnit primary, LayoutContext context, int alignment) {
+        // recursively retrieve (and thereby calculate the dimensions of)
+        // all KnuthElements of all contained LayoutManagers for the given cell
+        primary.createCellLM();
+        TableCellLayoutManager cellLM = primary.getCellLM();
+        cellLM.setParent(tableLM);
+        //Calculate width of cell
+        int spanWidth = 0;
+        Iterator<TableColumn> colIter = tableLM.getTable().getColumns().stream()
+                .map(c -> (TableColumn) c)
+                .collect(Collectors.toList())
+                .listIterator(primary.getColIndex());
+        for (int i = 0, c = primary.getCell().getNumberColumnsSpanned(); i < c; i++) {
+            spanWidth += colIter.next().getColumnWidth().getValue(tableLM);
+        }
+
+        LayoutContext childLC = LayoutContext.offspringOf(context);
+        childLC.setStackLimitBP(context.getStackLimitBP());
+        childLC.setRefIPD(spanWidth);
+
+        /* Works fine.  See: fop/test/layoutengine/standard-testcases/table-layout_auto_single_column.xml
+        // TODO: ugly workaround to deal with one-column tables which would be rendered broken otherwise
+        if (tableLM.getTable().getColumns().size() == 1) {
+            childLC.setRefIPD(context.getRefIPD());
+        } else {
+            childLC.setRefIPD(spanWidth);
+        }
+        */
+
+        //Get the element list for the cell contents
+        List elems = cellLM.getNextKnuthElements(childLC, alignment);
+        // temporarily assign these KnuthElements to the PGU to calculate its dimensions
+        primary.setElements(elems);
+        setBaseLength(primary, context);
+
+        // reset the PGU (and thereby reset (even destroy?) all contained LayoutManagers)
+        // the dimensions, however, are still present in form of a MinOptMax!
+        primary.setElements(null);
     }
 
 }

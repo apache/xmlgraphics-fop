@@ -71,6 +71,7 @@ import org.apache.fop.layoutmgr.NonLeafPosition;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.SpaceSpecifier;
+import org.apache.fop.layoutmgr.UnresolvedListElementWithLength;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -170,7 +171,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
 
     private LineLayoutPossibilities lineLayouts;
     private LineLayoutPossibilities[] lineLayoutsList;
-    private int ipd;
+    private MinOptMax ipd = null;
     /**
      * When layout must be re-started due to a change of IPD, there is no need
      * to perform hyphenation on the remaining Knuth sequence once again.
@@ -228,8 +229,12 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             if (textAlignment == EN_CENTER) {
                 lineFiller = MinOptMax.getInstance(lastLineEndIndent);
             } else {
-                lineFiller = MinOptMax.getInstance(lastLineEndIndent, lastLineEndIndent,
-                        layoutManager.ipd);
+                if (layoutManager.ipd.getOpt() < lastLineEndIndent) {
+                    lineFiller = MinOptMax.getInstance(lastLineEndIndent);
+                } else {
+                    lineFiller = MinOptMax.getInstance(lastLineEndIndent, lastLineEndIndent,
+                            layoutManager.ipd.getOpt());
+                }
             }
 
             // add auxiliary elements at the beginning of the paragraph
@@ -441,7 +446,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             // true if this line contains only zero-height, auxiliary boxes
             // and the actual line width is 0; in this case, the line "collapses"
             // i.e. the line area will have bpd = 0
-            boolean isZeroHeightLine = (difference == ipd);
+            boolean isZeroHeightLine = (difference == ipd.getOpt());
 
             // if line-stacking-strategy is "font-height", the line height
             // is not affected by its content
@@ -497,7 +502,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                              firstElementIndex, lastElementIndex,
                                              availableShrink, availableStretch,
                                              difference, ratio, 0, startIndent, endIndent,
-                                             0, ipd, 0, 0, 0);
+                                             0, ipd.getOpt(), 0, 0, 0);
             } else {
                 return new LineBreakPosition(thisLLM,
                                              knuthParagraphs.indexOf(par),
@@ -505,7 +510,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                              availableShrink, availableStretch,
                                              difference, ratio, 0, startIndent, endIndent,
                                              lineLead + lineFollow,
-                                             ipd, spaceBefore, spaceAfter,
+                                             ipd.getOpt(), spaceBefore, spaceAfter,
                                              lineLead);
             }
         }
@@ -616,7 +621,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     context.getWritingMode());
         }
         context.setAlignmentContext(alignmentContext);
-        ipd = context.getRefIPD();
+        ipd = MinOptMax.getInstance(context.getRefIPD());
 
         //PHASE 1: Create Knuth elements
         if (knuthParagraphs == null) {
@@ -686,7 +691,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             return null;
         }
 
-        ipd = context.getRefIPD();
+        ipd = MinOptMax.getInstance(context.getRefIPD());
         //PHASE 2: Create line breaks
         return createLineBreaks(context.getBPAlignment(), context);
     }
@@ -705,6 +710,9 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         StringBuffer trace = new StringBuffer("LineLM:");
 
         Paragraph lastPar = null;
+
+        int minimumIPD = 0;
+        int maxSumIPD = 0;
 
         InlineLevelLayoutManager curLM;
         while ((curLM = (InlineLevelLayoutManager) getChildLM()) != null) {
@@ -744,6 +752,32 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             // loop over the KnuthSequences (and single KnuthElements) in returnedList
             for (Object inlineElement : inlineElements) {
                 KnuthSequence sequence = (KnuthSequence) inlineElement;
+
+                // get to know the width of the contained elements
+                if (context.isInAutoLayoutDeterminationMode()) {
+                    final ListIterator i = sequence.listIterator();
+
+                    while (i.hasNext()) {
+                        Object object =  i.next();
+                        if (object instanceof KnuthElement) {
+                            final KnuthElement element = (KnuthElement) object;
+                            // retrieve minimum width for this lineLM along the way
+                            if (element instanceof KnuthBox) {
+                                // TODO: this is already calculated during the collection of the childLM's elements
+                                minimumIPD = Math.max(minimumIPD, element.getWidth());
+                            }
+                            maxSumIPD += element.getWidth();
+                        } else {
+                            if (object instanceof UnresolvedListElementWithLength) {
+                                final UnresolvedListElementWithLength unresolved  = (UnresolvedListElementWithLength) object;
+                                MinOptMax minmax = unresolved.getLength();
+                                maxSumIPD += minmax.getMax();
+                            }
+                        }
+
+                    }
+//                    log.debug("Line with minIPD:=" + minimumIPD);
+                }
                 // the sequence contains inline Knuth elements
                 if (sequence.isInlineSequence()) {
                     // look at the last element
@@ -785,7 +819,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                         if (!lastPar.containsBox()) {
                             //only a forced linefeed on this line
                             //-> compensate with an auxiliary glue
-                            lastPar.add(new KnuthGlue(ipd, 0, ipd, null, true));
+                            lastPar.add(new KnuthGlue(ipd.getOpt(), 0, ipd.getOpt(), null, true));
                         }
                         lastPar.endParagraph();
                         ElementListObserver.observe(lastPar, "line", null);
@@ -811,6 +845,22 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             if (log.isTraceEnabled()) {
                 trace.append(" ]");
             }
+        }
+
+        /**
+         * at this point, localIPD represents the maximum value for how wide the line should be.
+         */
+        if (ipd.getMax() < maxSumIPD && context.isInAutoLayoutDeterminationMode()) {
+            ipd = MinOptMax.getInstance(minimumIPD, maxSumIPD, maxSumIPD);
+
+            final MinOptMax stackLimitBP = context.getStackLimitBP();
+            int max = stackLimitBP.getMax();
+            if (max < maxSumIPD) {
+                max = maxSumIPD;
+            }
+            MinOptMax newStackLimitBP = MinOptMax.getInstance(stackLimitBP.getMin(), maxSumIPD, max);
+            context.setStackLimitBP(newStackLimitBP);
+            context.setRefIPD(ipd.getOpt());
         }
         log.trace(trace);
     }
@@ -865,7 +915,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                                         hyphenationLadderCount.getEnum() == EN_NO_LIMIT
                                             ? 0 : hyphenationLadderCount.getValue(),
                                         this);
-        alg.setConstantLineWidth(ipd);
+        alg.setConstantLineWidth(ipd.getOpt());
         boolean canWrap = (wrapOption != EN_NO_WRAP);
         boolean canHyphenate = (canWrap && hyphenationProperties.hyphenate.getEnum() == EN_TRUE);
 
@@ -1343,7 +1393,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     }
                 }
                 if (log.isTraceEnabled()) {
-                    log.trace(" Word to hyphenate: " + sbChars);
+                    log.trace(" Word to hyphenate: " + sbChars.toString());
                 }
                 // find hyphenation points
                 HyphContext hc = getHyphenContext(sbChars);
