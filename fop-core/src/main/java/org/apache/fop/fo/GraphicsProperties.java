@@ -19,6 +19,7 @@
 
 package org.apache.fop.fo;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.datatypes.Length;
 import org.apache.fop.fo.properties.LengthRangeProperty;
 
@@ -77,5 +78,11 @@ public interface GraphicsProperties {
      * @return the "text-align" property.
      */
     int getTextAlign();
+
+    /**
+     *
+     * @return user agent
+     */
+    FOUserAgent getUserAgent();
 
 }

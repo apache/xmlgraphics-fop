@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks image's width when inside a table cell
+    </p>
+  </info>
+  <cfg>
+    <use-parent-ipd-image-scaling>true</use-parent-ipd-image-scaling>
+  </cfg>
+  <fo>
+      <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:svg="http://www.w3.org/2000/svg">
+          <fo:layout-master-set>
+              <fo:simple-page-master master-name="content" page-width="2cm">
+                  <fo:region-body/>
+              </fo:simple-page-master>
+          </fo:layout-master-set>
+          <fo:page-sequence master-reference="content">
+              <fo:flow flow-name="xsl-region-body">
+                  <fo:block>
+                      <fo:table table-layout="fixed" width="100%">
+                          <fo:table-column column-width="proportional-column-width(50)" column-number="1"/>
+                          <fo:table-column column-width="proportional-column-width(50)" column-number="2"/>
+                          <fo:table-body>
+                              <fo:table-row>
+                                  <fo:table-cell>
+                                      <fo:block text-align="center">
+                                          <fo:external-graphic content-width="scale-up-to-fit" scaling="non-uniform" src="../resources/images/bgimg300dpi.jpg"/>
+                                      </fo:block>
+                                  </fo:table-cell>
+                                  <fo:table-cell>
+                                      <fo:block text-align="center">
+                                          <fo:external-graphic content-width="scale-up-to-fit" scaling="non-uniform" src="../resources/images/bgimg300dpi.jpg"/>
+                                      </fo:block>
+                                  </fo:table-cell>
+                              </fo:table-row>
+                              <fo:table-row height="0.396874994039536cm">
+                                  <fo:table-cell>
+                                      <fo:block text-align="center">
+                                          <fo:external-graphic content-width="scale-up-to-fit" scaling="uniform" src="../resources/images/bgimg300dpi.jpg"/>
+                                      </fo:block>
+                                  </fo:table-cell>
+                                  <fo:table-cell>
+                                      <fo:block text-align="center">
+                                          <fo:external-graphic content-width="scale-up-to-fit" scaling="uniform" src="../resources/images/bgimg300dpi.jpg"/>
+                                      </fo:block>
+                                  </fo:table-cell>
+                              </fo:table-row>
+                              <fo:table-row>
+                                  <fo:table-cell>
+                                      <fo:block text-align="center">
+                                          <fo:instream-foreign-object background-color="yellow" content-width="scale-up-to-fit" scaling="non-uniform">
+                                              <svg:svg width="2cm" height="2cm" viewBox="0 0 30 30">
+                                                  <svg:circle cx="15" cy="15" r="14" fill="#0000ff" stroke="none"/>
+                                              </svg:svg>
+                                          </fo:instream-foreign-object>
+                                      </fo:block>
+                                  </fo:table-cell>
+                                  <fo:table-cell>
+                                      <fo:block text-align="center">
+                                          <fo:instream-foreign-object background-color="yellow" content-width="scale-up-to-fit" scaling="non-uniform">
+                                              <svg:svg width="2cm" height="2cm" viewBox="0 0 30 30">
+                                                  <svg:circle cx="15" cy="15" r="14" fill="#0000ff" stroke="none"/>
+                                              </svg:svg>
+                                          </fo:instream-foreign-object>
+                                      </fo:block>
+                                  </fo:table-cell>
+                              </fo:table-row>
+                              <fo:table-row>
+                                  <fo:table-cell>
+                                      <fo:block text-align="center">
+                                          <fo:instream-foreign-object background-color="yellow" content-width="scale-up-to-fit" scaling="uniform">
+                                              <svg:svg width="2cm" height="2cm" viewBox="0 0 30 30">
+                                                  <svg:circle cx="15" cy="15" r="14" fill="#0000ff" stroke="none"/>
+                                              </svg:svg>
+                                          </fo:instream-foreign-object>
+                                      </fo:block>
+                                  </fo:table-cell>
+                                  <fo:table-cell>
+                                      <fo:block text-align="center">
+                                          <fo:instream-foreign-object background-color="yellow" content-width="scale-up-to-fit" scaling="uniform">
+                                              <svg:svg width="2cm" height="2cm" viewBox="0 0 30 30">
+                                                  <svg:circle cx="15" cy="15" r="14" fill="#0000ff" stroke="none"/>
+                                              </svg:svg>
+                                          </fo:instream-foreign-object>
+                                      </fo:block>
+                                  </fo:table-cell>
+                              </fo:table-row>
+                          </fo:table-body>
+                      </fo:table>
+                  </fo:block>
+              </fo:flow>
+          </fo:page-sequence>
+      </fo:root>
+  </fo>
+  <checks>
+    <!-- width of the first table -->
+    <eval expected="28300" xpath="//flow/block/block/block/block/lineArea/viewport[1]/@ipd"/>
+    <eval expected="46080" xpath="//flow/block/block/block/block/lineArea/viewport[1]/@bpd"/>
+    <eval expected="28300" xpath="//flow/block/block/block[2]/block/lineArea/viewport[1]/@ipd"/>
+    <eval expected="46080" xpath="//flow/block/block/block[2]/block/lineArea/viewport[1]/@bpd"/>
+    <eval expected="28300" xpath="//flow/block/block/block[3]/block/lineArea/viewport[1]/@ipd"/>
+    <eval expected="46080" xpath="//flow/block/block/block[3]/block/lineArea/viewport[1]/@bpd"/>
+    <eval expected="28300" xpath="//flow/block/block/block[4]/block/lineArea/viewport[1]/@ipd"/>
+    <eval expected="46080" xpath="//flow/block/block/block[4]/block/lineArea/viewport[1]/@bpd"/>
+    <eval expected="28300" xpath="//flow/block/block/block[5]/block/lineArea/viewport[1]/@ipd"/>
+    <eval expected="56692" xpath="//flow/block/block/block[5]/block/lineArea/viewport[1]/@bpd"/>
+    <eval expected="28300" xpath="//flow/block/block/block[6]/block/lineArea/viewport[1]/@ipd"/>
+    <eval expected="56692" xpath="//flow/block/block/block[6]/block/lineArea/viewport[1]/@bpd"/>
+    <eval expected="28300" xpath="//flow/block/block/block[7]/block/lineArea/viewport[1]/@ipd"/>
+    <eval expected="56692" xpath="//flow/block/block/block[7]/block/lineArea/viewport[1]/@bpd"/>
+    <eval expected="28300" xpath="//flow/block/block/block[8]/block/lineArea/viewport[1]/@ipd"/>
+    <eval expected="56692" xpath="//flow/block/block/block[8]/block/lineArea/viewport[1]/@bpd"/>
+  </checks>
+</testcase>

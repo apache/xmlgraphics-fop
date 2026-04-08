@@ -385,6 +385,11 @@ public final class FopFactoryBuilder {
         return this;
     }
 
+    public FopFactoryBuilder setUseParentIPDImageScaling(boolean value) {
+        fopFactoryConfigBuilder.setUseParentIPDImageScaling(value);
+        return this;
+    }
+
     public static class FopFactoryConfigImpl implements FopFactoryConfig {
 
         private final EnvironmentProfile enviro;
@@ -442,6 +447,8 @@ public final class FopFactoryBuilder {
         private boolean legacyFoWrapper;
 
         private boolean legacyInvalidBreakPosition = FopFactoryConfig.DEFAULT_LEGACY_INVALID_BREAK_POSITION;
+
+        private boolean useParentIPDImageScaling = FopFactoryConfig.DEFAULT_USE_PARENT_IPD_IMAGE_SCALING;
 
         private static final class ImageContextImpl implements ImageContext {
 
@@ -595,6 +602,10 @@ public final class FopFactoryBuilder {
             return legacyInvalidBreakPosition;
         }
 
+        public boolean isUseParentIPDImageScaling() {
+            return useParentIPDImageScaling;
+        }
+
         public Map<String, String> getHyphenationPatternNames() {
             return hyphPatNames;
         }
@@ -625,6 +636,8 @@ public final class FopFactoryBuilder {
         void setStrictUserConfigValidation(boolean validateStrictly);
 
         void setLegacyInvalidBreakPosition(boolean invalidBreakPosition);
+
+        void setUseParentIPDImageScaling(boolean useParentContentAreaIPD);
 
         void setBreakIndentInheritanceOnReferenceAreaBoundary(boolean value);
 
@@ -708,6 +721,10 @@ public final class FopFactoryBuilder {
         }
 
         public void setLegacyInvalidBreakPosition(boolean ignoreInvalidBreakPosition) {
+            throwIllegalStateException();
+        }
+
+        public void setUseParentIPDImageScaling(boolean useParentContentAreaIPD) {
             throwIllegalStateException();
         }
 
@@ -897,6 +914,10 @@ public final class FopFactoryBuilder {
 
         public void setLegacyInvalidBreakPosition(boolean legacyInvalidBreakPosition) {
             config.legacyInvalidBreakPosition = legacyInvalidBreakPosition;
+        }
+
+        public void setUseParentIPDImageScaling(boolean useParentIPDImageScaling) {
+            config.useParentIPDImageScaling = useParentIPDImageScaling;
         }
     }
 

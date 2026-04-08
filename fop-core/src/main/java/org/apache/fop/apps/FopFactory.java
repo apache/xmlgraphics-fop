@@ -272,6 +272,10 @@ public final class FopFactory implements ImageContext {
         return config.isLegacyInvalidBreakPosition();
     }
 
+    public boolean isUseParentIPDImageScaling() {
+        return config.isUseParentIPDImageScaling();
+    }
+
     /**
      * Returns a new {@link Fop} instance. FOP will be configured with a default user agent
      * instance. Use this factory method if your output type requires an output stream.

@@ -89,6 +89,10 @@ public final class MutableConfig implements FopFactoryConfig {
         return delegate.isLegacyInvalidBreakPosition();
     }
 
+    public boolean isUseParentIPDImageScaling() {
+        return delegate.isUseParentIPDImageScaling();
+    }
+
     public boolean isBreakIndentInheritanceOnReferenceAreaBoundary() {
         return setBreakInheritance;
     }

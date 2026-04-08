@@ -552,6 +552,16 @@ public class FOUserAgent {
     }
 
     /**
+     *  Should we use the parent's layout manager for the content area IPD?
+     *
+     * @return if FOP should use the parent's layout manager for the content area IPD
+     * @see FopFactory#isUseParentIPDImageScaling()
+     */
+    public boolean isUseParentIPDImageScaling() {
+        return factory.isUseParentIPDImageScaling();
+    }
+
+    /**
      * @return true if the indent inheritance should be broken when crossing reference area
      *         boundaries (for more info, see the javadoc for the relative member variable)
      * @see FopFactory#isBreakIndentInheritanceOnReferenceAreaBoundary()

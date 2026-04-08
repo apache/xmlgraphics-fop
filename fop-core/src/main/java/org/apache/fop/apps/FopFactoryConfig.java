@@ -67,6 +67,11 @@ public interface FopFactoryConfig {
     float DEFAULT_TARGET_RESOLUTION = 72.0f; //dpi
 
     /**
+     * Defines if FOP should use the parent's layout manager for the content area IPD
+     */
+    boolean DEFAULT_USE_PARENT_IPD_IMAGE_SCALING = false;
+
+    /**
      * Whether accessibility features are switched on.
      *
      * @return true if accessibility features have been requested
@@ -186,6 +191,8 @@ public interface FopFactoryConfig {
     boolean isLegacyFoWrapper();
 
     boolean isLegacyInvalidBreakPosition();
+
+    boolean isUseParentIPDImageScaling();
 
     /** @return the hyphenation pattern names */
     Map<String, String> getHyphenationPatternNames();

@@ -130,6 +130,7 @@ public class TestAssistant {
         builder.setLegacyLastPageChangeIPD(isLegacyLastPageChangeIPD(testDoc));
         builder.setLegacyFoWrapper(isLegacyFoWrapper(testDoc));
         builder.setLegacyInvalidBreakPosition(isLegacyInvalidBreakPosition(testDoc));
+        builder.setUseParentIPDImageScaling(isUseParentIPDImageScaling(testDoc));
         return builder.build();
     }
 
@@ -213,6 +214,15 @@ public class TestAssistant {
     private boolean isLegacyInvalidBreakPosition(Document testDoc) {
         try {
             String s = eval(testDoc, "/testcase/cfg/legacy-invalid-break-position");
+            return "true".equalsIgnoreCase(s);
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean isUseParentIPDImageScaling(Document testDoc) {
+        try {
+            String s = eval(testDoc, "/testcase/cfg/use-parent-ipd-image-scaling");
             return "true".equalsIgnoreCase(s);
         } catch (XPathExpressionException e) {
             throw new RuntimeException(e);

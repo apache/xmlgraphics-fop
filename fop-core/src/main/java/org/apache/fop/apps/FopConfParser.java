@@ -64,6 +64,7 @@ public class FopConfParser {
     private static final String LEGACY_LAST_PAGE_CHANGE_IPD = "legacy-last-page-change-ipd";
     private static final String LEGACY_FO_WRAPPER = "legacy-fo-wrapper";
     private static final String LEGACY_INVALID_BREAK_POSITION = "legacy-invalid-break-position";
+    private static final String USE_PARENT_IPD_IMAGE_SCALING = "use-parent-ipd-image-scaling";
 
     private static final Log LOG = LogFactory.getLog(FopConfParser.class);
     private static final String ACCESSIBILITY = "accessibility";
@@ -343,6 +344,14 @@ public class FopConfParser {
             try {
                 fopFactoryBuilder.setLegacyInvalidBreakPosition(
                         cfg.getChild(LEGACY_INVALID_BREAK_POSITION).getValueAsBoolean());
+            } catch (ConfigurationException e) {
+                LogUtil.handleException(LOG, e, strict);
+            }
+        }
+        if (cfg.getChild(USE_PARENT_IPD_IMAGE_SCALING, false) != null) {
+            try {
+                fopFactoryBuilder.setUseParentIPDImageScaling(
+                        cfg.getChild(USE_PARENT_IPD_IMAGE_SCALING).getValueAsBoolean());
             } catch (ConfigurationException e) {
                 LogUtil.handleException(LOG, e, strict);
             }

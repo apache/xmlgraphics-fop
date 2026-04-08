@@ -30,6 +30,7 @@ import org.apache.fop.datatypes.PercentBaseContext;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.GraphicsProperties;
 import org.apache.fop.fo.properties.LengthRangeProperty;
+import org.apache.fop.layoutmgr.LayoutManager;
 
 /**
  * Helper class which calculates the size and position in the viewport of an image.
@@ -49,6 +50,8 @@ public class ImageLayout implements Constants {
     private Dimension viewportSize = new Dimension(-1, -1);
     private boolean clip;
 
+    private boolean useParentIPDImageScaling;
+
     /**
      * Main constructor
      * @param props the properties for the image
@@ -60,6 +63,7 @@ public class ImageLayout implements Constants {
         this.props = props;
         this.percentBaseContext = percentBaseContext;
         this.intrinsicSize = intrinsicSize;
+        this.useParentIPDImageScaling = props.getUserAgent().isUseParentIPDImageScaling();
 
         doLayout();
     }
@@ -90,6 +94,10 @@ public class ImageLayout implements Constants {
         if (ipd == -1 && len.getEnum() != EN_AUTO) {
             //Establish minimum viewport size
             ipd = len.getValue(percentBaseContext);
+        }
+
+        if (useParentIPDImageScaling && percentBaseContext instanceof LayoutManager) {
+            ipd = getParentIPD((LayoutManager) percentBaseContext, ipd);
         }
 
         // if auto then use the intrinsic size of the content scaled
@@ -279,6 +287,19 @@ public class ImageLayout implements Constants {
             }
         }
         return dim;
+    }
+
+    private int getParentIPD(LayoutManager layoutManager, int ipd) {
+        if (layoutManager == null || layoutManager.getParent() == null) {
+            return ipd;
+        }
+
+        try {
+            return layoutManager.getParent().getContentAreaIPD();
+        } catch (UnsupportedOperationException e) {
+            // some layout managers do not support getContentAreaIPD, so we continue searching up the hierarchy
+            return getParentIPD(layoutManager.getParent(), ipd);
+        }
     }
 
     /**
