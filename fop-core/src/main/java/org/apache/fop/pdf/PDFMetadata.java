@@ -135,7 +135,9 @@ public class PDFMetadata extends PDFStream {
 
         //Set creation date if not available, yet
         if (info.getCreationDate() == null) {
-            Date d = new Date();
+            Date d = System.getenv("SOURCE_DATE_EPOCH") == null ?
+                new Date() :
+                new Date(1000 * Long.parseLong(System.getenv("SOURCE_DATE_EPOCH")));
             info.setCreationDate(d);
         }
 
