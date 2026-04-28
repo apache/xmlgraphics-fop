@@ -251,22 +251,24 @@ class PDFRenderingUtil {
     }
 
     public void renderXMPMetadata(XMPMetadata metadata) {
-        Metadata docXMP = metadata.getMetadata();
-        Metadata fopXMP = PDFMetadata.createXMPFromPDFDocument(pdfDoc);
-        //Merge FOP's own metadata into the one from the XSL-FO document
-        List<Class> exclude = new ArrayList<Class>();
-        if (pdfDoc.getProfile().getPDFAMode().isPart1()) {
-            exclude.add(DublinCoreSchema.class);
-        }
-        fopXMP.mergeInto(docXMP, exclude);
-        XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(docXMP);
-        //Metadata was changed so update metadata date
-        xmpBasic.setMetadataDate(new java.util.Date());
-        PDFMetadata.updateInfoFromMetadata(docXMP, pdfDoc.getInfo());
+        if (pdfDoc.getRoot().getMetadata() == null) {
+            Metadata docXMP = metadata.getMetadata();
+            Metadata fopXMP = PDFMetadata.createXMPFromPDFDocument(pdfDoc);
+            //Merge FOP's own metadata into the one from the XSL-FO document
+            List<Class> exclude = new ArrayList<Class>();
+            if (pdfDoc.getProfile().getPDFAMode().isPart1()) {
+                exclude.add(DublinCoreSchema.class);
+            }
+            fopXMP.mergeInto(docXMP, exclude);
+            XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(docXMP);
+            //Metadata was changed so update metadata date
+            xmpBasic.setMetadataDate(new java.util.Date());
+            PDFMetadata.updateInfoFromMetadata(docXMP, pdfDoc.getInfo());
 
-        PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(
-                docXMP, metadata.isReadOnly());
-        pdfDoc.getRoot().setMetadata(pdfMetadata);
+            PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(
+                    docXMP, metadata.isReadOnly());
+            pdfDoc.getRoot().setMetadata(pdfMetadata);
+        }
     }
 
     public void generateDefaultXMPMetadata() {

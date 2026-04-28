@@ -19,11 +19,22 @@
 
 package org.apache.fop.render.pdf;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -45,11 +56,17 @@ import org.apache.xmlgraphics.xmp.schemas.XMPBasicSchema;
 import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFAdapter;
 import org.apache.xmlgraphics.xmp.schemas.pdf.AdobePDFSchema;
 
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
 import org.apache.fop.pdf.PDFAMode;
 import org.apache.fop.pdf.PDFDocument;
 import org.apache.fop.pdf.PDFInfo;
 import org.apache.fop.pdf.PDFMetadata;
 import org.apache.fop.pdf.PDFUAMode;
+import org.apache.fop.render.intermediate.IFDocumentHandler;
+import org.apache.fop.render.intermediate.IFParser;
+import org.apache.fop.render.intermediate.IFUtil;
 
 /**
  * Test case for PDF/A metadata handling.
@@ -220,5 +237,35 @@ public class PDFAMetadataTestCase {
                 4, arrayList.size());
 
         return arrayList;
+    }
+
+    @Test
+    public void testDuplicateMetadata() throws Exception {
+        try (InputStream ifxml = PDFAMetadataTestCase.class.getResourceAsStream("duplicatemetadata.if.xml")) {
+            ByteArrayOutputStream out = iFToPDF(ifxml);
+            String[] lines = out.toString().split("\n");
+            int xmp = 0;
+            for (String line : lines) {
+                if (line.contains("<x:xmpmeta")) {
+                    xmp++;
+                }
+            }
+            assertEquals(1, xmp);
+        }
+    }
+
+    private ByteArrayOutputStream iFToPDF(InputStream is) throws Exception {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        FOUserAgent userAgent = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Source src = new StreamSource(is);
+        IFDocumentHandler documentHandler
+                = userAgent.getRendererFactory().createDocumentHandler(userAgent, MimeConstants.MIME_PDF);
+        documentHandler.setResult(new StreamResult(out));
+        IFUtil.setupFonts(documentHandler);
+        IFParser parser = new IFParser();
+        Result res = new SAXResult(parser.getContentHandler(documentHandler, userAgent));
+        transformer.transform(src, res);
+        return out;
     }
 }
