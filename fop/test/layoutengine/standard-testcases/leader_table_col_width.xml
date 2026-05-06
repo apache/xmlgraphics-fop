@@ -1,0 +1,745 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks leaders
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions">
+      <fo:layout-master-set>
+        <fo:simple-page-master margin-top="5mm" master-name="PageFront" page-width="210mm" page-height="297mm" margin-bottom="10mm" margin-right="12mm" margin-left="14mm">
+          <fo:region-body margin-top="40mm" margin-bottom="40mm" margin-right="0cm" margin-left="0cm" region-name="letterPageBody"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="PageBack" page-width="210mm" page-height="297mm" margin-bottom="4mm" margin-right="1.9cm" margin-top="0.5cm" margin-left="2.6cm">
+          <fo:region-body margin-bottom="1cm" margin-top="3cm" margin-right="0cm" margin-left="0cm" region-name="letterPageBody"/>
+        </fo:simple-page-master>
+        <fo:simple-page-master master-name="blank" page-width="210mm" page-height="297mm" margin-bottom="4mm" margin-right="18mm" margin-top="10mm" margin-left="19mm">
+          <fo:region-body margin-bottom="34mm" region-name="letterPageBody"/>
+        </fo:simple-page-master>
+        <fo:page-sequence-master master-name="MasterSequence">
+          <fo:repeatable-page-master-alternatives>
+            <fo:conditional-page-master-reference blank-or-not-blank="not-blank" page-position="first" master-reference="PageFront"/>
+            <fo:conditional-page-master-reference blank-or-not-blank="not-blank" master-reference="PageBack"/>
+            <fo:conditional-page-master-reference blank-or-not-blank="blank" master-reference="blank"/>
+          </fo:repeatable-page-master-alternatives>
+        </fo:page-sequence-master>
+      </fo:layout-master-set>
+      <fo:page-sequence format="1" id="th_default_sequence1" initial-page-number="auto" force-page-count="end-on-even" master-reference="MasterSequence">
+
+        <fo:flow flow-name="letterPageBody">
+          <fo:block-container margin-left="22mm" height="12mm">
+            <fo:block>
+              <fo:block line-height="13.22pt" font-size="10pt">29th April 2026<fo:block/>
+              </fo:block>
+              <fo:block line-height="13.22pt" font-size="9.5pt">
+                <fo:leader/>
+              </fo:block>
+            </fo:block>
+          </fo:block-container>
+          <fo:block margin-left="22mm">
+            <fo:block line-height="12.5pt" font-size="10pt">Mr Manpreet Xxxx  and Mrs Karmjit Xxxx</fo:block>
+            <fo:block line-height="12.5pt" font-size="10pt">51 Xxxx Bvd</fo:block>
+            <fo:block line-height="12.5pt" font-size="10pt">THORNHILL PARK VIC 3335</fo:block>
+            <fo:block line-height="12.5pt" font-size="10pt">
+              <fo:leader/>
+            </fo:block>
+          </fo:block>
+          <fo:block margin-top=".5cm">
+            <fo:table table-layout="fixed" width="100%">
+              <fo:table-column column-width="proportional-column-width(22.54)" column-number="1"/>
+              <fo:table-column column-width="proportional-column-width(77.46)" column-number="2"/>
+              <fo:table-body>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">
+                        <fo:inline line-height="13.22pt" font-size="10pt">Policy number:</fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">
+                        <fo:inline line-height="13.22pt" font-size="10pt">6359999965ALP</fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">
+                        <fo:inline line-height="13.22pt" font-size="10pt">Type of cover:</fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block>
+                        <fo:inline line-height="13.22pt" font-size="10pt">Life Plan</fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">
+                        <fo:inline line-height="13.22pt" font-size="10pt">Policy Anniversary Date:</fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">
+                        <fo:inline line-height="13.22pt" font-size="10pt">31/05/2026</fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+            <fo:block line-height="13.22pt" font-size="10pt">
+              <fo:leader/>
+            </fo:block>
+            <fo:block line-height="13.22pt" font-size="10pt">Dear  Manpreet and Karmjit</fo:block>
+            <fo:block line-height="13.22pt" font-size="10pt">
+              <fo:leader/>
+            </fo:block>
+            <fo:block line-height="13.22pt" font-size="10pt">Thank you for continuing to trust us to help protect what matters most to you. Your policy anniversary is on 31/05/2026 and your cover will automatically continue - ensuring you stay protected for the year ahead. </fo:block>
+            <fo:block>
+              <fo:leader/>
+            </fo:block>
+            <fo:block line-height="13.22pt" font-size="10pt">Here is a summary of your cover for the next 12 months:</fo:block>
+            <fo:block>
+              <fo:leader/>
+            </fo:block>
+            <fo:table table-layout="fixed" width="99.75%">
+              <fo:table-column column-width="proportional-column-width(0.762)" column-number="1"/>
+              <fo:table-column column-width="proportional-column-width(15.4)" column-number="2"/>
+              <fo:table-column column-width="proportional-column-width(0.96)" column-number="3"/>
+              <fo:table-column column-width="proportional-column-width(16.09)" column-number="4"/>
+              <fo:table-column column-width="proportional-column-width(0.96)" column-number="5"/>
+              <fo:table-column column-width="proportional-column-width(65.828)" column-number="6"/>
+              <fo:table-body>
+                <fo:table-row keep-together.within-page="always" keep-with-next.within-page="always">
+                  <fo:table-cell number-columns-spanned="6">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">Life Insured: Manpreet Xxxx   </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row background-color="#95ABC9" keep-with-next.within-page="always" keep-together.within-page="always" height="1.1112499833107cm">
+                  <fo:table-cell border-bottom-color="black" border-top-width="1pt" border-left-style="solid" border-bottom-width="1pt" border-left-color="black" border-top-color="black" border-bottom-style="solid" border-left-width="1pt" border-top-style="solid">
+                    <fo:block>
+                      <fo:block color="white" font-size="9.5pt" line-height="13.22pt"> </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-bottom-color="black" border-top-width="1pt" border-bottom-width="1pt" border-top-color="black" border-bottom-style="solid" border-top-style="solid">
+                    <fo:block>
+                      <fo:block color="white" font-size="9.5pt" line-height="13.22pt">Type of cover</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-bottom-color="black" border-top-width="1pt" border-left-style="solid" border-bottom-width="1pt" border-left-color="black" border-top-color="black" border-bottom-style="solid" border-left-width="1pt" border-top-style="solid">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-bottom-color="black" border-top-width="1pt" border-bottom-width="1pt" border-top-color="black" border-bottom-style="solid" border-top-style="solid">
+                    <fo:block>
+                      <fo:block color="white" font-size="9.5pt" line-height="13.22pt">Cover amount</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-bottom-color="black" border-top-width="1pt" border-left-style="solid" border-bottom-width="1pt" border-left-color="black" border-top-color="black" border-bottom-style="solid" border-left-width="1pt" border-top-style="solid">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-right-style="solid" border-bottom-color="black" border-top-width="1pt" border-right-width="1pt" border-bottom-width="1pt" border-top-color="black" border-bottom-style="solid" border-right-color="black" border-top-style="solid">
+                    <fo:block>
+                      <fo:block color="white" font-size="9.5pt" line-height="13.22pt">What we do to help in case these things happen</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+            <fo:table table-layout="fixed" width="99.75%">
+              <fo:table-column column-width="proportional-column-width(0.762)" column-number="1"/>
+              <fo:table-column column-width="proportional-column-width(15.4)" column-number="2"/>
+              <fo:table-column column-width="proportional-column-width(0.96)" column-number="3"/>
+              <fo:table-column column-width="proportional-column-width(16.09)" column-number="4"/>
+              <fo:table-column column-width="proportional-column-width(0.96)" column-number="5"/>
+              <fo:table-column column-width="proportional-column-width(62.687)" column-number="6"/>
+              <fo:table-column column-width="proportional-column-width(1.01)" column-number="7"/>
+              <fo:table-column column-width="proportional-column-width(2.13100000000002)" column-number="8"/>
+              <fo:table-body>
+                <fo:table-row keep-together.within-page="always" keep-with-next.within-page="always" height="0.96cm">
+                  <fo:table-cell display-align="center" padding-left="2pt" number-rows-spanned="3" border-bottom-color="black" border-left-style="solid" border-bottom-width="1pt" border-left-color="black" border-bottom-style="solid" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="9.5pt">
+                        <fo:inline baseline-shift="super" font-size="5pt"> </fo:inline>
+                      </fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-left-style="solid" border-left-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block></fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt"></fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-left-style="solid" border-left-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt" border-right-style="solid" border-right-width="1pt" border-right-color="black">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">Terminal Illness where death is likely to occur within 24 months.</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt" number-rows-spanned="3" border-bottom-color="black" border-bottom-width="1pt" border-bottom-style="solid">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell number-rows-spanned="3" border-right-style="solid" border-bottom-color="black" border-right-width="1pt" border-bottom-width="1pt" border-bottom-style="solid" border-right-color="black">
+                    <fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:inline baseline-shift="super" font-size="5pt">
+                          <fo:external-graphic scaling="uniform" src="url(20000923385~f61c37ab.JPEG)" width="0.29633333333333334cm" content-width="0.29633333333333334cm" height="0.1947333333333333cm" content-height="0.1947333333333333cm"/>
+                        </fo:inline>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:inline baseline-shift="super" font-size="5pt">
+                          <fo:external-graphic scaling="uniform" src="url(20000923385~f61c37ab.JPEG)" width="0.29633333333333334cm" content-width="0.29633333333333334cm" height="0.1947333333333333cm" content-height="0.1947333333333333cm"/>
+                        </fo:inline>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:inline baseline-shift="super" font-size="5pt">
+                          <fo:external-graphic scaling="uniform" src="url(20000923385~f61c37ab.JPEG)" width="0.29633333333333334cm" content-width="0.29633333333333334cm" height="0.1947333333333333cm" content-height="0.1947333333333333cm"/>
+                        </fo:inline>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row line-height="12pt" font-size="9pt" height="0.96cm">
+                  <fo:table-cell number-rows-spanned="2" border-bottom-color="black" border-bottom-width="1pt" border-bottom-style="solid">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">Life Cover<fo:inline baseline-shift="super" font-size="5pt"> </fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell number-rows-spanned="2" border-bottom-color="black" border-left-style="solid" border-bottom-width="1pt" border-left-color="black" border-bottom-style="solid" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell number-rows-spanned="2" border-bottom-color="black" border-bottom-width="1pt" border-bottom-style="solid">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">$1,247,919<fo:block/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-left-style="solid" border-left-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt" border-right-style="solid" border-right-width="1pt" border-right-color="black">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">$15,000 funeral advancement included within the cover.</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row line-height="12pt" font-size="9pt">
+                  <fo:table-cell border-bottom-color="black" border-left-style="solid" border-bottom-width="1pt" border-left-color="black" border-bottom-style="solid" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt" border-right-style="solid" border-bottom-color="black" border-right-width="1pt" border-bottom-width="1pt" border-bottom-style="solid" border-right-color="black">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">Life Event Benefit Increases - increase to your Life Cover Amount without further assessment of your health.<fo:inline baseline-shift="super" font-size="5pt">  </fo:inline>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:inline baseline-shift="super" font-size="5pt"></fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+            <fo:table table-layout="fixed" width="99.75%">
+              <fo:table-column column-width="proportional-column-width(0.762077364146882)" column-number="1"/>
+              <fo:table-column column-width="proportional-column-width(15.4)" column-number="2"/>
+              <fo:table-column column-width="proportional-column-width(0.96)" column-number="3"/>
+              <fo:table-column column-width="proportional-column-width(16.09)" column-number="4"/>
+              <fo:table-column column-width="proportional-column-width(0.96)" column-number="5"/>
+              <fo:table-column column-width="proportional-column-width(62.6868898926873)" column-number="6"/>
+              <fo:table-column column-width="proportional-column-width(0.654381821492871)" column-number="7"/>
+              <fo:table-column column-width="proportional-column-width(2.48665092167291)" column-number="8"/>
+              <fo:table-body>
+                <fo:table-row keep-together.within-page="always" keep-with-next.within-page="always">
+                  <fo:table-cell display-align="center" padding-left="2pt" border-left-style="solid" border-left-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="9.5pt">
+                        <fo:inline baseline-shift="super" font-size="5pt"> </fo:inline>
+                      </fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-left-style="solid" border-left-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block></fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt"></fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-left-style="solid" border-left-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt" border-right-style="solid" border-right-width="1pt" border-right-color="black">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">Pays a lump sum benefit if you suffer one of the 14 defined Critical Illnesses.</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt" number-rows-spanned="3" border-bottom-color="black" border-bottom-width="1pt" border-bottom-style="solid">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell number-rows-spanned="3" border-right-style="solid" border-bottom-color="black" border-right-width="1pt" border-bottom-width="1pt" border-bottom-style="solid" border-right-color="black">
+                    <fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:inline baseline-shift="super" font-size="5pt">
+                          <fo:external-graphic scaling="uniform" src="url(20000923385~f61c37ab.JPEG)" width="0.29633333333333334cm" content-width="0.29633333333333334cm" height="0.1947333333333333cm" content-height="0.1947333333333333cm"/>
+                        </fo:inline>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:inline baseline-shift="super" font-size="5pt">
+                          <fo:external-graphic scaling="uniform" src="url(20000923385~f61c37ab.JPEG)" width="0.29633333333333334cm" content-width="0.29633333333333334cm" height="0.1947333333333333cm" content-height="0.1947333333333333cm"/>
+                        </fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row line-height="12pt" font-size="9pt">
+                  <fo:table-cell number-rows-spanned="2" border-bottom-color="black" border-left-style="solid" border-bottom-width="1pt" border-left-color="black" border-bottom-style="solid" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell number-rows-spanned="2" border-bottom-color="black" border-bottom-width="1pt" border-bottom-style="solid">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">Critical Illness                    Cover</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell number-rows-spanned="2" border-bottom-color="black" border-left-style="solid" border-bottom-width="1pt" border-left-color="black" border-bottom-style="solid" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell number-rows-spanned="2" border-bottom-color="black" border-bottom-width="1pt" border-bottom-style="solid">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">$249,583<fo:block/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-left-style="solid" border-left-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt" number-rows-spanned="2" border-right-style="solid" border-bottom-color="black" border-right-width="1pt" border-bottom-width="1pt" border-bottom-style="solid" border-right-color="black">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">Guarantee to continue cover until the policy anniversary after your 70th birthday.</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row line-height="12pt" font-size="9pt">
+                  <fo:table-cell border-bottom-color="black" border-left-style="solid" border-bottom-width="1pt" border-left-color="black" border-bottom-style="solid" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+
+            <fo:table table-layout="fixed" width="99.75%">
+              <fo:table-column column-width="proportional-column-width(0.762)" column-number="1"/>
+              <fo:table-column column-width="proportional-column-width(15.4)" column-number="2"/>
+              <fo:table-column column-width="proportional-column-width(0.96)" column-number="3"/>
+              <fo:table-column column-width="proportional-column-width(16.09)" column-number="4"/>
+              <fo:table-column column-width="proportional-column-width(0.96)" column-number="5"/>
+              <fo:table-column column-width="proportional-column-width(62.687)" column-number="6"/>
+              <fo:table-column column-width="proportional-column-width(1.01)" column-number="7"/>
+              <fo:table-column column-width="proportional-column-width(2.13100000000002)" column-number="8"/>
+              <fo:table-body>
+                <fo:table-row keep-together.within-page="always" keep-with-next.within-page="always" height="0.96cm">
+                  <fo:table-cell display-align="center" padding-left="2pt" number-rows-spanned="3" border-bottom-color="black" border-left-style="solid" border-bottom-width="1pt" border-left-color="black" border-bottom-style="solid" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="9.5pt">
+                        <fo:inline baseline-shift="super" font-size="5pt"> </fo:inline>
+                      </fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-left-style="solid" border-left-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block></fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt"></fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-left-style="solid" border-left-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt" border-right-style="solid" border-right-width="1pt" border-right-color="black">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">Terminal Illness where death is likely to occur within 24 months.</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt" number-rows-spanned="3" border-bottom-color="black" border-bottom-width="1pt" border-bottom-style="solid">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell number-rows-spanned="3" border-right-style="solid" border-bottom-color="black" border-right-width="1pt" border-bottom-width="1pt" border-bottom-style="solid" border-right-color="black">
+                    <fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:inline baseline-shift="super" font-size="5pt">
+                          <fo:external-graphic scaling="uniform" src="url(20000923385~f61c37ab.JPEG)" width="0.29633333333333334cm" content-width="0.29633333333333334cm" height="0.1947333333333333cm" content-height="0.1947333333333333cm"/>
+                        </fo:inline>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:inline baseline-shift="super" font-size="5pt">
+                          <fo:external-graphic scaling="uniform" src="url(20000923385~f61c37ab.JPEG)" width="0.29633333333333334cm" content-width="0.29633333333333334cm" height="0.1947333333333333cm" content-height="0.1947333333333333cm"/>
+                        </fo:inline>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:inline baseline-shift="super" font-size="5pt">
+                          <fo:external-graphic scaling="uniform" src="url(20000923385~f61c37ab.JPEG)" width="0.29633333333333334cm" content-width="0.29633333333333334cm" height="0.1947333333333333cm" content-height="0.1947333333333333cm"/>
+                        </fo:inline>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row line-height="12pt" font-size="9pt" height="0.96cm">
+                  <fo:table-cell number-rows-spanned="2" border-bottom-color="black" border-bottom-width="1pt" border-bottom-style="solid">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">Life Cover<fo:inline baseline-shift="super" font-size="5pt"> </fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell number-rows-spanned="2" border-bottom-color="black" border-left-style="solid" border-bottom-width="1pt" border-left-color="black" border-bottom-style="solid" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell number-rows-spanned="2" border-bottom-color="black" border-bottom-width="1pt" border-bottom-style="solid">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">$1,247,919<fo:block/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-left-style="solid" border-left-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt" border-right-style="solid" border-right-width="1pt" border-right-color="black">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">$15,000 funeral advancement included within the cover.</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+                <fo:table-row line-height="12pt" font-size="9pt">
+                  <fo:table-cell border-bottom-color="black" border-left-style="solid" border-bottom-width="1pt" border-left-color="black" border-bottom-style="solid" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt" border-right-style="solid" border-bottom-color="black" border-right-width="1pt" border-bottom-width="1pt" border-bottom-style="solid" border-right-color="black">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">Life Event Benefit Increases - increase to your Life Cover Amount without further assessment of your health.<fo:inline baseline-shift="super" font-size="5pt">  </fo:inline>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:inline baseline-shift="super" font-size="5pt"></fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+            <fo:table table-layout="fixed" width="99.75%">
+              <fo:table-column column-width="proportional-column-width(0.762077364146882)" column-number="1"/>
+              <fo:table-column column-width="proportional-column-width(15.4)" column-number="2"/>
+              <fo:table-column column-width="proportional-column-width(0.96)" column-number="3"/>
+              <fo:table-column column-width="proportional-column-width(16.09)" column-number="4"/>
+              <fo:table-column column-width="proportional-column-width(0.96)" column-number="5"/>
+              <fo:table-column column-width="proportional-column-width(62.6868898926873)" column-number="6"/>
+              <fo:table-column column-width="proportional-column-width(0.654381821492871)" column-number="7"/>
+              <fo:table-column column-width="proportional-column-width(2.48665092167291)" column-number="8"/>
+              <fo:table-body>
+                <fo:table-row keep-together.within-page="always" keep-with-next.within-page="always">
+                  <fo:table-cell display-align="center" padding-left="2pt" border-left-style="solid" border-left-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="9.5pt">
+                        <fo:inline baseline-shift="super" font-size="5pt"> </fo:inline>
+                      </fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-left-style="solid" border-left-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell>
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block></fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt"></fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-left-style="solid" border-left-color="black" border-left-width="1pt">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt" border-right-style="solid" border-right-width="1pt" border-right-color="black">
+                    <fo:block>
+                      <fo:block line-height="13.22pt" font-size="10pt">Pays a lump sum benefit if you suffer one of the 14 defined Critical Illnesses.</fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell display-align="center" padding-left="2pt" border-bottom-color="black" border-bottom-width="1pt" border-bottom-style="solid">
+                    <fo:block>
+                      <fo:block>
+                        <fo:leader/>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                  <fo:table-cell border-right-style="solid" border-bottom-color="black" border-right-width="1pt" border-bottom-width="1pt" border-bottom-style="solid" border-right-color="black">
+                    <fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:inline baseline-shift="super" font-size="5pt">
+                          <fo:external-graphic scaling="uniform" src="url(20000923385~f61c37ab.JPEG)" width="0.29633333333333334cm" content-width="0.29633333333333334cm" height="0.1947333333333333cm" content-height="0.1947333333333333cm"/>
+                        </fo:inline>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:leader/>
+                      </fo:block>
+                      <fo:block font-size="6pt">
+                        <fo:inline baseline-shift="super" font-size="5pt">
+                          <fo:external-graphic scaling="uniform" src="url(20000923385~f61c37ab.JPEG)" width="0.29633333333333334cm" content-width="0.29633333333333334cm" height="0.1947333333333333cm" content-height="0.1947333333333333cm"/>
+                        </fo:inline>
+                      </fo:block>
+                    </fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="2" xpath="count(//pageViewport)"/>
+    <eval expected="29th" xpath="//pageViewport[1]//word[1]"/>
+    <eval expected="Pays" xpath="//pageViewport[2]//word[1]"/>
+  </checks>
+</testcase>

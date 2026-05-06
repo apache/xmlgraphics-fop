@@ -111,7 +111,7 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
                     - borderPaddingWidth;
         int max = fobj.getLeaderLength().getMaximum(this).getLength().getValue(this)
                     - borderPaddingWidth;
-        return MinOptMax.getInstance(min, opt, max);
+        return MinOptMax.getInstance(min, Math.min(opt, max), max);
     }
 
     private InlineArea getLeaderInlineArea(LayoutContext context) {
