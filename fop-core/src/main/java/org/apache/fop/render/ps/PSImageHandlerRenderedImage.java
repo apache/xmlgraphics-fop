@@ -77,7 +77,7 @@ public class PSImageHandlerRenderedImage implements PSImageHandler {
             ri = convertedImg;
         }
 
-        ImageEncoder encoder = ImageEncodingHelper.createRenderedImageEncoder(ri);
+        ImageEncoder encoder = ImageEncodingHelper.createRenderedImageEncoder(ri, gen.getJPEGCompressionRatio());
         Dimension imgDim = new Dimension(ri.getWidth(), ri.getHeight());
         String imgDescription = ri.getClass().getName();
         ImageEncodingHelper helper = new ImageEncodingHelper(ri);
@@ -99,7 +99,7 @@ public class PSImageHandlerRenderedImage implements PSImageHandler {
         FormGenerator formGen = new ImageFormGenerator(
                 form.getName(), imageDescription,
                 info.getSize().getDimensionPt(),
-                ri, false);
+                ri, false, gen);
         formGen.generate(gen);
     }
 

@@ -151,6 +151,7 @@ public class ResourceHandler implements DSCParserConstants, PSSupportedFlavors {
 
         PSGenerator gen = new PSGenerator(out);
         gen.setAcrobatDownsample(psUtil.isAcrobatDownsample());
+        gen.setJPEGCompressionRatio(psUtil.getJPEGCompressionRatio());
         parser.addListener(new DefaultNestedDocumentHandler(gen));
         parser.addListener(new IncludeResourceListener(gen));
 

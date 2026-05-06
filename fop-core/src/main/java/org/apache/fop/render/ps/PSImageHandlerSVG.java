@@ -94,7 +94,7 @@ public class PSImageHandlerSVG implements ImageHandler {
 
             MaskedImage mi = convertToRGB(ImageIO.read(is));
             BufferedImage ri = mi.getImage();
-            ImageEncoder encoder = ImageEncodingHelper.createRenderedImageEncoder(ri);
+            ImageEncoder encoder = ImageEncodingHelper.createRenderedImageEncoder(ri, gen.getJPEGCompressionRatio());
             Dimension imgDim = new Dimension(ri.getWidth(), ri.getHeight());
             String imgDescription = ri.getClass().getName();
             ImageEncodingHelper helper = new ImageEncodingHelper(ri);

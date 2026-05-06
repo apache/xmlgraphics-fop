@@ -118,4 +118,8 @@ public class ImageEncoderPNG implements ImageEncoder {
         filter += " /BitsPerComponent " + image.getBitDepth() + " >> /FlateDecode";
         return filter;
     }
+
+    public String getAdditionalFilter() {
+        return "";
+    }
 }

@@ -69,4 +69,8 @@ public class ImageEncoderCCITTFax implements ImageEncoder {
 
         return dict.toString() + " /CCITTFaxDecode";
     }
+
+    public String getAdditionalFilter() {
+        return "";
+    }
 }

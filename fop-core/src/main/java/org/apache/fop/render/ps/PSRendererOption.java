@@ -38,6 +38,7 @@ public enum PSRendererOption implements RendererConfigOption {
     /** Indicates whether the PostScript output should be DSC compliant, default: true*/
     DSC_COMPLIANT("dsc-compliant", true),
     RENDERING_MODE("rendering", PSRenderingMode.QUALITY),
+    JPEG_COMPRESSION("jpeg-compression", null),
     ACROBAT_DOWNSAMPLE("acrobat-downsample", false);
 
     private final String name;

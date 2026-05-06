@@ -61,6 +61,9 @@ public class PSRendererConfigurator extends DefaultRendererConfigurator {
         if (psConfig.isAcrobatDownsample() != null) {
             psUtil.setAcrobatDownsample(psConfig.isAcrobatDownsample());
         }
+        if (psConfig.getJPEGCompressionRatio() != null) {
+            psUtil.setJPEGCompressionRatio(psConfig.getJPEGCompressionRatio());
+        }
     }
 
     @Override
