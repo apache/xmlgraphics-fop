@@ -1,7 +1,3 @@
-meta:
-  environments:
-    - github_rulesets
-
 github:
   description: "Apache XML Graphics FOP"
   homepage: https://xmlgraphics.apache.org/fop/
