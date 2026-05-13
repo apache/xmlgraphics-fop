@@ -11,6 +11,7 @@ github:
         includes:
           - "main"
           - "fop*"
+          - "release*"
       restrict_deletion: true
       restrict_force_push: true
       required_linear_history: true
