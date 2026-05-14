@@ -821,7 +821,8 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
                         || GlyphMapping.isSpace(ch)
                         || CharUtilities.isExplicitBreak(ch)
                         || ((prevLevel != -1) && (level != prevLevel) && !Character.isHighSurrogate(prevChar));
-                if (!processWord && foText.getCommonFont().getFontSelectionStrategy() == EN_CHARACTER_BY_CHARACTER) {
+                if (!processWord && !Character.isHighSurrogate(prevChar)
+                        && foText.getCommonFont().getFontSelectionStrategy() == EN_CHARACTER_BY_CHARACTER) {
                     if (lastFont == null || lastFontPos != nextStart - 1) {
                         lastFont = FontSelector.selectFontForCharactersInText(
                                 foText, nextStart - 1, nextStart, foText, this);
