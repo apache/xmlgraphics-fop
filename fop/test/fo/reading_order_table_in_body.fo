@@ -1,0 +1,63 @@
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Dina" font-size="16pt" xml:lang="en">
+    <fo:layout-master-set>
+        <fo:simple-page-master master-name="Pages" page-height="148mm" page-width="210mm">
+            <fo:region-body region-name="Body" margin-top="80mm" margin-bottom="45mm"/>
+            <fo:region-before region-name="Header" extent="70mm"/>
+            <fo:region-after region-name="Footer" extent="27mm"/>
+        </fo:simple-page-master>
+    </fo:layout-master-set>
+    <fo:page-sequence master-reference="Pages">
+        <fo:static-content flow-name="Header">
+            <fo:block-container height="27mm" width="68mm" top="5mm" left="14.5mm" absolute-position="fixed">
+                <fo:block margin-top="5mm">
+                    rest header
+                </fo:block>
+            </fo:block-container>
+        </fo:static-content>
+        <fo:static-content flow-name="Footer">
+            <fo:block-container height="27mm" width="68mm" top="110mm" left="14.5mm" absolute-position="fixed">
+                <fo:block margin-top="5mm">
+                    rest footer
+                </fo:block>
+            </fo:block-container>
+        </fo:static-content>
+        <fo:flow flow-name="Body">
+            <fo:block>
+                <fo:table table-layout="fixed" width="100%">
+                    <fo:table-header>
+                        <fo:table-row>
+                            <fo:table-cell number-columns-spanned="2">
+                                <fo:block text-align="left" text-align-last="center"> Table Title </fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                    </fo:table-header>
+                    <fo:table-footer>
+                        <fo:table-row>
+                            <fo:table-cell number-columns-spanned="2">
+                                <fo:block text-align="left" text-align-last="center"> Table footer </fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                    </fo:table-footer>
+                    <fo:table-body>
+                        <fo:table-row>
+                            <fo:table-cell>
+                                <fo:block>Row 1 Column A</fo:block>
+                            </fo:table-cell>
+                            <fo:table-cell>
+                                <fo:block>Row 1 Column B</fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                        <fo:table-row>
+                            <fo:table-cell>
+                                <fo:block>Row 2 Column A</fo:block>
+                            </fo:table-cell>
+                            <fo:table-cell>
+                                <fo:block>Row 2 Column B</fo:block>
+                            </fo:table-cell>
+                        </fo:table-row>
+                    </fo:table-body>
+                </fo:table>
+            </fo:block>
+        </fo:flow>
+    </fo:page-sequence>
+</fo:root>

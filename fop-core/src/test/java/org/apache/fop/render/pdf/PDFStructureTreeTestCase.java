@@ -21,6 +21,9 @@ package org.apache.fop.render.pdf;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,12 +38,27 @@ import org.junit.Test;
 import org.xml.sax.helpers.AttributesImpl;
 import static org.junit.Assert.assertEquals;
 
+import org.apache.fop.accessibility.StructureTreeElement;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.pdf.PDFLinearizationTestCase;
 import org.apache.fop.pdf.PDFStructElem;
 import org.apache.fop.pdf.StandardStructureTypes;
+import org.apache.fop.pdf.StructureType;
+
+import static org.apache.fop.pdf.StandardStructureTypes.Grouping.DIV;
+import static org.apache.fop.pdf.StandardStructureTypes.Grouping.DOCUMENT;
+import static org.apache.fop.pdf.StandardStructureTypes.Grouping.PART;
+import static org.apache.fop.pdf.StandardStructureTypes.Grouping.SECT;
+import static org.apache.fop.pdf.StandardStructureTypes.Paragraphlike.P;
+import static org.apache.fop.pdf.StandardStructureTypes.Table.TABLE;
+import static org.apache.fop.pdf.StandardStructureTypes.Table.TBODY;
+import static org.apache.fop.pdf.StandardStructureTypes.Table.TD;
+import static org.apache.fop.pdf.StandardStructureTypes.Table.TFOOT;
+import static org.apache.fop.pdf.StandardStructureTypes.Table.TH;
+import static org.apache.fop.pdf.StandardStructureTypes.Table.THEAD;
+import static org.apache.fop.pdf.StandardStructureTypes.Table.TR;
 
 public class PDFStructureTreeTestCase {
     @Test
@@ -77,111 +95,137 @@ public class PDFStructureTreeTestCase {
     }
 
     @Test
-    public void testTableHeaderDuplicatedIfStaticRegionsPerPageTrue() throws Exception {
-        List<PDFStructElem> elems = getPDFStructElems("<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\" "
-                + "font-family=\"arial\" font-size=\"16pt\" xml:lang=\"en\">\n"
-                + "  <fo:layout-master-set>\n"
-                + "    <fo:simple-page-master master-name=\"A5-Page\" page-width=\"148mm\" page-height=\"210mm\">\n"
-                + "      <fo:region-body background-color=\"#efefef\" margin=\"10mm\"/>\n"
-                + "    </fo:simple-page-master>\n"
-                + "    <fo:page-sequence-master master-name=\"A5\">\n"
-                + "      <fo:repeatable-page-master-alternatives>\n"
-                + "        <fo:conditional-page-master-reference master-reference=\"A5-Page\"/>\n"
-                + "      </fo:repeatable-page-master-alternatives>\n"
-                + "    </fo:page-sequence-master>\n"
-                + "  </fo:layout-master-set>\n"
-                + "  <fo:page-sequence master-reference=\"A5\">\n"
-                + "    <fo:flow flow-name=\"xsl-region-body\">\n"
-                + "      <fo:block>\n"
-                + "        <fo:block padding-bottom=\"160mm\">Table overflow</fo:block>\n"
-                + "        <fo:table table-layout=\"fixed\" width=\"100%\">\n"
-                + "          <fo:table-header>\n"
-                + "            <fo:table-row>\n"
-                + "              <fo:table-cell number-columns-spanned=\"2\">\n"
-                + "                <fo:block font-weight=\"bold\" font-style=\"italic\" text-align=\"left\" "
-                + "text-align-last=\"center\"> Table Title </fo:block>\n"
-                + "              </fo:table-cell>\n"
-                + "            </fo:table-row>\n"
-                + "          </fo:table-header>\n"
-                + "          <fo:table-body>\n"
-                + "            <fo:table-row>\n"
-                + "              <fo:table-cell>\n"
-                + "                <fo:block>Row 1 Column A</fo:block>\n"
-                + "              </fo:table-cell>\n"
-                + "              <fo:table-cell>\n"
-                + "                <fo:block>Row 1 Column B</fo:block>\n"
-                + "              </fo:table-cell>\n"
-                + "            </fo:table-row>\n"
-                + "            <fo:table-row>\n"
-                + "              <fo:table-cell>\n"
-                + "                <fo:block>Row 2 Column A</fo:block>\n"
-                + "              </fo:table-cell>\n"
-                + "              <fo:table-cell>\n"
-                + "                <fo:block>Row 2 Column B</fo:block>\n"
-                + "              </fo:table-cell>\n"
-                + "            </fo:table-row>\n"
-                + "            <fo:table-row>\n"
-                + "              <fo:table-cell>\n"
-                + "                <fo:block>Row 2 Column A</fo:block>\n"
-                + "              </fo:table-cell>\n"
-                + "              <fo:table-cell>\n"
-                + "                <fo:block>Row 2 Column B</fo:block>\n"
-                + "              </fo:table-cell>\n"
-                + "            </fo:table-row>\n"
-                + "            <fo:table-row>\n"
-                + "              <fo:table-cell>\n"
-                + "                <fo:block>Row 2 Column A</fo:block>\n"
-                + "              </fo:table-cell>\n"
-                + "              <fo:table-cell>\n"
-                + "                <fo:block>Row 2 Column B</fo:block>\n"
-                + "              </fo:table-cell>\n"
-                + "            </fo:table-row>\n"
-                + "          </fo:table-body>\n"
-                + "        </fo:table>\n"
-                + "      </fo:block>\n"
-                + "    </fo:flow>\n"
-                + "  </fo:page-sequence>\n"
-                + "</fo:root>");
+    public void testReadingOrder() throws Exception {
+        checkReadingOrder(Arrays.asList(DOCUMENT, PART, SECT, DIV, P, P, DIV, P, DIV, P, P, DIV, P),
+                "test/fo/reading_order.fo");
+    }
 
+    @Test
+    public void testReadingOrderWithTableInHeader() throws Exception {
+        checkReadingOrder(Arrays.asList(DOCUMENT, PART, SECT, DIV, P, TABLE, THEAD, TR, TH, P, TBODY, TR, TD, P, TFOOT,
+                        TR, TD, P, P, DIV, P, DIV, P, TABLE, THEAD, TR, TH, P, TBODY, TR, TD, P, TFOOT,
+                        TR, TD, P, P, DIV, P),
+                "test/fo/reading_order_table_in_header.fo");
+    }
+
+    @Test
+    public void testReadingOrderBlockSpannedOverPage() throws Exception {
+        checkReadingOrder(Arrays.asList(DOCUMENT, PART, SECT, DIV, P, P, DIV, P, DIV, P, P, DIV, P, DIV, P, P, DIV, P),
+                "test/fo/reading_order_block_spanned_over_page.fo");
+    }
+
+    @Test
+    public void testReadingOrderTableInBody() throws Exception {
+        checkReadingOrder(Arrays.asList(DOCUMENT, PART, SECT, DIV, P, P, TABLE, THEAD, TR, TH, P, TBODY, TR, TD, P, TD,
+                        P, TFOOT, TR, TD, P, DIV, P, DIV, P, P, TABLE, THEAD, TR, TH, P, TBODY, TR, TD, P, TD, P, TFOOT,
+                        TR, TD, P, DIV, P),
+                "test/fo/reading_order_table_in_body.fo");
+    }
+
+    private int countTableElements(List<PDFStructElem> elems, StructureType elementType) {
         int count = 0;
         for (PDFStructElem elem : elems) {
-            if (elem.getStructureType().equals(StandardStructureTypes.Table.THEAD)) {
+            if (elem.getStructureType().equals(elementType)) {
                 count++;
             }
         }
 
-        assertEquals("The static region per page conf must apply to static regions only", 1, count);
+        return count;
     }
 
-    private List<PDFStructElem> getPDFStructElems(String fo) throws Exception {
-        FopFactory fopFactory = getFopFactory();
-        FOUserAgent userAgent = fopFactory.newFOUserAgent();
-        foToOutput(fo, fopFactory, userAgent);
+    private void checkReadingOrder(List<StructureType> orderedTypes,  String filePath) throws Exception {
+        List<PDFStructElem> elems = getPDFStructElems(filePath, true);
 
-        PDFStructElem block = (PDFStructElem) userAgent
-                .getStructureTreeEventHandler().startNode("block", new AttributesImpl(), null);
+        int index = 0;
+        for (PDFStructElem elem : elems) {
+            assertEquals("Reading order must be preserved when static-region-per-page is true",
+                    orderedTypes.get(index), elem.getStructureType());
+            index++;
+        }
 
-        return block.getDocument().getStructureTreeElements();
+        assertEquals("Must verify all the PDFStructElements", orderedTypes.size(), elems.size());
+    }
+
+    @Test
+    public void testTableDuplicatedIfStaticRegionsPerPageTrue() throws Exception {
+        checkTableBodyCount(true, "test/fo/reading_order_table_in_body.fo",
+                "A table element should only have one respective structure element", 2);
+    }
+
+    @Test
+    public void testTableBodyNotDuplicatedIfStaticRegionsPerPageFalse() throws Exception {
+        checkTableBodyCount(false, "test/fo/reading_order_table_in_body.fo",
+                "A table element should only have one respective structure element", 1);
+    }
+
+    @Test
+    public void testTableBodyDuplicatedIfInsideStaticContent() throws Exception {
+        checkTableBodyCount(true, "test/fo/reading_order_table_in_header.fo",
+                "If the conf is set to true, a table element must be duplicated like any other fo element", 2);
+    }
+
+    private void checkTableBodyCount(boolean staticRegionPerPage, String filePath, String assertionMessage,
+                                     int expectedCount) throws Exception {
+        List<PDFStructElem> elems = getPDFStructElems(filePath, staticRegionPerPage);
+
+        int count = countTableElements(elems, TABLE);
+        assertEquals(assertionMessage, expectedCount, count);
+
+        count = countTableElements(elems, StandardStructureTypes.Table.TBODY);
+        assertEquals(assertionMessage, expectedCount, count);
+
+        count = countTableElements(elems, THEAD);
+        assertEquals(assertionMessage, expectedCount, count);
+
+        count = countTableElements(elems, StandardStructureTypes.Table.TFOOT);
+        assertEquals(assertionMessage, expectedCount, count);
+    }
+
+    private List<PDFStructElem> getPDFStructElems(String foFileName, boolean staticRegionPerPage) throws Exception {
+        FopFactory fopFactory = getFopFactory(staticRegionPerPage, true);
+            FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        foToOutput(new FileInputStream(foFileName), fopFactory, userAgent);
+
+        StructureTreeElement block = userAgent.getStructureTreeEventHandler()
+                .startNode("#PCDATA", new AttributesImpl(), null);
+
+        PDFStructElem blockElem;
+        if (block instanceof PDFStructElem) {
+            blockElem = (PDFStructElem) block;
+        } else {
+            blockElem = ((PDFStructureTreeBuilder.Factory) block).createStructureElement(1);
+        }
+
+        return blockElem.getDocument().getStructureTreeElements();
     }
 
     private ByteArrayOutputStream foToOutput(String fo) throws Exception {
-        FopFactory fopFactory = getFopFactory();
-        return foToOutput(fo, fopFactory, fopFactory.newFOUserAgent());
+        FopFactory fopFactory = getFopFactory(true, false);
+        return foToOutput(new ByteArrayInputStream(fo.getBytes()), fopFactory, fopFactory.newFOUserAgent());
     }
 
-    private ByteArrayOutputStream foToOutput(String fo, FopFactory fopFactory, FOUserAgent userAgent) throws Exception {
+
+    private ByteArrayOutputStream foToOutput(InputStream inputStream, FopFactory fopFactory, FOUserAgent userAgent)
+            throws Exception {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Fop fop = fopFactory.newFop("application/pdf", userAgent, bos);
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
-        Source src = new StreamSource(new ByteArrayInputStream(fo.getBytes()));
+
+        Source src = new StreamSource(inputStream);
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
         return bos;
     }
 
-    private FopFactory getFopFactory() throws Exception {
-        String fopxconf =
-                "<fop version=\"1.0\"><accessibility static-region-per-page=\"true\">true</accessibility></fop>";
+    private FopFactory getFopFactory(boolean staticRegionPerPage, boolean useObjectsStreams) throws Exception {
+        String fopxconf = "<fop version=\"1.0\">"
+                + "     <accessibility static-region-per-page=\"" + staticRegionPerPage + "\">true</accessibility>"
+                + "         <renderers>\n"
+                + "             <renderer mime=\"application/pdf\">\n"
+                + "                   <use-object-streams>" + useObjectsStreams + "</use-object-streams>"
+                + "             </renderer>\n"
+                + "         </renderers>\n"
+                + "</fop>";
         return FopFactory.newInstance(new File(".").toURI(), new ByteArrayInputStream(fopxconf.getBytes()));
     }
 }
