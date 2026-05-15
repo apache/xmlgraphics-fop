@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+    <fo:layout-master-set>
+        <fo:simple-page-master master-name="Pages" page-height="297mm" page-width="210mm">
+            <fo:region-body region-name="Body"/>
+            <fo:region-before region-name="Header" extent="70mm"/>
+            <fo:region-after region-name="Footer" extent="27mm"/>
+        </fo:simple-page-master>
+    </fo:layout-master-set>
+    <fo:page-sequence format="1" id="th_default_sequence1" master-reference="Pages">
+        <fo:static-content flow-name="Header">
+            <fo:block-container height="27mm" width="68mm" top="5mm" left="14.5mm" absolute-position="fixed">
+                <fo:block margin-top="5mm">
+                    rest header
+                </fo:block>
+            </fo:block-container>
+        </fo:static-content>
+        <fo:static-content flow-name="Footer">
+            <fo:block-container height="27mm" width="68mm" top="100mm" left="14.5mm" absolute-position="fixed">
+                <fo:block margin-top="5mm">
+                    rest footer
+                </fo:block>
+            </fo:block-container>
+        </fo:static-content>
+        <fo:flow flow-name="Body">
+            <fo:block padding-bottom="27cm">test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test </fo:block>
+            <fo:block padding-bottom="27cm" page-break-after="always">test1</fo:block>
+        </fo:flow>
+    </fo:page-sequence>
+</fo:root>

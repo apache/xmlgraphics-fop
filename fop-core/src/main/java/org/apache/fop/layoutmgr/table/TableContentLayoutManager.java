@@ -465,7 +465,7 @@ public class TableContentLayoutManager implements PercentBaseContext {
             addHeaderFooterAreas(headerElements, tableLM.getTable().getTableHeader(), painter,
                     false);
             if (!ancestorTreatAsArtifact) {
-                headerIsBeingRepeated = true;
+                headerIsBeingRepeated = !tableLM.getFObj().getUserAgent().isStaticRegionsPerPageForAccessibility();
             }
             layoutContext.setTreatAsArtifact(ancestorTreatAsArtifact);
         }
@@ -487,7 +487,8 @@ public class TableContentLayoutManager implements PercentBaseContext {
 
         if (footerElements != null && !footerElements.isEmpty()) {
             boolean ancestorTreatAsArtifact = layoutContext.treatAsArtifact();
-            layoutContext.setTreatAsArtifact(treatFooterAsArtifact);
+            layoutContext.setTreatAsArtifact(treatFooterAsArtifact
+                    && !tableLM.getFObj().getUserAgent().isStaticRegionsPerPageForAccessibility());
             //Positions for footers are simply added at the end
             addHeaderFooterAreas(footerElements, tableLM.getTable().getTableFooter(), painter, true);
             if (lastPos instanceof TableHFPenaltyPosition && !tableLM.getFooterFootnotes().isEmpty()) {

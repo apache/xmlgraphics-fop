@@ -355,8 +355,6 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
 
     private PDFStructElem rootStructureElement;
 
-    private boolean staticContent;
-
     void setPdfFactory(PDFFactory pdfFactory) {
         this.pdfFactory = pdfFactory;
     }
@@ -403,9 +401,6 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     }
 
     public StructureTreeElement startNode(String name, Attributes attributes, StructureTreeElement parent) {
-        if ("static-content".equals(name)) {
-            staticContent = true;
-        }
         if (!isPDFA1Safe(name)) {
             return null;
         }
@@ -416,7 +411,7 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
             parentElem = parent;
         }
         StructureTreeElement structElem;
-        if (staticContent && pdfFactory.getDocument().isStaticRegionsPerPageForAccessibility()) {
+        if (pdfFactory.getDocument().isStaticRegionsPerPageForAccessibility()) {
             structElem = new Factory(name, parentElem, attributes);
         } else {
             structElem = createStructureElement(
@@ -464,10 +459,6 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
     }
 
     public void endNode(String name) {
-        if ("static-content".equals(name)) {
-            staticContent = false;
-        }
-
         if (isPDFA1Safe(name)) {
             ancestors.removeFirst();
         }
