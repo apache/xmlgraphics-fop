@@ -25,6 +25,7 @@
       <groupId>com.thoughtworks.qdox</groupId>
       <artifactId>qdox</artifactId>
       <version>1.12</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>commons-io</groupId>
