@@ -177,7 +177,7 @@ public class PDFAMetadataTestCase {
         Metadata meta = PDFMetadata.createXMPFromPDFDocument(doc);
 
         XMPProperty schemas = meta.getProperty(XMPConstants.PDF_A_EXTENSION, "schemas");
-        assertProperties(schemas, XMPConstants.PDF_A_EXTENSION, "schemas", null, null);
+        assertProperties(schemas, XMPConstants.PDF_A_EXTENSION, "schemas", "pdfaExtension", null);
         assertNotNull("When PDF/A and PDF/UA are both active, we need to add an "
                 + "extension element to avoid validation errors from PDF/A validators", schemas);
 
