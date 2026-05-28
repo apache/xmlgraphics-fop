@@ -19,6 +19,8 @@
 
 package org.apache.fop.render.pdf;
 
+import java.awt.Color;
+import java.awt.Point;
 import java.io.IOException;
 
 import org.junit.Before;
@@ -31,6 +33,7 @@ import static org.mockito.Mockito.verify;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.pdf.PDFNumber;
+import org.apache.fop.traits.RuleStyle;
 
 public class PDFGraphicsPainterTestCase {
 
@@ -133,6 +136,12 @@ public class PDFGraphicsPainterTestCase {
     public void testDrawBorderLineDashed() {
         sut.drawBorderLine(0, 0, 0, 0, true, true, Constants.EN_DASHED, null);
         verify(generator, never()).add(any(String.class));
+    }
+
+    @Test
+    public void testDottedLeader() {
+        sut.drawLine(new Point(0, 0), new Point(10, 0), 10, new Color(0), RuleStyle.DOTTED);
+        verify(generator, never()).clipRect(any());
     }
 
     private void testTransformCoordinatesF(float... args) {
