@@ -45,6 +45,7 @@ public class PDFLink extends PDFObject {
     private String color;
     private PDFAction action;
     private Integer structParent;
+    private String contents;
 
     /**
      * create objects associated with a link annotation (GoToR)
@@ -82,6 +83,18 @@ public class PDFLink extends PDFObject {
     }
 
     /**
+     * Sets the alternate description written to the /Contents entry of the link
+     * annotation dictionary. PDF/UA-1 (ISO 14289-1 §7.18.5) requires every link
+     * annotation to carry such a description. This is used for internal
+     * (GoTo) links, whose action does not otherwise convey alternate text.
+     *
+     * @param contents the alternate description, typically from fox:alt-text
+     */
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public String toPDFString() {
@@ -101,16 +114,21 @@ public class PDFLink extends PDFObject {
                    + this.action.getAction() + "\n" + "/H /I\n"
                    + (this.structParent != null
                            ? "/StructParent " + this.structParent.toString() + "\n" : "");
-        if (action instanceof PDFUri) {
-            String altText = ((PDFUri) action).getAltText();
-            if (altText != null && !altText.isEmpty()) {
-                if (getDocumentSafely().isEncryptionActive()) {
-                    altText = new String(encodeText(altText), StandardCharsets.ISO_8859_1);
-                } else {
-                    altText = PDFText.escapeText(altText);
-                }
-                dict += "/Contents " + altText + "\n";
+        // PDF/UA-1 requires every link annotation to carry an alternate
+        // description in /Contents. An explicitly set value (used for internal
+        // GoTo links) takes precedence; otherwise fall back to the alternate
+        // text carried by a URI action for external links.
+        String altText = this.contents;
+        if ((altText == null || altText.isEmpty()) && action instanceof PDFUri) {
+            altText = ((PDFUri) action).getAltText();
+        }
+        if (altText != null && !altText.isEmpty()) {
+            if (getDocumentSafely().isEncryptionActive()) {
+                altText = new String(encodeText(altText), StandardCharsets.ISO_8859_1);
+            } else {
+                altText = PDFText.escapeText(altText);
             }
+            dict += "/Contents " + altText + "\n";
         }
         dict += fFlag + "\n>>";
         return dict;

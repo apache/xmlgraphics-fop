@@ -194,6 +194,17 @@ public class PDFLogicalStructureHandler {
     void addLinkContentItem(PDFLink link, PDFStructElem structureTreeElement) {
         int structParent = getNextParentTreeKey();
         link.setStructParent(structParent);
+
+        // Propagate the link's alternate text (fox:alt-text, stored as
+        // /Alt on the Link structure element) to the annotation's
+        // /Contents entry, as required by PDF/UA-1 (ISO 14289-1
+        // §7.18.5). External (URI) links also carry this via their
+        // action, but internal (GoTo) links otherwise would not.
+        Object altText = structureTreeElement.get("Alt");
+        if (altText instanceof String) {
+            link.setContents((String) altText);
+        }
+
         PDFDictionary contentItem = new PDFDictionary();
         contentItem.put("Type", OBJR);
         contentItem.put("Pg", this.currentPage);
