@@ -114,6 +114,15 @@ public class PDFDocumentNavigationHandler implements IFDocumentNavigationHandler
             PDFStructElem structure = (PDFStructElem) link.getAction().getStructureTreeElement();
             if (documentHandler.getUserAgent().isAccessibilityEnabled() && structure != null) {
                 documentHandler.getLogicalStructureHandler().addLinkContentItem(pdfLink, structure);
+                // Propagate the link's alternate text (fox:alt-text, stored as
+                // /Alt on the Link structure element) to the annotation's
+                // /Contents entry, as required by PDF/UA-1 (ISO 14289-1
+                // §7.18.5). External (URI) links also carry this via their
+                // action, but internal (GoTo) links otherwise would not.
+                Object altText = structure.get("Alt");
+                if (altText instanceof String) {
+                    pdfLink.setContents((String) altText);
+                }
             }
             documentHandler.getCurrentPage().addAnnotation(pdfLink);
         }
