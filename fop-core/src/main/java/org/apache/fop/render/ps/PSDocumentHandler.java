@@ -543,7 +543,8 @@ public class PSDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
                     } catch (PSDictionaryFormatException e) {
                         PSEventProducer eventProducer = PSEventProducer.Provider.get(
                                 getUserAgent().getEventBroadcaster());
-                        eventProducer.postscriptDictionaryParseError(this, content, e);
+                        eventProducer.postscriptDictionaryParseError(this,
+                                "ps:ps-setpagedevice value: " + content, e);
                     }
                 }
             } else if (extension instanceof PSCommentBefore) {

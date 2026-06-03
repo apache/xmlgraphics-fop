@@ -203,21 +203,13 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
         saveGraphicsState();
         int half = width / 2;
         int starty = start.y - half;
-        Rectangle boundingRect = new Rectangle(start.x, start.y - half, end.x - start.x, width);
         switch (style.getEnumValue()) {
         case Constants.EN_SOLID:
         case Constants.EN_DASHED:
         case Constants.EN_DOUBLE:
+        case Constants.EN_DOTTED:
             drawBorderLine(start.x, start.y - half, end.x, end.y + half,
                     true, true, style.getEnumValue(), color);
-            break;
-        case Constants.EN_DOTTED:
-            generator.clipRect(boundingRect)
-            //This displaces the dots to the right by half a dot's width
-            //TODO There's room for improvement here
-                    .transformCoordinatesLine(1, 0, 0 , 1, half, 0);
-            drawBorderLine(start.x, start.y - half, end.x, end.y + half, true, true, style.getEnumValue(),
-                    color);
             break;
         case Constants.EN_GROOVE:
         case Constants.EN_RIDGE:
