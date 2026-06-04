@@ -20,6 +20,7 @@
 package org.apache.fop.area.inline;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.traits.BorderStyle;
 
 /**
  * This is a leader inline area.
@@ -35,7 +36,7 @@ public class Leader extends InlineArea {
 
     private static final long serialVersionUID = -8011373048313956301L;
 
-    private int ruleStyle = Constants.EN_SOLID;
+    private BorderStyle ruleStyle = BorderStyle.SOLID;
     private int ruleThickness = 1000;
 
     /**
@@ -49,29 +50,29 @@ public class Leader extends InlineArea {
      *
      * @param style the rule style for the leader line
      */
-    public void setRuleStyle(int style) {
-        ruleStyle = style;
+    public void setRuleStyle(BorderStyle style) {
+        this.ruleStyle = style;
     }
 
     /**
      * Set the rule style of this leader area.
      * @param style the rule style for the leader area (XSL enum values)
      */
-    public void setRuleStyle(String style) {
+    public void setRuleStyle(String style, int spaceWidth) {
         if ("dotted".equalsIgnoreCase(style)) {
-            setRuleStyle(Constants.EN_DOTTED);
+            setRuleStyle(BorderStyle.DOTTED.withSpaceWidth(spaceWidth));
         } else if ("dashed".equalsIgnoreCase(style)) {
-            setRuleStyle(Constants.EN_DASHED);
+            setRuleStyle(BorderStyle.DASHED.withSpaceWidth(spaceWidth));
         } else if ("solid".equalsIgnoreCase(style)) {
-            setRuleStyle(Constants.EN_SOLID);
+            setRuleStyle(BorderStyle.SOLID.withSpaceWidth(spaceWidth));
         } else if ("double".equalsIgnoreCase(style)) {
-            setRuleStyle(Constants.EN_DOUBLE);
+            setRuleStyle(BorderStyle.DOUBLE.withSpaceWidth(spaceWidth));
         } else if ("groove".equalsIgnoreCase(style)) {
-            setRuleStyle(Constants.EN_GROOVE);
+            setRuleStyle(BorderStyle.GROOVE.withSpaceWidth(spaceWidth));
         } else if ("ridge".equalsIgnoreCase(style)) {
-            setRuleStyle(Constants.EN_RIDGE);
+            setRuleStyle(BorderStyle.RIDGE.withSpaceWidth(spaceWidth));
         } else if ("none".equalsIgnoreCase(style)) {
-            setRuleStyle(Constants.EN_NONE);
+            setRuleStyle(BorderStyle.NONE.withSpaceWidth(spaceWidth));
         }
     }
 
@@ -89,13 +90,13 @@ public class Leader extends InlineArea {
      *
      * @return the rule style
      */
-    public int getRuleStyle() {
+    public BorderStyle getRuleStyle() {
         return ruleStyle;
     }
 
     /** @return the rule style as string */
-    public String getRuleStyleAsString() {
-        switch (getRuleStyle()) {
+    public String getBorderStyleAsString() {
+        switch (getRuleStyle().getEnumValue()) {
         case Constants.EN_DOTTED: return "dotted";
         case Constants.EN_DASHED: return "dashed";
         case Constants.EN_SOLID: return "solid";
@@ -116,6 +117,5 @@ public class Leader extends InlineArea {
     public int getRuleThickness() {
         return ruleThickness;
     }
-
 }
 

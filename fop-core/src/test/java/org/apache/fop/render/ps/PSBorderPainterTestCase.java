@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.xmlgraphics.ps.PSGenerator;
 
-import org.apache.fop.fo.Constants;
+import org.apache.fop.traits.BorderStyle;
 
 public class PSBorderPainterTestCase {
 
@@ -51,7 +51,7 @@ public class PSBorderPainterTestCase {
     @Test
     public void testDrawBorderLine() throws Exception {
         borderPainter.drawBorderLine(0, 0, 40000, 1000, true, true,
-                Constants.EN_DASHED, Color.BLACK);
+                BorderStyle.DASHED, Color.BLACK);
         assertTrue(outStream.toString().contains("[7.2727275 3.6363637] 0 setdash"));
     }
 

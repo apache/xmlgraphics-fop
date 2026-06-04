@@ -58,7 +58,7 @@ import org.apache.fop.render.ImageHandlerRegistry;
 import org.apache.fop.render.ImageHandlerUtil;
 import org.apache.fop.render.RenderingContext;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.traits.BorderStyle;
 
 /**
  * Abstract base class for IFPainter implementations.
@@ -402,7 +402,7 @@ public abstract class AbstractIFPainter<T extends IFDocumentHandler> implements 
     }
 
     /** {@inheritDoc} */
-    public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+    public void drawLine(Point start, Point end, int width, Color color, BorderStyle style)
             throws IFException {
         Rectangle rect = getLineBoundingBox(start, end, width);
         fillRect(rect, color);

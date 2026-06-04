@@ -41,6 +41,7 @@ import org.apache.fop.area.inline.TextArea;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.txt.border.AbstractBorderElement;
 import org.apache.fop.render.txt.border.BorderManager;
+import org.apache.fop.traits.BorderStyle;
 
 /**
  * <p>Renderer that renders areas to plain text.</p>
@@ -502,7 +503,7 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
      * {@inheritDoc}
      */
     protected void drawBorderLine(float x1, float y1, float x2, float y2,
-            boolean horz, boolean startOrBefore, int style, Color col) {
+                                  boolean horz, boolean startOrBefore, BorderStyle style, Color col) {
 
         int borderHeight = bm.getHeight();
         int borderWidth = bm.getWidth();
@@ -544,15 +545,15 @@ public class TXTRenderer extends AbstractPathOrientedRenderer {
             endType = 1 << AbstractBorderElement.UP;
         }
 
-        addBitOfBorder(x, y, style, startType);
+        addBitOfBorder(x, y, style.getEnumValue(), startType);
         for (int i = 0; i < length - 2; i++) {
             x += dx;
             y += dy;
-            addBitOfBorder(x, y, style, startType + endType);
+            addBitOfBorder(x, y, style.getEnumValue(), startType + endType);
         }
         x += dx;
         y += dy;
-        addBitOfBorder(x, y, style, endType);
+        addBitOfBorder(x, y, style.getEnumValue(), endType);
     }
 
     /**

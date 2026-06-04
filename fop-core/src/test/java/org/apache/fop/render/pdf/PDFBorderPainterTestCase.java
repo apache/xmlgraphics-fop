@@ -27,8 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.fop.fo.Constants;
 import org.apache.fop.pdf.PDFDocument;
+import org.apache.fop.traits.BorderStyle;
 
 public class PDFBorderPainterTestCase {
 
@@ -51,7 +51,7 @@ public class PDFBorderPainterTestCase {
     @Test
     public void testDrawBorderLine() throws Exception {
         borderPainter.drawBorderLine(0, 0, 40000, 1000, true, true,
-                Constants.EN_DASHED, Color.BLACK);
+                BorderStyle.DASHED, Color.BLACK);
         generator.flushPDFDoc();
         OutputStream outStream = new ByteArrayOutputStream();
         outStream = generator.getStream().getBufferOutputStream();

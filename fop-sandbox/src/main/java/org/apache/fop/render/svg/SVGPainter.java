@@ -49,7 +49,7 @@ import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.GenerationHelperContentHandler;
 import org.apache.fop.util.XMLConstants;
@@ -296,7 +296,7 @@ public class SVGPainter extends AbstractIFPainter<AbstractSVGDocumentHandler>
     }
 
     /** {@inheritDoc} */
-    public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+    public void drawLine(Point start, Point end, int width, Color color, BorderStyle style)
             throws IFException {
         try {
             establish(MODE_NORMAL);

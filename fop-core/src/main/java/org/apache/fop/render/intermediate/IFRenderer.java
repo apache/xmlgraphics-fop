@@ -97,7 +97,7 @@ import org.apache.fop.render.intermediate.extensions.Link;
 import org.apache.fop.render.intermediate.extensions.NamedDestination;
 import org.apache.fop.render.intermediate.extensions.URIAction;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.util.StringUtils;
 
 /**
@@ -1333,7 +1333,6 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
     public void renderLeader(Leader area) {
         renderInlineAreaBackAndBorders(area);
 
-        int style = area.getRuleStyle();
         int ruleThickness = area.getRuleThickness();
         int startx = currentIPPosition + area.getBorderAndPaddingWidthStart();
         int starty = currentBPPosition + area.getBlockProgressionOffset() + (ruleThickness / 2);
@@ -1345,7 +1344,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         Point start = new Point(startx, starty);
         Point end = new Point(endx, starty);
         try {
-            painter.drawLine(start, end, ruleThickness, col, RuleStyle.valueOf(style));
+            painter.drawLine(start, end, ruleThickness, col, area.getRuleStyle());
         } catch (IFException ife) {
             handleIFException(ife);
         }
@@ -1425,7 +1424,7 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
 
     /** {@inheritDoc} */
     protected void drawBorderLine(float x1, float y1, float x2, float y2, boolean horz,
-            boolean startOrBefore, int style, Color col) {
+            boolean startOrBefore, BorderStyle style, Color col) {
         //Simplified implementation that is only used by renderTextDecoration()
         //drawBorders() is overridden and uses the Painter's high-level method drawBorderRect()
         updateColor(col, true);

@@ -66,8 +66,8 @@ import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.render.pdf.PDFLogicalStructureHandler.MarkedContentInfo;
 import org.apache.fop.traits.BorderProps;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.traits.Direction;
-import org.apache.fop.traits.RuleStyle;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ImageObjectCache;
 
@@ -463,7 +463,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
 
     /** {@inheritDoc} */
     @Override
-    public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+    public void drawLine(Point start, Point end, int width, Color color, BorderStyle style)
         throws IFException {
         generator.endTextObject();
         if (accessEnabled) {

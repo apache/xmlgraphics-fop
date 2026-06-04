@@ -29,11 +29,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.xmlgraphics.ps.PSGenerator;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.render.PainterUtils;
 import org.apache.fop.render.intermediate.ArcToBezierCurveTransformer;
 import org.apache.fop.render.intermediate.BezierCurvePainter;
 import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.render.intermediate.GraphicsPainter;
-import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.util.ColorUtil;
 
 /**
@@ -60,7 +61,7 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
 
     /** {@inheritDoc} */
     public void drawBorderLine(int x1, int y1, int x2, int y2, boolean horz,
-            boolean startOrBefore, int style, Color col) throws IOException {
+            boolean startOrBefore, BorderStyle style, Color col) throws IOException {
         drawBorderLine(generator, toPoints(x1), toPoints(y1), toPoints(x2), toPoints(y2),
                 horz, startOrBefore, style, col);
     }
@@ -77,21 +78,22 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
     /** {@inheritDoc} */
     public static void drawBorderLine(PSGenerator gen,
             float x1, float y1, float x2, float y2, boolean horz,
-            boolean startOrBefore, int style, Color col) throws IOException {
+            boolean startOrBefore, BorderStyle style, Color col) throws IOException {
         float w = x2 - x1;
         float h = y2 - y1;
         if ((w < 0) || (h < 0)) {
             log.error("Negative extent received. Border won't be painted.");
             return;
         }
-        switch (style) {
+        switch (style.getEnumValue()) {
         case Constants.EN_DASHED:
             gen.useColor(col);
             if (horz) {
                 float dashWidth = BorderPainter.dashWidthCalculator(w, h);
+                float newSpaceWidth = PainterUtils.getDashedSpaceWidth(dashWidth, style.getSpaceWidth());
+
                 if (dashWidth != 0) {
-                    gen.useDash("[" + dashWidth + " " + BorderPainter.DASHED_BORDER_SPACE_RATIO
-                            * dashWidth + "] 0");
+                    gen.useDash("[" + dashWidth + " " + newSpaceWidth + "] 0");
                 }
                 gen.useLineCap(0);
                 gen.useLineWidth(h);
@@ -99,9 +101,10 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
                 drawLine(gen, x1, ym, x2, ym);
             } else {
                 float dashWidth = BorderPainter.dashWidthCalculator(h, w);
+                float newSpaceWidth = PainterUtils.getDashedSpaceWidth(dashWidth, style.getSpaceWidth());
+
                 if (dashWidth != 0) {
-                    gen.useDash("[" + dashWidth + " " + BorderPainter.DASHED_BORDER_SPACE_RATIO
-                            * dashWidth + "] 0");
+                    gen.useDash("[" + dashWidth + " " + newSpaceWidth + "] 0");
                 }
                 gen.useLineCap(0);
                 gen.useLineWidth(w);
@@ -113,24 +116,12 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             gen.useColor(col);
             gen.useLineCap(1); //Rounded!
             if (horz) {
-                float unit = Math.abs(2 * h);
-                int rep = (int) (w / unit);
-                if (rep % 2 == 0) {
-                    rep++;
-                }
-                unit = w / rep;
-                gen.useDash("[0 " + unit + "] 0");
+                gen.useDash("[0 " + PainterUtils.getUnit(h, w, style.getSpaceWidth(), false) + "] 0");
                 gen.useLineWidth(h);
                 float ym = y1 + (h / 2);
                 drawLine(gen, x1, ym, x2, ym);
             } else {
-                float unit = Math.abs(2 * w);
-                int rep = (int) (h / unit);
-                if (rep % 2 == 0) {
-                    rep++;
-                }
-                unit = h / rep;
-                gen.useDash("[0 " + unit + "] 0");
+                gen.useDash("[0 " + PainterUtils.getUnit(w, h, style.getSpaceWidth(), false) + "] 0");
                 gen.useLineWidth(w);
                 float xm = x1 + (w / 2);
                 drawLine(gen, xm, y1, xm, y2);
@@ -157,7 +148,7 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             break;
         case Constants.EN_GROOVE:
         case Constants.EN_RIDGE:
-            float colFactor = (style == Constants.EN_GROOVE ? 0.4f : -0.4f);
+            float colFactor = (style.getEnumValue() == Constants.EN_GROOVE ? 0.4f : -0.4f);
             gen.useDash(null);
             if (horz) {
                 Color uppercol = ColorUtil.lightenColor(col, -colFactor);
@@ -187,7 +178,7 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             break;
         case Constants.EN_INSET:
         case Constants.EN_OUTSET:
-            colFactor = (style == Constants.EN_OUTSET ? 0.4f : -0.4f);
+            colFactor = (style.getEnumValue() == Constants.EN_OUTSET ? 0.4f : -0.4f);
             gen.useDash(null);
             if (horz) {
                 Color c = ColorUtil.lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
@@ -223,7 +214,7 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
 
     /** {@inheritDoc} */
     public void drawLine(Point start, Point end,
-            int width, Color color, RuleStyle style) throws IOException {
+            int width, Color color, BorderStyle style) throws IOException {
         if (start.y != end.y) {
             //TODO Support arbitrary lines if necessary
             throw new UnsupportedOperationException(
@@ -239,16 +230,11 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
         case Constants.EN_SOLID:
         case Constants.EN_DASHED:
         case Constants.EN_DOUBLE:
-            drawBorderLine(start.x, starty, end.x, starty + width,
-                    true, true, style.getEnumValue(), color);
+            drawBorderLine(start.x, starty, end.x, starty + width, true, true, style, color);
             break;
         case Constants.EN_DOTTED:
-            clipRect(start.x, starty, end.x - start.x, width);
-            //This displaces the dots to the right by half a dot's width
-            //TODO There's room for improvement here
-            generator.concatMatrix(1, 0, 0, 1, toPoints(half), 0);
-            drawBorderLine(start.x, starty, end.x, starty + width,
-                    true, true, style.getEnumValue(), color);
+            drawBorderLine(start.x + width + half, starty, end.x - width - half, starty + width,
+                    true, true, style, color);
             break;
         case Constants.EN_GROOVE:
         case Constants.EN_RIDGE:
@@ -261,7 +247,7 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             generator.write(" " + generator.mapCommand("fill"));
             generator.writeln(" " + generator.mapCommand("newpath"));
             generator.useColor(color);
-            if (style == RuleStyle.GROOVE) {
+            if (style.getEnumValue() == BorderStyle.GROOVE.getEnumValue()) {
                 moveTo(start.x, starty);
                 lineTo(end.x, starty);
                 lineTo(end.x, starty + half);
@@ -311,11 +297,6 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
     /** {@inheritDoc} */
     public void closePath() throws IOException {
         generator.writeln("cp");
-    }
-
-    private void clipRect(int x, int y, int width, int height) throws IOException {
-        generator.defineRect(toPoints(x), toPoints(y), toPoints(width), toPoints(height));
-        clip();
     }
 
     /** {@inheritDoc} */

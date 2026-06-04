@@ -45,6 +45,7 @@ import org.apache.fop.layoutmgr.ListElement;
 import org.apache.fop.layoutmgr.Position;
 import org.apache.fop.layoutmgr.PositionIterator;
 import org.apache.fop.layoutmgr.TraitSetter;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.traits.MinOptMax;
 
 /**
@@ -121,7 +122,8 @@ public class LeaderLayoutManager extends LeafNodeLayoutManager {
             if (fobj.getRuleStyle() != EN_NONE) {
                 org.apache.fop.area.inline.Leader leader
                     = new org.apache.fop.area.inline.Leader();
-                leader.setRuleStyle(fobj.getRuleStyle());
+                leader.setRuleStyle(BorderStyle.valueOf(fobj.getRuleStyle(),
+                        fobj.getLeaderPatternWidth().getValue(this)));
                 leader.setRuleThickness(fobj.getRuleThickness().getValue(this));
                 leaderArea = leader;
             } else {

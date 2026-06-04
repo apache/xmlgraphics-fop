@@ -107,7 +107,8 @@ public class AFPBorderPainter extends AbstractAFPPainter {
         lineDataInfo.setThickness(Math.round(thickness));
 
         // handle border-*-style
-        switch (borderPaintInfo.getStyle()) {
+        int styleSpaceWidth = Math.round(unitConv.mpt2units(borderPaintInfo.getStyle().getSpaceWidth()));
+        switch (borderPaintInfo.getStyle().getEnumValue()) {
         case Constants.EN_DOUBLE:
             int thickness3 = (int)Math.floor(thickness / 3f);
             lineDataInfo.setThickness(thickness3);
@@ -138,6 +139,10 @@ public class AFPBorderPainter extends AbstractAFPPainter {
                 lineDataInfo.setY2(lineDataInfo.getY1());
                 int ex2 = Math.round(x2);
                 int spaceWidth = (int) (BorderPainter.DASHED_BORDER_SPACE_RATIO * dashWidth);
+                if (styleSpaceWidth > 0) {
+                    spaceWidth = styleSpaceWidth;
+                }
+
                 while (lineDataInfo.getX2() <= ex2 && dashWidth > 0) {
                     dataStream.createLine(lineDataInfo);
                     lineDataInfo.setX1(lineDataInfo.getX2() + spaceWidth);
@@ -149,6 +154,9 @@ public class AFPBorderPainter extends AbstractAFPPainter {
                 lineDataInfo.setY2(lineDataInfo.getY1() + dashWidth);
                 int ey2 = Math.round(y2);
                 int spaceWidth = (int) (BorderPainter.DASHED_BORDER_SPACE_RATIO * dashWidth);
+                if (styleSpaceWidth > 0) {
+                    spaceWidth = styleSpaceWidth;
+                }
                 while (lineDataInfo.getY2() <= ey2 && dashWidth > 0) {
                     dataStream.createLine(lineDataInfo);
                     lineDataInfo.setY1(lineDataInfo.getY2() + spaceWidth);
@@ -161,18 +169,28 @@ public class AFPBorderPainter extends AbstractAFPPainter {
                 lineDataInfo.setX2(lineDataInfo.getX1() + lineDataInfo.getThickness());
                 lineDataInfo.setY2(lineDataInfo.getY1());
                 int ex2 = Math.round(x2);
+                int spaceWidth = lineDataInfo.getThickness() * 3;
+                if (styleSpaceWidth > 0) {
+                    spaceWidth = styleSpaceWidth;
+                }
+
                 while (lineDataInfo.getX1() + lineDataInfo.getThickness() < ex2) {
                     dataStream.createLine(lineDataInfo);
-                    lineDataInfo.setX1(lineDataInfo.getX1() + 3 * lineDataInfo.getThickness());
+                    lineDataInfo.setX1(lineDataInfo.getX1() + spaceWidth);
                     lineDataInfo.setX2(lineDataInfo.getX1() + lineDataInfo.getThickness());
                 }
             } else {
                 lineDataInfo.setX2(lineDataInfo.getX1());
                 lineDataInfo.setY2(lineDataInfo.getY1() + lineDataInfo.getThickness());
                 int ey2 = Math.round(y2);
+                int spaceWidth = lineDataInfo.getThickness() * 3;
+                if (styleSpaceWidth > 0) {
+                    spaceWidth = styleSpaceWidth;
+                }
+
                 while (lineDataInfo.getY1() + lineDataInfo.getThickness() < ey2) {
                     dataStream.createLine(lineDataInfo);
-                    lineDataInfo.setY1(lineDataInfo.getY1() + 3 * lineDataInfo.getThickness());
+                    lineDataInfo.setY1(lineDataInfo.getY1() + spaceWidth);
                     lineDataInfo.setY2(lineDataInfo.getY1() + lineDataInfo.getThickness());
                 }
             }
@@ -182,7 +200,7 @@ public class AFPBorderPainter extends AbstractAFPPainter {
             //TODO
             int yNew;
             lineDataInfo.setX2(Math.round(x2));
-            float colFactor = (borderPaintInfo.getStyle() == Constants.EN_GROOVE ? 0.4f : -0.4f);
+            float colFactor = (borderPaintInfo.getStyle().getEnumValue() == Constants.EN_GROOVE ? 0.4f : -0.4f);
             float h3 = (y2 - y1) / 3;
             lineDataInfo.setColor(
                 ColorUtil.lightenColor(borderPaintInfo.getColor(), -colFactor));

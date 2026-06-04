@@ -98,6 +98,10 @@
                rule double after-edge
           </fo:block>
           <fo:block>
+            <fo:leader leader-length="36pt" leader-pattern-width="10pt" leader-pattern="rule" rule-style="double" alignment-baseline="after-edge" background-color="yellow"/>
+               rule double after-edge
+          </fo:block>
+          <fo:block>
           <!-- use content currently causes a ClassCastException
             <fo:leader leader-length="36pt" leader-pattern="use-content" alignment-baseline="after-edge" background-color="yellow">x</fo:leader>
                use-content x after-edge
@@ -167,5 +171,11 @@
     <eval expected="360000" xpath="//flow/block[15]/lineArea/@ipd"/>
     <eval expected="36000" xpath="//flow/block[15]/lineArea/leader/@ipd"/>
     <eval expected="10100" xpath="//flow/block[15]/lineArea/leader/@offset"/>
+
+    <eval expected="11100" xpath="//flow/block[16]/lineArea/@bpd"/>
+    <eval expected="360000" xpath="//flow/block[16]/lineArea/@ipd"/>
+    <eval expected="36000" xpath="//flow/block[16]/lineArea/leader/@ipd"/>
+    <eval expected="10100" xpath="//flow/block[16]/lineArea/leader/@offset"/>
+    <eval expected="10000" xpath="//flow/block[16]/lineArea/leader/@leader-pattern-width"/>
   </checks>
 </testcase>

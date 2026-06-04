@@ -79,18 +79,6 @@
       <xs:enumeration value="outset"/>
     </xs:restriction>
   </xs:simpleType>
-  <xs:simpleType name="ruleStyle">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="none"/>
-      <xs:enumeration value="hidden"/>
-      <xs:enumeration value="solid"/>
-      <xs:enumeration value="dotted"/>
-      <xs:enumeration value="dashed"/>
-      <xs:enumeration value="double"/>
-      <xs:enumeration value="groove"/>
-      <xs:enumeration value="ridge"/>
-    </xs:restriction>
-  </xs:simpleType>
   <xs:simpleType name="borderDef">
     <xs:restriction base="xs:string">
       <!-- TODO refine me: \w+ will not be good enough for CMYK color, for example

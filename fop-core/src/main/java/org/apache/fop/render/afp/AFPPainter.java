@@ -70,6 +70,7 @@ import org.apache.fop.afp.ptoca.PtocaBuilder;
 import org.apache.fop.afp.ptoca.PtocaProducer;
 import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.fo.Constants;
 import org.apache.fop.fonts.Font;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.Typeface;
@@ -82,7 +83,7 @@ import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.render.intermediate.IFUtil;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -325,8 +326,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
         }
 
         public void drawBorderLine(int x1, int y1, int x2, int y2,
-                boolean horz, boolean startOrBefore, int style, Color color)
-                        throws IOException {
+                boolean horz, boolean startOrBefore, BorderStyle style, Color color) {
             BorderPaintingInfo borderPaintInfo = new BorderPaintingInfo(
                     toPoints(x1), toPoints(y1), toPoints(x2), toPoints(y2),
                     horz, style, color);
@@ -337,16 +337,20 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
             return mpt / 1000f;
         }
 
-        public void drawLine(Point start, Point end, int width,
-                Color color, RuleStyle style) throws IOException {
+        public void drawLine(Point start, Point end, int width, Color color, BorderStyle style) {
             if (start.y != end.y) {
                 //TODO Support arbitrary lines if necessary
                 throw new UnsupportedOperationException("Can only deal with horizontal lines right now");
             }
             //Simply delegates to drawBorderLine() as AFP line painting is not very sophisticated.
             int halfWidth = width / 2;
-            drawBorderLine(start.x, start.y - halfWidth, end.x, start.y + halfWidth,
-                    true, true, style.getEnumValue(), color);
+            if (style.getEnumValue() == Constants.EN_DOTTED) {
+                drawBorderLine(start.x + width + halfWidth, start.y - halfWidth, end.x - width - halfWidth,
+                        start.y + halfWidth, true, true, style, color);
+            } else {
+                drawBorderLine(start.x, start.y - halfWidth, end.x, start.y + halfWidth,
+                        true, true, style, color);
+            }
         }
 
         public void moveTo(int x, int y) throws IOException {
@@ -890,7 +894,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
 
     /** {@inheritDoc} */
     @Override
-    public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+    public void drawLine(Point start, Point end, int width, Color color, BorderStyle style)
             throws IFException {
         try {
             this.graphicsPainter.drawLine(start, end, width, color, style);

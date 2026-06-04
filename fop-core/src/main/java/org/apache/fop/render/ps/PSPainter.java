@@ -54,7 +54,7 @@ import org.apache.fop.render.intermediate.GraphicsPainter;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.HexEncoder;
 
@@ -264,7 +264,7 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
     }
 
     /** {@inheritDoc} */
-    public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+    public void drawLine(Point start, Point end, int width, Color color, BorderStyle style)
                 throws IFException {
         try {
             endTextObject();

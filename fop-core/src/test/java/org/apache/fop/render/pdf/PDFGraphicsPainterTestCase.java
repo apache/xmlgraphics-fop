@@ -22,20 +22,32 @@ package org.apache.fop.render.pdf;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.endsWith;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import org.apache.fop.fo.Constants;
 import org.apache.fop.pdf.PDFNumber;
-import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.traits.BorderStyle;
 
 public class PDFGraphicsPainterTestCase {
+
+    private static final int SPACE_WIDTH = 14000;
+
+    private static final String DEFAULT_MESSAGE = "Must use space width from style if available";
+
+    private static final String ABOVE_ZERO_MESSAGE = "Style space width is only to be used if higher than zero";
+
+    private static final String MESSAGE_NO_SPACE_WIDTH = "Must use default spacing is space width not availabe";
 
     private PDFGraphicsPainter sut;
 
@@ -134,14 +146,48 @@ public class PDFGraphicsPainterTestCase {
 
     @Test
     public void testDrawBorderLineDashed() {
-        sut.drawBorderLine(0, 0, 0, 0, true, true, Constants.EN_DASHED, null);
+        sut.drawBorderLine(0, 0, 0, 0, true, true, BorderStyle.DASHED, null);
         verify(generator, never()).add(any(String.class));
     }
 
     @Test
     public void testDottedLeader() {
-        sut.drawLine(new Point(0, 0), new Point(10, 0), 10, new Color(0), RuleStyle.DOTTED);
+        sut.drawLine(new Point(0, 0), new Point(10, 0), 10, new Color(0), BorderStyle.DOTTED);
         verify(generator, never()).clipRect(any());
+    }
+
+    @Test
+    public void testDrawLineDotted() {
+        checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(SPACE_WIDTH), DEFAULT_MESSAGE, "[0 14] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(0), ABOVE_ZERO_MESSAGE, "[0 2] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(-1), ABOVE_ZERO_MESSAGE, "[0 2] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DOTTED, MESSAGE_NO_SPACE_WIDTH, "[0 2] 0 d ");
+    }
+
+    @Test
+    public void testDrawLineDashed() {
+        checkSpaceWidthUnit(BorderStyle.DASHED.withSpaceWidth(SPACE_WIDTH), DEFAULT_MESSAGE, "[1 14] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DASHED.withSpaceWidth(0), ABOVE_ZERO_MESSAGE, "[1 0.5] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DASHED.withSpaceWidth(-1), ABOVE_ZERO_MESSAGE, "[1 0.5] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DASHED, MESSAGE_NO_SPACE_WIDTH, "[1 0.5] 0 d ");
+    }
+
+    private void checkSpaceWidthUnit(BorderStyle style, String message, String expectedValue) {
+        generator = mock(PDFContentGenerator.class);
+        sut = new PDFGraphicsPainter(generator);
+
+        sut.drawLine(new Point(0, 0), new Point(1000, 0), 1000, new Color(0), style);
+
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(generator, atLeastOnce()).add(captor.capture());
+
+        int index = 2;
+        if (style.getEnumValue() == Constants.EN_DASHED) {
+            index = 1;
+        }
+
+        List<String> allValues = captor.getAllValues();
+        assertEquals(message, expectedValue, allValues.get(index));
     }
 
     private void testTransformCoordinatesF(float... args) {

@@ -66,7 +66,7 @@ import org.apache.fop.render.pcl.fonts.PCLSoftFontManager;
 import org.apache.fop.render.pcl.fonts.PCLSoftFontManager.PCLTextSegment;
 import org.apache.fop.render.pcl.fonts.truetype.PCLTTFCharacterWriter;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -258,7 +258,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
 
     /** {@inheritDoc} */
     public void drawLine(final Point start, final Point end,
-                final int width, final Color color, final RuleStyle style)
+                final int width, final Color color, final BorderStyle style)
             throws IFException {
         if (isSpeedOptimized()) {
             super.drawLine(start, end, width, color, style);

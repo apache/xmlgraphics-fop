@@ -45,7 +45,7 @@ import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.render.intermediate.IFState;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.util.CharUtilities;
 
 /**
@@ -216,7 +216,7 @@ public class Java2DPainter extends AbstractIFPainter<IFDocumentHandler> {
     }
 
     /** {@inheritDoc} */
-    public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+    public void drawLine(Point start, Point end, int width, Color color, BorderStyle style)
             throws IFException {
         try {
             this.graphicsPainter.drawLine(start, end, width, color, style);

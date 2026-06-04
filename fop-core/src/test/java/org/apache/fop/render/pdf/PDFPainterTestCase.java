@@ -96,7 +96,7 @@ import org.apache.fop.render.RenderingContext;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFException;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ImageObjectCache;
 
@@ -788,7 +788,7 @@ public class PDFPainterTestCase {
     @Test
     public void testDrawLineMarksContentWithoutPDFUA() throws IFException {
         createPDFPainter(true);
-        pdfPainter.drawLine(new Point(0, 0), new Point(100, 0), -1, new Color(1), RuleStyle.DOTTED);
+        pdfPainter.drawLine(new Point(0, 0), new Point(100, 0), -1, new Color(1), BorderStyle.DOTTED);
 
         verify(pdfContentGenerator).beginMarkedContentSequence(null, 0, null);
         verify(pdfContentGenerator).endMarkedContentSequence();

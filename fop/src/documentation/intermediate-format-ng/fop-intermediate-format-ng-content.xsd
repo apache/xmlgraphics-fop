@@ -94,7 +94,8 @@
           <xs:attribute name="y2" use="required" type="mf:lengthType"/>
           <xs:attribute name="color" use="required" type="mf:colorType"/>
           <xs:attribute name="stroke-width" use="required" type="mf:lengthType"/>
-          <xs:attribute name="style" use="required" type="mf:ruleStyle"/>
+          <xs:attribute name="style" use="required" type="mf:borderStyle"/>
+          <xs:attribute name="space-width" type="mf:lengthType"/>
         </xs:complexType>
       </xs:element>
       <xs:element name="border-rect">

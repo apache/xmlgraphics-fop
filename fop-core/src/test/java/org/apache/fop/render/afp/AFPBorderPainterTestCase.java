@@ -22,9 +22,12 @@ package org.apache.fop.render.afp;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -34,13 +37,14 @@ import org.apache.fop.afp.AFPPaintingState;
 import org.apache.fop.afp.BorderPaintingInfo;
 import org.apache.fop.afp.DataStream;
 import org.apache.fop.afp.Factory;
-import org.apache.fop.fo.Constants;
+import org.apache.fop.traits.BorderStyle;
 
 public class AFPBorderPainterTestCase {
     private ByteArrayOutputStream outStream;
     private AFPBorderPainter borderPainter;
     private DataStream ds;
     private AFPLineDataInfo line;
+    private List<AFPLineDataInfo> lineData;
 
     @Before
     public void setUp() throws Exception {
@@ -49,6 +53,7 @@ public class AFPBorderPainterTestCase {
         ds.startDocument();
         ds.startPage(1000, 1000, 90, 72, 72);
         borderPainter = new AFPBorderPainter(new AFPPaintingState(), ds);
+        lineData = new ArrayList<>();
     }
 
     /**
@@ -59,10 +64,37 @@ public class AFPBorderPainterTestCase {
     @Test
     public void testDrawBorderLine() throws Exception {
         BorderPaintingInfo paintInfo = new BorderPaintingInfo(0f, 0f, 1000f, 1000f, true,
-                Constants.EN_DASHED, Color.BLACK);
+                BorderStyle.DASHED, Color.BLACK);
         borderPainter.paint(paintInfo);
         ds.endDocument();
         assertTrue(line.getX1() == 4999 && line.getX2() == 8332);
+    }
+
+    @Test
+    public void testDrawBorderLineDottedWithSpaceWidth() throws Exception {
+        BorderPaintingInfo paintInfo = new BorderPaintingInfo(0f, 0f, 20f, 1f, true,
+                BorderStyle.DOTTED.withSpaceWidth(14000), Color.BLACK);
+        borderPainter.paint(paintInfo);
+        ds.endDocument();
+
+        assertEquals("X1 value for the start of the line", 0, lineData.get(0).getX1());
+        assertEquals("X2 value must be equal to X1 plus the thickness", 3, lineData.get(0).getX2());
+        assertEquals("Next dot must be spaced according with the style space width", 47,
+                lineData.get(1).getX1());
+    }
+
+    @Test
+    public void testDrawBorderLineDashedWithSpaceWidth() throws Exception {
+        BorderPaintingInfo paintInfo = new BorderPaintingInfo(0f, 0f, 30f, 1f, true,
+                BorderStyle.DASHED.withSpaceWidth(14000), Color.BLACK);
+        borderPainter.paint(paintInfo);
+        ds.endDocument();
+
+        assertEquals("X1 value for the start of the line", 0, lineData.get(0).getX1());
+        assertEquals("X2 value must be equal to X1 plus the thickness", 24, lineData.get(0).getX2());
+        assertEquals("Next dot must be spaced according with the style space width", 71,
+                lineData.get(1).getX1());
+
     }
 
     class MyDataStream extends DataStream {
@@ -72,12 +104,13 @@ public class AFPBorderPainterTestCase {
 
         public void createLine(AFPLineDataInfo lineDataInfo) {
             line = lineDataInfo;
+            lineData.add(new AFPLineDataInfo(lineDataInfo));
         }
     }
 
     @Test
     public void testDrawBorderLineDashed2() throws Exception {
-        BorderPaintingInfo paintInfo = new BorderPaintingInfo(0, 0, 0, 0, false, Constants.EN_DASHED, Color.BLACK);
+        BorderPaintingInfo paintInfo = new BorderPaintingInfo(0, 0, 0, 0, false, BorderStyle.DASHED, Color.BLACK);
         borderPainter.paint(paintInfo);
         ds.endDocument();
         assertNull(line);

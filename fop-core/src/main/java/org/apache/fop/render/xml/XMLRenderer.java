@@ -933,8 +933,11 @@ public class XMLRenderer extends AbstractXMLRenderer {
         addAreaAttributes(area);
         addTraitAttributes(area);
         addAttribute("offset", area.getBlockProgressionOffset());
-        addAttribute("ruleStyle", area.getRuleStyleAsString());
+        addAttribute("ruleStyle", area.getBorderStyleAsString());
         addAttribute("ruleThickness", area.getRuleThickness());
+        if (area.getRuleStyle().getSpaceWidth() > 0) {
+            addAttribute("leader-pattern-width", area.getRuleStyle().getSpaceWidth());
+        }
         startElement("leader", atts);
         endElement("leader");
         super.renderLeader(area);

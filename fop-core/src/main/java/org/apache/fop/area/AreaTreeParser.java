@@ -902,7 +902,7 @@ public class AreaTreeParser {
                     XMLUtil.getAttributeAsInt(attributes, "offset", 0));
                 String ruleStyle = attributes.getValue("ruleStyle");
                 if (ruleStyle != null) {
-                    leader.setRuleStyle(ruleStyle);
+                    leader.setRuleStyle(ruleStyle, XMLUtil.getAttributeAsInt(attributes, "leader-pattern-width", 0));
                 }
                 leader.setRuleThickness(
                         XMLUtil.getAttributeAsInt(attributes, "ruleThickness", 0));

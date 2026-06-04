@@ -32,8 +32,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.render.PainterUtils;
 import org.apache.fop.render.intermediate.GraphicsPainter;
-import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.util.ColorUtil;
 
 class Java2DGraphicsPainter implements GraphicsPainter {
@@ -60,8 +61,40 @@ class Java2DGraphicsPainter implements GraphicsPainter {
         return getG2DState().getGraph();
     }
 
+    private static void drawStrokeLine(Graphics2D g2d, BorderStyle style, Color col, boolean horz, int cap,
+                                       float height, float width, float startX, float startY, float endX, float endY) {
+        g2d.setColor(col);
+        if (horz) {
+            float unit = PainterUtils.getUnit(height, width, style.getSpaceWidth(), true);
+
+            float[] dash = new float[] {unit};
+            if (cap == BasicStroke.CAP_ROUND) {
+                dash = new float[] {0f, unit};
+            }
+
+            BasicStroke s = new BasicStroke(height, cap, BasicStroke.JOIN_MITER, 10.0f, dash, 0);
+            g2d.setStroke(s);
+
+            float valueY = startY + (height / 2);
+            g2d.draw(new Line2D.Float(startX, valueY, endX, valueY));
+        } else {
+            float unit = PainterUtils.getUnit(width, height, style.getSpaceWidth(), true);
+
+            float[] dash = new float[] {unit};
+            if (cap == BasicStroke.CAP_ROUND) {
+                dash = new float[] {0f, unit};
+            }
+
+            BasicStroke s = new BasicStroke(width, cap, BasicStroke.JOIN_MITER, 10.0f, dash, 0);
+            g2d.setStroke(s);
+
+            float valueX = startX + (width / 2);
+            g2d.draw(new Line2D.Float(valueX, startY, valueX, endY));
+        }
+    }
+
     public void drawBorderLine(int x1, int y1, int x2, int y2,
-            boolean horz, boolean startOrBefore, int style, Color color)
+            boolean horz, boolean startOrBefore, BorderStyle style, Color color)
                     throws IOException {
         float w = x2 - x1;
         float h = y2 - y1;
@@ -69,62 +102,12 @@ class Java2DGraphicsPainter implements GraphicsPainter {
             log.error("Negative extent received. Border won't be painted.");
             return;
         }
-        switch (style) {
+        switch (style.getEnumValue()) {
         case Constants.EN_DASHED:
-            getG2D().setColor(color);
-            if (horz) {
-                float unit = Math.abs(2 * h);
-                int rep = (int)(w / unit);
-                if (rep % 2 == 0) {
-                    rep++;
-                }
-                unit = w / rep;
-                float ym = y1 + (h / 2);
-                BasicStroke s = new BasicStroke(h, BasicStroke.CAP_BUTT,
-                        BasicStroke.JOIN_MITER, 10.0f, new float[] {unit}, 0);
-                getG2D().setStroke(s);
-                getG2D().draw(new Line2D.Float(x1, ym, x2, ym));
-            } else {
-                float unit = Math.abs(2 * w);
-                int rep = (int)(h / unit);
-                if (rep % 2 == 0) {
-                    rep++;
-                }
-                unit = h / rep;
-                float xm = x1 + (w / 2);
-                BasicStroke s = new BasicStroke(w, BasicStroke.CAP_BUTT,
-                        BasicStroke.JOIN_MITER, 10.0f, new float[] {unit}, 0);
-                getG2D().setStroke(s);
-                getG2D().draw(new Line2D.Float(xm, y1, xm, y2));
-            }
+            drawStrokeLine(getG2D(), style, color, horz, BasicStroke.CAP_BUTT, h, w, x1, y1, x2, y2);
             break;
         case Constants.EN_DOTTED:
-            getG2D().setColor(color);
-            if (horz) {
-                float unit = Math.abs(2 * h);
-                int rep = (int)(w / unit);
-                if (rep % 2 == 0) {
-                    rep++;
-                }
-                unit = w / rep;
-                float ym = y1 + (h / 2);
-                BasicStroke s = new BasicStroke(h, BasicStroke.CAP_ROUND,
-                        BasicStroke.JOIN_MITER, 10.0f, new float[] {0, unit}, 0);
-                getG2D().setStroke(s);
-                getG2D().draw(new Line2D.Float(x1, ym, x2, ym));
-            } else {
-                float unit = Math.abs(2 * w);
-                int rep = (int)(h / unit);
-                if (rep % 2 == 0) {
-                    rep++;
-                }
-                unit = h / rep;
-                float xm = x1 + (w / 2);
-                BasicStroke s = new BasicStroke(w, BasicStroke.CAP_ROUND,
-                        BasicStroke.JOIN_MITER, 10.0f, new float[] {0, unit}, 0);
-                getG2D().setStroke(s);
-                getG2D().draw(new Line2D.Float(xm, y1, xm, y2));
-            }
+            drawStrokeLine(getG2D(), style, color, horz, BasicStroke.CAP_ROUND, h, w, x1, y1, x2, y2);
             break;
         case Constants.EN_DOUBLE:
             getG2D().setColor(color);
@@ -148,7 +131,7 @@ class Java2DGraphicsPainter implements GraphicsPainter {
             break;
         case Constants.EN_GROOVE:
         case Constants.EN_RIDGE:
-            float colFactor = (style == Constants.EN_GROOVE ? 0.4f : -0.4f);
+            float colFactor = (style.getEnumValue() == Constants.EN_GROOVE ? 0.4f : -0.4f);
             if (horz) {
                 Color uppercol = ColorUtil.lightenColor(color, -colFactor);
                 Color lowercol = ColorUtil.lightenColor(color, colFactor);
@@ -177,7 +160,7 @@ class Java2DGraphicsPainter implements GraphicsPainter {
             break;
         case Constants.EN_INSET:
         case Constants.EN_OUTSET:
-            colFactor = (style == Constants.EN_OUTSET ? 0.4f : -0.4f);
+            colFactor = (style.getEnumValue() == Constants.EN_OUTSET ? 0.4f : -0.4f);
             if (horz) {
                 color = ColorUtil.lightenColor(color, (startOrBefore ? 1 : -1) * colFactor);
                 getG2D().setStroke(new BasicStroke(h));
@@ -209,7 +192,7 @@ class Java2DGraphicsPainter implements GraphicsPainter {
     }
 
     public void drawLine(Point start, Point end, int width, Color color,
-            RuleStyle style) throws IOException {
+            BorderStyle style) throws IOException {
         if (start.y != end.y) {
             //TODO Support arbitrary lines if necessary
             throw new UnsupportedOperationException(
@@ -227,12 +210,11 @@ class Java2DGraphicsPainter implements GraphicsPainter {
         case Constants.EN_DASHED:
         case Constants.EN_DOUBLE:
             drawBorderLine(start.x, start.y - half, end.x, end.y + half,
-                    true, true, style.getEnumValue(), color);
+                    true, true, style, color);
             break;
         case Constants.EN_DOTTED:
-            int shift = half; //This shifts the dots to the right by half a dot's width
-            drawBorderLine(start.x + shift, start.y - half, end.x + shift, end.y + half,
-                    true, true, style.getEnumValue(), color);
+            drawBorderLine(start.x + width + half, start.y - half, end.x - width - half, end.y + half,
+                    true, true, style, color);
             break;
         case Constants.EN_GROOVE:
         case Constants.EN_RIDGE:

@@ -75,10 +75,12 @@ import org.apache.fop.fonts.FontManager;
 import org.apache.fop.fonts.Typeface;
 import org.apache.fop.render.AbstractPathOrientedRenderer;
 import org.apache.fop.render.Graphics2DAdapter;
+import org.apache.fop.render.PainterUtils;
 import org.apache.fop.render.RendererContext;
 import org.apache.fop.render.extensions.prepress.PageBoundaries;
 import org.apache.fop.render.extensions.prepress.PageScale;
 import org.apache.fop.render.pdf.CTMHelper;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.util.CharUtilities;
 import org.apache.fop.util.ColorUtil;
 import static org.apache.fop.render.java2d.Java2DRendererOption.JAVA2D_TRANSPARENT_PAGE_BACKGROUND;
@@ -548,12 +550,44 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
 
     /** {@inheritDoc} */
     protected void drawBorderLine(float x1, float y1, float x2, float y2,
-            boolean horz, boolean startOrBefore, int style, Color col) {
+                                  boolean horz, boolean startOrBefore, BorderStyle style, Color col) {
         Graphics2D g2d = state.getGraph();
         float width = x2 - x1;
         float height = y2 - y1;
         drawBorderLine(new Rectangle2D.Float(x1, y1, width, height),
                 horz, startOrBefore, style, col, g2d);
+    }
+
+    private static void drawStrokeLine(Graphics2D g2d, BorderStyle style, Color col, boolean horz, int cap,
+                                       float height, float width, float startX, float startY, float endX, float endY) {
+        g2d.setColor(col);
+        if (horz) {
+            float unit = PainterUtils.getUnit(height, width, style.getSpaceWidth(), true);
+
+            float[] dash = new float[] {unit};
+            if (cap == BasicStroke.CAP_ROUND) {
+                dash = new float[] {0f, unit};
+            }
+
+            BasicStroke s = new BasicStroke(height, cap, BasicStroke.JOIN_MITER, 10.0f, dash, 0);
+            g2d.setStroke(s);
+
+            float valueY = startY + (height / 2);
+            g2d.draw(new Line2D.Float(startX, valueY, endX, valueY));
+        } else {
+            float unit = PainterUtils.getUnit(width, height, style.getSpaceWidth(), true);
+
+            float[] dash = new float[] {unit};
+            if (cap == BasicStroke.CAP_ROUND) {
+                dash = new float[] {0f, unit};
+            }
+
+            BasicStroke s = new BasicStroke(width, cap, BasicStroke.JOIN_MITER, 10.0f, dash, 0);
+            g2d.setStroke(s);
+
+            float valueX = startX + (width / 2);
+            g2d.draw(new Line2D.Float(valueX, startY, valueX, endY));
+        }
     }
 
     /**
@@ -567,7 +601,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
      * @param g2d the Graphics2D instance to paint to
      */
     public static void drawBorderLine(Rectangle2D.Float lineRect,
-            boolean horz, boolean startOrBefore, int style, Color col, Graphics2D g2d) {
+            boolean horz, boolean startOrBefore, BorderStyle style, Color col, Graphics2D g2d) {
         float x1 = lineRect.x;
         float y1 = lineRect.y;
         float x2 = x1 + lineRect.width;
@@ -578,62 +612,12 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             log.error("Negative extent received. Border won't be painted.");
             return;
         }
-        switch (style) {
+        switch (style.getEnumValue()) {
             case Constants.EN_DASHED:
-                g2d.setColor(col);
-                if (horz) {
-                    float unit = Math.abs(2 * h);
-                    int rep = (int)(w / unit);
-                    if (rep % 2 == 0) {
-                        rep++;
-                    }
-                    unit = w / rep;
-                    float ym = y1 + (h / 2);
-                    BasicStroke s = new BasicStroke(h, BasicStroke.CAP_BUTT,
-                            BasicStroke.JOIN_MITER, 10.0f, new float[] {unit}, 0);
-                    g2d.setStroke(s);
-                    g2d.draw(new Line2D.Float(x1, ym, x2, ym));
-                } else {
-                    float unit = Math.abs(2 * w);
-                    int rep = (int)(h / unit);
-                    if (rep % 2 == 0) {
-                        rep++;
-                    }
-                    unit = h / rep;
-                    float xm = x1 + (w / 2);
-                    BasicStroke s = new BasicStroke(w, BasicStroke.CAP_BUTT,
-                            BasicStroke.JOIN_MITER, 10.0f, new float[] {unit}, 0);
-                    g2d.setStroke(s);
-                    g2d.draw(new Line2D.Float(xm, y1, xm, y2));
-                }
+                drawStrokeLine(g2d, style, col, horz, BasicStroke.CAP_BUTT, h, w, x1, y1, x2, y2);
                 break;
             case Constants.EN_DOTTED:
-                g2d.setColor(col);
-                if (horz) {
-                    float unit = Math.abs(2 * h);
-                    int rep = (int)(w / unit);
-                    if (rep % 2 == 0) {
-                        rep++;
-                    }
-                    unit = w / rep;
-                    float ym = y1 + (h / 2);
-                    BasicStroke s = new BasicStroke(h, BasicStroke.CAP_ROUND,
-                            BasicStroke.JOIN_MITER, 10.0f, new float[] {0, unit}, 0);
-                    g2d.setStroke(s);
-                    g2d.draw(new Line2D.Float(x1, ym, x2, ym));
-                } else {
-                    float unit = Math.abs(2 * w);
-                    int rep = (int)(h / unit);
-                    if (rep % 2 == 0) {
-                        rep++;
-                    }
-                    unit = h / rep;
-                    float xm = x1 + (w / 2);
-                    BasicStroke s = new BasicStroke(w, BasicStroke.CAP_ROUND,
-                            BasicStroke.JOIN_MITER, 10.0f, new float[] {0, unit}, 0);
-                    g2d.setStroke(s);
-                    g2d.draw(new Line2D.Float(xm, y1, xm, y2));
-                }
+                drawStrokeLine(g2d, style, col, horz, BasicStroke.CAP_ROUND, h, w, x1, y1, x2, y2);
                 break;
             case Constants.EN_DOUBLE:
                 g2d.setColor(col);
@@ -657,7 +641,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                 break;
             case Constants.EN_GROOVE:
             case Constants.EN_RIDGE:
-                float colFactor = (style == EN_GROOVE ? 0.4f : -0.4f);
+                float colFactor = (style.getEnumValue() == EN_GROOVE ? 0.4f : -0.4f);
                 if (horz) {
                     Color uppercol = ColorUtil.lightenColor(col, -colFactor);
                     Color lowercol = ColorUtil.lightenColor(col, colFactor);
@@ -686,7 +670,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                 break;
             case Constants.EN_INSET:
             case Constants.EN_OUTSET:
-                colFactor = (style == EN_OUTSET ? 0.4f : -0.4f);
+                colFactor = (style.getEnumValue() == EN_OUTSET ? 0.4f : -0.4f);
                 if (horz) {
                     col = ColorUtil.lightenColor(col, (startOrBefore ? 1 : -1) * colFactor);
                     g2d.setStroke(new BasicStroke(h));
@@ -849,24 +833,17 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         Color col = (Color) area.getTrait(Trait.COLOR);
         state.updateColor(col);
 
-        Line2D line = new Line2D.Float();
-        line.setLine(startx, starty, endx, starty);
+
         float ruleThickness = area.getRuleThickness() / 1000f;
 
-        int style = area.getRuleStyle();
+        int style = area.getRuleStyle().getEnumValue();
         switch (style) {
         case EN_SOLID:
         case EN_DASHED:
         case EN_DOUBLE:
-            drawBorderLine(startx, starty, endx, starty + ruleThickness,
-                    true, true, style, col);
-            break;
         case EN_DOTTED:
-            //TODO Dots should be shifted to the left by ruleThickness / 2
-            state.updateStroke(ruleThickness, style);
-            float rt2 = ruleThickness / 2f;
-            line.setLine(line.getX1(), line.getY1() + rt2, line.getX2(), line.getY2() + rt2);
-            state.getGraph().draw(line);
+            drawBorderLine(startx, starty, endx, starty + ruleThickness,
+                    true, true, area.getRuleStyle(), col);
             break;
         case EN_GROOVE:
         case EN_RIDGE:

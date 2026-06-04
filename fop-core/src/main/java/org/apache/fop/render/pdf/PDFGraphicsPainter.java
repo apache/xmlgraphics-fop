@@ -25,11 +25,12 @@ import java.awt.Rectangle;
 import java.io.IOException;
 
 import org.apache.fop.fo.Constants;
+import org.apache.fop.render.PainterUtils;
 import org.apache.fop.render.intermediate.ArcToBezierCurveTransformer;
 import org.apache.fop.render.intermediate.BezierCurvePainter;
 import org.apache.fop.render.intermediate.BorderPainter;
 import org.apache.fop.render.intermediate.GraphicsPainter;
-import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.util.ColorUtil;
 
 /**
@@ -49,26 +50,28 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
 
     /** {@inheritDoc} */
     public void drawBorderLine(int x1, int y1, int x2, int y2, boolean horz,
-            boolean startOrBefore, int style, Color col) {
+            boolean startOrBefore, BorderStyle style, Color col) {
         //TODO lose scale?
         drawBorderLine2(x1 / 1000f, y1 / 1000f, x2 / 1000f, y2 / 1000f,
                 horz, startOrBefore, style, col);
     }
 
+
     /** {@inheritDoc} */
     private void drawBorderLine2(float x1, float y1, float x2, float y2, boolean horz,
-            boolean startOrBefore, int style, Color col) {
+            boolean startOrBefore, BorderStyle style, Color col) {
         float w = x2 - x1;
         float h = y2 - y1;
         float colFactor;
-        switch (style) {
+        switch (style.getEnumValue()) {
         case Constants.EN_DASHED:
             generator.setColor(col);
             if (horz) {
                 float dashedWidth = BorderPainter.dashWidthCalculator(w, h);
                 if (dashedWidth != 0) {
                     float ym = y1 + (h / 2);
-                    generator.setDashLine(dashedWidth, dashedWidth * BorderPainter.DASHED_BORDER_SPACE_RATIO)
+                    generator.setDashLine(dashedWidth, PainterUtils.getDashedSpaceWidth(
+                            dashedWidth, style.getSpaceWidth()))
                             .setLineWidth(h)
                             .strokeLine(x1, ym, x2, ym);
                 }
@@ -76,7 +79,8 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
                 float dashedWidth = BorderPainter.dashWidthCalculator(h, w);
                 if (dashedWidth != 0) {
                     float xm = x1 + (w / 2);
-                    generator.setDashLine(dashedWidth, dashedWidth * BorderPainter.DASHED_BORDER_SPACE_RATIO)
+                    generator.setDashLine(dashedWidth, PainterUtils.getDashedSpaceWidth(
+                            dashedWidth, style.getSpaceWidth()))
                             .setLineWidth(w)
                             .strokeLine(xm, y1, xm, y2);
                 }
@@ -85,25 +89,13 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
         case Constants.EN_DOTTED:
             generator.setColor(col).setRoundCap();
             if (horz) {
-                float unit = Math.abs(2 * h);
-                int rep = (int) (w / unit);
-                if (rep % 2 == 0) {
-                    rep++;
-                }
-                unit = w / rep;
                 float ym = y1 + (h / 2);
-                generator.setDashLine(0, unit)
+                generator.setDashLine(0, PainterUtils.getUnit(h, w, style.getSpaceWidth(), false))
                         .setLineWidth(h)
                         .strokeLine(x1, ym, x2, ym);
             } else {
-                float unit = Math.abs(2 * w);
-                int rep = (int) (h / unit);
-                if (rep % 2 == 0) {
-                    rep++;
-                }
-                unit = h / rep;
                 float xm = x1 + (w / 2);
-                generator.setDashLine(0, unit)
+                generator.setDashLine(0, PainterUtils.getUnit(w, h, style.getSpaceWidth(), false))
                         .setLineWidth(w)
                         .strokeLine(xm, y1, xm, y2);
             }
@@ -129,7 +121,7 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             break;
         case Constants.EN_GROOVE:
         case Constants.EN_RIDGE:
-            colFactor = (style == Constants.EN_GROOVE ? 0.4f : -0.4f);
+            colFactor = (style.getEnumValue() == Constants.EN_GROOVE ? 0.4f : -0.4f);
             generator.setSolidLine();
             if (horz) {
                 Color uppercol = ColorUtil.lightenColor(col, -colFactor);
@@ -159,7 +151,7 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             break;
         case Constants.EN_INSET:
         case Constants.EN_OUTSET:
-            colFactor = (style == Constants.EN_OUTSET ? 0.4f : -0.4f);
+            colFactor = (style.getEnumValue() == Constants.EN_OUTSET ? 0.4f : -0.4f);
             generator.setSolidLine();
             Color c = col;
             if (horz) {
@@ -194,7 +186,7 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
 
     /** {@inheritDoc} */
     public void drawLine(Point start, Point end,
-            int width, Color color, RuleStyle style) {
+            int width, Color color, BorderStyle style) {
         if (start.y != end.y) {
             //TODO Support arbitrary lines if necessary
             throw new UnsupportedOperationException(
@@ -207,9 +199,12 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
         case Constants.EN_SOLID:
         case Constants.EN_DASHED:
         case Constants.EN_DOUBLE:
-        case Constants.EN_DOTTED:
             drawBorderLine(start.x, start.y - half, end.x, end.y + half,
-                    true, true, style.getEnumValue(), color);
+                    true, true, style, color);
+            break;
+        case Constants.EN_DOTTED:
+            drawBorderLine(start.x + width + half, start.y - half, end.x - width - half, end.y + half,
+                    true, true, style, color);
             break;
         case Constants.EN_GROOVE:
         case Constants.EN_RIDGE:
@@ -361,12 +356,12 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
                     .addLine("f");
         }
 
-        public PDFContentGeneratorHelper fillRidge(RuleStyle style, int xStart, int yStart, int xEnd,
+        public PDFContentGeneratorHelper fillRidge(BorderStyle style, int xStart, int yStart, int xEnd,
                 int yEnd, int half) {
             String xS = format(xStart);
             String xE = format(xEnd);
             String yS = format(yStart);
-            if (style == RuleStyle.GROOVE) {
+            if (style.getEnumValue() == BorderStyle.GROOVE.getEnumValue()) {
                 addLine("m", xS, yS)
                         .addLine("l", xE, yS)
                         .addLine("l", xE, format(yStart + half))

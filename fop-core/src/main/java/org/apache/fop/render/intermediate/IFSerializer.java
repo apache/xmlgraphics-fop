@@ -55,7 +55,7 @@ import org.apache.fop.render.intermediate.extensions.DocumentNavigationExtension
 import org.apache.fop.render.intermediate.extensions.Link;
 import org.apache.fop.render.intermediate.extensions.NamedDestination;
 import org.apache.fop.traits.BorderProps;
-import org.apache.fop.traits.RuleStyle;
+import org.apache.fop.traits.BorderStyle;
 import org.apache.fop.util.ColorUtil;
 import org.apache.fop.util.DOM2SAX;
 import org.apache.fop.util.LanguageTags;
@@ -665,7 +665,7 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
     }
 
     /** {@inheritDoc} */
-    public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
+    public void drawLine(Point start, Point end, int width, Color color, BorderStyle style)
             throws IFException {
         try {
             addID();
@@ -677,6 +677,9 @@ implements IFConstants, IFPainter, IFDocumentNavigationHandler {
             addAttribute(atts, "stroke-width", Integer.toString(width));
             addAttribute(atts, "color", ColorUtil.colorToString(color));
             addAttribute(atts, "style", style.getName());
+            if (style.getSpaceWidth() > 0) {
+                addAttribute(atts, "space-width", Integer.toString(style.getSpaceWidth()));
+            }
             handler.element(EL_LINE, atts);
         } catch (SAXException e) {
             throw new IFException("SAX error in drawLine()", e);

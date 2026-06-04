@@ -15,35 +15,23 @@
  * limitations under the License.
  */
 
-/* $Id: Java2DRenderer.java 1827168 2018-03-19 08:49:57Z ssteiner $ */
 package org.apache.fop.render.java2d;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.area.BodyRegion;
-import org.apache.fop.area.CTM;
-import org.apache.fop.area.Page;
-import org.apache.fop.area.PageViewport;
-import org.apache.fop.area.RegionViewport;
 import org.apache.fop.fo.Constants;
 import org.apache.fop.traits.BorderStyle;
 
-public class Java2DRendererTestCase {
+public class Java2DGraphicsPainterTestCase {
 
     private static final int SPACE_WIDTH = 14000;
 
@@ -52,29 +40,6 @@ public class Java2DRendererTestCase {
     private static final String ABOVE_ZERO_MESSAGE = "Style space width is only to be used if higher than zero";
 
     private static final String MESSAGE_NO_SPACE_WIDTH = "Must use default spacing is space width not availabe";
-
-    @Test
-    public void testPrint() throws Exception {
-        FOUserAgent userAgent = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
-        Java2DRenderer java2DRenderer = new Java2DRenderer(userAgent) {
-            public String getMimeType() {
-                return null;
-            }
-        };
-        PageViewport pageViewport = new PageViewport(new Rectangle(), 0, null, null, true);
-        pageViewport.setPageIndex(0);
-        Page page = new Page();
-        RegionViewport regionViewport = new RegionViewport(new Rectangle());
-        BodyRegion bodyRegion = new BodyRegion(Constants.FO_REGION_BODY, null, regionViewport, 0, 0);
-        bodyRegion.setCTM(new CTM());
-        bodyRegion.getMainReference().createSpan(true);
-        regionViewport.setRegionReference(bodyRegion);
-        page.setRegionViewport(Constants.FO_REGION_BODY, regionViewport);
-        pageViewport.setPage(page);
-        java2DRenderer.renderPage(pageViewport);
-        BufferedImage image = new BufferedImage(100, 50, BufferedImage.TYPE_INT_ARGB);
-        Assert.assertEquals(java2DRenderer.print(image.createGraphics(), null, 0), 0);
-    }
 
     @Test
     public void testDrawBorderLineDotted() throws IOException {
@@ -101,19 +66,15 @@ public class Java2DRendererTestCase {
     }
 
     private void checkDashArrayValue(BorderStyle style, boolean horizontal, String assertionMessage,
-                                     Integer expectedValue) {
+                                     Integer expectedValue) throws IOException {
         Graphics2D mockGraphics2D = mock(Graphics2D.class);
-        FOUserAgent userAgent = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
-        Java2DRenderer java2DRenderer = new Java2DRenderer(userAgent) {
-            public String getMimeType() {
-                return null;
-            }
-        };
-        java2DRenderer.state = new Java2DGraphicsState(mockGraphics2D, null, null);
-
-        java2DRenderer.drawBorderLine(0f, 0f, 30f, 1f, horizontal, true, style, Color.BLACK);
+        Java2DPainter java2DPainter = new Java2DPainter(mockGraphics2D, null, null);
+        Java2DGraphicsPainter graphicsPainter = new Java2DGraphicsPainter(java2DPainter);
 
         ArgumentCaptor<BasicStroke> captor = ArgumentCaptor.forClass(BasicStroke.class);
+
+        graphicsPainter.drawBorderLine(0, 0, 30, 1, horizontal, true, style, Color.BLACK);
+
         verify(mockGraphics2D).setStroke(captor.capture());
 
         int spaceWidthIndex = 0;

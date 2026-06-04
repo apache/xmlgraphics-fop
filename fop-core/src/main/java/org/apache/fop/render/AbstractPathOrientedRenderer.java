@@ -46,11 +46,10 @@ import org.apache.fop.area.Trait;
 import org.apache.fop.area.inline.ForeignObject;
 import org.apache.fop.area.inline.InlineArea;
 import org.apache.fop.area.inline.InlineViewport;
-import org.apache.fop.fo.Constants;
 import org.apache.fop.fo.extensions.ExtensionElementMapping;
 import org.apache.fop.fonts.FontMetrics;
 import org.apache.fop.traits.BorderProps;
-
+import org.apache.fop.traits.BorderStyle;
 
 /**
  * Abstract base class for renderers like PDF and PostScript where many painting operations
@@ -449,7 +448,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             closePath();
             clip();
             drawBorderLine(sx1a, outery, ex1a, innery, true, true,
-                    bpsTop.style, bpsTop.color);
+                    BorderStyle.valueOf(bpsTop.style), bpsTop.color);
             restoreGraphicsState();
         }
         if (bpsRight != null) {
@@ -483,7 +482,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             closePath();
             clip();
             drawBorderLine(innerx, sy1a, outerx, ey1a, false, false,
-                           bpsRight.style, bpsRight.color);
+                    BorderStyle.valueOf(bpsRight.style), bpsRight.color);
             restoreGraphicsState();
         }
         if (bpsBottom != null) {
@@ -517,7 +516,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             closePath();
             clip();
             drawBorderLine(sx1a, innery, ex1a, outery, true, false,
-                           bpsBottom.style, bpsBottom.color);
+                    BorderStyle.valueOf(bpsBottom.style), bpsBottom.color);
             restoreGraphicsState();
         }
         if (bpsLeft != null) {
@@ -550,7 +549,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
             lineTo(innerx, ey2);
             closePath();
             clip();
-            drawBorderLine(outerx, sy1a, innerx, ey1a, false, true, bpsLeft.style, bpsLeft.color);
+            drawBorderLine(outerx, sy1a, innerx, ey1a, false, true, BorderStyle.valueOf(bpsLeft.style), bpsLeft.color);
             restoreGraphicsState();
         }
     }
@@ -888,21 +887,21 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
                 float y = baseline - descender / 2f;
                 drawBorderLine(startx / 1000f, (y - halfLineWidth) / 1000f,
                         endx, (y + halfLineWidth) / 1000f,
-                        true, true, Constants.EN_SOLID, ct);
+                        true, true, BorderStyle.SOLID, ct);
             }
             if (inline.hasOverline()) {
                 Color ct = (Color) inline.getTrait(Trait.OVERLINE_COLOR);
                 float y = (float)(baseline - (1.1 * capHeight));
                 drawBorderLine(startx / 1000f, (y - halfLineWidth) / 1000f,
                         endx, (y + halfLineWidth) / 1000f,
-                        true, true, Constants.EN_SOLID, ct);
+                        true, true, BorderStyle.SOLID, ct);
             }
             if (inline.hasLineThrough()) {
                 Color ct = (Color) inline.getTrait(Trait.LINETHROUGH_COLOR);
                 float y = (float)(baseline - (0.45 * capHeight));
                 drawBorderLine(startx / 1000f, (y - halfLineWidth) / 1000f,
                         endx, (y + halfLineWidth) / 1000f,
-                        true, true, Constants.EN_SOLID, ct);
+                        true, true, BorderStyle.SOLID, ct);
             }
         }
     }
@@ -986,7 +985,7 @@ public abstract class AbstractPathOrientedRenderer extends PrintRenderer {
      * @param col the color for the border segment
      */
     protected abstract void drawBorderLine(float x1, float y1, float x2, float y2, boolean horz,
-            boolean startOrBefore, int style, Color col);
+                                           boolean startOrBefore, BorderStyle style, Color col);
 
     /** {@inheritDoc} */
     public void renderForeignObject(ForeignObject fo, Rectangle2D pos) {

@@ -21,6 +21,8 @@ package org.apache.fop.afp;
 
 import java.awt.Color;
 
+import org.apache.fop.traits.BorderStyle;
+
 /**
  * Border painting information
  */
@@ -31,7 +33,7 @@ public class BorderPaintingInfo implements PaintingInfo {
     private final float x2;
     private final float y2;
     private final boolean isHorizontal;
-    private final int style;
+    private final BorderStyle style;
     private final Color color;
 
     /**
@@ -46,7 +48,7 @@ public class BorderPaintingInfo implements PaintingInfo {
      * @param color the border color
      */
     public BorderPaintingInfo(float x1, float y1, float x2, float y2,
-            boolean isHorizontal, int style, Color color) {
+                              boolean isHorizontal, BorderStyle style, Color color) {
         this.x1 = x1;
         this.y1 = y1;
         this.x2 = x2;
@@ -106,7 +108,7 @@ public class BorderPaintingInfo implements PaintingInfo {
      *
      * @return the style
      */
-    public int getStyle() {
+    public BorderStyle getStyle() {
         return style;
     }
 
