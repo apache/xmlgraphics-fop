@@ -466,7 +466,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
     public void drawLine(Point start, Point end, int width, Color color, RuleStyle style)
         throws IFException {
         generator.endTextObject();
-        if (accessEnabled && getUserAgent().isPdfUAEnabled()) {
+        if (accessEnabled) {
             generator.beginMarkedContentSequence(null, 0, null);
         }
         try {
@@ -474,7 +474,7 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         } catch (IOException ioe) {
             throw new IFException("Cannot draw line", ioe);
         }
-        if (accessEnabled && getUserAgent().isPdfUAEnabled()) {
+        if (accessEnabled) {
             generator.endMarkedContentSequence();
         }
     }
