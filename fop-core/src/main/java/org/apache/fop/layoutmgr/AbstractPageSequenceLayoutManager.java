@@ -153,7 +153,7 @@ public abstract class AbstractPageSequenceLayoutManager extends AbstractLayoutMa
      * @param id the ID reference to add
      */
     public void addIDToPage(String id) {
-        if (id != null && id.length() > 0) {
+        if (id != null && !id.isEmpty() && curPage != null) {
             idTracker.associateIDWithPageViewport(id, curPage.getPageViewport());
         }
     }
