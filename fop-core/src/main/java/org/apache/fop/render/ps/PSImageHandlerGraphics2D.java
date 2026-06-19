@@ -160,6 +160,7 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
 
                 @Override
                 protected void generateAdditionalDataStream(PSGenerator gen) throws IOException {
+                    gen.startContent();
                     gen.writeln("/" + form.getName() + ":Data currentfile <<");
                     gen.writeln("  /Filter /SubFileDecode");
                     gen.writeln("  /DecodeParms << /EODCount 0 /EODString (%FOPEndOfData) >>");
@@ -169,6 +170,7 @@ public class PSImageHandlerGraphics2D implements PSImageHandler {
                     } finally {
                         gen.writeln("%FOPEndOfData");
                         gen.writeln("def");
+                        gen.endContent();
                     }
                 }
 

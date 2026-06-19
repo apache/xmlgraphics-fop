@@ -58,6 +58,7 @@ public class PSRenderingUtil {
     private boolean autoRotateLandscape;
     private int languageLevel = PSGenerator.DEFAULT_LANGUAGE_LEVEL;
     private boolean acrobatDownsample;
+    private boolean compressStreams;
     private String jpegCompressionRatio;
 
     /** Determines whether the PS file is generated in two passes to minimize file size */
@@ -306,6 +307,17 @@ public class PSRenderingUtil {
 
     public String getJPEGCompressionRatio() {
         return jpegCompressionRatio;
+    }
+
+    public void setCompressStreams(boolean b) {
+        compressStreams = b;
+        if (b && !optimizeResources) {
+            throw new UnsupportedOperationException("compress-streams requires optimize-resources in fop.xconf");
+        }
+    }
+
+    public boolean isCompressStreams() {
+        return compressStreams;
     }
 
     /**

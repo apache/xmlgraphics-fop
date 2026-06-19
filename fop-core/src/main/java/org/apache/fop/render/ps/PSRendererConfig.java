@@ -37,6 +37,7 @@ import org.apache.fop.render.RendererConfig;
 import org.apache.fop.util.LogUtil;
 import static org.apache.fop.render.ps.PSRendererOption.ACROBAT_DOWNSAMPLE;
 import static org.apache.fop.render.ps.PSRendererOption.AUTO_ROTATE_LANDSCAPE;
+import static org.apache.fop.render.ps.PSRendererOption.COMPRESS_STREAMS;
 import static org.apache.fop.render.ps.PSRendererOption.DSC_COMPLIANT;
 import static org.apache.fop.render.ps.PSRendererOption.JPEG_COMPRESSION;
 import static org.apache.fop.render.ps.PSRendererOption.LANGUAGE_LEVEL;
@@ -90,6 +91,10 @@ public final class PSRendererConfig implements RendererConfig {
         return (Boolean) params.get(ACROBAT_DOWNSAMPLE);
     }
 
+    public Boolean isCompressStreams() {
+        return (Boolean) params.get(COMPRESS_STREAMS);
+    }
+
     public String getJPEGCompressionRatio() {
         return (String) params.get(JPEG_COMPRESSION);
     }
@@ -134,6 +139,7 @@ public final class PSRendererConfig implements RendererConfig {
                 setBoolConfigParam(cfg, SAFE_SET_PAGE_DEVICE);
                 setBoolConfigParam(cfg, DSC_COMPLIANT);
                 setBoolConfigParam(cfg, ACROBAT_DOWNSAMPLE);
+                setBoolConfigParam(cfg, COMPRESS_STREAMS);
                 Configuration child = cfg.getChild("rendering");
                 if (child != null) {
                     config.params.put(RENDERING_MODE,

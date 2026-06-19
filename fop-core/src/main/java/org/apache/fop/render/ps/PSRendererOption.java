@@ -39,6 +39,7 @@ public enum PSRendererOption implements RendererConfigOption {
     DSC_COMPLIANT("dsc-compliant", true),
     RENDERING_MODE("rendering", PSRenderingMode.QUALITY),
     JPEG_COMPRESSION("jpeg-compression", null),
+    COMPRESS_STREAMS("compress-streams", false),
     ACROBAT_DOWNSAMPLE("acrobat-downsample", false);
 
     private final String name;
