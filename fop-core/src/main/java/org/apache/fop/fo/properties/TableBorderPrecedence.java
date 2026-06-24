@@ -50,6 +50,34 @@ public class TableBorderPrecedence extends NumberProperty.Maker {
      *
      * {@inheritDoc}
      */
+    public Property getNameId(PropertyList propertyList) throws PropertyException {
+        FObj fo = propertyList.getFObj();
+        switch (fo.getNameId()) {
+        case Constants.FO_TABLE:
+            return num6;
+        case Constants.FO_TABLE_CELL:
+            return num5;
+        case Constants.FO_TABLE_COLUMN:
+            return num4;
+        case Constants.FO_TABLE_ROW:
+            return num3;
+        case Constants.FO_TABLE_BODY:
+            return num2;
+        case Constants.FO_TABLE_HEADER:
+            return num1;
+        case Constants.FO_TABLE_FOOTER:
+            return num0;
+        default:
+            return null;
+        }
+    }    
+    
+    /**
+     * Set default precedence according to the parent FObj
+     *
+     * {@inheritDoc}
+     */
+    @Deprecated
     public Property make(PropertyList propertyList) throws PropertyException {
         FObj fo = propertyList.getFObj();
         switch (fo.getNameId()) {
