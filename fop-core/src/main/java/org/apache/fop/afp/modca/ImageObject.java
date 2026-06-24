@@ -141,6 +141,7 @@ public class ImageObject extends AbstractDataObject {
      * @deprecated Use {@link org.apache.fop.afp.ioca.IDEStructureParameter#setColorModel(byte)}
      * instead.
      */
+    @Deprecated
     public void setIDEColorModel(byte colorModel) {
         getImageSegment().setIDEColorModel(colorModel);
     }
@@ -151,6 +152,7 @@ public class ImageObject extends AbstractDataObject {
      * @deprecated Use {@link org.apache.fop.afp.ioca.IDEStructureParameter#setSubtractive(boolean)}
      * instead.
      */
+    @Deprecated
     public void setSubtractive(boolean subtractive) {
         getImageSegment().setSubtractive(subtractive);
     }
