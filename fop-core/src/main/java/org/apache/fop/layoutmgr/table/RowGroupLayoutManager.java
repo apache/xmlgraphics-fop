@@ -95,11 +95,8 @@ class RowGroupLayoutManager {
     private void createElementsForRowGroup(LayoutContext context, int alignment,
             int bodyType, LinkedList returnList) {
         log.debug("Handling row group with " + rowGroup.length + " rows...");
-        EffRow row;
-        for (EffRow aRowGroup : rowGroup) {
-            row = aRowGroup;
-            for (Object o : row.getGridUnits()) {
-                GridUnit gu = (GridUnit) o;
+        for (EffRow row : rowGroup) {
+            for (GridUnit gu : row.getGridUnits()) {
                 if (gu.isPrimary()) {
                     PrimaryGridUnit primary = gu.getPrimary();
                     // TODO a new LM must be created for every new static-content
@@ -113,7 +110,7 @@ class RowGroupLayoutManager {
                         spanWidth += ((TableColumn) colIter.next()).getColumnWidth().getValue(
                                 tableLM);
                     }
-                    LayoutContext childLC = LayoutContext.newInstance();
+                    LayoutContext childLC = LayoutContext.offspringOf(context);
                     childLC.setStackLimitBP(context.getStackLimitBP()); //necessary?
                     childLC.setRefIPD(spanWidth);
 
@@ -156,8 +153,7 @@ class RowGroupLayoutManager {
                 rowHeights[rgi] = rowBPD.toMinOptMax(tableLM);
                 explicitRowHeight = rowBPD.toMinOptMax(tableLM);
             }
-            for (Object o : row.getGridUnits()) {
-                GridUnit gu = (GridUnit) o;
+            for (GridUnit gu : row.getGridUnits()) {
                 if (!gu.isEmpty() && gu.getColSpanIndex() == 0 && gu.isLastGridUnitRowSpan()) {
                     PrimaryGridUnit primary = gu.getPrimary();
                     int effectiveCellBPD = 0;
