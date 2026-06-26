@@ -179,8 +179,7 @@ public class PDFResources extends PDFDictionary {
      * @return the requested color space or null if it wasn't found
      */
     public PDFICCBasedColorSpace getICCColorSpaceByProfileName(String desc) {
-        PDFICCBasedColorSpace cs = this.iccColorSpaces.get(desc);
-        return cs;
+        return this.iccColorSpaces.get(desc);
     }
 
     /**

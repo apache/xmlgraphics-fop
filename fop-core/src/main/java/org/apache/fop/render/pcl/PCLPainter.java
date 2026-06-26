@@ -163,7 +163,7 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
 
     /** {@inheritDoc} */
     protected RenderingContext createRenderingContext() {
-        PCLRenderingContext pdfContext = new PCLRenderingContext(
+        return new PCLRenderingContext(
                 getUserAgent(), this.gen, getPCLUtil()) {
 
             public Point2D transformedPoint(int x, int y) {
@@ -175,7 +175,6 @@ public class PCLPainter extends AbstractIFPainter<PCLDocumentHandler> implements
             }
 
         };
-        return pdfContext;
     }
 
     /** {@inheritDoc} */

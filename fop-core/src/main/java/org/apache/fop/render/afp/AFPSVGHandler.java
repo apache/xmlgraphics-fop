@@ -167,9 +167,8 @@ public class AFPSVGHandler extends AbstractGenericSVGHandler {
         int objY = (int) Math.round(at.getTranslateY());
         int objWidth = Math.round(unitConv.mpt2units(width));
         int objHeight = Math.round(unitConv.mpt2units(height));
-        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo(objX, objY, objWidth, objHeight,
+        return new AFPObjectAreaInfo(objX, objY, objWidth, objHeight,
                 resolution, rotation);
-        return objectAreaInfo;
     }
 
     private AFPGraphicsObjectInfo createGraphicsObjectInfo(

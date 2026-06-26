@@ -47,8 +47,7 @@ public class ToBeImplementedProperty extends Property {
                 return p;
             }
 
-            ToBeImplementedProperty val = new ToBeImplementedProperty(getPropId());
-            return val;
+            return new ToBeImplementedProperty(getPropId());
         }
     }
 

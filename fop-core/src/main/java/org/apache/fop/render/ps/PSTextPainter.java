@@ -197,9 +197,8 @@ public class PSTextPainter extends NativeTextPainter {
 
         public boolean isMultiByte(Font f) {
             FontMetrics metrics = f.getFontMetrics();
-            boolean multiByte = metrics instanceof MultiByteFont || metrics instanceof LazyFont
+            return metrics instanceof MultiByteFont || metrics instanceof LazyFont
                     && ((LazyFont) metrics).getRealFont() instanceof MultiByteFont;
-            return multiByte;
         }
 
         public void writeTextMatrix(AffineTransform transform) throws IOException {

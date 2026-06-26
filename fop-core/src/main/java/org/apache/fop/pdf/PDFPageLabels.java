@@ -196,7 +196,6 @@ public class PDFPageLabels extends PDFNumberTreeNode {
     }
 
     private int alphabeticToArabic(char c) {
-        int arabic = Character.toLowerCase(c) - 'a' + 1;
-        return arabic;
+        return Character.toLowerCase(c) - 'a' + 1;
     }
 }

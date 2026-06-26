@@ -686,8 +686,7 @@ public abstract class PropertyList {
      * @throws PropertyException if there's a problem while processing the properties
      */
     public CommonAural getAuralProps() throws PropertyException {
-        CommonAural props = new CommonAural(this);
-        return props;
+        return new CommonAural(this);
     }
 
     /**

@@ -193,8 +193,7 @@ public final class SVGUtilities {
      * @return the new g element
      */
     public static Element createG(Document doc) {
-        Element border = doc.createElementNS(SVG_NS, "g");
-        return border;
+        return doc.createElementNS(SVG_NS, "g");
     }
 
     /**

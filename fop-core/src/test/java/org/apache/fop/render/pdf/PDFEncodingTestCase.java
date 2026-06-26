@@ -50,8 +50,7 @@ public class PDFEncodingTestCase extends BasePDFTest {
      * @return an initialized FOUserAgent
      */
     protected FOUserAgent getUserAgent() {
-        final FOUserAgent a = fopFactory.newFOUserAgent();
-        return a;
+        return fopFactory.newFOUserAgent();
     }
 
     /**

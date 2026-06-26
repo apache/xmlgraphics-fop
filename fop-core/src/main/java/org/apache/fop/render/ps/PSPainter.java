@@ -148,9 +148,8 @@ public class PSPainter extends AbstractIFPainter<PSDocumentHandler> {
 
     /** {@inheritDoc} */
     protected RenderingContext createRenderingContext() {
-        PSRenderingContext psContext = new PSRenderingContext(
+        return new PSRenderingContext(
                 getUserAgent(), getGenerator(), getFontInfo());
-        return psContext;
     }
 
     /** {@inheritDoc} */

@@ -1050,15 +1050,13 @@ public abstract class OpenFont {
      * @return String The ItalicAngle
      */
     public String getItalicAngle() {
-        String ia = Short.toString((short)(italicAngle / 0x10000));
-
         // This is the correct italic angle, however only int italic
         // angles are supported at the moment so this is commented out.
         /*
          * if ((italicAngle % 0x10000) > 0 )
          * ia=ia+(comma+Short.toString((short)((short)((italicAngle % 0x10000)*1000)/0x10000)));
          */
-        return ia;
+        return Short.toString((short)(italicAngle / 0x10000));
     }
 
     /**

@@ -87,8 +87,7 @@ public final class TableAttributesConverter {
      */
     static RtfAttributes convertTablePartAttributes(TablePart part)
             throws FOPException {
-        FOPRtfAttributes attrib = new FOPRtfAttributes();
-        return attrib;
+        return new FOPRtfAttributes();
     }
 
     /**

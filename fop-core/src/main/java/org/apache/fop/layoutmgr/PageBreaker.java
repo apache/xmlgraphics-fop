@@ -819,9 +819,8 @@ public class PageBreaker extends AbstractBreaker {
                 restartAtLM = position.getPosition().getLM();
             }
         }
-        int nextSequenceStartsOn = getNextBlockList(childLC, Constants.EN_COLUMN, positionAtBreak,
+        return getNextBlockList(childLC, Constants.EN_COLUMN, positionAtBreak,
                 restartAtLM, firstElements);
-        return nextSequenceStartsOn;
     }
 
     protected void addAreasForFloats(PageBreakingAlgorithm alg, int startPart, int partCount,

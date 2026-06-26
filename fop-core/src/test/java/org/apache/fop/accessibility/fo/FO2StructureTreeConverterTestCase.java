@@ -449,8 +449,7 @@ public class FO2StructureTreeConverterTestCase {
     }
 
     private static Diff createDiff(DOMResult expected, DOMResult actual) {
-        Diff diff = new Diff(getDocument(expected), getDocument(actual));
-        return diff;
+        return new Diff(getDocument(expected), getDocument(actual));
     }
 
     private static Document getDocument(DOMResult result) {
