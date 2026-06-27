@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Fop.Svg</RootNamespace>
+    <Description>A minimal SVG parser that flattens an SVG document into renderer-neutral vector primitives (paths + text) for the FOP layout/render pipeline.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Fop.Colors\Fop.Colors.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Fop.Svg.Tests" />
+  </ItemGroup>
+
+</Project>

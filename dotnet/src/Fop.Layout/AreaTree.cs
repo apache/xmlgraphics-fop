@@ -72,6 +72,7 @@ public sealed class PageArea
     private readonly List<TextRun> textRuns = new();
     private readonly List<RectFill> rectFills = new();
     private readonly List<ImageRun> images = new();
+    private readonly List<VectorPath> vectors = new();
     private readonly List<LinkArea> links = new();
     private readonly List<AreaGroup> groups = new();
 
@@ -96,6 +97,12 @@ public sealed class PageArea
 
     /// <summary>Positioned images on this page.</summary>
     public IReadOnlyList<ImageRun> Images => images;
+
+    /// <summary>
+    /// Vector graphic paths on this page (e.g. an embedded SVG flattened into filled/stroked paths,
+    /// in page coordinates). They paint after images and before text.
+    /// </summary>
+    public IReadOnlyList<VectorPath> Vectors => vectors;
 
     /// <summary>Clickable link rectangles (internal or external) on this page.</summary>
     public IReadOnlyList<LinkArea> Links => links;
@@ -123,6 +130,13 @@ public sealed class PageArea
     {
         ArgumentNullException.ThrowIfNull(image);
         images.Add(image);
+    }
+
+    /// <summary>Adds a vector graphic path.</summary>
+    public void Add(VectorPath vector)
+    {
+        ArgumentNullException.ThrowIfNull(vector);
+        vectors.Add(vector);
     }
 
     /// <summary>Adds a clickable link rectangle.</summary>
@@ -154,6 +168,7 @@ public sealed class AreaGroup
     private readonly List<TextRun> textRuns = new();
     private readonly List<RectFill> rectFills = new();
     private readonly List<ImageRun> images = new();
+    private readonly List<VectorPath> vectors = new();
     private readonly List<LinkArea> links = new();
 
     /// <summary>Creates a group whose local origin maps to (<paramref name="translateXMpt"/>,
@@ -184,6 +199,9 @@ public sealed class AreaGroup
     /// <summary>Images in group-local coordinates.</summary>
     public IReadOnlyList<ImageRun> Images => images;
 
+    /// <summary>Vector graphic paths in group-local coordinates.</summary>
+    public IReadOnlyList<VectorPath> Vectors => vectors;
+
     /// <summary>Link rectangles in group-local coordinates.</summary>
     public IReadOnlyList<LinkArea> Links => links;
 
@@ -204,6 +222,13 @@ public sealed class AreaGroup
         images.Add(image);
     }
 
+    /// <summary>Adds a vector graphic path (group-local coordinates).</summary>
+    public void Add(VectorPath vector)
+    {
+        ArgumentNullException.ThrowIfNull(vector);
+        vectors.Add(vector);
+    }
+
     /// <summary>Adds a link rectangle (group-local coordinates).</summary>
     public void Add(LinkArea link)
     {
@@ -221,7 +246,81 @@ public sealed class AreaGroup
 /// <param name="Text">The run's text.</param>
 /// <param name="Font">The font to render with.</param>
 /// <param name="Color">The fill colour.</param>
-public sealed record TextRun(double XMpt, double BaselineYMpt, string Text, FontKey Font, FopColor Color);
+/// <param name="LetterSpacingMpt">
+/// Extra space inserted after each glyph, in millipoints (the resolved <c>letter-spacing</c>). Zero
+/// (the default) means natural spacing and lets a renderer draw the run as one string; a non-zero
+/// value asks the renderer to advance glyph-by-glyph.
+/// </param>
+public sealed record TextRun(
+    double XMpt, double BaselineYMpt, string Text, FontKey Font, FopColor Color, double LetterSpacingMpt = 0);
+
+/// <summary>The kind of a <see cref="PathSegment"/> -- which drawing verb it represents.</summary>
+public enum PathVerb
+{
+    /// <summary>Start a new subpath at the segment's first point.</summary>
+    MoveTo,
+
+    /// <summary>A straight line to the segment's first point.</summary>
+    LineTo,
+
+    /// <summary>A quadratic Bezier with control point (X0,Y0) ending at (X1,Y1).</summary>
+    QuadTo,
+
+    /// <summary>A cubic Bezier with controls (X0,Y0),(X1,Y1) ending at (X2,Y2).</summary>
+    CubicTo,
+
+    /// <summary>Close the current subpath back to its start point.</summary>
+    Close,
+}
+
+/// <summary>
+/// One segment of a <see cref="VectorPath"/>. Coordinates are in page (or group-local) millipoints
+/// from the top-left, already transformed from the source graphic's coordinate space. Which of the
+/// point fields are meaningful depends on <see cref="Verb"/> (see <see cref="PathVerb"/>).
+/// </summary>
+/// <param name="Verb">The drawing verb.</param>
+/// <param name="X0">First point x (the target point for move/line, first control for curves).</param>
+/// <param name="Y0">First point y.</param>
+/// <param name="X1">Second point x (end for quad, second control for cubic).</param>
+/// <param name="Y1">Second point y.</param>
+/// <param name="X2">Third point x (end for cubic).</param>
+/// <param name="Y2">Third point y.</param>
+public readonly record struct PathSegment(
+    PathVerb Verb, double X0 = 0, double Y0 = 0, double X1 = 0, double Y1 = 0, double X2 = 0, double Y2 = 0)
+{
+    /// <summary>A move-to (X,Y).</summary>
+    public static PathSegment Move(double x, double y) => new(PathVerb.MoveTo, x, y);
+
+    /// <summary>A line-to (X,Y).</summary>
+    public static PathSegment Line(double x, double y) => new(PathVerb.LineTo, x, y);
+
+    /// <summary>A quadratic Bezier: control (cx,cy), end (x,y).</summary>
+    public static PathSegment Quad(double cx, double cy, double x, double y) => new(PathVerb.QuadTo, cx, cy, x, y);
+
+    /// <summary>A cubic Bezier: controls (c1x,c1y),(c2x,c2y), end (x,y).</summary>
+    public static PathSegment Cubic(double c1x, double c1y, double c2x, double c2y, double x, double y)
+        => new(PathVerb.CubicTo, c1x, c1y, c2x, c2y, x, y);
+
+    /// <summary>A close-subpath.</summary>
+    public static PathSegment ClosePath() => new(PathVerb.Close);
+}
+
+/// <summary>
+/// A vector graphic path on a page (or in a group), in millipoints with a top-left origin. The path is
+/// described by an ordered list of <see cref="PathSegment"/>s and painted with an optional fill and/or
+/// stroke. A renderer fills first (when <see cref="FillColor"/> is set) then strokes (when
+/// <see cref="StrokeColor"/> is set and <see cref="StrokeWidthMpt"/> is positive), using the nonzero
+/// winding rule (the SVG/PostScript default).
+/// </summary>
+/// <param name="Segments">The ordered path segments.</param>
+/// <param name="FillColor">The fill colour, or <c>null</c> for no fill.</param>
+/// <param name="StrokeColor">The stroke colour, or <c>null</c> for no stroke.</param>
+/// <param name="StrokeWidthMpt">The stroke width in millipoints.</param>
+public sealed record VectorPath(
+    IReadOnlyList<PathSegment> Segments,
+    FopColor? FillColor,
+    FopColor? StrokeColor,
+    double StrokeWidthMpt);
 
 /// <summary>A filled rectangle on a page (top-left origin, millipoints).</summary>
 /// <param name="XMpt">Left edge.</param>

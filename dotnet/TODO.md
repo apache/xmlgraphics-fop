@@ -125,10 +125,19 @@ Independent back-ends; port in priority order. Each can be its own project (`Fop
 - [ ] Bitmap/Java2D → **ImageSharp** raster renderer (`Fop.Render.Bitmap`).
 - [ ] PostScript, AFP, PCL, RTF, TXT, intermediate XML — subsequent.
 - [ ] Image loading pipeline (`Fop.Imaging`) — built on ImageSharp; `ImageDimensions` started.
+- [x] **SVG** (`fo:instream-foreign-object`) — `Fop.Svg` parses a static SVG subset (basic shapes,
+      `path` with arc→Bezier, `g`/`transform`, presentation attrs + `style`, simple `text`) into
+      renderer-neutral vector primitives; `Fop.Layout` scales them onto the object's content box as
+      area-tree `VectorPath`s/`TextRun`s and the PdfSharp renderer paints them (`Fop.Render.Pdf`
+      replacing Batik). Not modelled: gradients/patterns, filters, clipping, `<use>`, animation.
+- [x] **text-decoration** (underline/overline/line-through as font-metric-positioned rules) and
+      **letter-spacing** (per-glyph tracking widening the line advance; drawn glyph-by-glyph).
 
-## Phase 7 — Front-end & integration  `[ ]`
+## Phase 7 — Front-end & integration  `[~]`
 
-- [ ] `Fop.Cli` — command-line tool (port of `org.apache.fop.cli`).
+- [x] `Fop.Cli` — command-line tool (port of `org.apache.fop.cli`): `fop in.fo out.pdf`, the
+      `-fo`/`-pdf` flags, an `-xml`/`-xsl` XSLT-to-FO path (via `XslCompiledTransform`), `-fontdir`
+      font registration, and `-version`/`-help`. Packable as a global .NET tool (`ToolCommandName=fop`).
 - [ ] `FopFactory` / `Fop` user-facing API, configuration (`Fop.Configuration`).
 - [x] Hyphenation (`Fop.Hyphenation`): `TernaryTree` + `HyphenationTree` (Liang algorithm),
       `PatternParser` (XmlReader), `Hyphenator` with an embedded English pattern set, wired into
@@ -141,6 +150,7 @@ Independent back-ends; port in priority order. Each can be its own project (`Fop
 - [ ] Port JUnit suites alongside each module; add golden-file output comparisons vs. the Java FOP
       for end-to-end equivalence once a renderer works.
 - [ ] CI workflow: `dotnet build` + `dotnet test` on the `dotnet/` solution.
-- [ ] Decide SVG story (Batik has no direct .NET equivalent — evaluate ImageSharp.Drawing + a
-      dedicated SVG parser, or scope SVG out initially).
+- [x] Decide SVG story: a dedicated, dependency-light SVG parser (`Fop.Svg`) flattens a static SVG
+      subset to vector primitives painted by the existing PdfSharp renderer (no Batik, no
+      ImageSharp.Drawing dependency). Richer SVG (gradients, filters, clipping, `<use>`) is future work.
 - [ ] Replace `commons-logging` call sites with `Microsoft.Extensions.Logging`.

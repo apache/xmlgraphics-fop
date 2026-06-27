@@ -106,6 +106,7 @@ that stack with modern, cross-platform, managed libraries:
 | `java.util.logging` / commons-logging        | `Microsoft.Extensions.Logging` abstractions       |
 | `javax.xml.transform` / SAX / DOM            | `System.Xml` (`XmlReader`, `XDocument`, `XslCompiledTransform`) |
 | `java.lang.reflect.Proxy` (dynamic proxies)  | `System.Reflection.DispatchProxy`                 |
+| Apache **Batik** (SVG rendering)             | **`Fop.Svg`** — bespoke static-SVG parser → vector primitives |
 | Java `ServiceLoader` / `META-INF/services`   | DI registration / `[assembly:]` discovery / explicit registries |
 | Resource bundles (`*.properties`/XML bundles)| `System.Resources` / embedded resources           |
 | `BigDecimal`, `BitSet`                       | `decimal`, `System.Collections.BitArray`          |
@@ -151,6 +152,14 @@ that stack with modern, cross-platform, managed libraries:
 - **`Fop.Render.Pdf`** — renders the area tree to PDF via **PdfSharp**, with an embedded-Liberation
   `IFontResolver`, a PdfSharp-backed `IFontMeasurer`, and the high-level `FopProcessor` facade
   (FO in → PDF out).
+- **`Fop.Svg`** — a dependency-light SVG parser (replacing Batik) that flattens a static SVG subset
+  (basic shapes, `path` with arc→Bezier conversion, `g`/`transform`, presentation attributes + the
+  `style` attribute for fill/stroke/opacity, simple `text`) into renderer-neutral vector primitives.
+  `Fop.Layout` scales these onto an `fo:instream-foreign-object`'s content box as area-tree
+  `VectorPath`s/`TextRun`s; the PdfSharp renderer paints them.
+- **`Fop.Cli`** — the `fop` command-line front-end: `fop in.fo out.pdf`, `-fo`/`-pdf`, an
+  `-xml`/`-xsl` XSLT-to-FO path, `-fontdir` font registration, and `-version`/`-help`. Packable as a
+  global .NET tool (`ToolCommandName=fop`).
 
 A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subset:
 - block/inline text, fonts, colour, alignment/justification, indents, pagination;
@@ -182,10 +191,16 @@ A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subse
   built-in fallback; the measurer and PdfSharp resolver share one registry;
 - **PDF bookmarks** (`fo:bookmark-tree` → a nested, page-targeted document outline);
 - **`fo:block-container`** — absolute/fixed/auto positioning and `reference-orientation` rotation
-  (90/180/270) via a transform group rendered with PdfSharp transforms.
+  (90/180/270) via a transform group rendered with PdfSharp transforms;
+- **embedded SVG** (`fo:instream-foreign-object`) — a static SVG subset flattened to vector paths and
+  painted to PDF (the `Fop.Svg` parser; no Batik dependency);
+- **text-decoration** (underline/overline/line-through, positioned from font metrics) and
+  **letter-spacing** (per-glyph tracking that widens line advance and is drawn glyph-by-glyph).
 
-The solution has 12 library projects and **867 passing tests** on .NET 10. See `samples/hello.fo`
-(a clickable TOC with leaders, links, a marker header, and page-number citations).
+The solution has 14 library projects and **912 passing tests** on .NET 10. See `samples/hello.fo`
+(a clickable TOC with leaders, links, a marker header, and page-number citations) and
+`samples/svg-decoration.fo` (embedded SVG, text-decoration and letter-spacing). The `fop` CLI renders
+a document with `fop in.fo out.pdf`.
 
 ---
 

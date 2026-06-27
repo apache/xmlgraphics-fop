@@ -17,6 +17,7 @@ using System.Text;
 
 using Fop.Colors;
 using Fop.Fo;
+using Fop.Svg;
 
 namespace Fop.Layout;
 
@@ -674,7 +675,7 @@ public sealed class LayoutEngine
 
         if (points is null || points.Length == 0)
         {
-            para.AddBox(LineBreaker.Item.Box(measurer.MeasureWidthMpt(word.Text, word.Font)),
+            para.AddBox(LineBreaker.Item.Box(MeasuredAdvance(word.Text, word.Font, word.LetterSpacingMpt)),
                 new BoxContent(word, spaceBefore, ContinuesWord: false));
             return;
         }
@@ -693,7 +694,7 @@ public sealed class LayoutEngine
             // but the first fragment), then a flagged hyphen penalty recording the box it follows.
             string fragment = word.Text[prev..cut];
             int boxItem = para.Items.Count;
-            para.AddBox(LineBreaker.Item.Box(measurer.MeasureWidthMpt(fragment, word.Font)),
+            para.AddBox(LineBreaker.Item.Box(MeasuredAdvance(fragment, word.Font, word.LetterSpacingMpt)),
                 new BoxContent(word with { Text = fragment }, spaceBefore && first, ContinuesWord: !first));
             first = false;
 
@@ -705,9 +706,18 @@ public sealed class LayoutEngine
 
         // The trailing fragment after the last hyphenation point.
         string tail = word.Text[prev..];
-        para.AddBox(LineBreaker.Item.Box(measurer.MeasureWidthMpt(tail, word.Font)),
+        para.AddBox(LineBreaker.Item.Box(MeasuredAdvance(tail, word.Font, word.LetterSpacingMpt)),
             new BoxContent(word with { Text = tail }, spaceBefore && first, ContinuesWord: !first));
     }
+
+    /// <summary>
+    /// The inline advance of <paramref name="text"/> in <paramref name="font"/>, including the extra
+    /// width that a non-zero <paramref name="letterSpacingMpt"/> inserts after each glyph. This is the
+    /// width the renderer reproduces when it draws the run glyph-by-glyph for letter-spacing.
+    /// </summary>
+    private double MeasuredAdvance(string text, FontKey font, double letterSpacingMpt)
+        => measurer.MeasureWidthMpt(text, font)
+           + (letterSpacingMpt != 0 ? letterSpacingMpt * text.Length : 0);
 
     /// <summary>
     /// Builds the styled-word line slices for a block from the optimal breakpoints. Each returned
@@ -791,7 +801,7 @@ public sealed class LayoutEngine
         StyledWord word = box.Word;
         double wordWidth = word.IsLeader
             ? word.Leader!.Value.FixedLengthMpt ?? 0
-            : measurer.MeasureWidthMpt(word.Text, word.Font);
+            : MeasuredAdvance(word.Text, word.Font, word.LetterSpacingMpt);
 
         if (box.ContinuesWord && placed.Count > 0)
         {
@@ -902,7 +912,7 @@ public sealed class LayoutEngine
             positions[j] = x;
             double advance = word.IsLeader
                 ? (word.Leader!.Value.FixedLengthMpt ?? perLeaderSlack)
-                : measurer.MeasureWidthMpt(word.Text, word.Font);
+                : MeasuredAdvance(word.Text, word.Font, word.LetterSpacingMpt);
             advances[j] = advance;
             x += advance;
         }
@@ -938,12 +948,59 @@ public sealed class LayoutEngine
                 text.Append(words[j].Text);
             }
 
-            target.Add(new TextRun(positions[runStart], baseline, text.ToString(), first.Font, first.Color));
+            double runWidth = positions[runEnd] + advances[runEnd] - positions[runStart];
+            target.Add(new TextRun(positions[runStart], baseline, text.ToString(), first.Font, first.Color,
+                first.LetterSpacingMpt));
+
+            // Text-decoration lines span the run's inline extent, positioned from the font metrics.
+            if (first.Decoration != TextDecoration.None)
+            {
+                EmitDecoration(target, first, positions[runStart], runWidth, baseline);
+            }
+
             runStart = runEnd + 1;
         }
 
         // Pass 3: record a LinkArea over each contiguous span of words sharing the same link target.
         EmitLinkAreas(target, words, positions, advances, lineHeightMpt, lineTopMpt);
+    }
+
+    /// <summary>
+    /// Emits the active <c>text-decoration</c> lines for a run as thin <see cref="RectFill"/>s spanning
+    /// [<paramref name="runX"/>, runX + <paramref name="width"/>]. Line positions are derived from the
+    /// font's ascent/size: the underline sits just below the baseline, the overline at the top of the
+    /// glyph box, and the line-through near the middle of the x-height. The line thickness scales with
+    /// the font size.
+    /// </summary>
+    private void EmitDecoration(IPrimitiveSink target, StyledWord word, double runX, double width,
+        double baseline)
+    {
+        if (width <= 0)
+        {
+            return;
+        }
+
+        TextDecoration decoration = word.Decoration;
+        double fontSize = word.Font.SizeMpt;
+        double ascender = measurer.AscenderMpt(word.Font);
+        double thickness = Math.Max(fontSize * 0.05, 250); // >= 0.25pt so it is always visible
+
+        void Line(double centreY) => target.Add(new RectFill(runX, centreY - thickness / 2, width, thickness, word.Color));
+
+        if (decoration.HasFlag(TextDecoration.Underline))
+        {
+            Line(baseline + fontSize * 0.12);
+        }
+
+        if (decoration.HasFlag(TextDecoration.LineThrough))
+        {
+            Line(baseline - ascender * 0.3);
+        }
+
+        if (decoration.HasFlag(TextDecoration.Overline))
+        {
+            Line(baseline - ascender);
+        }
     }
 
     /// <summary>
@@ -1034,9 +1091,14 @@ public sealed class LayoutEngine
     private static bool SameStyle(StyledWord a, StyledWord b) =>
         a.Font.Equals(b.Font) && a.Color.Equals(b.Color);
 
-    /// <summary>Whether two words share style <em>and</em> link target (so they coalesce into one run).</summary>
+    /// <summary>
+    /// Whether two words share style, link target <em>and</em> decoration (so they coalesce into one
+    /// run). Words with non-zero letter-spacing never coalesce: each is positioned individually so the
+    /// renderer reproduces the exact per-glyph advance the layout used.
+    /// </summary>
     private static bool SameStyleAndLink(StyledWord a, StyledWord b) =>
-        SameStyle(a, b) && Nullable.Equals(a.Link, b.Link);
+        SameStyle(a, b) && Nullable.Equals(a.Link, b.Link) && a.Decoration == b.Decoration
+        && a.LetterSpacingMpt == 0 && b.LetterSpacingMpt == 0;
 
     /// <summary>
     /// A greedily-filled line: its words, natural (unjustified) width, content height, next word index,
@@ -1060,6 +1122,8 @@ public sealed class LayoutEngine
 
         void Add(ImageRun image);
 
+        void Add(VectorPath vector);
+
         void Add(LinkArea link);
     }
 
@@ -1072,6 +1136,8 @@ public sealed class LayoutEngine
 
         public void Add(ImageRun image) => page.Add(image);
 
+        public void Add(VectorPath vector) => page.Add(vector);
+
         public void Add(LinkArea link) => page.Add(link);
     }
 
@@ -1083,6 +1149,8 @@ public sealed class LayoutEngine
         public void Add(RectFill rect) => group.Add(rect);
 
         public void Add(ImageRun image) => group.Add(image);
+
+        public void Add(VectorPath vector) => group.Add(vector);
 
         public void Add(LinkArea link) => group.Add(link);
     }
@@ -1097,6 +1165,7 @@ public sealed class LayoutEngine
         private readonly List<RectFill> rects = new();
         private readonly List<TextRun> runs = new();
         private readonly List<ImageRun> images = new();
+        private readonly List<VectorPath> vectors = new();
         private readonly List<LinkArea> links = new();
 
         public void Add(TextRun run) => runs.Add(run);
@@ -1104,6 +1173,8 @@ public sealed class LayoutEngine
         public void Add(RectFill rect) => rects.Add(rect);
 
         public void Add(ImageRun image) => images.Add(image);
+
+        public void Add(VectorPath vector) => vectors.Add(vector);
 
         public void Add(LinkArea link) => links.Add(link);
 
@@ -1120,6 +1191,11 @@ public sealed class LayoutEngine
                 target.Add(img with { XMpt = img.XMpt + dx, YMpt = img.YMpt + dy });
             }
 
+            foreach (VectorPath vector in vectors)
+            {
+                target.Add(vector with { Segments = TranslateSegments(vector.Segments, dx, dy) });
+            }
+
             foreach (TextRun run in runs)
             {
                 target.Add(run with { XMpt = run.XMpt + dx, BaselineYMpt = run.BaselineYMpt + dy });
@@ -1129,6 +1205,24 @@ public sealed class LayoutEngine
             {
                 target.Add(link with { XMpt = link.XMpt + dx, YMpt = link.YMpt + dy });
             }
+        }
+
+        /// <summary>Returns a copy of <paramref name="segments"/> with every point offset by (dx, dy).</summary>
+        private static IReadOnlyList<PathSegment> TranslateSegments(
+            IReadOnlyList<PathSegment> segments, double dx, double dy)
+        {
+            var moved = new List<PathSegment>(segments.Count);
+            foreach (PathSegment seg in segments)
+            {
+                moved.Add(seg with
+                {
+                    X0 = seg.X0 + dx, Y0 = seg.Y0 + dy,
+                    X1 = seg.X1 + dx, Y1 = seg.Y1 + dy,
+                    X2 = seg.X2 + dx, Y2 = seg.Y2 + dy,
+                });
+            }
+
+            return moved;
         }
     }
 
@@ -1542,6 +1636,9 @@ public sealed class LayoutEngine
                     case FoExternalGraphic graphic:
                         LayOutImage(graphic, childLeft, childWidth, target);
                         break;
+                    case FoInstreamForeignObject foreign:
+                        LayOutInstreamForeignObject(foreign, childLeft, childWidth, target);
+                        break;
                     case FoTable table:
                         // Tables flow both in the main region and inside a relocatable buffer (so a
                         // table nested in a block lays out via the same shared, target-driven mechanism).
@@ -1631,6 +1728,60 @@ public sealed class LayoutEngine
 
             target.SetCursor(this, boxTop + borderBoxHeight);
             target.Advance(this, graphic.Properties.GetLength("space-after", FoLength.Zero).Millipoints);
+
+            _ = widthMpt;
+        }
+
+        /// <summary>
+        /// Lays out an <see cref="FoInstreamForeignObject"/> (an embedded SVG) as a block-level box. The
+        /// SVG is parsed and flattened into vector paths/text sized to the object's content box; the box
+        /// dimensions come from <c>content-width</c>/<c>content-height</c> (or <c>width</c>/<c>height</c>),
+        /// falling back to the SVG's intrinsic size and finally a square placeholder. A graphic that
+        /// fails to parse emits just its border box (an empty reserved area).
+        /// </summary>
+        private void LayOutInstreamForeignObject(FoInstreamForeignObject foreign, double leftMpt,
+            double widthMpt, IBlockTarget target)
+        {
+            BoxProperties box = foreign.Box;
+            SvgGraphic? graphic = SvgArea.TryParse(foreign.ForeignXml);
+
+            double defaultSize = FoLength.FromPoints(72).Millipoints;
+            double intrinsicW = graphic is { IntrinsicWidth: > 0 } ? graphic.IntrinsicWidth * 1000.0 : defaultSize;
+            double intrinsicH = graphic is { IntrinsicHeight: > 0 } ? graphic.IntrinsicHeight * 1000.0 : defaultSize;
+
+            double contentWidth = (foreign.ContentWidth ?? foreign.Width)?.Millipoints ?? intrinsicW;
+            double contentHeight = (foreign.ContentHeight ?? foreign.Height)?.Millipoints ?? intrinsicH;
+
+            double borderBoxWidth = contentWidth + box.LeftInsetMpt + box.RightInsetMpt;
+            double borderBoxHeight = contentHeight + box.TopInsetMpt + box.BottomInsetMpt;
+
+            target.Advance(this, foreign.SpaceBefore.Millipoints);
+
+            IPrimitiveSink sink = target.SinkForAdvance(this, borderBoxHeight);
+            double boxTop = target.Cursor(this);
+
+            // Background/border behind the graphic.
+            EmitBox(sink, box, leftMpt, boxTop, borderBoxWidth, borderBoxHeight);
+
+            if (graphic is not null)
+            {
+                double graphicX = leftMpt + box.LeftInsetMpt;
+                double graphicY = boxTop + box.TopInsetMpt;
+                PlacedSvg placed = SvgArea.Place(graphic, graphicX, graphicY, contentWidth, contentHeight,
+                    engine.Measurer);
+                foreach (VectorPath path in placed.Paths)
+                {
+                    sink.Add(path);
+                }
+
+                foreach (TextRun run in placed.Texts)
+                {
+                    sink.Add(run);
+                }
+            }
+
+            target.SetCursor(this, boxTop + borderBoxHeight);
+            target.Advance(this, foreign.SpaceAfter.Millipoints);
 
             _ = widthMpt;
         }
@@ -1986,6 +2137,9 @@ public sealed class LayoutEngine
                         break;
                     case FoBlockContainer container:
                         LayOutBlockContainer(container, 0, widthMpt, target);
+                        break;
+                    case FoInstreamForeignObject foreign:
+                        LayOutInstreamForeignObject(foreign, 0, widthMpt, target);
                         break;
                 }
             }

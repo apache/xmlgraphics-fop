@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+  <fo:layout-master-set>
+    <fo:simple-page-master master-name="A4" page-width="210mm" page-height="297mm"
+        margin-top="20mm" margin-bottom="20mm" margin-left="20mm" margin-right="20mm">
+      <fo:region-body/>
+    </fo:simple-page-master>
+  </fo:layout-master-set>
+  <fo:page-sequence master-reference="A4">
+    <fo:flow flow-name="xsl-region-body">
+      <fo:block font-size="18pt" font-weight="bold" text-decoration="underline" space-after="6pt">
+        Vector graphics, decoration and tracking
+      </fo:block>
+      <fo:block text-decoration="overline" space-after="4pt">An overlined line of text.</fo:block>
+      <fo:block text-decoration="line-through" space-after="4pt">A struck-through line of text.</fo:block>
+      <fo:block letter-spacing="3pt" space-after="10pt">W I D E   T R A C K I N G</fo:block>
+      <fo:block>Inline <fo:inline text-decoration="underline" color="blue">underlined blue</fo:inline> word.</fo:block>
+      <fo:block space-before="10pt">
+        <fo:instream-foreign-object content-width="120pt" content-height="120pt">
+          <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 100 100">
+            <rect x="2" y="2" width="96" height="96" fill="#eef" stroke="navy" stroke-width="2"/>
+            <circle cx="50" cy="50" r="40" fill="orange" stroke="black" stroke-width="1"/>
+            <path d="M20 50 L50 20 L80 50 L50 80 Z" fill="rgba(0,128,0,0.5)" stroke="green" stroke-width="2"/>
+            <line x1="10" y1="90" x2="90" y2="10" stroke="red" stroke-width="3"/>
+            <text x="50" y="55" font-size="12" text-anchor="middle" fill="black">SVG</text>
+          </svg>
+        </fo:instream-foreign-object>
+      </fo:block>
+    </fo:flow>
+  </fo:page-sequence>
+</fo:root>

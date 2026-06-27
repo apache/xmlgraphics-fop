@@ -64,6 +64,8 @@ public sealed class PdfRenderer
                 DrawImage(gfx, image);
             }
 
+            DrawVectors(gfx, pageArea.Vectors);
+
             DrawRuns(gfx, pageArea.TextRuns, baseline);
 
             // Transformed groups (e.g. rotated block-containers) paint after the page's flat content,
@@ -148,14 +150,127 @@ public sealed class PdfRenderer
 
             XFont font = measurer.GetXFont(run.Font);
             var brush = new XSolidBrush(ToXColor(run.Color));
-            gfx.DrawString(
-                run.Text,
-                font,
-                brush,
-                run.XMpt / MptPerPoint,
-                run.BaselineYMpt / MptPerPoint,
-                baseline);
+            double y = run.BaselineYMpt / MptPerPoint;
+
+            if (run.LetterSpacingMpt != 0)
+            {
+                // Letter-spacing: draw each character at its own x, advancing by the glyph width plus
+                // the extra tracking. The layout engine measured the run's total advance the same way.
+                double x = run.XMpt;
+                double spacing = run.LetterSpacingMpt;
+                foreach (char c in run.Text)
+                {
+                    string s = c.ToString();
+                    gfx.DrawString(s, font, brush, x / MptPerPoint, y, baseline);
+                    x += measurer.MeasureWidthMpt(s, run.Font) + spacing;
+                }
+
+                continue;
+            }
+
+            gfx.DrawString(run.Text, font, brush, run.XMpt / MptPerPoint, y, baseline);
         }
+    }
+
+    /// <summary>
+    /// Draws the page's vector paths. Each <see cref="VectorPath"/> is rebuilt as an
+    /// <see cref="XGraphicsPath"/> (quadratics promoted to cubics) and filled (nonzero winding) and/or
+    /// stroked. Coordinates are converted from millipoints to points.
+    /// </summary>
+    private static void DrawVectors(XGraphics gfx, IReadOnlyList<VectorPath> vectors)
+    {
+        foreach (VectorPath vector in vectors)
+        {
+            XGraphicsPath? path = BuildPath(vector.Segments);
+            if (path is null)
+            {
+                continue;
+            }
+
+            XBrush? brush = vector.FillColor is { } fill ? new XSolidBrush(ToXColor(fill)) : null;
+            XPen? pen = vector.StrokeColor is { } stroke && vector.StrokeWidthMpt > 0
+                ? new XPen(ToXColor(stroke), Math.Max(0.1, vector.StrokeWidthMpt / MptPerPoint))
+                : null;
+
+            if (brush is not null && pen is not null)
+            {
+                gfx.DrawPath(pen, brush, path);
+            }
+            else if (brush is not null)
+            {
+                gfx.DrawPath(brush, path);
+            }
+            else if (pen is not null)
+            {
+                gfx.DrawPath(pen, path);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Builds an <see cref="XGraphicsPath"/> from area-tree path segments, tracking the current point
+    /// to feed PdfSharp's start-point-based segment API and converting quadratic Beziers to cubics.
+    /// Returns <c>null</c> when the path has no drawable segments.
+    /// </summary>
+    private static XGraphicsPath? BuildPath(IReadOnlyList<PathSegment> segments)
+    {
+        var path = new XGraphicsPath { FillMode = XFillMode.Winding };
+        double curX = 0, curY = 0, startX = 0, startY = 0;
+        bool any = false;
+
+        foreach (PathSegment seg in segments)
+        {
+            switch (seg.Verb)
+            {
+                case PathVerb.MoveTo:
+                    path.StartFigure();
+                    curX = startX = seg.X0 / MptPerPoint;
+                    curY = startY = seg.Y0 / MptPerPoint;
+                    break;
+
+                case PathVerb.LineTo:
+                {
+                    double x = seg.X0 / MptPerPoint, y = seg.Y0 / MptPerPoint;
+                    path.AddLine(curX, curY, x, y);
+                    curX = x; curY = y;
+                    any = true;
+                    break;
+                }
+
+                case PathVerb.CubicTo:
+                {
+                    double c1x = seg.X0 / MptPerPoint, c1y = seg.Y0 / MptPerPoint;
+                    double c2x = seg.X1 / MptPerPoint, c2y = seg.Y1 / MptPerPoint;
+                    double x = seg.X2 / MptPerPoint, y = seg.Y2 / MptPerPoint;
+                    path.AddBezier(curX, curY, c1x, c1y, c2x, c2y, x, y);
+                    curX = x; curY = y;
+                    any = true;
+                    break;
+                }
+
+                case PathVerb.QuadTo:
+                {
+                    double cx = seg.X0 / MptPerPoint, cy = seg.Y0 / MptPerPoint;
+                    double x = seg.X1 / MptPerPoint, y = seg.Y1 / MptPerPoint;
+                    // Promote the quadratic to a cubic about the current point.
+                    double c1x = curX + 2.0 / 3.0 * (cx - curX);
+                    double c1y = curY + 2.0 / 3.0 * (cy - curY);
+                    double c2x = x + 2.0 / 3.0 * (cx - x);
+                    double c2y = y + 2.0 / 3.0 * (cy - y);
+                    path.AddBezier(curX, curY, c1x, c1y, c2x, c2y, x, y);
+                    curX = x; curY = y;
+                    any = true;
+                    break;
+                }
+
+                case PathVerb.Close:
+                    path.CloseFigure();
+                    curX = startX; curY = startY;
+                    break;
+            }
+        }
+
+        return any ? path : null;
     }
 
     /// <summary>
@@ -184,6 +299,8 @@ public sealed class PdfRenderer
             {
                 DrawImage(gfx, image);
             }
+
+            DrawVectors(gfx, group.Vectors);
 
             DrawRuns(gfx, group.TextRuns, baseline);
         }

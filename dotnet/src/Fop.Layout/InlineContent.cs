@@ -54,8 +54,11 @@ internal readonly record struct LeaderInfo(LeaderPattern Pattern, double? FixedL
 /// <param name="Color">The resolved fill colour for this word.</param>
 /// <param name="Link">The link this word belongs to, or <c>null</c>.</param>
 /// <param name="Leader">The leader descriptor when this word is a leader token, or <c>null</c>.</param>
+/// <param name="LetterSpacingMpt">The resolved <c>letter-spacing</c> in millipoints (0 = natural).</param>
+/// <param name="Decoration">The active <c>text-decoration</c> lines on this word.</param>
 internal readonly record struct StyledWord(
-    string Text, FontKey Font, FopColor Color, LinkRef? Link = null, LeaderInfo? Leader = null)
+    string Text, FontKey Font, FopColor Color, LinkRef? Link = null, LeaderInfo? Leader = null,
+    double LetterSpacingMpt = 0, TextDecoration Decoration = TextDecoration.None)
 {
     /// <summary>Whether this word is an expandable leader token rather than rendered text.</summary>
     public bool IsLeader => Leader is not null;
@@ -175,13 +178,15 @@ internal static class InlineContent
     {
         FontKey font = FontKeyFor(owner);
         FopColor color = owner.Properties.GetColor();
+        double letterSpacing = owner.LetterSpacingMpt;
+        TextDecoration decoration = owner.TextDecoration;
 
         foreach (FONode child in owner.Children)
         {
             switch (child)
             {
                 case FOText text:
-                    AppendWords(text.Text, font, color, words, currentLink);
+                    AppendWords(text.Text, font, color, words, currentLink, letterSpacing, decoration);
                     break;
 
                 // fo:page-number resolves to the current page number as a single styled word.
@@ -190,7 +195,9 @@ internal static class InlineContent
                         pageNumber.ToString(System.Globalization.CultureInfo.InvariantCulture),
                         FontKeyFor(pageNum),
                         pageNum.Properties.GetColor(),
-                        currentLink));
+                        currentLink,
+                        LetterSpacingMpt: pageNum.LetterSpacingMpt,
+                        Decoration: pageNum.TextDecoration));
                     break;
 
                 // fo:page-number-citation[-last] resolves to the referenced id's page number via the
@@ -294,15 +301,17 @@ internal static class InlineContent
         FlattenContext? context, LinkRef? currentLink)
     {
         string text = context?.ResolveCitation?.Invoke(refId) ?? UnresolvedCitation;
-        AppendWords(text, FontKeyFor(citation), citation.Properties.GetColor(), words, currentLink);
+        AppendWords(text, FontKeyFor(citation), citation.Properties.GetColor(), words, currentLink,
+            citation.LetterSpacingMpt, citation.TextDecoration);
     }
 
     private static void AppendWords(string text, FontKey font, FopColor color, List<StyledWord> words,
-        LinkRef? currentLink)
+        LinkRef? currentLink, double letterSpacing = 0, TextDecoration decoration = TextDecoration.None)
     {
         foreach (string token in text.Split(' ', StringSplitOptions.RemoveEmptyEntries))
         {
-            words.Add(new StyledWord(token, font, color, currentLink));
+            words.Add(new StyledWord(token, font, color, currentLink,
+                LetterSpacingMpt: letterSpacing, Decoration: decoration));
         }
     }
 

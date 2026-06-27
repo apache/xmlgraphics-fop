@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/Fop.Cli/Fop.Cli.csproj" />
     <Project Path="src/Fop.Colors/Fop.Colors.csproj" />
     <Project Path="src/Fop.Configuration/Fop.Configuration.csproj" />
     <Project Path="src/Fop.Core/Fop.Core.csproj" />
@@ -11,10 +12,12 @@
     <Project Path="src/Fop.Layout/Fop.Layout.csproj" />
     <Project Path="src/Fop.Pdf/Fop.Pdf.csproj" />
     <Project Path="src/Fop.Render.Pdf/Fop.Render.Pdf.csproj" />
+    <Project Path="src/Fop.Svg/Fop.Svg.csproj" />
     <Project Path="src/Fop.Traits/Fop.Traits.csproj" />
     <Project Path="src/Fop.Util/Fop.Util.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Fop.Cli.Tests/Fop.Cli.Tests.csproj" />
     <Project Path="tests/Fop.Colors.Tests/Fop.Colors.Tests.csproj" />
     <Project Path="tests/Fop.Configuration.Tests/Fop.Configuration.Tests.csproj" />
     <Project Path="tests/Fop.DataTypes.Tests/Fop.DataTypes.Tests.csproj" />
@@ -25,6 +28,7 @@
     <Project Path="tests/Fop.Layout.Tests/Fop.Layout.Tests.csproj" />
     <Project Path="tests/Fop.Pdf.Tests/Fop.Pdf.Tests.csproj" />
     <Project Path="tests/Fop.Rendering.Tests/Fop.Rendering.Tests.csproj" />
+    <Project Path="tests/Fop.Svg.Tests/Fop.Svg.Tests.csproj" />
     <Project Path="tests/Fop.Traits.Tests/Fop.Traits.Tests.csproj" />
     <Project Path="tests/Fop.Util.Tests/Fop.Util.Tests.csproj" />
   </Folder>

@@ -773,6 +773,66 @@ public sealed class FoExternalGraphic(PropertyList properties) : FObj(properties
     }
 }
 
+/// <summary>
+/// An instream foreign object, <c>fo:instream-foreign-object</c>. Wraps a non-XSL-FO XML fragment
+/// (typically an SVG <c>&lt;svg&gt;</c> document) embedded directly in the flow. The foreign markup is
+/// captured verbatim as <see cref="ForeignXml"/> by the tree builder; the layout engine parses and
+/// flattens it (SVG via <c>Fop.Svg</c>) into vector primitives sized to this object's box.
+/// </summary>
+public sealed class FoInstreamForeignObject(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "instream-foreign-object";
+
+    /// <summary>
+    /// The captured foreign-namespace XML (the outer XML of the embedded element, e.g. the whole SVG
+    /// document), or the empty string when no foreign child was present.
+    /// </summary>
+    public string ForeignXml { get; internal set; } = string.Empty;
+
+    /// <summary>The specified <c>content-width</c>, or <c>null</c> for <c>auto</c>/<c>scale-to-fit</c>/unset.</summary>
+    public FoLength? ContentWidth => ParseSizeProperty("content-width");
+
+    /// <summary>The specified <c>content-height</c>, or <c>null</c> for <c>auto</c>/<c>scale-to-fit</c>/unset.</summary>
+    public FoLength? ContentHeight => ParseSizeProperty("content-height");
+
+    /// <summary>The specified <c>width</c> of the viewport, or <c>null</c> for <c>auto</c>/unset.</summary>
+    public FoLength? Width => ParseSizeProperty("width");
+
+    /// <summary>The specified <c>height</c> of the viewport, or <c>null</c> for <c>auto</c>/unset.</summary>
+    public FoLength? Height => ParseSizeProperty("height");
+
+    /// <summary>Space before the object (optimum).</summary>
+    public FoLength SpaceBefore =>
+        Properties.GetLength("space-before", Properties.GetLength("space-before.optimum", FoLength.Zero));
+
+    /// <summary>Space after the object (optimum).</summary>
+    public FoLength SpaceAfter =>
+        Properties.GetLength("space-after", Properties.GetLength("space-after.optimum", FoLength.Zero));
+
+    /// <summary>The resolved box-model properties (borders, padding, background colour).</summary>
+    public BoxProperties Box => Properties.GetBox();
+
+    private FoLength? ParseSizeProperty(string name)
+    {
+        string? raw = Properties.GetRaw(name);
+        if (raw is null)
+        {
+            return null;
+        }
+
+        string trimmed = raw.Trim();
+        if (trimmed.Length == 0
+            || trimmed.Equals("auto", StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals("scale-to-fit", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        return FoLength.TryParse(trimmed, Properties.FontSizeMpt);
+    }
+}
+
 /// <summary>A neutral wrapper, <c>fo:wrapper</c>, and the fallback for unmodelled elements.</summary>
 public sealed class FoGeneric(PropertyList properties, string localName) : FObj(properties)
 {

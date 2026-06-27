@@ -99,7 +99,16 @@ public static class FoTreeBuilder
                         parent?.AddChild(obj);
                         root ??= obj;
 
-                        if (!isEmpty)
+                        if (obj is FoInstreamForeignObject foreign && !isEmpty)
+                        {
+                            // Capture the embedded non-FO markup (e.g. SVG) verbatim instead of walking
+                            // it as FO. ReadSubtree consumes through the element's end tag; on dispose the
+                            // outer reader sits on that EndElement, so we must not also push the object.
+                            using XmlReader sub = reader.ReadSubtree();
+                            sub.Read();
+                            foreign.ForeignXml = sub.ReadInnerXml().Trim();
+                        }
+                        else if (!isEmpty)
                         {
                             stack.Push(obj);
                         }
@@ -188,6 +197,7 @@ public static class FoTreeBuilder
         "footnote" => new FoFootnote(properties),
         "footnote-body" => new FoFootnoteBody(properties),
         "external-graphic" => new FoExternalGraphic(properties),
+        "instream-foreign-object" => new FoInstreamForeignObject(properties),
         "bookmark-tree" => new FoBookmarkTree(properties),
         "bookmark" => new FoBookmark(properties),
         "bookmark-title" => new FoBookmarkTitle(properties),

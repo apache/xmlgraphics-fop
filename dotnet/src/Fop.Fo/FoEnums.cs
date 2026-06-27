@@ -84,6 +84,27 @@ public enum AbsolutePosition
     Fixed,
 }
 
+/// <summary>
+/// The active <c>text-decoration</c> lines, as a combinable flag set. XSL-FO/CSS allow several to be
+/// switched on at once (e.g. <c>underline overline</c>), and the <c>no-*</c> keywords clear a line
+/// that an ancestor turned on; <see cref="None"/> is the unset/cleared state.
+/// </summary>
+[Flags]
+public enum TextDecoration
+{
+    /// <summary>No decoration.</summary>
+    None = 0,
+
+    /// <summary>A line beneath the text baseline (<c>underline</c>).</summary>
+    Underline = 1,
+
+    /// <summary>A line above the text (<c>overline</c>).</summary>
+    Overline = 2,
+
+    /// <summary>A line through the middle of the text (<c>line-through</c>).</summary>
+    LineThrough = 4,
+}
+
 /// <summary>The <c>font-style</c> property values.</summary>
 public enum FontStyle
 {
@@ -204,6 +225,41 @@ public static class FoEnumParsing
         // Normalize into [0, 360). Only the right-angle multiples are valid; anything else falls to 0.
         int normalized = ((degrees % 360) + 360) % 360;
         return normalized is 0 or 90 or 180 or 270 ? normalized : 0;
+    }
+
+    /// <summary>
+    /// Parses a <c>text-decoration</c> value into the set of lines it leaves active, applied over an
+    /// <paramref name="inherited"/> set (text-decoration is not a normally-inheriting property in
+    /// XSL-FO, but its effect propagates to descendants, so callers thread the ancestor set through).
+    /// The value is a space-separated list of <c>underline</c>/<c>overline</c>/<c>line-through</c>
+    /// (each turning a line on), their <c>no-*</c> counterparts (turning it off), <c>none</c> (clears
+    /// all) and <c>blink</c> (ignored). An unset value leaves the inherited set unchanged.
+    /// </summary>
+    public static TextDecoration ParseTextDecoration(string? value, TextDecoration inherited = TextDecoration.None)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return inherited;
+        }
+
+        TextDecoration result = inherited;
+        foreach (string token in value.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries))
+        {
+            switch (token.Trim().ToLowerInvariant())
+            {
+                case "none": result = TextDecoration.None; break;
+                case "underline": result |= TextDecoration.Underline; break;
+                case "overline": result |= TextDecoration.Overline; break;
+                case "line-through": result |= TextDecoration.LineThrough; break;
+                case "no-underline": result &= ~TextDecoration.Underline; break;
+                case "no-overline": result &= ~TextDecoration.Overline; break;
+                case "no-line-through": result &= ~TextDecoration.LineThrough; break;
+                // "blink" and any unknown keyword are ignored.
+                default: break;
+            }
+        }
+
+        return result;
     }
 
     /// <summary>

@@ -50,6 +50,8 @@ public sealed class PropertyList
         "hyphenation-character",
         "hyphenation-remain-character-count",
         "hyphenation-push-character-count",
+        "letter-spacing",
+        "word-spacing",
     };
 
     private const double DefaultFontSizeMpt = 12_000;
@@ -214,6 +216,37 @@ public sealed class PropertyList
 
     /// <summary>The resolved <c>text-align</c>.</summary>
     public TextAlign TextAlign => FoEnumParsing.ParseTextAlign(GetRaw("text-align"));
+
+    /// <summary>
+    /// The resolved set of active <c>text-decoration</c> lines. Although XSL-FO does not list
+    /// text-decoration as an inheriting property, its visual effect propagates to descendant inline
+    /// content, so this composes the ancestor chain: the parent's resolved decoration is the base over
+    /// which this object's own <c>text-decoration</c> (including the <c>no-*</c> clears) is applied.
+    /// </summary>
+    public TextDecoration TextDecoration =>
+        FoEnumParsing.ParseTextDecoration(
+            own.TryGetValue("text-decoration", out var v) ? v : null,
+            parent?.TextDecoration ?? TextDecoration.None);
+
+    /// <summary>
+    /// The resolved <c>letter-spacing</c> in millipoints: the extra space inserted after each glyph
+    /// (inherited, default 0). The <c>normal</c> keyword and an unset value both resolve to 0. A length
+    /// (including a negative one, which tightens spacing) is resolved against the current font size for
+    /// <c>em</c> units.
+    /// </summary>
+    public double LetterSpacingMpt
+    {
+        get
+        {
+            string? raw = GetRaw("letter-spacing");
+            if (raw is null || raw.Trim().Equals("normal", StringComparison.OrdinalIgnoreCase))
+            {
+                return 0;
+            }
+
+            return GetLength("letter-spacing", FoLength.Zero, FontSizeMpt).Millipoints;
+        }
+    }
 
     /// <summary>The resolved <c>font-style</c>.</summary>
     public FontStyle FontStyle => FoEnumParsing.ParseFontStyle(GetRaw("font-style"));

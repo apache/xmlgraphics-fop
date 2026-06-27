@@ -9,6 +9,7 @@
     <ProjectReference Include="..\Fop.Fo\Fop.Fo.csproj" />
     <ProjectReference Include="..\Fop.Colors\Fop.Colors.csproj" />
     <ProjectReference Include="..\Fop.Hyphenation\Fop.Hyphenation.csproj" />
+    <ProjectReference Include="..\Fop.Svg\Fop.Svg.csproj" />
   </ItemGroup>
 
 </Project>
