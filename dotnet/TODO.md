@@ -83,7 +83,10 @@ package, as a rough size signal.
 Independent back-ends; port in priority order. Each can be its own project (`Fop.Render.Pdf`, …).
 
 - [ ] `Fop.Render` shared: `Renderer`, `IFDocumentHandler` (intermediate format), painter abstractions.
-- [ ] **PDF** (`Fop.Render.Pdf` + `Fop.Pdf`, ~24,000 LOC) — primary target.
+- [~] **PDF** (`Fop.Render.Pdf` + `Fop.Pdf`, ~24,000 LOC) — primary target. The low-level object
+      model (`Fop.Pdf`: PDFObject/Name/Number/String/Array/Dictionary/Reference/Null + serialization)
+      is ported; still need PDFDocument, the page/resource/font/image objects, encryption, filters,
+      and the `Fop.Render.Pdf` renderer.
 - [ ] Bitmap/Java2D → **ImageSharp** raster renderer (`Fop.Render.Bitmap`).
 - [ ] PostScript, AFP, PCL, RTF, TXT, intermediate XML — subsequent.
 - [ ] Image loading pipeline (`Fop.Imaging`) — built on ImageSharp; `ImageDimensions` started.

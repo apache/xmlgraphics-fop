@@ -135,11 +135,14 @@ that stack with modern, cross-platform, managed libraries:
   colours), `ColorWithFallback`, `OCAColor`/`OCAColorSpace`. Real ICC resolution deferred.
 - **`Fop.Hyphenation`** — `Hyphen`, `Hyphenation`, `ByteVector`/`CharVector`, and the `TernaryTree`
   search tree (the SAX pattern loaders are deferred).
+- **`Fop.Pdf`** — the low-level PDF object model: `PDFObject` base, `PDFName`, `PDFNumber`,
+  `PDFString`/`PDFText`, `PDFArray`, `PDFDictionary`, `PDFReference`, `PDFNull`, with byte-faithful
+  serialization and an `IPdfDocument` owner abstraction (full `PDFDocument` and encryption deferred).
 - **`Fop.Core`** — project established with the SixLabors dependencies wired in;
   `Fop.Imaging.ImageDimensions` is the first ImageSharp-backed utility (image identify) and the seed
   of the image pipeline.
 
-As of the latest wave, the solution has 9 library projects and **448 passing tests** on .NET 10.
+As of the latest wave, the solution has 10 library projects and **530 passing tests** on .NET 10.
 
 ---
 
