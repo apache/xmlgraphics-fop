@@ -53,12 +53,23 @@ public sealed class LiberationFontResolver : IFontResolver
         }
     }
 
+    /// <summary>The shared instance, reusable by other resolvers (e.g. <see cref="FopFontResolver"/>).</summary>
+    public static LiberationFontResolver Instance => Shared;
+
     /// <inheritdoc/>
     public byte[]? GetFont(string faceName)
         => fontData.GetOrAdd(faceName, LoadEmbeddedFont);
 
     /// <inheritdoc/>
     public FontResolverInfo? ResolveTypeface(string familyName, bool isBold, bool isItalic)
+        => new(MapToLiberationFace(familyName, isBold, isItalic));
+
+    /// <summary>
+    /// Maps a requested family + style to the embedded Liberation face name (e.g.
+    /// <c>LiberationSerif-BoldItalic</c>). Exposed so <see cref="FopFontResolver"/> can reuse the exact
+    /// base-14 / sans fallback mapping when no custom font is registered.
+    /// </summary>
+    public static string MapToLiberationFace(string familyName, bool isBold, bool isItalic)
     {
         string family = familyName.Trim().ToLowerInvariant();
         string baseName = family switch
@@ -76,7 +87,7 @@ public sealed class LiberationFontResolver : IFontResolver
             (false, false) => "-Regular",
         };
 
-        return new FontResolverInfo(baseName + suffix);
+        return baseName + suffix;
     }
 
     private static byte[] LoadEmbeddedFont(string faceName)

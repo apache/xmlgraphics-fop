@@ -8,6 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Fop.Fo\Fop.Fo.csproj" />
     <ProjectReference Include="..\Fop.Colors\Fop.Colors.csproj" />
+    <ProjectReference Include="..\Fop.Hyphenation\Fop.Hyphenation.csproj" />
   </ItemGroup>
 
 </Project>

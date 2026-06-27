@@ -23,6 +23,13 @@ namespace Fop.Render.Pdf;
 /// High-level facade for the FO-to-PDF pipeline: parse an XSL-FO document, lay it out, and render
 /// the result to PDF. This is the modern equivalent of the <c>org.apache.fop.apps.Fop</c> entry
 /// point, wired to the PdfSharp renderer.
+/// <para>
+/// Custom fonts can be registered via <see cref="Fonts"/> (or the <c>RegisterFont*</c> passthroughs)
+/// so documents can use families beyond the bundled Liberation faces. Constructing a processor
+/// installs the FOP font resolver as PdfSharp's global resolver. Because PdfSharp's resolver and
+/// face cache are process-global, the registry is shared across all processors; register fonts
+/// before converting (see the caveat on <see cref="FopFontResolver"/>).
+/// </para>
 /// </summary>
 public sealed class FopProcessor
 {
@@ -33,10 +40,30 @@ public sealed class FopProcessor
     /// <summary>Creates a processor with the default PdfSharp font handling.</summary>
     public FopProcessor()
     {
+        // Installs the FOP global resolver (idempotent) and binds to its shared registry.
         measurer = new PdfSharpFontMeasurer();
         layoutEngine = new LayoutEngine(measurer);
         renderer = new PdfRenderer(measurer);
     }
+
+    /// <summary>
+    /// The font registry used by both the measurer and the PdfSharp resolver. Register TTF/OTF fonts
+    /// here (before conversion) to make custom families available to documents; unregistered families
+    /// fall back to the embedded Liberation faces.
+    /// </summary>
+    public FontRegistry Fonts => measurer.Registry;
+
+    /// <summary>Registers a custom font from bytes under a family + style. See <see cref="Fonts"/>.</summary>
+    public string RegisterFont(byte[] data, string family, bool bold = false, bool italic = false)
+        => Fonts.RegisterFont(data, family, bold, italic);
+
+    /// <summary>Registers a custom font from a file under a family + style. See <see cref="Fonts"/>.</summary>
+    public string RegisterFont(string path, string family, bool bold = false, bool italic = false)
+        => Fonts.RegisterFont(path, family, bold, italic);
+
+    /// <summary>Scans a directory and registers each TTF/OTF font found. See <see cref="Fonts"/>.</summary>
+    public IReadOnlyList<string> RegisterFontsDirectory(string dir)
+        => Fonts.RegisterFontsDirectory(dir);
 
     /// <summary>Lays out an already-parsed FO tree (useful for inspection/testing).</summary>
     public AreaTree LayOut(FoRoot root) => layoutEngine.LayOut(root);

@@ -5,4 +5,10 @@
     <Description>Self-contained hyphenation data structures and core algorithm (ternary search tree, growable vectors, hyphenation points) for the C# port of Apache FOP.</Description>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- Bundled hyphenation pattern files (hyphenation.dtd format). Resource name is
+         Fop.Hyphenation.Patterns.<lang>.xml; add more languages by dropping in another file. -->
+    <EmbeddedResource Include="Patterns\*.xml" />
+  </ItemGroup>
+
 </Project>

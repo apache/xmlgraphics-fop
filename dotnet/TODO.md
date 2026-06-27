@@ -60,7 +60,9 @@ package, as a rough size signal.
       `FontCache`, `FontManager`, `FontDetector` — the loading/instantiation machinery.
 - [ ] TrueType/OpenType/Type1 loading & metrics via **SixLabors.Fonts** (replacing FOP's own parsers
       where practical; port the parsers where embedding needs raw tables).
-- [ ] Font embedding/subsetting hooks for the PDF/PS/AFP renderers.
+- [x] Custom-font registration in `Fop.Render.Pdf` (register TTF/OTF by family/style or scan a
+      directory with OpenType name-table detection; PdfSharp embeds them; Liberation fallback).
+- [ ] Font subsetting hooks for the PDF/PS/AFP renderers (PdfSharp embeds full faces today).
 - [ ] `FontEventListener` wiring (currently stubbed in `Typeface`/`FontInfo`).
 - [ ] `Fop.ComplexScripts` (bidi + shaping; `IPositionable`/`ISubstitutable` stand-ins exist) — large;
       can be deferred behind a feature flag.
@@ -70,8 +72,11 @@ package, as a rough size signal.
 - [x] `Fop.Fo` core: `FONode`, `FObj`, `FOText`, a modern inheriting `PropertyList`, `FoLength`,
       and `FoTreeBuilder` (XmlReader). Concrete FOs: root, layout-master-set, simple-page-master,
       region-body, page-sequence, flow, block, inline.
-- [ ] Full property subsystem (the ~290 properties, shorthands, refinement) and the `Fop.Fo.Expr`
-      expression evaluator — currently a curated subset is resolved directly in `PropertyList`.
+- [x] `Fop.Fo.Expr` property-expression evaluator (arithmetic with `div`/`mod`, unit math,
+      `from-parent`/`from-nearest-specified-value`/`inherited-property-value`, `max`/`min`/`abs`/
+      `round`/`ceiling`/`floor`, `rgb`/`system-color`), gated into `PropertyList`.
+- [ ] Full property subsystem (the remaining ~290 properties, shorthands, refinement) — a curated
+      subset is resolved in `PropertyList`, now backed by the expression evaluator.
 - [ ] Remaining flow/pagination/table FOs; `FOEventHandler`, validation.
 
 ## Phase 5 — Area tree & layout  `[~]`  (~46,000 LOC)
@@ -79,8 +84,30 @@ package, as a rough size signal.
 - [x] `Fop.Layout` — flat area model (`AreaTree`/`PageArea`/`TextRun`/`RectFill`), `IFontMeasurer`,
       and a `LayoutEngine` doing block stacking, greedy line breaking, alignment/justification,
       nested-block indent, and pagination.
-- [ ] Knuth total-fit line/page breaking, lists, tables, footnotes, floats, keeps/breaks, a richer
-      nested area tree, multi-region pages and static content.
+- [x] **Tables** (`fo:table` + column/header/body/footer/row/cell): %/proportional/absolute column
+      widths, row heights, per-cell box model, column spanning, **row spanning**, row-level
+      pagination with best-effort header repetition.
+- [x] Box model (borders/padding/backgrounds), painted **across page breaks**, + `fo:external-graphic`.
+- [x] **Lists** (`fo:list-block`/item/label/body) with provisional label/body geometry and nesting.
+- [x] **Static content / regions**: `fo:region-before`/`after` bands + `fo:static-content` running
+      headers/footers + `fo:page-number`.
+- [x] **Keeps & breaks**: `break-before`/`break-after` (page/column/even-page/odd-page),
+      `keep-together.within-page` (move-whole-to-next-page).
+- [x] **Nesting** — tables and lists lay out inside table cells / list bodies / kept blocks (unified
+      block/table/list layout over the paginating-or-buffered target abstraction). Kept blocks taller
+      than a page now split instead of overflowing.
+- [x] **Footnotes** (`fo:footnote`/`footnote-body`): body at the page bottom with a separator; the
+      footnote reserve reduces body height.
+- [x] **`fo:page-number-citation`/`-last`**: forward/backward `ref-id` references resolved via a
+      two-pass layout (unknown ref-ids → "?").
+- [x] **Knuth–Plass total-fit** line breaking (box/glue/penalty + active-node DP) as the default.
+- [x] **`fo:block-container`** — absolute/fixed/auto positioning + `reference-orientation` rotation
+      (transform group in the area tree, PdfSharp transforms in the renderer).
+- [x] **PDF bookmarks** (`fo:bookmark-tree` → document outline).
+- [ ] Total-fit *page* breaking, floats, intra-row splitting; rotated-group link annotations. (Residual TODOs: footnote reserve is greedy not
+      iterative; a row-spanning cell crossing a page break paints on its origin page only; ids inside
+      buffered contexts (cells/footnote bodies) aren't recorded for citations; citation-last uses the
+      single recorded page under the flat model.)
 
 ## Phase 6 — Renderers  `[ ]`  (~79,000 LOC)
 
@@ -103,8 +130,10 @@ Independent back-ends; port in priority order. Each can be its own project (`Fop
 
 - [ ] `Fop.Cli` — command-line tool (port of `org.apache.fop.cli`).
 - [ ] `FopFactory` / `Fop` user-facing API, configuration (`Fop.Configuration`).
-- [~] Hyphenation (`Fop.Hyphenation`): core data structures + `TernaryTree` done; still need the
-      SAX `PatternParser`, `Hyphenator`, `HyphenationTree`/cache, and bundled patterns.
+- [x] Hyphenation (`Fop.Hyphenation`): `TernaryTree` + `HyphenationTree` (Liang algorithm),
+      `PatternParser` (XmlReader), `Hyphenator` with an embedded English pattern set, wired into
+      `Fop.Layout` line breaking via `hyphenate="true"`. (More languages/fuller patterns can be
+      dropped in as embedded resources.)
 - [ ] Accessibility / tagged PDF, SVG (Batik) integration strategy.
 
 ## Cross-cutting / ongoing

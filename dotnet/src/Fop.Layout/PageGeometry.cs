@@ -27,13 +27,37 @@ namespace Fop.Layout;
 /// <param name="ContentTopMpt">Top edge of the body content rectangle.</param>
 /// <param name="ContentWidthMpt">Width of the body content rectangle.</param>
 /// <param name="ContentHeightMpt">Height of the body content rectangle.</param>
+/// <param name="RegionLeftMpt">Left edge of the region-before/after bands (page minus left/right page margins).</param>
+/// <param name="RegionWidthMpt">Width of the region-before/after bands.</param>
+/// <param name="RegionBeforeTopMpt">Top edge of the region-before band (the page top margin).</param>
+/// <param name="RegionBeforeExtentMpt">Height of the region-before band (its <c>extent</c>).</param>
+/// <param name="RegionAfterTopMpt">Top edge of the region-after band.</param>
+/// <param name="RegionAfterExtentMpt">Height of the region-after band (its <c>extent</c>).</param>
+/// <param name="RegionStartLeftMpt">Left edge of the region-start (left) side band (the page left margin).</param>
+/// <param name="RegionStartExtentMpt">Width of the region-start side band (its <c>extent</c>).</param>
+/// <param name="RegionEndLeftMpt">Left edge of the region-end (right) side band.</param>
+/// <param name="RegionEndExtentMpt">Width of the region-end side band (its <c>extent</c>).</param>
+/// <param name="SideRegionTopMpt">Top edge of the side bands (below the region-before band).</param>
+/// <param name="SideRegionHeightMpt">Height of the side bands (between the before and after bands).</param>
 internal readonly record struct PageGeometry(
     double PageWidthMpt,
     double PageHeightMpt,
     double ContentLeftMpt,
     double ContentTopMpt,
     double ContentWidthMpt,
-    double ContentHeightMpt)
+    double ContentHeightMpt,
+    double RegionLeftMpt,
+    double RegionWidthMpt,
+    double RegionBeforeTopMpt,
+    double RegionBeforeExtentMpt,
+    double RegionAfterTopMpt,
+    double RegionAfterExtentMpt,
+    double RegionStartLeftMpt,
+    double RegionStartExtentMpt,
+    double RegionEndLeftMpt,
+    double RegionEndExtentMpt,
+    double SideRegionTopMpt,
+    double SideRegionHeightMpt)
 {
     /// <summary>Right edge of the body content rectangle.</summary>
     public double ContentRightMpt => ContentLeftMpt + ContentWidthMpt;
@@ -46,11 +70,27 @@ internal readonly record struct PageGeometry(
     private static readonly double DefaultHeight = FoLength.FromPoints(841.89).Millipoints;
 
     /// <summary>Resolves the geometry from a simple-page-master (falling back to A4 with no margins).</summary>
+    /// <remarks>
+    /// The region-before band sits at the top of the page, below the page top margin, with height
+    /// equal to the region-before <c>extent</c>; the region-after band sits at the bottom, above the
+    /// page bottom margin, with height equal to the region-after <c>extent</c>. The body content
+    /// rectangle is inset by the region-body margins; standard practice requires the region-body
+    /// margin-top/bottom be at least the before/after extents, and margin-left/right at least the
+    /// region-start/end extents, so the body does not overlap the bands. This engine does not enforce
+    /// that overlap constraint -- it trusts the FO author to set it.
+    /// <para>
+    /// The region-start band is the left vertical band of width = its <c>extent</c>; the region-end
+    /// band is the right vertical band. Both sit between the region-before and region-after bands
+    /// vertically and within the page left/right margins horizontally.
+    /// </para>
+    /// </remarks>
     public static PageGeometry Resolve(FoSimplePageMaster? master)
     {
         if (master is null)
         {
-            return new PageGeometry(DefaultWidth, DefaultHeight, 0, 0, DefaultWidth, DefaultHeight);
+            return new PageGeometry(DefaultWidth, DefaultHeight, 0, 0, DefaultWidth, DefaultHeight,
+                0, DefaultWidth, 0, 0, DefaultHeight, 0,
+                0, 0, DefaultWidth, 0, 0, DefaultHeight);
         }
 
         double pageWidth = master.PageWidth.Millipoints;
@@ -72,6 +112,26 @@ internal readonly record struct PageGeometry(
         double width = Math.Max(0, pageWidth - left - marginRight - bodyRight);
         double height = Math.Max(0, pageHeight - top - marginBottom - bodyBottom);
 
-        return new PageGeometry(pageWidth, pageHeight, left, top, width, height);
+        // The header/footer bands span the page between the left and right page margins.
+        double regionLeft = marginLeft;
+        double regionWidth = Math.Max(0, pageWidth - marginLeft - marginRight);
+
+        double beforeExtent = master.RegionBefore?.Extent.Millipoints ?? 0;
+        double afterExtent = master.RegionAfter?.Extent.Millipoints ?? 0;
+
+        double beforeTop = marginTop;
+        double afterTop = pageHeight - marginBottom - afterExtent;
+
+        // Side bands: left/right vertical strips of width = extent, between the before/after bands.
+        double startExtent = master.RegionStart?.Extent.Millipoints ?? 0;
+        double endExtent = master.RegionEnd?.Extent.Millipoints ?? 0;
+        double startLeft = marginLeft;
+        double endLeft = pageWidth - marginRight - endExtent;
+        double sideTop = beforeTop + beforeExtent;
+        double sideHeight = Math.Max(0, afterTop - sideTop);
+
+        return new PageGeometry(pageWidth, pageHeight, left, top, width, height,
+            regionLeft, regionWidth, beforeTop, beforeExtent, afterTop, afterExtent,
+            startLeft, startExtent, endLeft, endExtent, sideTop, sideHeight);
     }
 }

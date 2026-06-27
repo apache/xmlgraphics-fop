@@ -168,14 +168,45 @@ public static class FoTreeBuilder
         "layout-master-set" => new FoLayoutMasterSet(properties),
         "simple-page-master" => new FoSimplePageMaster(properties),
         "region-body" => new FoRegionBody(properties),
+        "region-before" => new FoRegionBefore(properties),
+        "region-after" => new FoRegionAfter(properties),
+        "region-start" => new FoRegionStart(properties),
+        "region-end" => new FoRegionEnd(properties),
         "page-sequence" => new FoPageSequence(properties),
         "flow" => new FoFlow(properties),
+        "static-content" => new FoStaticContent(properties),
         "block" => new FoBlock(properties),
+        "block-container" => new FoBlockContainer(properties),
         "inline" => new FoInline(properties),
+        "basic-link" => new FoBasicLink(properties),
+        "leader" => new FoLeader(properties),
+        "marker" => new FoMarker(properties),
+        "retrieve-marker" => new FoRetrieveMarker(properties),
+        "page-number" => new FoPageNumber(properties),
+        "page-number-citation" => new FoPageNumberCitation(properties),
+        "page-number-citation-last" => new FoPageNumberCitationLast(properties),
+        "footnote" => new FoFootnote(properties),
+        "footnote-body" => new FoFootnoteBody(properties),
+        "external-graphic" => new FoExternalGraphic(properties),
+        "bookmark-tree" => new FoBookmarkTree(properties),
+        "bookmark" => new FoBookmark(properties),
+        "bookmark-title" => new FoBookmarkTitle(properties),
+        "table" => new FoTable(properties),
+        "table-column" => new FoTableColumn(properties),
+        "table-header" => new FoTableHeader(properties),
+        "table-body" => new FoTableBody(properties),
+        "table-footer" => new FoTableFooter(properties),
+        "table-row" => new FoTableRow(properties),
+        "table-cell" => new FoTableCell(properties),
+        "list-block" => new FoListBlock(properties),
+        "list-item" => new FoListItem(properties),
+        "list-item-label" => new FoListItemLabel(properties),
+        "list-item-body" => new FoListItemBody(properties),
         _ => new FoGeneric(properties, localName),
     };
 
-    private static bool IsContentContainer(FObj obj) => obj is FoBlock or FoInline or FoGeneric;
+    private static bool IsContentContainer(FObj obj) =>
+        obj is FoBlock or FoInline or FoBasicLink or FoGeneric or FoMarker or FoBookmarkTitle;
 
     /// <summary>Collapses runs of XSL-FO whitespace to a single space (the default behaviour).</summary>
     public static string CollapseWhitespace(string text)

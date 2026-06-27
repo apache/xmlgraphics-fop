@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!--
+  A compact subset of the classic TeX English (Liang) hyphenation patterns,
+  hand-authored for the C# port of Apache FOP. It is intentionally small: it is
+  enough to hyphenate common words encountered in tests and samples (for example
+  "hyphenation", "typography", "formatting", "represents"). It is NOT exhaustive.
+
+  To add more coverage, append patterns below (or drop in a fuller file). To add
+  another language, bundle "Patterns/<lang>.xml" as an EmbeddedResource in this
+  project, in this same hyphenation.dtd format.
+-->
+<hyphenation-info>
+
+  <hyphen-char value="-"/>
+  <hyphen-min before="2" after="2"/>
+
+  <!-- Equivalence classes: the first char of a group is the normalization char;
+       a word made only of these chars is a candidate for hyphenation. -->
+  <classes>
+    aA
+    bB
+    cC
+    dD
+    eE
+    fF
+    gG
+    hH
+    iI
+    jJ
+    kK
+    lL
+    mM
+    nN
+    oO
+    pP
+    qQ
+    rR
+    sS
+    tT
+    uU
+    vV
+    wW
+    xX
+    yY
+    zZ
+  </classes>
+
+  <!-- Words whose algorithmic hyphenation is wrong or that we want to pin down. -->
+  <exceptions>
+    ta-ble
+    pro-ject
+    pro-jects
+  </exceptions>
+
+  <!-- Hyphenation patterns. A digit between two letters is the interletter weight
+       at that position (odd = a hyphenation point); '.' marks a word boundary. -->
+  <patterns>
+    1tion
+    2io
+    o2n
+    n2at
+    hen5at
+    hena4
+    he2n
+    hy3ph
+    phe4
+    y1p
+    pog1ra
+    ty1pog
+    1pog
+    for1m
+    1mat
+    ma2t
+    mat1t
+    2t1t2
+    1tin
+    t2ing
+    rep5re
+    re3sent
+    s2en
+    sent5s
+    e2s
+    1re
+  </patterns>
+
+</hyphenation-info>

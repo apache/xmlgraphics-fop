@@ -45,44 +45,233 @@ public sealed class PdfRenderer
         using var document = new PdfDocument();
         var baseline = new XStringFormat { Alignment = XStringAlignment.Near, LineAlignment = XLineAlignment.BaseLine };
 
+        // The PdfPage of each area-tree page, by 0-based index, so outline entries can target pages.
+        var pdfPages = new List<PdfPage>(tree.Pages.Count);
+
         foreach (PageArea pageArea in tree.Pages)
         {
             PdfPage page = document.AddPage();
+            pdfPages.Add(page);
             page.Width = XUnit.FromPoint(pageArea.WidthMpt / MptPerPoint);
             page.Height = XUnit.FromPoint(pageArea.HeightMpt / MptPerPoint);
 
             using XGraphics gfx = XGraphics.FromPdfPage(page);
 
-            foreach (RectFill rect in pageArea.RectFills)
+            DrawRects(gfx, pageArea.RectFills);
+
+            foreach (ImageRun image in pageArea.Images)
             {
-                gfx.DrawRectangle(
-                    new XSolidBrush(ToXColor(rect.Color)),
-                    rect.XMpt / MptPerPoint,
-                    rect.YMpt / MptPerPoint,
-                    rect.WidthMpt / MptPerPoint,
-                    rect.HeightMpt / MptPerPoint);
+                DrawImage(gfx, image);
             }
 
-            foreach (TextRun run in pageArea.TextRuns)
-            {
-                if (run.Text.Length == 0)
-                {
-                    continue;
-                }
+            DrawRuns(gfx, pageArea.TextRuns, baseline);
 
-                XFont font = measurer.GetXFont(run.Font);
-                var brush = new XSolidBrush(ToXColor(run.Color));
-                gfx.DrawString(
-                    run.Text,
-                    font,
-                    brush,
-                    run.XMpt / MptPerPoint,
-                    run.BaselineYMpt / MptPerPoint,
-                    baseline);
+            // Transformed groups (e.g. rotated block-containers) paint after the page's flat content,
+            // each under its own translate+rotate transform applied around the group's local origin.
+            foreach (AreaGroup group in pageArea.Groups)
+            {
+                DrawGroup(gfx, group, baseline);
+            }
+
+            // Link annotations are emitted after the visible content so the clickable region overlays
+            // the text/rule it wraps. They do not paint anything themselves.
+            double pageHeightPt = pageArea.HeightMpt / MptPerPoint;
+            foreach (LinkArea link in pageArea.Links)
+            {
+                AddLink(page, link, pageHeightPt);
             }
         }
 
+        // Emit the document outline (PDF bookmarks) after the pages exist, so each entry can point at
+        // its target PdfPage. Guarded so we never touch document.Outlines when there is nothing to add:
+        // the getter materializes an /Outlines catalog entry, which we avoid for bookmark-free documents.
+        if (tree.Outline.Count > 0 && pdfPages.Count > 0)
+        {
+            AddOutline(document.Outlines, tree.Outline, pdfPages);
+        }
+
         document.Save(output);
+    }
+
+    /// <summary>
+    /// Adds <paramref name="entries"/> to <paramref name="collection"/> (the document's top-level
+    /// outline collection, or a parent entry's child collection) as PdfSharp outline nodes, recursing
+    /// into each entry's children. Each entry targets the <see cref="PdfPage"/> at its
+    /// <see cref="OutlineEntry.TargetPageIndex"/>; an entry whose target is missing falls back to the
+    /// first page so it stays clickable. <see cref="PdfOutline.Outlines"/> holds an entry's children.
+    /// </summary>
+    private static void AddOutline(PdfOutlineCollection collection, IReadOnlyList<OutlineEntry> entries,
+        IReadOnlyList<PdfPage> pdfPages)
+    {
+        if (entries.Count == 0 || pdfPages.Count == 0)
+        {
+            return;
+        }
+
+        foreach (OutlineEntry entry in entries)
+        {
+            // Map the 0-based target page index to its PdfPage. PdfSharp outlines are page-targeted and
+            // require a destination page, so we clamp to a valid page and default to the first page when
+            // the entry has no resolved target (e.g. an unresolved ref-id or a URI-only bookmark).
+            // TODO: external-destination bookmarks cannot be expressed as a web link in a PdfSharp
+            // outline node (outlines are page destinations), so a URI-only bookmark navigates to a page
+            // rather than opening the URI.
+            int index = entry.TargetPageIndex is int i && i >= 0 && i < pdfPages.Count ? i : 0;
+            PdfPage destination = pdfPages[index];
+
+            PdfOutline node = collection.Add(entry.Title, destination, entry.Open);
+            AddOutline(node.Outlines, entry.Children, pdfPages);
+        }
+    }
+
+    private static void DrawRects(XGraphics gfx, IReadOnlyList<RectFill> rects)
+    {
+        foreach (RectFill rect in rects)
+        {
+            gfx.DrawRectangle(
+                new XSolidBrush(ToXColor(rect.Color)),
+                rect.XMpt / MptPerPoint,
+                rect.YMpt / MptPerPoint,
+                rect.WidthMpt / MptPerPoint,
+                rect.HeightMpt / MptPerPoint);
+        }
+    }
+
+    private void DrawRuns(XGraphics gfx, IReadOnlyList<TextRun> runs, XStringFormat baseline)
+    {
+        foreach (TextRun run in runs)
+        {
+            if (run.Text.Length == 0)
+            {
+                continue;
+            }
+
+            XFont font = measurer.GetXFont(run.Font);
+            var brush = new XSolidBrush(ToXColor(run.Color));
+            gfx.DrawString(
+                run.Text,
+                font,
+                brush,
+                run.XMpt / MptPerPoint,
+                run.BaselineYMpt / MptPerPoint,
+                baseline);
+        }
+    }
+
+    /// <summary>
+    /// Renders an <see cref="AreaGroup"/> under its affine transform. PdfSharp's <see cref="XGraphics"/>
+    /// (from <c>FromPdfPage</c>) uses a top-left origin with y growing downward -- the same convention as
+    /// our area tree -- so the group's translate (page-space mpt converted to points) maps directly and a
+    /// positive <c>RotateTransform</c> angle rotates clockwise about the current origin. The transforms
+    /// are applied as translate-then-rotate (so the rotation pivots about the group's local origin), the
+    /// group's primitives are drawn in their local coordinates, then the graphics state is restored.
+    /// Link annotations inside a group are not emitted (PDF link rectangles are axis-aligned page-space
+    /// boxes and cannot follow a rotation); rotated containers are visual, not interactive, here.
+    /// </summary>
+    private void DrawGroup(XGraphics gfx, AreaGroup group, XStringFormat baseline)
+    {
+        XGraphicsState state = gfx.Save();
+        try
+        {
+            gfx.TranslateTransform(group.TranslateXMpt / MptPerPoint, group.TranslateYMpt / MptPerPoint);
+            if (group.RotationDegrees != 0)
+            {
+                gfx.RotateTransform(group.RotationDegrees);
+            }
+
+            DrawRects(gfx, group.RectFills);
+            foreach (ImageRun image in group.Images)
+            {
+                DrawImage(gfx, image);
+            }
+
+            DrawRuns(gfx, group.TextRuns, baseline);
+        }
+        finally
+        {
+            gfx.Restore(state);
+        }
+    }
+
+    private static void DrawImage(XGraphics gfx, ImageRun image)
+    {
+        double x = image.XMpt / MptPerPoint;
+        double y = image.YMpt / MptPerPoint;
+        double w = image.WidthMpt / MptPerPoint;
+        double h = image.HeightMpt / MptPerPoint;
+
+        XImage? loaded = TryLoadImage(image);
+        if (loaded is not null)
+        {
+            using (loaded)
+            {
+                gfx.DrawImage(loaded, x, y, w, h);
+            }
+
+            return;
+        }
+
+        // TODO: PdfSharp image decoding can fail (missing file, unsupported codec, or PdfSharp's
+        // platform image support being unavailable on this OS). As a graceful fallback we paint a
+        // light-grey placeholder box with a thin border so the image's reserved area is still visible.
+        gfx.DrawRectangle(new XSolidBrush(XColor.FromArgb(255, 230, 230, 230)), x, y, w, h);
+        gfx.DrawRectangle(new XPen(XColor.FromArgb(255, 160, 160, 160), 0.5), x, y, w, h);
+    }
+
+    private static XImage? TryLoadImage(ImageRun image)
+    {
+        try
+        {
+            if (image.SourceBytes is { Length: > 0 } bytes)
+            {
+                var stream = new MemoryStream(bytes, writable: false);
+                return XImage.FromStream(stream);
+            }
+
+            if (!string.IsNullOrEmpty(image.SourcePath) && File.Exists(image.SourcePath))
+            {
+                return XImage.FromFile(image.SourcePath);
+            }
+        }
+        catch (Exception)
+        {
+            // Fall through to the placeholder. Image loading is best-effort.
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Adds one PdfSharp link annotation for <paramref name="link"/> on <paramref name="page"/>. Our
+    /// link rectangle is top-left origin in millipoints; PdfSharp's <see cref="PdfRectangle"/> is PDF
+    /// user space (points, bottom-left origin), so the lower-left corner is
+    /// (x, pageHeight - (yTop + h)) and the upper-right is (x + w, pageHeight - yTop). An internal link
+    /// targets a 0-based page index via <c>AddDocumentLink</c>; an external link uses <c>AddWebLink</c>.
+    /// </summary>
+    private static void AddLink(PdfPage page, LinkArea link, double pageHeightPt)
+    {
+        double x = link.XMpt / MptPerPoint;
+        double w = link.WidthMpt / MptPerPoint;
+        double yTop = link.YMpt / MptPerPoint;
+        double h = link.HeightMpt / MptPerPoint;
+        if (w <= 0 || h <= 0)
+        {
+            return;
+        }
+
+        double lowerLeftY = pageHeightPt - (yTop + h);
+        double upperRightY = pageHeightPt - yTop;
+        var rect = new PdfRectangle(new XPoint(x, lowerLeftY), new XPoint(x + w, upperRightY));
+
+        if (link.TargetPageIndex is int targetPage)
+        {
+            // Internal link: jump to the target page (no explicit destination point -> page-level link).
+            page.AddDocumentLink(rect, targetPage, point: null);
+        }
+        else if (!string.IsNullOrEmpty(link.Uri))
+        {
+            page.AddWebLink(rect, link.Uri);
+        }
     }
 
     private static XColor ToXColor(FopColor color)

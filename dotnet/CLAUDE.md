@@ -152,9 +152,40 @@ that stack with modern, cross-platform, managed libraries:
   `IFontResolver`, a PdfSharp-backed `IFontMeasurer`, and the high-level `FopProcessor` facade
   (FO in → PDF out).
 
-A **working end-to-end FO→PDF pipeline** exists for a meaningful XSL-FO subset (block/inline text,
-fonts, colour, alignment/justification, indents, pagination). The solution has 12 library projects
-and **553 passing tests** on .NET 10. See `samples/hello.fo` for an example input.
+A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subset:
+- block/inline text, fonts, colour, alignment/justification, indents, pagination;
+- the **box model** (borders, padding, backgrounds), painted across page breaks, and
+  **external-graphic images**;
+- **tables** (%/proportional/absolute columns, header/body/footer, per-cell box, column & row
+  spanning, row pagination);
+- **lists** (`fo:list-block` with provisional label/body geometry, nesting);
+- **static content** — running headers/footers via `fo:region-before`/`after` + `fo:static-content`,
+  with `fo:page-number`;
+- **keeps & breaks** (`break-before`/`after` page/even/odd, `keep-together.within-page`);
+- **nesting** — tables and lists lay out inside table cells / list bodies / kept blocks (a unified
+  block/table/list layout over one paginating-or-buffered target abstraction);
+- **footnotes** (`fo:footnote`/`footnote-body`, rendered at the page bottom with the reserve
+  reducing body height) and **`fo:page-number-citation`/`-last`** (forward/backward references
+  resolved by a two-pass layout);
+- **markers** (`fo:marker`/`retrieve-marker`, e.g. "current chapter" running headers) and
+  **side regions** (`fo:region-start`/`end`);
+- **hyperlinks** (`fo:basic-link` → PDF internal/external link annotations) and **leaders**
+  (`fo:leader` dots/rule fills, e.g. a clickable table of contents);
+- a **property-expression evaluator** (`fo.expr`: arithmetic with `div`/`mod`, units, `from-parent`,
+  `inherited-property-value`, `max`/`min`/`abs`/`round`, `rgb`, …) feeding `PropertyList`;
+- **hyphenation** (Liang algorithm over the ported `TernaryTree`, embedded English patterns) wired
+  into line breaking when `hyphenate="true"`;
+- **Knuth–Plass total-fit line breaking** (box/glue/penalty model + active-node DP, the algorithm
+  FOP itself uses) as the default paragraph breaker;
+- **custom-font registration** — register TTF/OTF fonts by family/style (or scan a directory, with
+  OpenType `name`-table family detection) so documents use real embedded fonts, Liberation as the
+  built-in fallback; the measurer and PdfSharp resolver share one registry;
+- **PDF bookmarks** (`fo:bookmark-tree` → a nested, page-targeted document outline);
+- **`fo:block-container`** — absolute/fixed/auto positioning and `reference-orientation` rotation
+  (90/180/270) via a transform group rendered with PdfSharp transforms.
+
+The solution has 12 library projects and **867 passing tests** on .NET 10. See `samples/hello.fo`
+(a clickable TOC with leaders, links, a marker header, and page-number citations).
 
 ---
 

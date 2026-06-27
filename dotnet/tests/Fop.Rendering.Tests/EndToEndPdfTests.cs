@@ -91,4 +91,39 @@ public class EndToEndPdfTests
         var tree = processor.LayOut(root);
         Assert.True(tree.Pages.Count > 1, $"Expected multiple pages, got {tree.Pages.Count}");
     }
+
+    [Fact]
+    public void DocumentWithLinksAndLeaderConvertsToValidPdf()
+    {
+        const string fo = """
+            <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Helvetica" font-size="12pt">
+              <fo:layout-master-set>
+                <fo:simple-page-master master-name="A4" page-width="210mm" page-height="297mm"
+                    margin-top="20mm" margin-bottom="20mm" margin-left="25mm" margin-right="25mm">
+                  <fo:region-body/>
+                </fo:simple-page-master>
+              </fo:layout-master-set>
+              <fo:page-sequence master-reference="A4">
+                <fo:flow flow-name="xsl-region-body">
+                  <fo:block>Contents</fo:block>
+                  <fo:block>Chapter 1<fo:leader leader-pattern="dots"/><fo:basic-link internal-destination="chap1">1</fo:basic-link></fo:block>
+                  <fo:block><fo:basic-link external-destination="url(https://example.com/)">Visit the site</fo:basic-link></fo:block>
+                  <fo:block break-before="page" id="chap1">Chapter 1 body.</fo:block>
+                </fo:flow>
+              </fo:page-sequence>
+            </fo:root>
+            """;
+
+        var processor = new FopProcessor();
+        byte[] pdf = processor.Convert(fo);
+
+        Assert.True(pdf.Length > 1000, $"PDF unexpectedly small: {pdf.Length} bytes");
+        Assert.Equal("%PDF-", Encoding.ASCII.GetString(pdf, 0, 5));
+
+        // The link annotations are present on the laid-out tree (internal -> page index, external uri).
+        var tree = processor.LayOut(Fo.FoTreeBuilder.ParseString(fo));
+        var links = tree.Pages.SelectMany(p => p.Links).ToList();
+        Assert.Contains(links, l => l.TargetPageIndex == tree.Pages.Count - 1);
+        Assert.Contains(links, l => l.Uri == "https://example.com/");
+    }
 }
