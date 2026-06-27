@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Fop.Render.Pdf</RootNamespace>
+    <Description>Renders a laid-out area tree to PDF using the PdfSharp library, and exposes the high-level Fop facade (FO in, PDF out).</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Fop.Fo\Fop.Fo.csproj" />
+    <ProjectReference Include="..\Fop.Layout\Fop.Layout.csproj" />
+    <ProjectReference Include="..\Fop.Colors\Fop.Colors.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Official PdfSharp (latest preview), used for PDF output and font embedding. -->
+    <PackageReference Include="PdfSharp" Version="7.0.0-preview-1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Liberation fonts embedded so the default resolver works on any platform. -->
+    <EmbeddedResource Include="Fonts\*.ttf" />
+  </ItemGroup>
+
+</Project>

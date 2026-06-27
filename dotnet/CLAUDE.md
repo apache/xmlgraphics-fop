@@ -102,6 +102,7 @@ that stack with modern, cross-platform, managed libraries:
 | `java.awt.image`, `javax.imageio`            | **SixLabors.ImageSharp** (decode/encode/identify) |
 | `java.awt.geom`, 2D drawing                  | **SixLabors.ImageSharp.Drawing**                  |
 | `java.awt.Font`, font metrics/TrueType/OpenType | **SixLabors.Fonts**                            |
+| PDF output writer (`org.apache.fop.render.pdf`) | **PdfSharp** (in `Fop.Render.Pdf`; layout/metrics via its `XGraphics`) |
 | `java.util.logging` / commons-logging        | `Microsoft.Extensions.Logging` abstractions       |
 | `javax.xml.transform` / SAX / DOM            | `System.Xml` (`XmlReader`, `XDocument`, `XslCompiledTransform`) |
 | `java.lang.reflect.Proxy` (dynamic proxies)  | `System.Reflection.DispatchProxy`                 |
@@ -141,8 +142,19 @@ that stack with modern, cross-platform, managed libraries:
 - **`Fop.Core`** — project established with the SixLabors dependencies wired in;
   `Fop.Imaging.ImageDimensions` is the first ImageSharp-backed utility (image identify) and the seed
   of the image pipeline.
+- **`Fop.Fo`** — the formatting-object layer: `FoLength`, the inheriting `PropertyList` (a modern
+  reformulation of FOP's PropertyMaker subsystem over a curated property set), `FONode`/`FObj`/`FOText`,
+  the concrete FOs (root, page masters, page-sequence, flow, block, inline), and the
+  `FoTreeBuilder` XML parser.
+- **`Fop.Layout`** — the area model (`AreaTree`/`PageArea`/`TextRun`), the `IFontMeasurer` contract,
+  and a `LayoutEngine` that stacks blocks, breaks lines (greedy), aligns/justifies, and paginates.
+- **`Fop.Render.Pdf`** — renders the area tree to PDF via **PdfSharp**, with an embedded-Liberation
+  `IFontResolver`, a PdfSharp-backed `IFontMeasurer`, and the high-level `FopProcessor` facade
+  (FO in → PDF out).
 
-As of the latest wave, the solution has 10 library projects and **530 passing tests** on .NET 10.
+A **working end-to-end FO→PDF pipeline** exists for a meaningful XSL-FO subset (block/inline text,
+fonts, colour, alignment/justification, indents, pagination). The solution has 12 library projects
+and **553 passing tests** on .NET 10. See `samples/hello.fo` for an example input.
 
 ---
 
