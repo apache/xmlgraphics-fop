@@ -146,11 +146,17 @@ public sealed class HyphenationLayoutTests
     public void HyphenateOn_RealEnglishPatterns_SplitsHyphenation()
     {
         // Real bundled en patterns: "hyphenation" hyphenates hy-phen-ation (points 2 and 6).
-        // Width 60pt: "ab"(10000)+space(5000) leaves 45000. "hyphen"(30000)+"-"(5000)=35000 fits
-        // (point 6); "hyphenation"[..6] = "hyphen".
+        // Width 50pt = 50000mpt is chosen so the whole word ("hyphenation" = 55000) does NOT fit on a
+        // line by itself: total-fit then genuinely benefits from hyphenating. "ab"(10000)+space(5000)+
+        // "hyphen"(30000)+"-"(5000) = 50000 fills line 1 exactly (point 6); "ation" = 25000 on line 2.
+        //
+        // NOTE (changed from greedy): at the original width 60pt the whole word fits alone, so optimal
+        // total-fit (unlike greedy) leaves it unhyphenated ("ab" / "hyphenation") rather than inserting a
+        // needless hyphen. The width was tightened so a hyphen is actually the better break, which is what
+        // this test means to exercise.
         var engine = new LayoutEngine(Measurer);
         string body = "<fo:block font-size=\"10pt\" hyphenate=\"true\" language=\"en\">ab hyphenation</fo:block>";
-        AreaTree tree = engine.LayOut(FoTreeBuilder.ParseString(Document(body, pageWidthPt: 60)));
+        AreaTree tree = engine.LayOut(FoTreeBuilder.ParseString(Document(body, pageWidthPt: 50)));
         PageArea page = Assert.Single(tree.Pages);
 
         Assert.Equal("ab hyphen-", page.TextRuns[0].Text);

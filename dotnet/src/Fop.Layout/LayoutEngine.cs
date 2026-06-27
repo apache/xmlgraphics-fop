@@ -26,8 +26,9 @@ namespace Fop.Layout;
 /// <para>
 /// This is the modern stand-in for FOP's layout-manager subsystem
 /// (<c>org.apache.fop.layoutmgr</c>), scoped to block/inline text flow for the initial pipeline.
-/// Line breaking is greedy (first-fit) rather than FOP's Knuth total-fit algorithm, which keeps the
-/// engine readable while producing correct, deterministic output for this milestone.
+/// Line breaking is the Knuth-Plass total-fit algorithm (see <see cref="LineBreaker"/>) -- the same
+/// family FOP itself uses -- which minimises total demerits over the whole paragraph rather than
+/// filling each line greedily, while reusing the existing per-line emission/justification path.
 /// </para>
 /// </summary>
 public sealed class LayoutEngine
@@ -431,149 +432,313 @@ public sealed class LayoutEngine
         buffer.FlushTo(new PageSink(page), bandLeftMpt, bandTopMpt);
     }
 
-    // ----- Greedy line fill -----------------------------------------------------------------
+    // ----- Total-fit (Knuth-Plass) line breaking -------------------------------------------
+    //
+    // Lines are chosen by the Knuth-Plass total-fit algorithm (see LineBreaker), the same family of
+    // algorithm FOP itself uses. The paragraph's styled words are turned into an abstract item stream
+    // -- boxes (words / fixed leaders), glue (inter-word spaces and expanding leaders), and penalties
+    // (hyphenation candidates plus a final forced break) -- and the breaker returns the optimal set of
+    // breakpoints minimising total demerits over the whole paragraph. The chosen line slices are then
+    // rebuilt into LineBoxes and handed to the existing EmitLine machinery, so positioning,
+    // justification, leader expansion, run coalescing and link recording are entirely unchanged: only
+    // the *choice* of break points moved from greedy first-fit to optimal total-fit.
 
     /// <summary>
-    /// Greedily packs words from <paramref name="words"/> starting at <paramref name="start"/> until
-    /// the next word would exceed <paramref name="availableMpt"/>. Always places at least one word so
-    /// an over-wide word cannot stall the loop (it simply overflows its line).
-    /// <para>
-    /// A leader token contributes zero natural width (it expands at emission to consume the line's
-    /// leftover space) and a fixed leader contributes only its fixed length, so leaders never on their
-    /// own force a wrap; <see cref="LineBox.HasLeader"/> records whether the line carries one.
-    /// </para>
+    /// For justified text an inter-word space may stretch by half its width so the optimiser packs lines
+    /// tightly and the emission machinery distributes the slack. Inter-word spaces are not allowed to
+    /// shrink (shrink = 0): like greedy first-fit, a word that does not fit moves to the next line rather
+    /// than being crammed in by compressing spaces, which keeps optimal breaking from ever overprinting.
+    /// For ragged text (start/center/end) the slack instead lives in a line-end glue contributed only
+    /// when a break is chosen there, so a short line is cheap rather than badly underfull -- this mirrors
+    /// FOP's own element generation.
     /// </summary>
-    private LineBox FillLine(List<StyledWord> words, int start, double availableMpt)
+    private const double GlueStretchFraction = 0.5;
+
+    private const double GlueShrinkFraction = 0.0;
+
+    /// <summary>The stretch (in space-widths) given to a ragged line's end glue, matching FOP.</summary>
+    private const double RaggedLineEndStretch = 3.0;
+
+    /// <summary>
+    /// The render-time facet attached to each Knuth-Plass <em>box</em> item: the styled fragment to
+    /// paint, whether an inter-word space precedes it on its line, and whether it is a continuation of
+    /// the previous box's word (a hyphenation fragment, joined with no space). A box that ends at a
+    /// chosen flagged hyphen break has the block's hyphenation character appended to render "frag-".
+    /// Glue and penalty items carry a default (empty) box and are never themselves rendered.
+    /// </summary>
+    private readonly record struct BoxContent(StyledWord Word, bool SpaceBefore, bool ContinuesWord);
+
+    /// <summary>
+    /// The paragraph item stream plus the per-item render facets needed to rebuild lines from chosen
+    /// breakpoints. <see cref="Items"/> is what the breaker sees; <see cref="Boxes"/> maps each item
+    /// index to its <see cref="BoxContent"/> (only box items have meaningful content);
+    /// <see cref="HyphenAfter"/> records, for a flagged hyphen penalty item, the index of the box it
+    /// follows (so a break there appends a hyphen to that box's fragment).
+    /// </summary>
+    private sealed class Paragraph
+    {
+        public List<LineBreaker.Item> Items { get; } = new();
+
+        public List<BoxContent> Boxes { get; } = new();
+
+        /// <summary>Maps a flagged hyphen-penalty item index to the box item it immediately follows.</summary>
+        public Dictionary<int, int> HyphenAfter { get; } = new();
+
+        public void AddBox(LineBreaker.Item item, BoxContent content)
+        {
+            Items.Add(item);
+            Boxes.Add(content);
+        }
+
+        public void AddSynthetic(LineBreaker.Item item)
+        {
+            Items.Add(item);
+            Boxes.Add(default);
+        }
+    }
+
+    /// <summary>
+    /// Builds the Knuth-Plass item stream for a block's flattened <paramref name="words"/> at the given
+    /// line width. Each rendered word becomes a box (a fixed leader is a box of its fixed length, an
+    /// expanding leader is a glue with very large stretch so it fills the line). A word-space between two
+    /// rendered words becomes a stretchable/shrinkable glue and a legal breakpoint; a leader abuts its
+    /// neighbours (no surrounding space), matching emission. When the block enables hyphenation, each
+    /// internal hyphenation point of a word is emitted as a flagged penalty (carrying the hyphen-character
+    /// width) between fragment boxes, so a break may fall inside the word. The stream ends with an
+    /// infinitely-stretchable finishing glue and a forced break so the last line is never penalised for
+    /// being short.
+    /// </summary>
+    private Paragraph BuildParagraph(FoBlock block, List<StyledWord> words, double lineWidth)
+    {
+        var para = new Paragraph();
+        bool hyphenate = block.Hyphenate && Hyphenator is not null;
+        bool justify = block.TextAlign == TextAlign.Justify;
+
+        // A very large (but finite) stretch makes a glue behave as "infinitely" stretchable relative to
+        // ordinary word spaces, while staying a real number for the ratio arithmetic. Scaled off the
+        // line width so it dominates regardless of font size.
+        double infiniteStretch = Math.Max(lineWidth, 1) * 1000.0;
+
+        bool previousWasRendered = false;
+        foreach (StyledWord word in words)
+        {
+            if (word.IsLeader)
+            {
+                // A leader abuts its neighbours (no inter-word glue). A fixed leader is a box of its
+                // length; an expanding leader is a glue with very large stretch so it fills the line.
+                double? fixedLen = word.Leader!.Value.FixedLengthMpt;
+                if (fixedLen is double len)
+                {
+                    para.AddBox(LineBreaker.Item.Box(len), new BoxContent(word, SpaceBefore: false, ContinuesWord: false));
+                }
+                else
+                {
+                    // The expanding leader is a glue (so it fills the line). It is also a box for
+                    // reconstruction: record its content under the same item index.
+                    para.AddBox(LineBreaker.Item.Glue(0, infiniteStretch, 0),
+                        new BoxContent(word, SpaceBefore: false, ContinuesWord: false));
+                }
+
+                previousWasRendered = false;
+                continue;
+            }
+
+            // A word-space precedes this word unless it is the first rendered item or abuts a leader.
+            bool spaceBefore = previousWasRendered;
+            if (spaceBefore)
+            {
+                AppendInterWordGlue(para, SpaceWidth(word.Font), justify);
+            }
+
+            AppendWord(para, block, word, hyphenate, spaceBefore);
+            previousWasRendered = true;
+        }
+
+        // Finishing glue (infinitely stretchable, so the last line is never short-penalised) plus the
+        // mandatory paragraph-end break.
+        para.AddSynthetic(LineBreaker.Item.Glue(0, infiniteStretch, 0));
+        para.AddSynthetic(LineBreaker.Item.Penalty(LineBreaker.ForcedBreak));
+        return para;
+    }
+
+    /// <summary>
+    /// Emits the inter-word break opportunity for a space of the given width. For justified text this is
+    /// a single stretchable/shrinkable glue (a legal break, since it follows a box): the optimiser packs
+    /// lines tightly and the leftover is distributed at emission. For ragged text it is FOP's three-part
+    /// sequence -- a line-end stretch glue, the legal break penalty, then the actual space as a glue that
+    /// cancels the stretch when the space is mid-line -- so the slack of a short line lives at the line
+    /// end (cheap badness) rather than spread through the line.
+    /// </summary>
+    private static void AppendInterWordGlue(Paragraph para, double space, bool justify)
+    {
+        if (justify)
+        {
+            para.AddSynthetic(LineBreaker.Item.Glue(space, space * GlueStretchFraction,
+                space * GlueShrinkFraction));
+            return;
+        }
+
+        // Ragged: the first glue contributes the line-end stretch only when the following penalty is the
+        // chosen break; the trailing glue cancels that stretch when the space sits mid-line (net width =
+        // space, net stretch = 0). An INFINITE penalty before the stretch glue forbids breaking there, so
+        // the only legal break is the zero penalty between the two glues.
+        para.AddSynthetic(LineBreaker.Item.Penalty(LineBreaker.InfiniteBreak));
+        para.AddSynthetic(LineBreaker.Item.Glue(0, space * RaggedLineEndStretch, 0));
+        para.AddSynthetic(LineBreaker.Item.Penalty(0));
+        para.AddSynthetic(LineBreaker.Item.Glue(space, -space * RaggedLineEndStretch, 0));
+    }
+
+    /// <summary>
+    /// Appends a single rendered word to the stream as either one box (no hyphenation) or a sequence of
+    /// fragment boxes joined by flagged hyphen penalties. Each fragment box carries its own fragment
+    /// text so line reconstruction never re-measures or duplicates the word; fragments of the same word
+    /// are marked as continuations so they join with no inter-word space.
+    /// </summary>
+    private void AppendWord(Paragraph para, FoBlock block, StyledWord word, bool hyphenate, bool spaceBefore)
+    {
+        int[]? points = hyphenate && word.Text.Length > 0
+            ? Hyphenator!.Hyphenate(block.Language, block.Country, word.Text,
+                block.HyphenationRemainCharacterCount, block.HyphenationPushCharacterCount)
+            : null;
+
+        if (points is null || points.Length == 0)
+        {
+            para.AddBox(LineBreaker.Item.Box(measurer.MeasureWidthMpt(word.Text, word.Font)),
+                new BoxContent(word, spaceBefore, ContinuesWord: false));
+            return;
+        }
+
+        double hyphenWidth = measurer.MeasureWidthMpt(block.HyphenationCharacter, word.Font);
+        int prev = 0;
+        bool first = true;
+        foreach (int cut in points)
+        {
+            if (cut <= prev || cut >= word.Text.Length)
+            {
+                continue;
+            }
+
+            // The fragment between the previous cut and this one (a continuation of the same word for all
+            // but the first fragment), then a flagged hyphen penalty recording the box it follows.
+            string fragment = word.Text[prev..cut];
+            int boxItem = para.Items.Count;
+            para.AddBox(LineBreaker.Item.Box(measurer.MeasureWidthMpt(fragment, word.Font)),
+                new BoxContent(word with { Text = fragment }, spaceBefore && first, ContinuesWord: !first));
+            first = false;
+
+            int penaltyItem = para.Items.Count;
+            para.AddSynthetic(LineBreaker.Item.Penalty(LineBreaker.HyphenPenalty, hyphenWidth, flagged: true));
+            para.HyphenAfter[penaltyItem] = boxItem;
+            prev = cut;
+        }
+
+        // The trailing fragment after the last hyphenation point.
+        string tail = word.Text[prev..];
+        para.AddBox(LineBreaker.Item.Box(measurer.MeasureWidthMpt(tail, word.Font)),
+            new BoxContent(word with { Text = tail }, spaceBefore && first, ContinuesWord: !first));
+    }
+
+    /// <summary>
+    /// Builds the styled-word line slices for a block from the optimal breakpoints. Each returned
+    /// <see cref="LineBox"/> carries the words/fragments on that line (a hyphenation fragment ending a
+    /// line is rendered as "frag-"), the line's natural width (matching the emission machinery's
+    /// spacing), its content height and whether it carries a leader.
+    /// </summary>
+    private List<LineBox> BreakIntoLines(FoBlock block, List<StyledWord> words, double lineWidth)
+    {
+        Paragraph para = BuildParagraph(block, words, lineWidth);
+        IReadOnlyList<int> breaks = LineBreaker.Break(para.Items, lineWidth);
+
+        var lines = new List<LineBox>(breaks.Count);
+        int itemStart = 0;
+        foreach (int breakItem in breaks)
+        {
+            lines.Add(BuildLine(para, block, itemStart, breakItem));
+
+            // The next line starts just after this break (the broken-at glue/penalty is consumed).
+            itemStart = breakItem + 1;
+        }
+
+        return lines;
+    }
+
+    /// <summary>
+    /// Rebuilds one line's <see cref="LineBox"/> from the box items in the range
+    /// [<paramref name="itemStart"/>, <paramref name="breakItem"/>). The natural width is computed
+    /// exactly as emission does: a word-space precedes each box that records one, except a box that
+    /// continues the previous box's word (a hyphenation fragment) or abuts a leader. When the break is a
+    /// flagged hyphen penalty the box it follows gets the block's hyphenation character appended so the
+    /// line renders "frag-"; the trailing fragment opens the next line as an ordinary box.
+    /// </summary>
+    private LineBox BuildLine(Paragraph para, FoBlock block, int itemStart, int breakItem)
     {
         var placed = new List<StyledWord>();
         double naturalWidth = 0;
         double maxFontHeight = 0;
         bool hasLeader = false;
-        int i = start;
 
-        while (i < words.Count)
+        for (int i = itemStart; i < breakItem; i++)
         {
-            StyledWord word = words[i];
-
-            // A leader's natural footprint is its fixed length (0 when it expands to fill); it never
-            // wraps the line by itself.
-            double wordWidth = word.IsLeader
-                ? word.Leader!.Value.FixedLengthMpt ?? 0
-                : measurer.MeasureWidthMpt(word.Text, word.Font);
-
-            // A leader abuts its neighbours: no word-space is counted on either side of it. This keeps
-            // the measured natural width consistent with emission so the leader fills exactly the slack.
-            bool abuts = placed.Count == 0 || word.IsLeader || placed[^1].IsLeader;
-            double spaceBefore = abuts ? 0 : SpaceWidth(words[i - 1].Font);
-            if (placed.Count > 0 && !word.IsLeader && naturalWidth + spaceBefore + wordWidth > availableMpt)
+            if (para.Items[i].Kind == LineBreaker.ItemKind.Penalty
+                || (para.Items[i].Kind == LineBreaker.ItemKind.Glue && !IsExpandingLeader(para, i)))
             {
-                break;
+                // Synthetic glue/penalty: not rendered. (An expanding-leader glue is also a box.)
+                continue;
             }
 
-            placed.Add(word);
-            naturalWidth += spaceBefore + wordWidth;
-            maxFontHeight = Math.Max(maxFontHeight, FontHeight(word.Font));
-            hasLeader |= word.IsLeader;
-            i++;
+            BoxContent box = para.Boxes[i];
+            AddBoxToLine(placed, ref naturalWidth, ref maxFontHeight, ref hasLeader, box);
         }
 
-        return new LineBox(placed, naturalWidth, maxFontHeight, i, hasLeader);
+        // A flagged hyphen break ends the line inside a word: append the hyphenation character to the
+        // last fragment so it renders "frag-". The trailing fragment is a separate box that opens the
+        // next line, so nothing needs to be carried.
+        if (para.HyphenAfter.ContainsKey(breakItem) && placed.Count > 0)
+        {
+            StyledWord tailFragment = placed[^1];
+            placed[^1] = tailFragment with { Text = tailFragment.Text + block.HyphenationCharacter };
+            double hyphenWidth = measurer.MeasureWidthMpt(block.HyphenationCharacter, tailFragment.Font);
+            naturalWidth += hyphenWidth;
+        }
+
+        return new LineBox(placed, naturalWidth, maxFontHeight, breakItem + 1, hasLeader);
     }
 
+    /// <summary>Whether item <paramref name="i"/> is the glue that represents an expanding leader.</summary>
+    private static bool IsExpandingLeader(Paragraph para, int i) =>
+        para.Items[i].Kind == LineBreaker.ItemKind.Glue && para.Boxes[i].Word.IsLeader;
+
     /// <summary>
-    /// Attempts to hyphenate a word that does not fit on a greedily-filled <paramref name="line"/> so a
-    /// leading fragment plus the block's hyphenation character fits in the line's remaining width. Two
-    /// cases are handled: the next word that did not fit after one or more words were placed, and a lone
-    /// first word that is itself wider than the whole line. On success the words list is mutated in place
-    /// -- the candidate word is replaced by its trailing fragment (so the next line picks it up) and a new
-    /// line is returned with the leading fragment (carrying the hyphenation character). On failure (no
-    /// configured hyphenator, a leader line, no candidate, no points, or no point whose prefix fits) the
-    /// original line is returned unchanged, so layout falls back to the existing behaviour (the word moves
-    /// to the next line / overflows).
+    /// Adds one box's styled fragment to a line being built, accumulating natural width/height. A
+    /// fragment that continues the previous box's word (two hyphenation fragments that ended up on the
+    /// same line because the point between them was not chosen as a break) is merged back into the last
+    /// placed word with no inter-fragment space, so emission never inserts a spurious space inside it.
     /// </summary>
-    private LineBox TryHyphenateLine(FoBlock block, List<StyledWord> words, int start, LineBox line,
-        double availableMpt)
+    private void AddBoxToLine(List<StyledWord> placed, ref double naturalWidth, ref double maxFontHeight,
+        ref bool hasLeader, BoxContent box)
     {
-        ILineHyphenator? hyphenator = Hyphenator;
-        if (hyphenator is null || line.HasLeader || line.Words.Count == 0)
+        StyledWord word = box.Word;
+        double wordWidth = word.IsLeader
+            ? word.Leader!.Value.FixedLengthMpt ?? 0
+            : measurer.MeasureWidthMpt(word.Text, word.Font);
+
+        if (box.ContinuesWord && placed.Count > 0)
         {
-            return line;
+            // Re-join with the previous fragment of the same word (no space, no extra height change).
+            StyledWord head = placed[^1];
+            placed[^1] = head with { Text = head.Text + word.Text };
+            naturalWidth += wordWidth;
+            return;
         }
 
-        // Determine the candidate word and the line-prefix that precedes it on this line.
-        //  - Case 1: words fit and the NEXT word did not. The candidate is words[line.NextIndex]; the
-        //    placed words (line.Words) stay on the line, the candidate's leading fragment is appended.
-        //  - Case 2: a lone first word is wider than the whole line. The candidate is that placed word;
-        //    the line is rebuilt with just its leading fragment.
-        int candidateIndex;
-        List<StyledWord> linePrefix;
-        double prefixWidth;
-        double spaceBefore;
-        if (line.NextIndex < words.Count && line.NextIndex != start)
-        {
-            candidateIndex = line.NextIndex;
-            linePrefix = new List<StyledWord>(line.Words);
-            prefixWidth = line.NaturalWidth;
-            spaceBefore = SpaceWidth(words[candidateIndex - 1].Font);
-        }
-        else if (line.Words.Count == 1 && line.NaturalWidth > availableMpt)
-        {
-            // Lone over-wide word: hyphenate it from scratch on an otherwise empty line.
-            candidateIndex = start;
-            linePrefix = new List<StyledWord>();
-            prefixWidth = 0;
-            spaceBefore = 0;
-        }
-        else
-        {
-            return line;
-        }
+        // A leader abuts its neighbours; otherwise a word-space precedes a box that records one.
+        bool abuts = placed.Count == 0 || word.IsLeader || placed[^1].IsLeader;
+        double space = abuts || !box.SpaceBefore ? 0 : SpaceWidth(word.Font);
 
-        StyledWord candidate = words[candidateIndex];
-        if (candidate.IsLeader || candidate.Text.Length == 0)
-        {
-            return line;
-        }
-
-        int[]? points = hyphenator.Hyphenate(block.Language, block.Country, candidate.Text,
-            block.HyphenationRemainCharacterCount, block.HyphenationPushCharacterCount);
-        if (points is null || points.Length == 0)
-        {
-            return line;
-        }
-
-        string hyphenChar = block.HyphenationCharacter;
-        double hyphenWidth = measurer.MeasureWidthMpt(hyphenChar, candidate.Font);
-        double remaining = availableMpt - prefixWidth - spaceBefore;
-        if (remaining <= 0)
-        {
-            return line;
-        }
-
-        // Find the LAST hyphenation point whose leading fragment + hyphen char fits in the remaining
-        // width (the longest fragment that fits, for a tight line).
-        for (int i = points.Length - 1; i >= 0; i--)
-        {
-            int cut = points[i];
-            string fragment = candidate.Text[..cut];
-            double fragmentWidth = measurer.MeasureWidthMpt(fragment, candidate.Font);
-            if (fragmentWidth + hyphenWidth <= remaining)
-            {
-                // Carry the trailing fragment to the next line (picked up at candidateIndex next time).
-                words[candidateIndex] = candidate with { Text = candidate.Text[cut..] };
-
-                // The leading fragment carries the hyphenation character so it renders as "frag-".
-                var head = candidate with { Text = fragment + hyphenChar };
-                linePrefix.Add(head);
-                double newNaturalWidth = prefixWidth + spaceBefore + fragmentWidth + hyphenWidth;
-                double newHeight = Math.Max(line.Height, FontHeight(head.Font));
-
-                // The line ends at the leading fragment; the next line resumes at candidateIndex.
-                return new LineBox(linePrefix, newNaturalWidth, newHeight, candidateIndex, line.HasLeader);
-            }
-        }
-
-        return line;
+        placed.Add(word);
+        naturalWidth += space + wordWidth;
+        maxFontHeight = Math.Max(maxFontHeight, FontHeight(word.Font));
+        hasLeader |= word.IsLeader;
     }
 
     /// <summary>
@@ -1380,33 +1545,27 @@ public sealed class LayoutEngine
             double lineHeight = block.LineHeightMpt;
             TextAlign align = block.TextAlign;
 
-            // Hyphenation is attempted only when the block enables it, a hyphenator is configured and the
-            // block has a language with bundled patterns (the hyphenator returns no points otherwise, so
-            // an unknown language degrades to the existing greedy behaviour).
-            bool hyphenate = block.Hyphenate && engine.Hyphenator is not null;
-
-            int index = 0;
-            while (index < words.Count)
+            // Choose the optimal break points for the whole paragraph (Knuth-Plass total-fit), then emit
+            // each resulting line slice through the unchanged EmitLine machinery. Hyphenation candidates
+            // are modelled inside the breaker as flagged penalties, so a word may be split mid-line when
+            // that improves the paragraph; the chosen fragment is rendered with the hyphenation character
+            // and the remainder carried to the next line by BreakIntoLines.
+            List<LineBox> lines = engine.BreakIntoLines(block, words, widthMpt);
+            for (int i = 0; i < lines.Count; i++)
             {
-                LineBox line = engine.FillLine(words, index, widthMpt);
-
-                if (hyphenate)
+                LineBox line = lines[i];
+                if (line.Words.Count == 0)
                 {
-                    // If a word remains that did not fit, try to split it so a leading fragment (+ the
-                    // hyphenation character) fits in the space this line still has. On success the words
-                    // list is mutated in place: the overflow word becomes its trailing fragment (carried
-                    // to the next iteration) and the line gains the leading fragment.
-                    line = engine.TryHyphenateLine(block, words, index, line, widthMpt);
+                    continue;
                 }
 
-                bool isLastLine = line.NextIndex >= words.Count;
+                bool isLastLine = i == lines.Count - 1;
                 double advance = Math.Max(lineHeight, line.Height);
 
                 IPrimitiveSink sink = target.SinkForAdvance(this, advance);
                 engine.EmitLine(sink, line, leftMpt, widthMpt, lineHeight, target.Cursor(this), align, isLastLine);
 
                 target.Advance(this, advance);
-                index = line.NextIndex;
             }
         }
 
