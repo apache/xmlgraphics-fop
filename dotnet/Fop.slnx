@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Fop.Colors/Fop.Colors.csproj" />
+    <Project Path="src/Fop.Configuration/Fop.Configuration.csproj" />
+    <Project Path="src/Fop.Core/Fop.Core.csproj" />
+    <Project Path="src/Fop.DataTypes/Fop.DataTypes.csproj" />
+    <Project Path="src/Fop.Events/Fop.Events.csproj" />
+    <Project Path="src/Fop.Fonts/Fop.Fonts.csproj" />
+    <Project Path="src/Fop.Hyphenation/Fop.Hyphenation.csproj" />
+    <Project Path="src/Fop.Pdf/Fop.Pdf.csproj" />
+    <Project Path="src/Fop.Traits/Fop.Traits.csproj" />
+    <Project Path="src/Fop.Util/Fop.Util.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Fop.Colors.Tests/Fop.Colors.Tests.csproj" />
+    <Project Path="tests/Fop.Configuration.Tests/Fop.Configuration.Tests.csproj" />
+    <Project Path="tests/Fop.DataTypes.Tests/Fop.DataTypes.Tests.csproj" />
+    <Project Path="tests/Fop.Events.Tests/Fop.Events.Tests.csproj" />
+    <Project Path="tests/Fop.Fonts.Tests/Fop.Fonts.Tests.csproj" />
+    <Project Path="tests/Fop.Hyphenation.Tests/Fop.Hyphenation.Tests.csproj" />
+    <Project Path="tests/Fop.Pdf.Tests/Fop.Pdf.Tests.csproj" />
+    <Project Path="tests/Fop.Traits.Tests/Fop.Traits.Tests.csproj" />
+    <Project Path="tests/Fop.Util.Tests/Fop.Util.Tests.csproj" />
+  </Folder>
+</Solution>

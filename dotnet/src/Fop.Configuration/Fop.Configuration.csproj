@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Fop.Configuration</RootNamespace>
+    <Description>Configuration subsystem (XML-backed configuration tree, builder and accessors) for the C# port of Apache FOP.</Description>
+  </PropertyGroup>
+
+</Project>

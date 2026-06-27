@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Fop.Pdf</RootNamespace>
+    <Description>Low-level PDF object model (names, numbers, strings, arrays, dictionaries, references) for the C# port of Apache FOP.</Description>
+  </PropertyGroup>
+
+</Project>

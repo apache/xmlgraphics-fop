@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Fop.DataTypes</RootNamespace>
+    <Description>XSL-FO datatype layer (numerics, lengths, percentages, keeps, URI specifications) for the C# port of Apache FOP.</Description>
+  </PropertyGroup>
+
+</Project>

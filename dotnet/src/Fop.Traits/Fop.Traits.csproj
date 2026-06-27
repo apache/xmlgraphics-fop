@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Fop.Traits</RootNamespace>
+    <Description>Layout trait value types for the C# port of Apache FOP (MinOptMax and the trait enumerations).</Description>
+  </PropertyGroup>
+
+</Project>
