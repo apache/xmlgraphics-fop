@@ -62,6 +62,28 @@ public enum KeepStrength
     Always,
 }
 
+/// <summary>
+/// The <c>absolute-position</c> property values of an <c>fo:block-container</c>: whether it flows
+/// normally or is taken out of the flow and positioned by its <c>top</c>/<c>left</c>/etc.
+/// </summary>
+public enum AbsolutePosition
+{
+    /// <summary>Normal flow (the default): the container behaves like an ordinary block.</summary>
+    Auto,
+
+    /// <summary>
+    /// Positioned absolutely relative to the containing reference area (the body region/content area).
+    /// The container is removed from the normal flow.
+    /// </summary>
+    Absolute,
+
+    /// <summary>
+    /// Positioned relative to the page (fixed). Removed from the normal flow. This engine treats
+    /// <c>fixed</c> the same as <c>absolute</c> but relative to the page rather than the content area.
+    /// </summary>
+    Fixed,
+}
+
 /// <summary>The <c>font-style</c> property values.</summary>
 public enum FontStyle
 {
@@ -151,6 +173,37 @@ public static class FoEnumParsing
         }
 
         return KeepStrength.Always;
+    }
+
+    /// <summary>
+    /// Parses an <c>absolute-position</c> keyword, defaulting to <see cref="AbsolutePosition.Auto"/>.
+    /// The <c>absolute</c> and <c>fixed</c> keywords select out-of-flow positioning.
+    /// </summary>
+    public static AbsolutePosition ParseAbsolutePosition(string? value) => value?.Trim().ToLowerInvariant() switch
+    {
+        "absolute" => AbsolutePosition.Absolute,
+        "fixed" => AbsolutePosition.Fixed,
+        _ => AbsolutePosition.Auto,
+    };
+
+    /// <summary>
+    /// Parses a <c>reference-orientation</c> value (an integer number of degrees) and normalizes it to
+    /// one of 0/90/180/270. The XSL-FO permitted values are 0, 90, 180, 270, -90, -180, -270; a negative
+    /// value is normalized into the [0, 360) range (e.g. -90 =&gt; 270). Any other or unparseable value
+    /// defaults to 0.
+    /// </summary>
+    public static int ParseReferenceOrientation(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)
+            || !int.TryParse(value.Trim(), System.Globalization.NumberStyles.Integer,
+                System.Globalization.CultureInfo.InvariantCulture, out int degrees))
+        {
+            return 0;
+        }
+
+        // Normalize into [0, 360). Only the right-angle multiples are valid; anything else falls to 0.
+        int normalized = ((degrees % 360) + 360) % 360;
+        return normalized is 0 or 90 or 180 or 270 ? normalized : 0;
     }
 
     /// <summary>

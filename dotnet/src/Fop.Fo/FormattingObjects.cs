@@ -376,6 +376,91 @@ public sealed class FoBlock(PropertyList properties) : FObj(properties)
     public int HyphenationPushCharacterCount => Properties.HyphenationPushCharacterCount;
 }
 
+/// <summary>
+/// A block-container, <c>fo:block-container</c>. A block-level reference area that holds block-level
+/// content (blocks, tables, lists, nested containers). It can be positioned absolutely/fixed (taken
+/// out of the normal flow at a <c>top</c>/<c>left</c> offset) or flow normally, and it can rotate its
+/// content by a <c>reference-orientation</c> of 0/90/180/270 degrees. It carries the usual box model
+/// (border/padding/background) and a specified <c>width</c>/<c>height</c>.
+/// </summary>
+public sealed class FoBlockContainer(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "block-container";
+
+    /// <summary>The resolved <c>absolute-position</c> (not inherited; default <see cref="AbsolutePosition.Auto"/>).</summary>
+    public AbsolutePosition AbsolutePosition => FoEnumParsing.ParseAbsolutePosition(Properties.GetRaw("absolute-position"));
+
+    /// <summary>
+    /// The resolved <c>reference-orientation</c> in degrees, normalized to one of 0/90/180/270
+    /// (a negative multiple of 90 is normalized, e.g. -90 =&gt; 270). Not inherited; default 0.
+    /// </summary>
+    public int ReferenceOrientation => FoEnumParsing.ParseReferenceOrientation(Properties.GetRaw("reference-orientation"));
+
+    /// <summary>The <c>top</c> offset, or <c>null</c> for <c>auto</c>/unset.</summary>
+    public FoLength? Top => ParseOffset("top");
+
+    /// <summary>The <c>left</c> offset, or <c>null</c> for <c>auto</c>/unset.</summary>
+    public FoLength? Left => ParseOffset("left");
+
+    /// <summary>The <c>bottom</c> offset, or <c>null</c> for <c>auto</c>/unset.</summary>
+    public FoLength? Bottom => ParseOffset("bottom");
+
+    /// <summary>The <c>right</c> offset, or <c>null</c> for <c>auto</c>/unset.</summary>
+    public FoLength? Right => ParseOffset("right");
+
+    /// <summary>The specified <c>width</c>, or <c>null</c> for <c>auto</c>/unset.</summary>
+    public FoLength? Width => ParseOffset("width");
+
+    /// <summary>The specified <c>height</c>, or <c>null</c> for <c>auto</c>/unset.</summary>
+    public FoLength? Height => ParseOffset("height");
+
+    /// <summary>Space before the container (optimum).</summary>
+    public FoLength SpaceBefore =>
+        Properties.GetLength("space-before", Properties.GetLength("space-before.optimum", FoLength.Zero));
+
+    /// <summary>Space after the container (optimum).</summary>
+    public FoLength SpaceAfter =>
+        Properties.GetLength("space-after", Properties.GetLength("space-after.optimum", FoLength.Zero));
+
+    /// <summary>Start indent (applied in the normal-flow case).</summary>
+    public FoLength StartIndent => Properties.GetLength("start-indent", FoLength.Zero);
+
+    /// <summary>End indent (applied in the normal-flow case).</summary>
+    public FoLength EndIndent => Properties.GetLength("end-indent", FoLength.Zero);
+
+    /// <summary>The resolved box-model properties (borders, padding, background colour).</summary>
+    public BoxProperties Box => Properties.GetBox();
+
+    /// <summary>
+    /// The block-level children of this container in document order: blocks, nested tables, lists and
+    /// nested block-containers. These are laid out as a reference area's content.
+    /// </summary>
+    public IEnumerable<FObj> BlockLevelChildren =>
+        ChildObjects.Where(c => c is FoBlock or FoTable or FoListBlock or FoBlockContainer);
+
+    /// <summary>
+    /// Parses a length/offset property, returning <c>null</c> for the <c>auto</c> keyword or an unset
+    /// value. The offsets accept negative values (e.g. <c>left="-10pt"</c>).
+    /// </summary>
+    private FoLength? ParseOffset(string name)
+    {
+        string? raw = Properties.GetRaw(name);
+        if (raw is null)
+        {
+            return null;
+        }
+
+        string trimmed = raw.Trim();
+        if (trimmed.Length == 0 || trimmed.Equals("auto", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        return FoLength.TryParse(trimmed, Properties.FontSizeMpt);
+    }
+}
+
 /// <summary>An inline, <c>fo:inline</c>.</summary>
 public sealed class FoInline(PropertyList properties) : FObj(properties)
 {

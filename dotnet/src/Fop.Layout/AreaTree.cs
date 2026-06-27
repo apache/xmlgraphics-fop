@@ -73,6 +73,7 @@ public sealed class PageArea
     private readonly List<RectFill> rectFills = new();
     private readonly List<ImageRun> images = new();
     private readonly List<LinkArea> links = new();
+    private readonly List<AreaGroup> groups = new();
 
     /// <summary>Creates a page of the given size (millipoints).</summary>
     public PageArea(double widthMpt, double heightMpt)
@@ -99,6 +100,14 @@ public sealed class PageArea
     /// <summary>Clickable link rectangles (internal or external) on this page.</summary>
     public IReadOnlyList<LinkArea> Links => links;
 
+    /// <summary>
+    /// Transformed groups on this page (e.g. a rotated <c>fo:block-container</c>): each carries its own
+    /// primitives in group-local top-left coordinates plus an affine transform (translation + rotation)
+    /// that maps them into page coordinates. A renderer applies the transform, draws the group's
+    /// primitives, then restores. Groups paint after the page's flat primitives.
+    /// </summary>
+    public IReadOnlyList<AreaGroup> Groups => groups;
+
     /// <summary>Adds a text run.</summary>
     public void Add(TextRun run)
     {
@@ -117,6 +126,85 @@ public sealed class PageArea
     }
 
     /// <summary>Adds a clickable link rectangle.</summary>
+    public void Add(LinkArea link)
+    {
+        ArgumentNullException.ThrowIfNull(link);
+        links.Add(link);
+    }
+
+    /// <summary>Adds a transformed group.</summary>
+    public void Add(AreaGroup group)
+    {
+        ArgumentNullException.ThrowIfNull(group);
+        groups.Add(group);
+    }
+}
+
+/// <summary>
+/// A transformed group of primitives: its own text runs, rectangles, images and links expressed in
+/// group-LOCAL top-left coordinates (millipoints), plus an affine transform that maps that local space
+/// into page coordinates. The transform is a translation to (<see cref="TranslateXMpt"/>,
+/// <see cref="TranslateYMpt"/>) followed by a clockwise rotation of <see cref="RotationDegrees"/>
+/// (one of 0/90/180/270) about that translated origin. Used to render a rotated
+/// <c>fo:block-container</c>: laying its content out at origin (0,0) and emitting it as a group lets a
+/// renderer rotate both the glyph positions and the glyphs themselves.
+/// </summary>
+public sealed class AreaGroup
+{
+    private readonly List<TextRun> textRuns = new();
+    private readonly List<RectFill> rectFills = new();
+    private readonly List<ImageRun> images = new();
+    private readonly List<LinkArea> links = new();
+
+    /// <summary>Creates a group whose local origin maps to (<paramref name="translateXMpt"/>,
+    /// <paramref name="translateYMpt"/>) on the page, rotated clockwise by
+    /// <paramref name="rotationDegrees"/> (0/90/180/270) about that point.</summary>
+    public AreaGroup(double translateXMpt, double translateYMpt, int rotationDegrees)
+    {
+        TranslateXMpt = translateXMpt;
+        TranslateYMpt = translateYMpt;
+        RotationDegrees = rotationDegrees;
+    }
+
+    /// <summary>The page-space x of the group's local origin (millipoints from the page left).</summary>
+    public double TranslateXMpt { get; }
+
+    /// <summary>The page-space y of the group's local origin (millipoints from the page top).</summary>
+    public double TranslateYMpt { get; }
+
+    /// <summary>The clockwise rotation about the local origin, in degrees (0/90/180/270).</summary>
+    public int RotationDegrees { get; }
+
+    /// <summary>Text runs in group-local coordinates.</summary>
+    public IReadOnlyList<TextRun> TextRuns => textRuns;
+
+    /// <summary>Filled rectangles in group-local coordinates.</summary>
+    public IReadOnlyList<RectFill> RectFills => rectFills;
+
+    /// <summary>Images in group-local coordinates.</summary>
+    public IReadOnlyList<ImageRun> Images => images;
+
+    /// <summary>Link rectangles in group-local coordinates.</summary>
+    public IReadOnlyList<LinkArea> Links => links;
+
+    /// <summary>Adds a text run (group-local coordinates).</summary>
+    public void Add(TextRun run)
+    {
+        ArgumentNullException.ThrowIfNull(run);
+        textRuns.Add(run);
+    }
+
+    /// <summary>Adds a filled rectangle (group-local coordinates).</summary>
+    public void Add(RectFill rect) => rectFills.Add(rect);
+
+    /// <summary>Adds an image (group-local coordinates).</summary>
+    public void Add(ImageRun image)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+        images.Add(image);
+    }
+
+    /// <summary>Adds a link rectangle (group-local coordinates).</summary>
     public void Add(LinkArea link)
     {
         ArgumentNullException.ThrowIfNull(link);

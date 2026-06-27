@@ -421,6 +421,11 @@ public sealed class LayoutEngine
                         flow.LayOutList(list, geometry.ContentLeftMpt, geometry.ContentWidthMpt);
                         flow.ApplyBreak(list.BreakAfter);
                         break;
+                    case FoBlockContainer container:
+                        flow.ApplyBreak(container.BreakBefore);
+                        flow.LayOutBlockContainer(container, geometry.ContentLeftMpt, geometry.ContentWidthMpt);
+                        flow.ApplyBreak(container.BreakAfter);
+                        break;
                 }
             }
         }
@@ -1070,6 +1075,18 @@ public sealed class LayoutEngine
         public void Add(LinkArea link) => page.Add(link);
     }
 
+    /// <summary>An <see cref="IPrimitiveSink"/> that appends straight onto an <see cref="AreaGroup"/>.</summary>
+    private sealed class GroupSink(AreaGroup group) : IPrimitiveSink
+    {
+        public void Add(TextRun run) => group.Add(run);
+
+        public void Add(RectFill rect) => group.Add(rect);
+
+        public void Add(ImageRun image) => group.Add(image);
+
+        public void Add(LinkArea link) => group.Add(link);
+    }
+
     /// <summary>
     /// An <see cref="IPrimitiveSink"/> that collects primitives in memory so they can later be
     /// translated by a fixed (dx, dy) and flushed to a page. Backgrounds/borders are buffered
@@ -1556,6 +1573,19 @@ public sealed class LayoutEngine
                         }
 
                         break;
+                    case FoBlockContainer container:
+                        if (paginating)
+                        {
+                            ApplyBreak(container.BreakBefore);
+                            LayOutBlockContainer(container, childLeft, childWidth);
+                            ApplyBreak(container.BreakAfter);
+                        }
+                        else
+                        {
+                            LayOutBlockContainer(container, childLeft, childWidth, target);
+                        }
+
+                        break;
                 }
             }
 
@@ -1954,6 +1984,9 @@ public sealed class LayoutEngine
                     case FoListBlock list:
                         LayOutList(list, 0, widthMpt, target);
                         break;
+                    case FoBlockContainer container:
+                        LayOutBlockContainer(container, 0, widthMpt, target);
+                        break;
                 }
             }
 
@@ -2066,6 +2099,197 @@ public sealed class LayoutEngine
             target.SetCursor(this, itemTop + itemHeight);
             target.Advance(this, item.SpaceAfter.Millipoints);
         }
+
+        // ----- Block containers -------------------------------------------------------------
+
+        /// <summary>
+        /// Lays out an <see cref="FoBlockContainer"/> in the paginating main flow at border-box left
+        /// <paramref name="leftMpt"/> with the available width <paramref name="availableWidthMpt"/>.
+        /// </summary>
+        public void LayOutBlockContainer(FoBlockContainer container, double leftMpt, double availableWidthMpt)
+            => LayOutBlockContainer(container, leftMpt, availableWidthMpt, FlowTarget.Instance);
+
+        /// <summary>
+        /// Lays out an <see cref="FoBlockContainer"/> against the given <see cref="IBlockTarget"/>.
+        /// <para>
+        /// When <c>absolute-position</c> is <c>absolute</c> or <c>fixed</c> the container is taken out of
+        /// the normal flow: its content is laid into a relocatable buffer at the resolved content width
+        /// and placed at (<c>left</c>, <c>top</c>) without advancing the target's cursor, so following
+        /// flow content starts exactly where it would have without the container. <c>fixed</c> resolves
+        /// its offset relative to the page; <c>absolute</c> relative to the current region/content area.
+        /// </para>
+        /// <para>
+        /// When <c>absolute-position</c> is <c>auto</c> (the default) the container flows like a normal
+        /// block, honouring its <c>width</c> (a width smaller than the available measure shrinks the
+        /// content), and advances the cursor by its measured height.
+        /// </para>
+        /// <para>
+        /// In both cases a non-zero <c>reference-orientation</c> rotates the container's content (and the
+        /// box) about the border box's top-left corner by laying it into a buffer at the pre-rotation
+        /// width and emitting it as a transform group (so the renderer rotates positions and glyphs).
+        /// </para>
+        /// </summary>
+        private void LayOutBlockContainer(FoBlockContainer container, double leftMpt, double availableWidthMpt,
+            IBlockTarget target)
+        {
+            if (container.AbsolutePosition is AbsolutePosition.Absolute or AbsolutePosition.Fixed)
+            {
+                LayOutAbsoluteContainer(container, target);
+                return;
+            }
+
+            LayOutFlowContainer(container, leftMpt, availableWidthMpt, target);
+        }
+
+        /// <summary>
+        /// Lays out a normal-flow (<c>absolute-position="auto"</c>) block-container: the container's box
+        /// border-box width is its specified <c>width</c> clamped to the available width (or the full
+        /// available width when <c>auto</c>); its content is laid into a buffer at the inset content
+        /// width and placed at the current cursor, advancing it by the box height (the taller of the
+        /// content height and a specified <c>height</c>). A non-zero reference-orientation rotates the
+        /// box+content about its top-left.
+        /// </summary>
+        private void LayOutFlowContainer(FoBlockContainer container, double leftMpt, double availableWidthMpt,
+            IBlockTarget target)
+        {
+            target.Advance(this, container.SpaceBefore.Millipoints);
+
+            BoxProperties box = container.Box;
+            double indent = container.StartIndent.Millipoints;
+            double boxLeft = leftMpt + indent;
+            double available = Math.Max(0, availableWidthMpt - indent - container.EndIndent.Millipoints);
+
+            // The border-box width: the specified width (clamped to available) or the full available width.
+            double borderWidth = container.Width is { } w ? Math.Min(w.Millipoints, available) : available;
+            double contentWidth = Math.Max(0, borderWidth - box.LeftInsetMpt - box.RightInsetMpt);
+
+            // Lay the content into a buffer at content-local origin (0,0), then size the box.
+            var contentBuffer = new BufferedSink();
+            double contentHeight = LayOutBlockLevelIntoBuffer(container.BlockLevelChildren, contentBuffer, contentWidth);
+            double borderHeight = ResolveBorderHeight(container, box, contentHeight);
+
+            IPrimitiveSink sink = target.SinkForAdvance(this, RotatedAdvance(borderWidth, borderHeight,
+                container.ReferenceOrientation));
+            double boxTop = target.Cursor(this);
+
+            PlaceContainer(sink, container, box, contentBuffer, boxLeft, boxTop, borderWidth, borderHeight);
+
+            target.Advance(this, RotatedAdvance(borderWidth, borderHeight, container.ReferenceOrientation));
+            target.Advance(this, container.SpaceAfter.Millipoints);
+        }
+
+        /// <summary>
+        /// Lays out an out-of-flow (<c>absolute</c>/<c>fixed</c>) block-container. The container does NOT
+        /// advance the flow cursor: its content is laid into a buffer at the resolved content width and
+        /// placed on the current page at the resolved (left, top) origin.
+        /// <para>
+        /// Simplification: <c>fixed</c> resolves its offset relative to the page top-left, while
+        /// <c>absolute</c> resolves relative to the current content area's top-left. With single regions
+        /// these coincide except for the region/body margins. <c>right</c>/<c>bottom</c> are honoured
+        /// only to derive the origin when <c>left</c>/<c>top</c> are absent (origin = reference extent
+        /// minus the offset minus the box size); when neither edge is given the offset defaults to 0.
+        /// </para>
+        /// </summary>
+        private void LayOutAbsoluteContainer(FoBlockContainer container, IBlockTarget target)
+        {
+            // The container must land on a page; an out-of-flow container in a relocatable buffer (e.g.
+            // inside a table cell) has no page, so it is placed against the buffer at its own origin.
+            BoxProperties box = container.Box;
+            bool fixedPos = container.AbsolutePosition == AbsolutePosition.Fixed;
+
+            // The reference area: the page (fixed) or the body content area (absolute).
+            double refLeft = fixedPos ? 0 : geometry.ContentLeftMpt;
+            double refTop = fixedPos ? 0 : geometry.ContentTopMpt;
+            double refWidth = fixedPos ? geometry.PageWidthMpt : geometry.ContentWidthMpt;
+            double refHeight = fixedPos ? geometry.PageHeightMpt : geometry.ContentHeightMpt;
+
+            // Content/border width: specified width, else the reference width minus the left offset.
+            double leftOffset = container.Left?.Millipoints ?? 0;
+            double borderWidth = container.Width?.Millipoints
+                ?? Math.Max(0, refWidth - leftOffset);
+            double contentWidth = Math.Max(0, borderWidth - box.LeftInsetMpt - box.RightInsetMpt);
+
+            var contentBuffer = new BufferedSink();
+            double contentHeight = LayOutBlockLevelIntoBuffer(container.BlockLevelChildren, contentBuffer, contentWidth);
+            double borderHeight = ResolveBorderHeight(container, box, contentHeight);
+
+            // Resolve the placement origin. left/top win; else right/bottom anchor from the far edge.
+            double placeLeft = container.Left is { } l
+                ? refLeft + l.Millipoints
+                : container.Right is { } r
+                    ? refLeft + refWidth - r.Millipoints - borderWidth
+                    : refLeft;
+            double placeTop = container.Top is { } t
+                ? refTop + t.Millipoints
+                : container.Bottom is { } b
+                    ? refTop + refHeight - b.Millipoints - borderHeight
+                    : refTop;
+
+            // An out-of-flow container is placed on the current page without moving any flow cursor (the
+            // flow target's nor a buffer target's): it is removed from the normal flow, so following
+            // content starts exactly where it would have without the container. The placement origin is
+            // page/region relative, so it always targets the current page directly.
+            // Simplification: an out-of-flow container nested inside a relocatable buffer (e.g. a table
+            // cell) is still placed against the current page at the page/region-relative origin, not
+            // relative to the enclosing cell.
+            _ = target;
+            var sink = new PageSink(PageForContainer());
+            PlaceContainer(sink, container, box, contentBuffer, placeLeft, placeTop, borderWidth, borderHeight);
+        }
+
+        /// <summary>Ensures a page exists for an out-of-flow container and returns it (without paginating).</summary>
+        private PageArea PageForContainer()
+        {
+            EnsurePage();
+            return page!;
+        }
+
+        /// <summary>
+        /// Places a container's box (background/border) and its buffered content onto
+        /// <paramref name="sink"/>, at border-box origin (<paramref name="boxLeft"/>,
+        /// <paramref name="boxTop"/>). With no rotation the box and content are emitted directly (flat
+        /// primitives). With a non-zero reference-orientation the box and content are emitted into an
+        /// <see cref="AreaGroup"/> rotated about the border box's top-left corner, then the group is added
+        /// to the current page (groups are page-level; a rotated container in a buffer also targets the page).
+        /// </summary>
+        private void PlaceContainer(IPrimitiveSink sink, FoBlockContainer container, BoxProperties box,
+            BufferedSink contentBuffer, double boxLeft, double boxTop, double borderWidth, double borderHeight)
+        {
+            int rotation = container.ReferenceOrientation;
+            if (rotation == 0)
+            {
+                // Flat path: box behind the content, content inset from the border box.
+                EmitBox(sink, box, boxLeft, boxTop, borderWidth, borderHeight);
+                contentBuffer.FlushTo(sink, boxLeft + box.LeftInsetMpt, boxTop + box.TopInsetMpt);
+                return;
+            }
+
+            // Rotated path: build a group whose local origin is the border box top-left. Box and content
+            // are emitted in local coordinates (box at 0,0; content inset), and the group carries the
+            // translation to (boxLeft, boxTop) plus the rotation. Groups are page-level.
+            var group = new AreaGroup(boxLeft, boxTop, rotation);
+            var groupSink = new GroupSink(group);
+            EmitBox(groupSink, box, 0, 0, borderWidth, borderHeight);
+            contentBuffer.FlushTo(groupSink, box.LeftInsetMpt, box.TopInsetMpt);
+            PageForContainer().Add(group);
+        }
+
+        /// <summary>
+        /// The border-box height of a container: the specified <c>height</c> (border box) when given,
+        /// else the content height plus the box's top/bottom insets.
+        /// </summary>
+        private static double ResolveBorderHeight(FoBlockContainer container, BoxProperties box, double contentHeight)
+            => container.Height is { } h
+                ? h.Millipoints
+                : contentHeight + box.TopInsetMpt + box.BottomInsetMpt;
+
+        /// <summary>
+        /// The vertical extent a rotated container occupies in the flow: a 90/270 rotation about the
+        /// top-left turns the box's width into its vertical extent, so the flow advance becomes the
+        /// border width; 0/180 keep the border height.
+        /// </summary>
+        private static double RotatedAdvance(double borderWidth, double borderHeight, int rotationDegrees)
+            => rotationDegrees is 90 or 270 ? borderWidth : borderHeight;
 
         // ----- Block-target abstraction -----------------------------------------------------
 

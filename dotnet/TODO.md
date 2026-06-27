@@ -101,7 +101,10 @@ package, as a rough size signal.
 - [x] **`fo:page-number-citation`/`-last`**: forward/backward `ref-id` references resolved via a
       two-pass layout (unknown ref-ids → "?").
 - [x] **Knuth–Plass total-fit** line breaking (box/glue/penalty + active-node DP) as the default.
-- [ ] Total-fit *page* breaking, floats, intra-row splitting. (Residual TODOs: footnote reserve is greedy not
+- [x] **`fo:block-container`** — absolute/fixed/auto positioning + `reference-orientation` rotation
+      (transform group in the area tree, PdfSharp transforms in the renderer).
+- [x] **PDF bookmarks** (`fo:bookmark-tree` → document outline).
+- [ ] Total-fit *page* breaking, floats, intra-row splitting; rotated-group link annotations. (Residual TODOs: footnote reserve is greedy not
       iterative; a row-spanning cell crossing a page break paints on its origin page only; ids inside
       buffered contexts (cells/footnote bodies) aren't recorded for citations; citation-last uses the
       single recorded page under the flat model.)

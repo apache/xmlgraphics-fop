@@ -57,37 +57,20 @@ public sealed class PdfRenderer
 
             using XGraphics gfx = XGraphics.FromPdfPage(page);
 
-            foreach (RectFill rect in pageArea.RectFills)
-            {
-                gfx.DrawRectangle(
-                    new XSolidBrush(ToXColor(rect.Color)),
-                    rect.XMpt / MptPerPoint,
-                    rect.YMpt / MptPerPoint,
-                    rect.WidthMpt / MptPerPoint,
-                    rect.HeightMpt / MptPerPoint);
-            }
+            DrawRects(gfx, pageArea.RectFills);
 
             foreach (ImageRun image in pageArea.Images)
             {
                 DrawImage(gfx, image);
             }
 
-            foreach (TextRun run in pageArea.TextRuns)
-            {
-                if (run.Text.Length == 0)
-                {
-                    continue;
-                }
+            DrawRuns(gfx, pageArea.TextRuns, baseline);
 
-                XFont font = measurer.GetXFont(run.Font);
-                var brush = new XSolidBrush(ToXColor(run.Color));
-                gfx.DrawString(
-                    run.Text,
-                    font,
-                    brush,
-                    run.XMpt / MptPerPoint,
-                    run.BaselineYMpt / MptPerPoint,
-                    baseline);
+            // Transformed groups (e.g. rotated block-containers) paint after the page's flat content,
+            // each under its own translate+rotate transform applied around the group's local origin.
+            foreach (AreaGroup group in pageArea.Groups)
+            {
+                DrawGroup(gfx, group, baseline);
             }
 
             // Link annotations are emitted after the visible content so the clickable region overlays
@@ -138,6 +121,75 @@ public sealed class PdfRenderer
 
             PdfOutline node = collection.Add(entry.Title, destination, entry.Open);
             AddOutline(node.Outlines, entry.Children, pdfPages);
+        }
+    }
+
+    private static void DrawRects(XGraphics gfx, IReadOnlyList<RectFill> rects)
+    {
+        foreach (RectFill rect in rects)
+        {
+            gfx.DrawRectangle(
+                new XSolidBrush(ToXColor(rect.Color)),
+                rect.XMpt / MptPerPoint,
+                rect.YMpt / MptPerPoint,
+                rect.WidthMpt / MptPerPoint,
+                rect.HeightMpt / MptPerPoint);
+        }
+    }
+
+    private void DrawRuns(XGraphics gfx, IReadOnlyList<TextRun> runs, XStringFormat baseline)
+    {
+        foreach (TextRun run in runs)
+        {
+            if (run.Text.Length == 0)
+            {
+                continue;
+            }
+
+            XFont font = measurer.GetXFont(run.Font);
+            var brush = new XSolidBrush(ToXColor(run.Color));
+            gfx.DrawString(
+                run.Text,
+                font,
+                brush,
+                run.XMpt / MptPerPoint,
+                run.BaselineYMpt / MptPerPoint,
+                baseline);
+        }
+    }
+
+    /// <summary>
+    /// Renders an <see cref="AreaGroup"/> under its affine transform. PdfSharp's <see cref="XGraphics"/>
+    /// (from <c>FromPdfPage</c>) uses a top-left origin with y growing downward -- the same convention as
+    /// our area tree -- so the group's translate (page-space mpt converted to points) maps directly and a
+    /// positive <c>RotateTransform</c> angle rotates clockwise about the current origin. The transforms
+    /// are applied as translate-then-rotate (so the rotation pivots about the group's local origin), the
+    /// group's primitives are drawn in their local coordinates, then the graphics state is restored.
+    /// Link annotations inside a group are not emitted (PDF link rectangles are axis-aligned page-space
+    /// boxes and cannot follow a rotation); rotated containers are visual, not interactive, here.
+    /// </summary>
+    private void DrawGroup(XGraphics gfx, AreaGroup group, XStringFormat baseline)
+    {
+        XGraphicsState state = gfx.Save();
+        try
+        {
+            gfx.TranslateTransform(group.TranslateXMpt / MptPerPoint, group.TranslateYMpt / MptPerPoint);
+            if (group.RotationDegrees != 0)
+            {
+                gfx.RotateTransform(group.RotationDegrees);
+            }
+
+            DrawRects(gfx, group.RectFills);
+            foreach (ImageRun image in group.Images)
+            {
+                DrawImage(gfx, image);
+            }
+
+            DrawRuns(gfx, group.TextRuns, baseline);
+        }
+        finally
+        {
+            gfx.Restore(state);
         }
     }
 

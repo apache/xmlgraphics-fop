@@ -176,6 +176,7 @@ public static class FoTreeBuilder
         "flow" => new FoFlow(properties),
         "static-content" => new FoStaticContent(properties),
         "block" => new FoBlock(properties),
+        "block-container" => new FoBlockContainer(properties),
         "inline" => new FoInline(properties),
         "basic-link" => new FoBasicLink(properties),
         "leader" => new FoLeader(properties),

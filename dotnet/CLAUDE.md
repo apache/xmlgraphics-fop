@@ -179,9 +179,12 @@ A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subse
   FOP itself uses) as the default paragraph breaker;
 - **custom-font registration** — register TTF/OTF fonts by family/style (or scan a directory, with
   OpenType `name`-table family detection) so documents use real embedded fonts, Liberation as the
-  built-in fallback; the measurer and PdfSharp resolver share one registry.
+  built-in fallback; the measurer and PdfSharp resolver share one registry;
+- **PDF bookmarks** (`fo:bookmark-tree` → a nested, page-targeted document outline);
+- **`fo:block-container`** — absolute/fixed/auto positioning and `reference-orientation` rotation
+  (90/180/270) via a transform group rendered with PdfSharp transforms.
 
-The solution has 12 library projects and **816 passing tests** on .NET 10. See `samples/hello.fo`
+The solution has 12 library projects and **867 passing tests** on .NET 10. See `samples/hello.fo`
 (a clickable TOC with leaders, links, a marker header, and page-number citations).
 
 ---
