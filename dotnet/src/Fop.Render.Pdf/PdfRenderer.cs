@@ -85,6 +85,14 @@ public sealed class PdfRenderer
                     run.BaselineYMpt / MptPerPoint,
                     baseline);
             }
+
+            // Link annotations are emitted after the visible content so the clickable region overlays
+            // the text/rule it wraps. They do not paint anything themselves.
+            double pageHeightPt = pageArea.HeightMpt / MptPerPoint;
+            foreach (LinkArea link in pageArea.Links)
+            {
+                AddLink(page, link, pageHeightPt);
+            }
         }
 
         document.Save(output);
@@ -136,6 +144,39 @@ public sealed class PdfRenderer
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Adds one PdfSharp link annotation for <paramref name="link"/> on <paramref name="page"/>. Our
+    /// link rectangle is top-left origin in millipoints; PdfSharp's <see cref="PdfRectangle"/> is PDF
+    /// user space (points, bottom-left origin), so the lower-left corner is
+    /// (x, pageHeight - (yTop + h)) and the upper-right is (x + w, pageHeight - yTop). An internal link
+    /// targets a 0-based page index via <c>AddDocumentLink</c>; an external link uses <c>AddWebLink</c>.
+    /// </summary>
+    private static void AddLink(PdfPage page, LinkArea link, double pageHeightPt)
+    {
+        double x = link.XMpt / MptPerPoint;
+        double w = link.WidthMpt / MptPerPoint;
+        double yTop = link.YMpt / MptPerPoint;
+        double h = link.HeightMpt / MptPerPoint;
+        if (w <= 0 || h <= 0)
+        {
+            return;
+        }
+
+        double lowerLeftY = pageHeightPt - (yTop + h);
+        double upperRightY = pageHeightPt - yTop;
+        var rect = new PdfRectangle(new XPoint(x, lowerLeftY), new XPoint(x + w, upperRightY));
+
+        if (link.TargetPageIndex is int targetPage)
+        {
+            // Internal link: jump to the target page (no explicit destination point -> page-level link).
+            page.AddDocumentLink(rect, targetPage, point: null);
+        }
+        else if (!string.IsNullOrEmpty(link.Uri))
+        {
+            page.AddWebLink(rect, link.Uri);
+        }
     }
 
     private static XColor ToXColor(FopColor color)

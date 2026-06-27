@@ -49,6 +49,16 @@ public sealed class LayoutEngine
     /// <summary>The id-to-page-number map captured at the end of pass 1 (used by pass 2's resolver).</summary>
     private IReadOnlyDictionary<string, int>? resolvedIds;
 
+    /// <summary>
+    /// The id-to-page-INDEX map populated by the pass currently running: the 0-based index into the
+    /// area tree's pages that each id's area lands on (distinct from the 1-based page number, which is
+    /// per-sequence and offset by initial-page-number). Used to target internal links.
+    /// </summary>
+    private Dictionary<string, int> currentPageIndexes = new(StringComparer.Ordinal);
+
+    /// <summary>The id-to-page-index map captured at the end of pass 1 (used by pass 2's link resolver).</summary>
+    private IReadOnlyDictionary<string, int>? resolvedPageIndexes;
+
     /// <summary>Whether a citation resolver is active (pass 2). On pass 1 citations render a placeholder.</summary>
     private bool resolving;
 
@@ -108,15 +118,18 @@ public sealed class LayoutEngine
         // Pass 1: measure-only. Build the id-to-page map; citations render the placeholder.
         resolving = false;
         currentIds = new Dictionary<string, int>(StringComparer.Ordinal);
+        currentPageIndexes = new Dictionary<string, int>(StringComparer.Ordinal);
         markersByPage.Clear();
         _ = LayOutAllSequences(root);
         resolvedIds = currentIds;
+        resolvedPageIndexes = currentPageIndexes;
 
         // Pass 2: resolved. Re-lay with the citation resolver active. Layout is deterministic, so the
         // page each id lands on is identical to pass 1; the resolver reads the pass-1 map. Markers are
         // re-collected against the pass-2 page areas so static content resolves against this tree.
         resolving = true;
         currentIds = new Dictionary<string, int>(StringComparer.Ordinal);
+        currentPageIndexes = new Dictionary<string, int>(StringComparer.Ordinal);
         markersByPage.Clear();
         return LayOutAllSequences(root);
     }
@@ -138,12 +151,31 @@ public sealed class LayoutEngine
     /// on. For <c>fo:page-number-citation-last</c> the flat model records a single page per id, so the
     /// "last" page equals that page (documented approximation; areas are not split per page here).
     /// </remarks>
-    private void RecordId(string id, int pageNumber)
+    private void RecordId(string id, int pageNumber, int pageIndex)
     {
         if (id.Length > 0)
         {
             currentIds[id] = pageNumber;
+            if (pageIndex >= 0 && !currentPageIndexes.ContainsKey(id))
+            {
+                currentPageIndexes[id] = pageIndex;
+            }
         }
+    }
+
+    /// <summary>
+    /// Resolves an <c>fo:basic-link</c> <c>internal-destination</c> ref-id to the 0-based area-tree page
+    /// index its target lands on, using the pass-1 map; <c>null</c> on pass 1 or for an unknown id (the
+    /// link then records no internal target this pass).
+    /// </summary>
+    private int? ResolveInternalDestination(string refId)
+    {
+        if (!resolving || resolvedPageIndexes is null)
+        {
+            return null;
+        }
+
+        return resolvedPageIndexes.TryGetValue(refId, out int index) ? index : null;
     }
 
     /// <summary>
@@ -169,16 +201,16 @@ public sealed class LayoutEngine
     /// and footnote anchors; nested <see cref="FoBlock"/>s are skipped (each self-records when it is
     /// itself laid out on its own page).
     /// </summary>
-    private void RecordIdsOnPage(FoBlock block, int pageNumber)
+    private void RecordIdsOnPage(FoBlock block, int pageNumber, int pageIndex)
     {
-        RecordId(IdOf(block), pageNumber);
+        RecordId(IdOf(block), pageNumber, pageIndex);
         foreach (FONode child in block.Children)
         {
-            RecordInlineIds(child, pageNumber);
+            RecordInlineIds(child, pageNumber, pageIndex);
         }
     }
 
-    private void RecordInlineIds(FONode node, int pageNumber)
+    private void RecordInlineIds(FONode node, int pageNumber, int pageIndex)
     {
         if (node is FoBlock)
         {
@@ -188,10 +220,10 @@ public sealed class LayoutEngine
 
         if (node is FObj obj)
         {
-            RecordId(IdOf(obj), pageNumber);
+            RecordId(IdOf(obj), pageNumber, pageIndex);
             foreach (FONode child in obj.Children)
             {
-                RecordInlineIds(child, pageNumber);
+                RecordInlineIds(child, pageNumber, pageIndex);
             }
         }
     }
@@ -398,20 +430,35 @@ public sealed class LayoutEngine
     /// Greedily packs words from <paramref name="words"/> starting at <paramref name="start"/> until
     /// the next word would exceed <paramref name="availableMpt"/>. Always places at least one word so
     /// an over-wide word cannot stall the loop (it simply overflows its line).
+    /// <para>
+    /// A leader token contributes zero natural width (it expands at emission to consume the line's
+    /// leftover space) and a fixed leader contributes only its fixed length, so leaders never on their
+    /// own force a wrap; <see cref="LineBox.HasLeader"/> records whether the line carries one.
+    /// </para>
     /// </summary>
     private LineBox FillLine(List<StyledWord> words, int start, double availableMpt)
     {
         var placed = new List<StyledWord>();
         double naturalWidth = 0;
         double maxFontHeight = 0;
+        bool hasLeader = false;
         int i = start;
 
         while (i < words.Count)
         {
             StyledWord word = words[i];
-            double wordWidth = measurer.MeasureWidthMpt(word.Text, word.Font);
-            double spaceBefore = placed.Count == 0 ? 0 : SpaceWidth(words[i - 1].Font);
-            if (placed.Count > 0 && naturalWidth + spaceBefore + wordWidth > availableMpt)
+
+            // A leader's natural footprint is its fixed length (0 when it expands to fill); it never
+            // wraps the line by itself.
+            double wordWidth = word.IsLeader
+                ? word.Leader!.Value.FixedLengthMpt ?? 0
+                : measurer.MeasureWidthMpt(word.Text, word.Font);
+
+            // A leader abuts its neighbours: no word-space is counted on either side of it. This keeps
+            // the measured natural width consistent with emission so the leader fills exactly the slack.
+            bool abuts = placed.Count == 0 || word.IsLeader || placed[^1].IsLeader;
+            double spaceBefore = abuts ? 0 : SpaceWidth(words[i - 1].Font);
+            if (placed.Count > 0 && !word.IsLeader && naturalWidth + spaceBefore + wordWidth > availableMpt)
             {
                 break;
             }
@@ -419,10 +466,11 @@ public sealed class LayoutEngine
             placed.Add(word);
             naturalWidth += spaceBefore + wordWidth;
             maxFontHeight = Math.Max(maxFontHeight, FontHeight(word.Font));
+            hasLeader |= word.IsLeader;
             i++;
         }
 
-        return new LineBox(placed, naturalWidth, maxFontHeight, i);
+        return new LineBox(placed, naturalWidth, maxFontHeight, i, hasLeader);
     }
 
     /// <summary>
@@ -448,63 +496,195 @@ public sealed class LayoutEngine
         int gaps = line.Words.Count - 1;
         double startX = leftMpt;
         double extraPerGap = 0;
-        switch (align)
+
+        // A line carrying a leader gives its slack to the leader (so trailing content reaches the end
+        // edge); alignment/justification slack is suppressed. Otherwise the usual text-align applies.
+        if (!line.HasLeader)
         {
-            case TextAlign.Center:
-                startX = leftMpt + slack / 2;
-                break;
-            case TextAlign.End:
-                startX = leftMpt + slack;
-                break;
-            case TextAlign.Justify when !isLastLine && gaps > 0:
-                extraPerGap = slack / gaps;
-                break;
+            switch (align)
+            {
+                case TextAlign.Center:
+                    startX = leftMpt + slack / 2;
+                    break;
+                case TextAlign.End:
+                    startX = leftMpt + slack;
+                    break;
+                case TextAlign.Justify when !isLastLine && gaps > 0:
+                    extraPerGap = slack / gaps;
+                    break;
+            }
         }
 
-        EmitRuns(target, line, startX, baseline, extraPerGap);
+        EmitRuns(target, line, startX, baseline, extraPerGap, line.HasLeader ? slack : 0, effectiveHeight,
+            lineTopMpt);
     }
 
-    private void EmitRuns(IPrimitiveSink target, LineBox line, double startX, double baseline, double extraPerGap)
+    /// <summary>
+    /// Positions the line's words left to right at <paramref name="startX"/>: emits coalesced text runs
+    /// (consecutive words sharing style and link), expands any leader token to fill
+    /// <paramref name="leaderSlackMpt"/> (painting its pattern), and records one <see cref="LinkArea"/>
+    /// per contiguous run of words sharing the same link target.
+    /// </summary>
+    private void EmitRuns(IPrimitiveSink target, LineBox line, double startX, double baseline,
+        double extraPerGap, double leaderSlackMpt, double lineHeightMpt, double lineTopMpt)
     {
-        double x = startX;
-        int count = line.Words.Count;
-        int runStart = 0;
+        IReadOnlyList<StyledWord> words = line.Words;
+        int count = words.Count;
 
+        // Distribute the line's leftover space across its leader tokens (equally; the common case is a
+        // single leader). A fixed-length leader keeps its length and does not draw from the slack pool.
+        int expandingLeaders = 0;
+        for (int k = 0; k < count; k++)
+        {
+            if (words[k].IsLeader && words[k].Leader!.Value.FixedLengthMpt is null)
+            {
+                expandingLeaders++;
+            }
+        }
+
+        double perLeaderSlack = expandingLeaders > 0 ? leaderSlackMpt / expandingLeaders : 0;
+
+        // Pass 1: assign each word a start x and an advance, recording link spans as we go.
+        var positions = new double[count];
+        var advances = new double[count];
+        double x = startX;
+        for (int j = 0; j < count; j++)
+        {
+            StyledWord word = words[j];
+            if (j > 0)
+            {
+                // A word space precedes every word except a leader (a leader abuts its neighbours).
+                if (!word.IsLeader && !words[j - 1].IsLeader)
+                {
+                    x += SpaceWidth(word.Font) + extraPerGap;
+                }
+            }
+
+            positions[j] = x;
+            double advance = word.IsLeader
+                ? (word.Leader!.Value.FixedLengthMpt ?? perLeaderSlack)
+                : measurer.MeasureWidthMpt(word.Text, word.Font);
+            advances[j] = advance;
+            x += advance;
+        }
+
+        // Pass 2: emit text runs (coalescing adjacent same-style, same-link, non-leader words) and
+        // leader visuals.
+        int runStart = 0;
         while (runStart < count)
         {
-            StyledWord first = line.Words[runStart];
+            StyledWord first = words[runStart];
+            if (first.IsLeader)
+            {
+                EmitLeader(target, first, positions[runStart], advances[runStart], baseline);
+                runStart++;
+                continue;
+            }
 
-            // Extend the run across adjacent words sharing the exact same style.
             int runEnd = runStart;
-            while (runEnd + 1 < count && SameStyle(line.Words[runEnd + 1], first))
+            while (runEnd + 1 < count && !words[runEnd + 1].IsLeader
+                && SameStyleAndLink(words[runEnd + 1], first))
             {
                 runEnd++;
             }
 
-            double runX = x;
             var text = new StringBuilder();
             for (int j = runStart; j <= runEnd; j++)
             {
-                StyledWord word = line.Words[j];
                 if (j > runStart)
                 {
                     text.Append(' ');
-                    x += SpaceWidth(word.Font) + extraPerGap;
                 }
 
-                text.Append(word.Text);
-                x += measurer.MeasureWidthMpt(word.Text, word.Font);
+                text.Append(words[j].Text);
             }
 
-            target.Add(new TextRun(runX, baseline, text.ToString(), first.Font, first.Color));
-
-            // Advance across the gap to the next run (a word space plus any justification slack).
-            if (runEnd + 1 < count)
-            {
-                x += SpaceWidth(line.Words[runEnd + 1].Font) + extraPerGap;
-            }
-
+            target.Add(new TextRun(positions[runStart], baseline, text.ToString(), first.Font, first.Color));
             runStart = runEnd + 1;
+        }
+
+        // Pass 3: record a LinkArea over each contiguous span of words sharing the same link target.
+        EmitLinkAreas(target, words, positions, advances, lineHeightMpt, lineTopMpt);
+    }
+
+    /// <summary>
+    /// Paints an expandable leader across [<paramref name="leaderX"/>, leaderX + <paramref name="width"/>]:
+    /// a rule is a thin <see cref="RectFill"/> centred on the baseline; a dots (or use-content) leader is
+    /// a <see cref="TextRun"/> of repeated middle-dots in the leader font; a space leader paints nothing.
+    /// </summary>
+    private void EmitLeader(IPrimitiveSink target, StyledWord leader, double leaderX, double width,
+        double baseline)
+    {
+        if (width <= 0)
+        {
+            return;
+        }
+
+        LeaderInfo info = leader.Leader!.Value;
+        switch (info.Pattern)
+        {
+            case LeaderPattern.Rule:
+                double thickness = Math.Max(0, info.RuleThicknessMpt);
+                if (thickness > 0)
+                {
+                    // Centre the rule on the baseline.
+                    target.Add(new RectFill(leaderX, baseline - thickness / 2, width, thickness, leader.Color));
+                }
+
+                break;
+
+            case LeaderPattern.Dots:
+            case LeaderPattern.UseContent:
+                double dotWidth = measurer.MeasureWidthMpt(InlineContent.LeaderDot.ToString(), leader.Font);
+                if (dotWidth > 0)
+                {
+                    int dots = (int)Math.Floor(width / dotWidth);
+                    if (dots > 0)
+                    {
+                        target.Add(new TextRun(leaderX, baseline,
+                            new string(InlineContent.LeaderDot, dots), leader.Font, leader.Color));
+                    }
+                }
+
+                break;
+
+            case LeaderPattern.Space:
+            default:
+                // Nothing visible: the leader is just the gap.
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Records one <see cref="LinkArea"/> per maximal run of consecutive words that share the same
+    /// <see cref="LinkRef"/>, covering the run's inline extent over the full line box height.
+    /// </summary>
+    private static void EmitLinkAreas(IPrimitiveSink target, IReadOnlyList<StyledWord> words,
+        double[] positions, double[] advances, double lineHeightMpt, double lineTopMpt)
+    {
+        int count = words.Count;
+        int i = 0;
+        while (i < count)
+        {
+            LinkRef? link = words[i].Link;
+            if (link is null)
+            {
+                i++;
+                continue;
+            }
+
+            int j = i;
+            while (j + 1 < count && Nullable.Equals(words[j + 1].Link, link))
+            {
+                j++;
+            }
+
+            double left = positions[i];
+            double right = positions[j] + advances[j];
+            LinkRef dest = link.Value;
+            target.Add(new LinkArea(left, lineTopMpt, Math.Max(0, right - left), lineHeightMpt,
+                dest.TargetPageIndex, dest.Uri));
+            i = j + 1;
         }
     }
 
@@ -515,9 +695,16 @@ public sealed class LayoutEngine
     private static bool SameStyle(StyledWord a, StyledWord b) =>
         a.Font.Equals(b.Font) && a.Color.Equals(b.Color);
 
-    /// <summary>A greedily-filled line: its words, natural (unjustified) width, content height, and next word index.</summary>
+    /// <summary>Whether two words share style <em>and</em> link target (so they coalesce into one run).</summary>
+    private static bool SameStyleAndLink(StyledWord a, StyledWord b) =>
+        SameStyle(a, b) && Nullable.Equals(a.Link, b.Link);
+
+    /// <summary>
+    /// A greedily-filled line: its words, natural (unjustified) width, content height, next word index,
+    /// and whether it carries an expandable leader token.
+    /// </summary>
     private readonly record struct LineBox(
-        IReadOnlyList<StyledWord> Words, double NaturalWidth, double Height, int NextIndex);
+        IReadOnlyList<StyledWord> Words, double NaturalWidth, double Height, int NextIndex, bool HasLeader);
 
     // ----- Primitive sinks ------------------------------------------------------------------
 
@@ -533,6 +720,8 @@ public sealed class LayoutEngine
         void Add(RectFill rect);
 
         void Add(ImageRun image);
+
+        void Add(LinkArea link);
     }
 
     /// <summary>An <see cref="IPrimitiveSink"/> that appends straight onto a <see cref="PageArea"/>.</summary>
@@ -543,6 +732,8 @@ public sealed class LayoutEngine
         public void Add(RectFill rect) => page.Add(rect);
 
         public void Add(ImageRun image) => page.Add(image);
+
+        public void Add(LinkArea link) => page.Add(link);
     }
 
     /// <summary>
@@ -555,12 +746,15 @@ public sealed class LayoutEngine
         private readonly List<RectFill> rects = new();
         private readonly List<TextRun> runs = new();
         private readonly List<ImageRun> images = new();
+        private readonly List<LinkArea> links = new();
 
         public void Add(TextRun run) => runs.Add(run);
 
         public void Add(RectFill rect) => rects.Add(rect);
 
         public void Add(ImageRun image) => images.Add(image);
+
+        public void Add(LinkArea link) => links.Add(link);
 
         /// <summary>Replays the buffered primitives onto <paramref name="target"/>, offset by (dx, dy).</summary>
         public void FlushTo(IPrimitiveSink target, double dx, double dy)
@@ -578,6 +772,11 @@ public sealed class LayoutEngine
             foreach (TextRun run in runs)
             {
                 target.Add(run with { XMpt = run.XMpt + dx, BaselineYMpt = run.BaselineYMpt + dy });
+            }
+
+            foreach (LinkArea link in links)
+            {
+                target.Add(link with { XMpt = link.XMpt + dx, YMpt = link.YMpt + dy });
             }
         }
     }
@@ -923,7 +1122,8 @@ public sealed class LayoutEngine
             // (documented approximation -- such a ref-id resolves to "?").
             if (target.CanPaginate)
             {
-                engine.RecordIdsOnPage(block, currentPageNumber);
+                EnsurePage();
+                engine.RecordIdsOnPage(block, currentPageNumber, IndexOfPage(page!));
 
                 // Record this block's fo:marker children against the page it begins on (for
                 // retrieve-marker resolution), updating the sequence's running carryover. Markers are
@@ -954,6 +1154,7 @@ public sealed class LayoutEngine
             var flatten = new FlattenContext
             {
                 ResolveCitation = engine.ResolveCitation,
+                ResolveInternalDestination = engine.ResolveInternalDestination,
                 OnFootnote = target.CanPaginate ? ReserveFootnote : null,
                 ResolveMarker = MarkerResolver,
             };

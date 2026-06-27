@@ -166,9 +166,14 @@ A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subse
   block/table/list layout over one paginating-or-buffered target abstraction);
 - **footnotes** (`fo:footnote`/`footnote-body`, rendered at the page bottom with the reserve
   reducing body height) and **`fo:page-number-citation`/`-last`** (forward/backward references
-  resolved by a two-pass layout).
+  resolved by a two-pass layout);
+- **markers** (`fo:marker`/`retrieve-marker`, e.g. "current chapter" running headers) and
+  **side regions** (`fo:region-start`/`end`);
+- **hyperlinks** (`fo:basic-link` → PDF internal/external link annotations) and **leaders**
+  (`fo:leader` dots/rule fills, e.g. a clickable table of contents).
 
-The solution has 12 library projects and **677 passing tests** on .NET 10. See `samples/hello.fo`.
+The solution has 12 library projects and **719 passing tests** on .NET 10. See `samples/hello.fo`
+(a clickable TOC with leaders, links, a marker header, and page-number citations).
 
 ---
 

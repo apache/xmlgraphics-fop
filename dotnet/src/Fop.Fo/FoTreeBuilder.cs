@@ -177,6 +177,8 @@ public static class FoTreeBuilder
         "static-content" => new FoStaticContent(properties),
         "block" => new FoBlock(properties),
         "inline" => new FoInline(properties),
+        "basic-link" => new FoBasicLink(properties),
+        "leader" => new FoLeader(properties),
         "marker" => new FoMarker(properties),
         "retrieve-marker" => new FoRetrieveMarker(properties),
         "page-number" => new FoPageNumber(properties),
@@ -199,7 +201,8 @@ public static class FoTreeBuilder
         _ => new FoGeneric(properties, localName),
     };
 
-    private static bool IsContentContainer(FObj obj) => obj is FoBlock or FoInline or FoGeneric or FoMarker;
+    private static bool IsContentContainer(FObj obj) =>
+        obj is FoBlock or FoInline or FoBasicLink or FoGeneric or FoMarker;
 
     /// <summary>Collapses runs of XSL-FO whitespace to a single space (the default behaviour).</summary>
     public static string CollapseWhitespace(string text)

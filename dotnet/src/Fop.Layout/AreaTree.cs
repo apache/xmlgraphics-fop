@@ -44,6 +44,7 @@ public sealed class PageArea
     private readonly List<TextRun> textRuns = new();
     private readonly List<RectFill> rectFills = new();
     private readonly List<ImageRun> images = new();
+    private readonly List<LinkArea> links = new();
 
     /// <summary>Creates a page of the given size (millipoints).</summary>
     public PageArea(double widthMpt, double heightMpt)
@@ -67,6 +68,9 @@ public sealed class PageArea
     /// <summary>Positioned images on this page.</summary>
     public IReadOnlyList<ImageRun> Images => images;
 
+    /// <summary>Clickable link rectangles (internal or external) on this page.</summary>
+    public IReadOnlyList<LinkArea> Links => links;
+
     /// <summary>Adds a text run.</summary>
     public void Add(TextRun run)
     {
@@ -82,6 +86,13 @@ public sealed class PageArea
     {
         ArgumentNullException.ThrowIfNull(image);
         images.Add(image);
+    }
+
+    /// <summary>Adds a clickable link rectangle.</summary>
+    public void Add(LinkArea link)
+    {
+        ArgumentNullException.ThrowIfNull(link);
+        links.Add(link);
     }
 }
 
@@ -122,3 +133,23 @@ public sealed record ImageRun(
     double HeightMpt,
     string? SourcePath,
     byte[]? SourceBytes);
+
+/// <summary>
+/// A clickable link rectangle on a page (top-left origin, millipoints). A link targets either an
+/// internal page (<see cref="TargetPageIndex"/>, a 0-based index into <see cref="AreaTree.Pages"/>)
+/// or an external <see cref="Uri"/>; exactly one is set. A link whose content spans several lines is
+/// recorded as one <see cref="LinkArea"/> per line, all sharing the same target.
+/// </summary>
+/// <param name="XMpt">Left edge.</param>
+/// <param name="YMpt">Top edge.</param>
+/// <param name="WidthMpt">Width.</param>
+/// <param name="HeightMpt">Height.</param>
+/// <param name="TargetPageIndex">The 0-based target page index for an internal link, or <c>null</c> for an external link.</param>
+/// <param name="Uri">The destination URI for an external link, or <c>null</c> for an internal link.</param>
+public sealed record LinkArea(
+    double XMpt,
+    double YMpt,
+    double WidthMpt,
+    double HeightMpt,
+    int? TargetPageIndex,
+    string? Uri);

@@ -260,6 +260,113 @@ public sealed class FoInline(PropertyList properties) : FObj(properties)
 }
 
 /// <summary>
+/// A basic link, <c>fo:basic-link</c>. An inline-level container whose children flow inline as
+/// ordinary content (typically styled as a link) and whose extent becomes a clickable region. The
+/// link targets either an internal area by its <see cref="InternalDestination"/> (a <c>ref-id</c>,
+/// resolved during layout to the page that id lands on) or an external <see cref="ExternalDestination"/>
+/// URI. When both are set the internal destination takes precedence (matching FOP).
+/// </summary>
+public sealed class FoBasicLink(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "basic-link";
+
+    /// <summary>
+    /// The <c>internal-destination</c>: the <c>id</c>/<c>ref-id</c> of the in-document area to link to,
+    /// or the empty string when unset. Resolved to a page during layout.
+    /// </summary>
+    public string InternalDestination => Properties.GetString("internal-destination", string.Empty).Trim();
+
+    /// <summary>
+    /// The <c>external-destination</c> URI with any <c>url(...)</c> wrapper and surrounding quotes
+    /// stripped, or the empty string when unset.
+    /// </summary>
+    public string ExternalDestination => UnwrapUri(Properties.GetString("external-destination", string.Empty));
+
+    /// <summary>Strips a CSS-style <c>url(...)</c> wrapper and surrounding quotes from a URI value.</summary>
+    internal static string UnwrapUri(string value)
+    {
+        string trimmed = value.Trim();
+        if (trimmed.StartsWith("url(", StringComparison.OrdinalIgnoreCase) && trimmed.EndsWith(')'))
+        {
+            trimmed = trimmed[4..^1].Trim();
+        }
+
+        return trimmed.Trim('\'', '"');
+    }
+}
+
+/// <summary>The <c>leader-pattern</c> of an <see cref="FoLeader"/>: what fills the leader's width.</summary>
+public enum LeaderPattern
+{
+    /// <summary>An invisible gap (the default).</summary>
+    Space,
+
+    /// <summary>A horizontal rule (a thin line) across the leader width.</summary>
+    Rule,
+
+    /// <summary>Repeated dots across the leader width (the classic TOC dot leader).</summary>
+    Dots,
+
+    /// <summary>
+    /// Repeated user content. Not modelled in this cut; treated like <see cref="Dots"/> so a leader
+    /// declared <c>use-content</c> still fills visibly.
+    /// </summary>
+    UseContent,
+}
+
+/// <summary>
+/// A leader, <c>fo:leader</c>. An inline-level token that expands to consume the remaining inline
+/// space on its line, pushing the content that follows it toward the end edge (the classic TOC
+/// "Title .......... 42"). Its <see cref="LeaderPattern"/> selects the visible fill: dots, a rule, or
+/// an invisible gap.
+/// </summary>
+public sealed class FoLeader(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "leader";
+
+    /// <summary>The resolved <c>leader-pattern</c>, defaulting to <see cref="LeaderPattern.Space"/>.</summary>
+    public LeaderPattern Pattern =>
+        Properties.GetString("leader-pattern", string.Empty).Trim().ToLowerInvariant() switch
+        {
+            "rule" => LeaderPattern.Rule,
+            "dots" => LeaderPattern.Dots,
+            "use-content" => LeaderPattern.UseContent,
+            _ => LeaderPattern.Space,
+        };
+
+    /// <summary>
+    /// The fixed <c>leader-length</c> (its optimum), or <c>null</c> when unset (the leader then
+    /// expands to fill the remaining inline space). The <c>.optimum</c> component is honoured when
+    /// present, else the shorthand.
+    /// </summary>
+    public FoLength? LeaderLength
+    {
+        get
+        {
+            string? raw = Properties.GetRaw("leader-length.optimum") ?? Properties.GetRaw("leader-length");
+            if (raw is null)
+            {
+                return null;
+            }
+
+            string trimmed = raw.Trim();
+            if (trimmed.Length == 0 || trimmed.Contains('%'))
+            {
+                // A percentage leader-length has no inline-progression base here; treat as expanding.
+                return null;
+            }
+
+            return FoLength.TryParse(trimmed, Properties.FontSizeMpt);
+        }
+    }
+
+    /// <summary>The <c>rule-thickness</c> for a rule leader, defaulting to 1pt.</summary>
+    public FoLength RuleThickness => Properties.GetLength("rule-thickness", FoLength.FromPoints(1));
+}
+
+/// <summary>
 /// The retrieve-position of an <c>fo:retrieve-marker</c>: which qualifying marker of the class on (or
 /// carried over to) the page is rendered.
 /// </summary>
