@@ -46,6 +46,14 @@ internal sealed class FlattenContext
 
     /// <summary>Invoked (in inline order) for each footnote encountered while flattening.</summary>
     public Action<FoFootnote>? OnFootnote { get; init; }
+
+    /// <summary>
+    /// Resolves an <c>fo:retrieve-marker</c> (by retrieve-class-name + retrieve-position) to the
+    /// styled words of the matching marker for the page being laid out, or <c>null</c>/empty when no
+    /// marker qualifies (the retrieve-marker then renders nothing). Only set during static-content
+    /// layout, where markers recorded by the body pass are available.
+    /// </summary>
+    public Func<string, RetrievePosition, IReadOnlyList<StyledWord>?>? ResolveMarker { get; init; }
 }
 
 /// <summary>
@@ -78,6 +86,45 @@ internal static class InlineContent
         var words = new List<StyledWord>();
         Collect(owner, words, pageNumber, context);
         return words;
+    }
+
+    /// <summary>
+    /// Flattens the content of an <see cref="FoMarker"/> into styled words. Block-level marker content
+    /// is flattened as inline text for this cut (a marker is commonly inline text such as a chapter
+    /// title), so nested <see cref="FoBlock"/>s contribute their text rather than being stacked. The
+    /// resulting words carry the styling of their owning formatting object.
+    /// </summary>
+    public static List<StyledWord> FlattenMarker(FoMarker marker)
+    {
+        var words = new List<StyledWord>();
+        CollectMarker(marker, words);
+        return words;
+    }
+
+    private static void CollectMarker(FObj owner, List<StyledWord> words)
+    {
+        FontKey font = FontKeyFor(owner);
+        FopColor color = owner.Properties.GetColor();
+
+        foreach (FONode child in owner.Children)
+        {
+            switch (child)
+            {
+                case FOText text:
+                    AppendWords(text.Text, font, color, words);
+                    break;
+
+                // A nested marker is not part of this marker's rendered content.
+                case FoMarker:
+                    break;
+
+                // Both block- and inline-level descendants contribute their text inline (block content
+                // is rendered as inline text for this cut).
+                case FObj inner:
+                    CollectMarker(inner, words);
+                    break;
+            }
+        }
     }
 
     private static void Collect(FObj owner, List<StyledWord> words, int pageNumber, FlattenContext? context)
@@ -119,6 +166,24 @@ internal static class InlineContent
                         Collect(anchor, words, pageNumber, context);
                     }
 
+                    break;
+
+                // fo:retrieve-marker renders the matching marker's content for this page (resolved via
+                // the context, available during static-content layout). It contributes the marker's
+                // own styled words, or nothing when no marker of the class qualifies.
+                case FoRetrieveMarker retrieve:
+                    IReadOnlyList<StyledWord>? marker =
+                        context?.ResolveMarker?.Invoke(retrieve.RetrieveClassName, retrieve.RetrievePosition);
+                    if (marker is not null)
+                    {
+                        words.AddRange(marker);
+                    }
+
+                    break;
+
+                // fo:marker holds running-header content that is recorded per page, never flowed in
+                // place; the engine collects it separately, so skip it here.
+                case FoMarker:
                     break;
 
                 // Nested blocks are stacked by the engine, not flowed inline here.

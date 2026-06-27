@@ -74,6 +74,12 @@ public sealed class FoSimplePageMaster(PropertyList properties) : FObj(propertie
 
     /// <summary>The after (bottom) region, if present.</summary>
     public FoRegionAfter? RegionAfter => ChildObjects.OfType<FoRegionAfter>().FirstOrDefault();
+
+    /// <summary>The start (left, in lr-tb) side region, if present.</summary>
+    public FoRegionStart? RegionStart => ChildObjects.OfType<FoRegionStart>().FirstOrDefault();
+
+    /// <summary>The end (right, in lr-tb) side region, if present.</summary>
+    public FoRegionEnd? RegionEnd => ChildObjects.OfType<FoRegionEnd>().FirstOrDefault();
 }
 
 /// <summary>The body region, <c>fo:region-body</c>.</summary>
@@ -118,6 +124,34 @@ public sealed class FoRegionAfter(PropertyList properties) : FObj(properties)
     public override string LocalName => "region-after";
 
     /// <summary>The region's extent (its band height), defaulting to zero.</summary>
+    public FoLength Extent => Properties.GetLength("extent", FoLength.Zero);
+}
+
+/// <summary>
+/// The start side region, <c>fo:region-start</c> (the left vertical band in the default lr-tb
+/// writing mode). Its <c>extent</c> is the <em>width</em> of the band reserved down the start edge of
+/// the page, between the region-before and region-after bands.
+/// </summary>
+public sealed class FoRegionStart(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "region-start";
+
+    /// <summary>The region's extent (its band width), defaulting to zero.</summary>
+    public FoLength Extent => Properties.GetLength("extent", FoLength.Zero);
+}
+
+/// <summary>
+/// The end side region, <c>fo:region-end</c> (the right vertical band in the default lr-tb writing
+/// mode). Its <c>extent</c> is the <em>width</em> of the band reserved down the end edge of the page,
+/// between the region-before and region-after bands.
+/// </summary>
+public sealed class FoRegionEnd(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "region-end";
+
+    /// <summary>The region's extent (its band width), defaulting to zero.</summary>
     public FoLength Extent => Properties.GetLength("extent", FoLength.Zero);
 }
 
@@ -209,6 +243,13 @@ public sealed class FoBlock(PropertyList properties) : FObj(properties)
 
     /// <summary>The resolved box-model properties (borders, padding, background colour).</summary>
     public BoxProperties Box => Properties.GetBox();
+
+    /// <summary>
+    /// The <c>fo:marker</c> children of this block, in document order. Markers carry running-header
+    /// content that is <em>not</em> rendered in place; the layout engine records them per page so a
+    /// matching <c>fo:retrieve-marker</c> in a region's static content can render them.
+    /// </summary>
+    public IEnumerable<FoMarker> Markers => ChildObjects.OfType<FoMarker>();
 }
 
 /// <summary>An inline, <c>fo:inline</c>.</summary>
@@ -216,6 +257,72 @@ public sealed class FoInline(PropertyList properties) : FObj(properties)
 {
     /// <inheritdoc/>
     public override string LocalName => "inline";
+}
+
+/// <summary>
+/// The retrieve-position of an <c>fo:retrieve-marker</c>: which qualifying marker of the class on (or
+/// carried over to) the page is rendered.
+/// </summary>
+public enum RetrievePosition
+{
+    /// <summary>The first marker of the class that starts within the page (the default).</summary>
+    FirstStartingWithinPage,
+
+    /// <summary>
+    /// The first marker of the class that starts within the page, falling back to the last marker
+    /// of the class that was carried over (started on an earlier page) when none starts on this page.
+    /// </summary>
+    FirstIncludingCarryover,
+
+    /// <summary>The last marker of the class that starts within the page.</summary>
+    LastStartingWithinPage,
+
+    /// <summary>The last marker of the class that ends within the page (approximated as last-starting here).</summary>
+    LastEndingWithinPage,
+}
+
+/// <summary>
+/// A marker, <c>fo:marker</c>. A child of a flow formatting object (typically a block) that holds
+/// block/inline content which is <em>not</em> rendered in place; instead it is recorded per page so a
+/// matching <see cref="FoRetrieveMarker"/> in a region's static content can render it (a running
+/// "current chapter" header). Block-level marker content is rendered as inline text for this cut.
+/// </summary>
+public sealed class FoMarker(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "marker";
+
+    /// <summary>The <c>marker-class-name</c> grouping this marker with its retrieving counterpart.</summary>
+    public string MarkerClassName => Properties.GetString("marker-class-name", string.Empty);
+}
+
+/// <summary>
+/// A retrieve-marker, <c>fo:retrieve-marker</c>. Appears in a region's static content (a header/footer
+/// or side band) and renders, in place, the content of the matching <see cref="FoMarker"/> (by
+/// <see cref="RetrieveClassName"/>) for the page being laid out, selected per
+/// <see cref="RetrievePosition"/>. Resolves to empty when no marker of the class qualifies.
+/// </summary>
+public sealed class FoRetrieveMarker(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "retrieve-marker";
+
+    /// <summary>The <c>retrieve-class-name</c> naming the marker class to render.</summary>
+    public string RetrieveClassName => Properties.GetString("retrieve-class-name", string.Empty);
+
+    /// <summary>
+    /// The <c>retrieve-position</c>, defaulting to <see cref="RetrievePosition.FirstStartingWithinPage"/>.
+    /// Both the FO 1.0 keywords (e.g. <c>first-starting-within-page</c>) and the
+    /// <c>retrieve-boundary</c>-era spellings are accepted.
+    /// </summary>
+    public RetrievePosition RetrievePosition =>
+        Properties.GetString("retrieve-position", string.Empty).Trim().ToLowerInvariant() switch
+        {
+            "first-including-carryover" => RetrievePosition.FirstIncludingCarryover,
+            "last-starting-within-page" => RetrievePosition.LastStartingWithinPage,
+            "last-ending-within-page" => RetrievePosition.LastEndingWithinPage,
+            _ => RetrievePosition.FirstStartingWithinPage,
+        };
 }
 
 /// <summary>

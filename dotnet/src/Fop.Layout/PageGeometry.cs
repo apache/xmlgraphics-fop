@@ -33,6 +33,12 @@ namespace Fop.Layout;
 /// <param name="RegionBeforeExtentMpt">Height of the region-before band (its <c>extent</c>).</param>
 /// <param name="RegionAfterTopMpt">Top edge of the region-after band.</param>
 /// <param name="RegionAfterExtentMpt">Height of the region-after band (its <c>extent</c>).</param>
+/// <param name="RegionStartLeftMpt">Left edge of the region-start (left) side band (the page left margin).</param>
+/// <param name="RegionStartExtentMpt">Width of the region-start side band (its <c>extent</c>).</param>
+/// <param name="RegionEndLeftMpt">Left edge of the region-end (right) side band.</param>
+/// <param name="RegionEndExtentMpt">Width of the region-end side band (its <c>extent</c>).</param>
+/// <param name="SideRegionTopMpt">Top edge of the side bands (below the region-before band).</param>
+/// <param name="SideRegionHeightMpt">Height of the side bands (between the before and after bands).</param>
 internal readonly record struct PageGeometry(
     double PageWidthMpt,
     double PageHeightMpt,
@@ -45,7 +51,13 @@ internal readonly record struct PageGeometry(
     double RegionBeforeTopMpt,
     double RegionBeforeExtentMpt,
     double RegionAfterTopMpt,
-    double RegionAfterExtentMpt)
+    double RegionAfterExtentMpt,
+    double RegionStartLeftMpt,
+    double RegionStartExtentMpt,
+    double RegionEndLeftMpt,
+    double RegionEndExtentMpt,
+    double SideRegionTopMpt,
+    double SideRegionHeightMpt)
 {
     /// <summary>Right edge of the body content rectangle.</summary>
     public double ContentRightMpt => ContentLeftMpt + ContentWidthMpt;
@@ -63,15 +75,22 @@ internal readonly record struct PageGeometry(
     /// equal to the region-before <c>extent</c>; the region-after band sits at the bottom, above the
     /// page bottom margin, with height equal to the region-after <c>extent</c>. The body content
     /// rectangle is inset by the region-body margins; standard practice requires the region-body
-    /// margin-top/bottom be at least the respective extents so the body does not overlap the bands.
-    /// This engine does not enforce that overlap constraint -- it trusts the FO author to set it.
+    /// margin-top/bottom be at least the before/after extents, and margin-left/right at least the
+    /// region-start/end extents, so the body does not overlap the bands. This engine does not enforce
+    /// that overlap constraint -- it trusts the FO author to set it.
+    /// <para>
+    /// The region-start band is the left vertical band of width = its <c>extent</c>; the region-end
+    /// band is the right vertical band. Both sit between the region-before and region-after bands
+    /// vertically and within the page left/right margins horizontally.
+    /// </para>
     /// </remarks>
     public static PageGeometry Resolve(FoSimplePageMaster? master)
     {
         if (master is null)
         {
             return new PageGeometry(DefaultWidth, DefaultHeight, 0, 0, DefaultWidth, DefaultHeight,
-                0, DefaultWidth, 0, 0, DefaultHeight, 0);
+                0, DefaultWidth, 0, 0, DefaultHeight, 0,
+                0, 0, DefaultWidth, 0, 0, DefaultHeight);
         }
 
         double pageWidth = master.PageWidth.Millipoints;
@@ -103,7 +122,16 @@ internal readonly record struct PageGeometry(
         double beforeTop = marginTop;
         double afterTop = pageHeight - marginBottom - afterExtent;
 
+        // Side bands: left/right vertical strips of width = extent, between the before/after bands.
+        double startExtent = master.RegionStart?.Extent.Millipoints ?? 0;
+        double endExtent = master.RegionEnd?.Extent.Millipoints ?? 0;
+        double startLeft = marginLeft;
+        double endLeft = pageWidth - marginRight - endExtent;
+        double sideTop = beforeTop + beforeExtent;
+        double sideHeight = Math.Max(0, afterTop - sideTop);
+
         return new PageGeometry(pageWidth, pageHeight, left, top, width, height,
-            regionLeft, regionWidth, beforeTop, beforeExtent, afterTop, afterExtent);
+            regionLeft, regionWidth, beforeTop, beforeExtent, afterTop, afterExtent,
+            startLeft, startExtent, endLeft, endExtent, sideTop, sideHeight);
     }
 }

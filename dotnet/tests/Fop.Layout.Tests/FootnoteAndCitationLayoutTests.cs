@@ -205,7 +205,7 @@ public sealed class FootnoteAndCitationLayoutTests
             "</fo:footnote></fo:block>");
         AreaTree with = LayOut(withFootnote);
 
-        Assert.Equal(1, without.Pages.Count);
+        Assert.Single(without.Pages);
         Assert.True(with.Pages.Count > without.Pages.Count,
             $"footnote reserve should force pagination: without={without.Pages.Count} with={with.Pages.Count}");
     }

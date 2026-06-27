@@ -52,6 +52,37 @@ public sealed class LayoutEngine
     /// <summary>Whether a citation resolver is active (pass 2). On pass 1 citations render a placeholder.</summary>
     private bool resolving;
 
+    // ----- Marker collection state --------------------------------------------------------
+    //
+    // fo:marker content is recorded per page as the body flow places the block that carries it, much
+    // like ids are recorded. For each page we keep, per marker-class, the FIRST and LAST marker that
+    // STARTED on that page (in document order), plus a running "carryover": the last marker of each
+    // class seen on this or any earlier page of the sequence. A fo:retrieve-marker in a region's
+    // static content for page P then resolves against that page's record (with carryover fallback).
+    //
+    // The store is rebuilt on every pass (layout is deterministic). Markers are keyed by the PageArea
+    // object so a page number reused across sequences (via initial-page-number) cannot collide.
+
+    /// <summary>The per-page marker records for the pass currently running, keyed by page area.</summary>
+    private readonly Dictionary<PageArea, PageMarkers> markersByPage = new(ReferenceEqualityComparer.Instance);
+
+    /// <summary>The flattened content of one recorded marker.</summary>
+    private readonly record struct MarkerContent(IReadOnlyList<StyledWord> Words);
+
+    /// <summary>
+    /// The markers recorded for a single page: per class, the first and last marker that started on
+    /// the page, and the running carryover (the last marker of the class seen on this or an earlier
+    /// page of the sequence).
+    /// </summary>
+    private sealed class PageMarkers
+    {
+        public Dictionary<string, MarkerContent> First { get; } = new(StringComparer.Ordinal);
+
+        public Dictionary<string, MarkerContent> Last { get; } = new(StringComparer.Ordinal);
+
+        public Dictionary<string, MarkerContent> Carryover { get; } = new(StringComparer.Ordinal);
+    }
+
     /// <summary>Creates a layout engine that measures text via <paramref name="measurer"/>.</summary>
     public LayoutEngine(IFontMeasurer measurer)
     {
@@ -77,13 +108,16 @@ public sealed class LayoutEngine
         // Pass 1: measure-only. Build the id-to-page map; citations render the placeholder.
         resolving = false;
         currentIds = new Dictionary<string, int>(StringComparer.Ordinal);
+        markersByPage.Clear();
         _ = LayOutAllSequences(root);
         resolvedIds = currentIds;
 
         // Pass 2: resolved. Re-lay with the citation resolver active. Layout is deterministic, so the
-        // page each id lands on is identical to pass 1; the resolver reads the pass-1 map.
+        // page each id lands on is identical to pass 1; the resolver reads the pass-1 map. Markers are
+        // re-collected against the pass-2 page areas so static content resolves against this tree.
         resolving = true;
         currentIds = new Dictionary<string, int>(StringComparer.Ordinal);
+        markersByPage.Clear();
         return LayOutAllSequences(root);
     }
 
@@ -165,6 +199,91 @@ public sealed class LayoutEngine
     /// <summary>The declared <c>id</c> attribute of an object (keyed by local name), or empty if unset.</summary>
     private static string IdOf(FObj obj) => obj.Properties.GetString("id", string.Empty);
 
+    /// <summary>Returns (creating if needed) the marker record for <paramref name="page"/>.</summary>
+    private PageMarkers MarkersFor(PageArea page)
+    {
+        if (!markersByPage.TryGetValue(page, out PageMarkers? record))
+        {
+            record = new PageMarkers();
+            markersByPage[page] = record;
+        }
+
+        return record;
+    }
+
+    /// <summary>
+    /// Records every <c>fo:marker</c> carried by <paramref name="block"/> against the page it starts
+    /// on (<paramref name="page"/>), in document order: the first marker of a class on the page wins
+    /// the "first" slot, the last wins the "last" slot, and the running per-class
+    /// <paramref name="carryover"/> (the last marker of the class seen so far in the sequence) is
+    /// updated. The marker's block/inline content is flattened to styled words once, here.
+    /// </summary>
+    private void RecordMarkersOnPage(FoBlock block, PageArea page, Dictionary<string, MarkerContent> carryover)
+    {
+        PageMarkers record = MarkersFor(page);
+        foreach (FoMarker marker in block.Markers)
+        {
+            string cls = marker.MarkerClassName;
+            if (cls.Length == 0)
+            {
+                continue;
+            }
+
+            var content = new MarkerContent(InlineContent.FlattenMarker(marker));
+            if (!record.First.ContainsKey(cls))
+            {
+                record.First[cls] = content;
+            }
+
+            record.Last[cls] = content;
+            carryover[cls] = content;
+        }
+    }
+
+    /// <summary>
+    /// Resolves an <c>fo:retrieve-marker</c> for <paramref name="page"/>: the first/last marker of
+    /// <paramref name="retrieveClassName"/> that started on the page per <paramref name="position"/>,
+    /// falling back to the page's carryover (the last marker of the class from an earlier page) for
+    /// the carryover and last positions. Returns <c>null</c> when nothing qualifies (render empty).
+    /// </summary>
+    private IReadOnlyList<StyledWord>? ResolveMarker(PageArea page, string retrieveClassName,
+        RetrievePosition position)
+    {
+        if (!markersByPage.TryGetValue(page, out PageMarkers? record))
+        {
+            return null;
+        }
+
+        switch (position)
+        {
+            case RetrievePosition.FirstStartingWithinPage:
+                // First on the page only; no carryover fallback.
+                return record.First.TryGetValue(retrieveClassName, out MarkerContent f) ? f.Words : null;
+
+            case RetrievePosition.FirstIncludingCarryover:
+                // First on the page, else the carried-over last marker from an earlier page.
+                if (record.First.TryGetValue(retrieveClassName, out MarkerContent fc))
+                {
+                    return fc.Words;
+                }
+
+                return record.Carryover.TryGetValue(retrieveClassName, out MarkerContent fco)
+                    ? fco.Words : null;
+
+            case RetrievePosition.LastStartingWithinPage:
+            case RetrievePosition.LastEndingWithinPage:
+            default:
+                // Last on the page, else the carried-over last marker from an earlier page.
+                if (record.Last.TryGetValue(retrieveClassName, out MarkerContent l))
+                {
+                    return l.Words;
+                }
+
+                return record.Carryover.TryGetValue(retrieveClassName, out MarkerContent lco)
+                    ? lco.Words : null;
+        }
+    }
+
     private void LayOutSequence(FoRoot root, FoPageSequence seq, AreaTree tree)
     {
         PageGeometry geometry = PageGeometry.Resolve(root.LayoutMasterSet?.GetSimplePageMaster(seq.MasterReference));
@@ -212,7 +331,9 @@ public sealed class LayoutEngine
         // that page's 1-based number (so a fo:page-number in a header increments across pages).
         FoStaticContent? before = seq.GetStaticContent("xsl-region-before");
         FoStaticContent? after = seq.GetStaticContent("xsl-region-after");
-        if (before is not null || after is not null)
+        FoStaticContent? start = seq.GetStaticContent("xsl-region-start");
+        FoStaticContent? end = seq.GetStaticContent("xsl-region-end");
+        if (before is not null || after is not null || start is not null || end is not null)
         {
             for (int i = firstPageIndex; i < tree.Pages.Count; i++)
             {
@@ -220,12 +341,28 @@ public sealed class LayoutEngine
                 PageArea page = tree.Pages[i];
                 if (before is not null)
                 {
-                    LayOutStaticContent(before, page, geometry, geometry.RegionBeforeTopMpt, pageNumber);
+                    LayOutStaticContent(before, page, geometry, geometry.RegionLeftMpt,
+                        geometry.RegionWidthMpt, geometry.RegionBeforeTopMpt, pageNumber);
                 }
 
                 if (after is not null)
                 {
-                    LayOutStaticContent(after, page, geometry, geometry.RegionAfterTopMpt, pageNumber);
+                    LayOutStaticContent(after, page, geometry, geometry.RegionLeftMpt,
+                        geometry.RegionWidthMpt, geometry.RegionAfterTopMpt, pageNumber);
+                }
+
+                // Side regions: the start (left) and end (right) vertical bands, laid out into their
+                // band width and flushed at the band's top-left corner.
+                if (start is not null)
+                {
+                    LayOutStaticContent(start, page, geometry, geometry.RegionStartLeftMpt,
+                        geometry.RegionStartExtentMpt, geometry.SideRegionTopMpt, pageNumber);
+                }
+
+                if (end is not null)
+                {
+                    LayOutStaticContent(end, page, geometry, geometry.RegionEndLeftMpt,
+                        geometry.RegionEndExtentMpt, geometry.SideRegionTopMpt, pageNumber);
                 }
             }
         }
@@ -233,20 +370,26 @@ public sealed class LayoutEngine
 
     /// <summary>
     /// Lays out the block-level children of a <see cref="FoStaticContent"/> into a region band of the
-    /// given page, with its content top-aligned at <paramref name="bandTopMpt"/> and the page number
-    /// fixed at <paramref name="pageNumber"/>. The same block-stacking/line-breaking mechanism the body
-    /// flow uses is reused via a relocatable buffer (so the band never paginates), then flushed to the
-    /// page at the band origin.
+    /// given page: its content is left-aligned at <paramref name="bandLeftMpt"/>, top-aligned at
+    /// <paramref name="bandTopMpt"/>, laid out at <paramref name="bandWidthMpt"/> wide, with the page
+    /// number fixed at <paramref name="pageNumber"/>. The same block-stacking/line-breaking mechanism
+    /// the body flow uses is reused via a relocatable buffer (so the band never paginates), then
+    /// flushed to the page at the band origin. A <c>fo:page-number</c> resolves to the page number and a
+    /// <c>fo:retrieve-marker</c> to the matching marker recorded for this page.
     /// </summary>
     private void LayOutStaticContent(FoStaticContent content, PageArea page, PageGeometry geometry,
-        double bandTopMpt, int pageNumber)
+        double bandLeftMpt, double bandWidthMpt, double bandTopMpt, int pageNumber)
     {
         // A throwaway flow context drives the shared block walk; the band itself never paginates, so
         // the content is collected into a relocatable buffer and flushed to the page at the band origin.
-        var flow = new FlowContext(this, geometry, new AreaTree(), pageNumber);
+        // The context carries a marker resolver bound to this page so retrieve-markers resolve.
+        var flow = new FlowContext(this, geometry, new AreaTree(), pageNumber)
+        {
+            MarkerResolver = (cls, position) => ResolveMarker(page, cls, position),
+        };
         var buffer = new BufferedSink();
-        flow.LayOutStaticBlocks(content, geometry.RegionWidthMpt, buffer);
-        buffer.FlushTo(new PageSink(page), geometry.RegionLeftMpt, bandTopMpt);
+        flow.LayOutStaticBlocks(content, bandWidthMpt, buffer);
+        buffer.FlushTo(new PageSink(page), bandLeftMpt, bandTopMpt);
     }
 
     // ----- Greedy line fill -----------------------------------------------------------------
@@ -518,6 +661,21 @@ public sealed class LayoutEngine
         /// </summary>
         private int currentPageNumber = initialPageNumber;
 
+        /// <summary>
+        /// The running per-class marker carryover for this sequence: the last marker of each class
+        /// seen on this or any earlier page. Snapshotted into each new page's carryover record so a
+        /// retrieve-marker on a page with no marker of the class can fall back to an earlier one.
+        /// </summary>
+        private readonly Dictionary<string, MarkerContent> markerCarryover = new(StringComparer.Ordinal);
+
+        /// <summary>
+        /// Resolves an <c>fo:retrieve-marker</c> (retrieve-class-name + retrieve-position) to the
+        /// styled words to render, or <c>null</c> when none qualifies. Set only on the throwaway
+        /// context used for static-content layout, where it is bound to that page's marker record;
+        /// <c>null</c> in the body flow (a retrieve-marker in the body renders nothing).
+        /// </summary>
+        public Func<string, RetrievePosition, IReadOnlyList<StyledWord>?>? MarkerResolver { get; init; }
+
         // ----- Footnotes ------------------------------------------------------------------------
         //
         // Footnotes are placed at the bottom of the page their anchor lands on, above the region-after
@@ -766,6 +924,13 @@ public sealed class LayoutEngine
             if (target.CanPaginate)
             {
                 engine.RecordIdsOnPage(block, currentPageNumber);
+
+                // Record this block's fo:marker children against the page it begins on (for
+                // retrieve-marker resolution), updating the sequence's running carryover. Markers are
+                // only collected in the paginating flow -- a block laid into a relocatable buffer (a
+                // table cell, footnote body, kept block) has no page to attribute them to.
+                EnsurePage();
+                engine.RecordMarkersOnPage(block, page!, markerCarryover);
             }
 
             BoxProperties box = block.Box;
@@ -790,6 +955,7 @@ public sealed class LayoutEngine
             {
                 ResolveCitation = engine.ResolveCitation,
                 OnFootnote = target.CanPaginate ? ReserveFootnote : null,
+                ResolveMarker = MarkerResolver,
             };
             List<StyledWord> words = InlineContent.Flatten(block, currentPageNumber, flatten);
             if (words.Count > 0)
@@ -1472,6 +1638,15 @@ public sealed class LayoutEngine
             page = new PageArea(geometry.PageWidthMpt, geometry.PageHeightMpt);
             tree.AddPage(page);
             cursorY = geometry.ContentTopMpt;
+
+            // Snapshot the running carryover (markers from earlier pages of this sequence) into the new
+            // page's record, so a retrieve-marker on this page can fall back to an earlier marker even
+            // when nothing of its class starts here.
+            Dictionary<string, MarkerContent> carryover = engine.MarkersFor(page).Carryover;
+            foreach (var (cls, content) in markerCarryover)
+            {
+                carryover[cls] = content;
+            }
         }
 
         /// <summary>

@@ -170,11 +170,15 @@ public static class FoTreeBuilder
         "region-body" => new FoRegionBody(properties),
         "region-before" => new FoRegionBefore(properties),
         "region-after" => new FoRegionAfter(properties),
+        "region-start" => new FoRegionStart(properties),
+        "region-end" => new FoRegionEnd(properties),
         "page-sequence" => new FoPageSequence(properties),
         "flow" => new FoFlow(properties),
         "static-content" => new FoStaticContent(properties),
         "block" => new FoBlock(properties),
         "inline" => new FoInline(properties),
+        "marker" => new FoMarker(properties),
+        "retrieve-marker" => new FoRetrieveMarker(properties),
         "page-number" => new FoPageNumber(properties),
         "page-number-citation" => new FoPageNumberCitation(properties),
         "page-number-citation-last" => new FoPageNumberCitationLast(properties),
@@ -195,7 +199,7 @@ public static class FoTreeBuilder
         _ => new FoGeneric(properties, localName),
     };
 
-    private static bool IsContentContainer(FObj obj) => obj is FoBlock or FoInline or FoGeneric;
+    private static bool IsContentContainer(FObj obj) => obj is FoBlock or FoInline or FoGeneric or FoMarker;
 
     /// <summary>Collapses runs of XSL-FO whitespace to a single space (the default behaviour).</summary>
     public static string CollapseWhitespace(string text)
