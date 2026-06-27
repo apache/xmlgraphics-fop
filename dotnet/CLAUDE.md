@@ -174,9 +174,14 @@ A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subse
 - a **property-expression evaluator** (`fo.expr`: arithmetic with `div`/`mod`, units, `from-parent`,
   `inherited-property-value`, `max`/`min`/`abs`/`round`, `rgb`, …) feeding `PropertyList`;
 - **hyphenation** (Liang algorithm over the ported `TernaryTree`, embedded English patterns) wired
-  into line breaking when `hyphenate="true"`.
+  into line breaking when `hyphenate="true"`;
+- **Knuth–Plass total-fit line breaking** (box/glue/penalty model + active-node DP, the algorithm
+  FOP itself uses) as the default paragraph breaker;
+- **custom-font registration** — register TTF/OTF fonts by family/style (or scan a directory, with
+  OpenType `name`-table family detection) so documents use real embedded fonts, Liberation as the
+  built-in fallback; the measurer and PdfSharp resolver share one registry.
 
-The solution has 12 library projects and **801 passing tests** on .NET 10. See `samples/hello.fo`
+The solution has 12 library projects and **816 passing tests** on .NET 10. See `samples/hello.fo`
 (a clickable TOC with leaders, links, a marker header, and page-number citations).
 
 ---

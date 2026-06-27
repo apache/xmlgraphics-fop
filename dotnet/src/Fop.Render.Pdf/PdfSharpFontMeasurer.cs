@@ -22,8 +22,10 @@ namespace Fop.Render.Pdf;
 
 /// <summary>
 /// An <see cref="IFontMeasurer"/> implemented with PdfSharp, so that layout measurement and PDF
-/// rendering use exactly the same font metrics. Resolves fonts via the
-/// <see cref="LiberationFontResolver"/>.
+/// rendering use exactly the same font metrics. Resolves fonts via the global
+/// <see cref="FopFontResolver"/>, which consults the shared <see cref="FontRegistry"/> first and
+/// falls back to the embedded Liberation faces. Because measurement and rendering both build their
+/// <c>XFont</c> through that one resolver, the metrics and the embedded face always agree.
 /// </summary>
 public sealed class PdfSharpFontMeasurer : IFontMeasurer
 {
@@ -31,15 +33,27 @@ public sealed class PdfSharpFontMeasurer : IFontMeasurer
     private readonly ConcurrentDictionary<FontKey, XFont> fontCache = new();
     private readonly Lock measureLock = new();
 
-    /// <summary>Creates the measurer and ensures the font resolver is installed.</summary>
+    /// <summary>Creates the measurer and ensures the FOP font resolver is installed.</summary>
     public PdfSharpFontMeasurer()
     {
-        LiberationFontResolver.EnsureInstalled();
+        FopFontResolver.EnsureInstalled();
+        Registry = FopFontResolver.Shared.Registry;
         // A scratch page provides an XGraphics for text measurement.
         var doc = new PdfDocument();
         PdfPage page = doc.AddPage();
         measureSurface = XGraphics.FromPdfPage(page);
     }
+
+    /// <summary>The font registry shared with the resolver, so callers can register custom fonts.</summary>
+    public FontRegistry Registry { get; }
+
+    /// <summary>
+    /// Returns the face name the resolver would use for <paramref name="font"/>: a registered custom
+    /// face if one matches, otherwise the embedded Liberation face. Exposed so tests can assert the
+    /// measurer and resolver agree on the same face for a given <see cref="FontKey"/>.
+    /// </summary>
+    public string ResolveFaceName(FontKey font)
+        => FopFontResolver.Shared.ResolveTypeface(font.Family, font.IsBold, font.IsItalic)!.FaceName;
 
     /// <summary>Returns (creating and caching) the PdfSharp font for a <see cref="FontKey"/>.</summary>
     public XFont GetXFont(FontKey font) => fontCache.GetOrAdd(font, static key =>

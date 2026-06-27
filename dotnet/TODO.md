@@ -60,7 +60,9 @@ package, as a rough size signal.
       `FontCache`, `FontManager`, `FontDetector` — the loading/instantiation machinery.
 - [ ] TrueType/OpenType/Type1 loading & metrics via **SixLabors.Fonts** (replacing FOP's own parsers
       where practical; port the parsers where embedding needs raw tables).
-- [ ] Font embedding/subsetting hooks for the PDF/PS/AFP renderers.
+- [x] Custom-font registration in `Fop.Render.Pdf` (register TTF/OTF by family/style or scan a
+      directory with OpenType name-table detection; PdfSharp embeds them; Liberation fallback).
+- [ ] Font subsetting hooks for the PDF/PS/AFP renderers (PdfSharp embeds full faces today).
 - [ ] `FontEventListener` wiring (currently stubbed in `Typeface`/`FontInfo`).
 - [ ] `Fop.ComplexScripts` (bidi + shaping; `IPositionable`/`ISubstitutable` stand-ins exist) — large;
       can be deferred behind a feature flag.
@@ -98,8 +100,8 @@ package, as a rough size signal.
       footnote reserve reduces body height.
 - [x] **`fo:page-number-citation`/`-last`**: forward/backward `ref-id` references resolved via a
       two-pass layout (unknown ref-ids → "?").
-- [ ] Knuth total-fit line/page breaking, floats, intra-row splitting, multi-region side regions
-      (start/end), markers/`retrieve-marker`. (Residual TODOs: footnote reserve is greedy not
+- [x] **Knuth–Plass total-fit** line breaking (box/glue/penalty + active-node DP) as the default.
+- [ ] Total-fit *page* breaking, floats, intra-row splitting. (Residual TODOs: footnote reserve is greedy not
       iterative; a row-spanning cell crossing a page break paints on its origin page only; ids inside
       buffered contexts (cells/footnote bodies) aren't recorded for citations; citation-last uses the
       single recorded page under the flat model.)

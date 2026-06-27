@@ -17,6 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Expose internal helpers (font name-table parsing) to the rendering test project. -->
+    <InternalsVisibleTo Include="Fop.Rendering.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Liberation fonts embedded so the default resolver works on any platform. -->
     <EmbeddedResource Include="Fonts\*.ttf" />
   </ItemGroup>
