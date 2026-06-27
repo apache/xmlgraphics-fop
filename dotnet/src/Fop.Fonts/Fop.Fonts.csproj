@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Fop.Fonts</RootNamespace>
+    <Description>Foundation value types of the font subsystem for the C# port of Apache FOP (FontType, FontTriplet, FontUtil, Typeface and the IFontMetrics interface).</Description>
+  </PropertyGroup>
+
+</Project>
