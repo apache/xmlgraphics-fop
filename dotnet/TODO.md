@@ -23,17 +23,29 @@ package, as a rough size signal.
 - [x] `Fop.Events` — `Event`, `EventSeverity`, `IEventListener`, `IEventBroadcaster`,
       `CompositeEventListener`, `DefaultEventBroadcaster` (DispatchProxy producers), `EventException`.
 - [x] Tests: `BasicEventTests` (mirrors `BasicEventTestCase`), `CharUtilitiesTests`, `CompareUtilTests`.
-- [ ] Remaining `org.apache.fop.util` helpers: `StringUtils`, `HexEncoder`, `ListUtil`,
-      `LanguageTags`, `ConversionUtils`, `XMLUtil`, `ColorUtil`, `QName`, `DataURLUtil`, …
-- [ ] `fop-util` text: `AdvancedMessageFormat`, `XMLResourceBundle` (needed by `EventFormatter`).
+- [x] `org.apache.fop.util` helpers: `StringUtils`, `HexEncoder`, `ListUtil`, `LanguageTags`,
+      `ConversionUtils`, `XMLUtil`, `QName`, `UnitConv` (+ a `Locale` stand-in). `UnitConv` uses
+      `System.Numerics.Matrix3x2` in place of `AffineTransform`.
+- [ ] More `org.apache.fop.util`: `ColorUtil`, `DataURLUtil`, `XMLResourceBundle`, `LogUtil`,
+      `ContentHandlerFactory*`, `CompareUtil` (done), color helpers.
+- [ ] `fop-util` text: `AdvancedMessageFormat` (needed by `EventFormatter`).
 - [ ] `Fop.Events` extras: `EventFormatter` (localised messages via `System.Resources`),
       `EventExceptionManager` parity, model classes if still needed.
+- [ ] Replace the `StringUtils.ISoftHyphenSupport` and `XMLUtil` SAX TODOs once the painter/SAX
+      layers are ported.
 
-## Phase 2 — Data types & traits  `[ ]`  (~2,500 LOC)
+## Phase 2 — Data types & traits  `[~]`  (~2,500 LOC)
 
-- [ ] `Fop.DataTypes`: `Length`, `Numeric`, `PercentBase`, `Fixed`/numeric, `LengthBase`, `URISpecification`.
-- [ ] `Fop.Traits`: `BorderProps`, `SpaceVal`, `MinOptMax`, `Direction`, `WritingMode`, colour traits.
-- [ ] Colour handling on top of ImageSharp / `System.Drawing`-free colour model.
+- [x] `Fop.DataTypes`: `INumeric`, `ILength`, `IPercentBase`, `IPercentBaseContext`,
+      `ICompoundDatatype`, `LengthBase`, `FODimension`, `KeepValue`, `URISpecification`,
+      `SimplePercentBaseContext`, `ValidationPercentBaseContext` (+ temporary
+      `Fop.Fo.Expr.PropertyException` stand-in).
+- [x] `Fop.Traits`: `MinOptMax` (readonly record struct), `Direction`, `WritingMode`,
+      `BorderStyle`, `RuleStyle`, `Visibility`, `ITraitEnum`.
+- [ ] `Fop.Traits` remainder: `BorderProps`, `SpaceVal`, `WritingModeTraits*` (need colour + length
+      + property layers).
+- [ ] Colour handling on top of ImageSharp / `System.Drawing`-free colour model (`ColorUtil`,
+      `ColorWithFallback`, `OCAColor`).
 
 ## Phase 3 — Fonts  `[ ]`  (~26,000 LOC)
 
