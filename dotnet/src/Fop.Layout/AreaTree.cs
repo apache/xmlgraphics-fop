@@ -36,7 +36,35 @@ public sealed class AreaTree
         ArgumentNullException.ThrowIfNull(page);
         pages.Add(page);
     }
+
+    /// <summary>
+    /// The document outline (PDF bookmarks): the top-level <see cref="OutlineEntry"/> roots built from
+    /// the FO tree's <c>fo:bookmark-tree</c>, or an empty list when the document has no bookmark tree.
+    /// Each entry may carry nested children. Renderers emit this as the PDF navigation tree.
+    /// </summary>
+    public IReadOnlyList<OutlineEntry> Outline { get; internal set; } = [];
 }
+
+/// <summary>
+/// One entry in the document outline (a PDF bookmark). Targets a page by 0-based
+/// <see cref="TargetPageIndex"/> (an index into <see cref="AreaTree.Pages"/>) or, when it only has an
+/// external <see cref="Uri"/>, carries that instead. <see cref="Open"/> reflects the bookmark's
+/// <c>starting-state</c> (expanded when <c>show</c>). <see cref="Children"/> holds nested entries.
+/// </summary>
+/// <param name="Title">The bookmark's label text.</param>
+/// <param name="TargetPageIndex">
+/// The 0-based target page index, or <c>null</c> when the bookmark's internal-destination did not
+/// resolve to a page (an unknown/missing ref-id) and it has no usable page target.
+/// </param>
+/// <param name="Uri">The external destination URI for a URI-only bookmark, or <c>null</c> otherwise.</param>
+/// <param name="Open">Whether the entry opens expanded (its children visible).</param>
+/// <param name="Children">The nested child entries, in document order.</param>
+public sealed record OutlineEntry(
+    string Title,
+    int? TargetPageIndex,
+    string? Uri,
+    bool Open,
+    IReadOnlyList<OutlineEntry> Children);
 
 /// <summary>A single laid-out page and its positioned content.</summary>
 public sealed class PageArea

@@ -45,9 +45,13 @@ public sealed class PdfRenderer
         using var document = new PdfDocument();
         var baseline = new XStringFormat { Alignment = XStringAlignment.Near, LineAlignment = XLineAlignment.BaseLine };
 
+        // The PdfPage of each area-tree page, by 0-based index, so outline entries can target pages.
+        var pdfPages = new List<PdfPage>(tree.Pages.Count);
+
         foreach (PageArea pageArea in tree.Pages)
         {
             PdfPage page = document.AddPage();
+            pdfPages.Add(page);
             page.Width = XUnit.FromPoint(pageArea.WidthMpt / MptPerPoint);
             page.Height = XUnit.FromPoint(pageArea.HeightMpt / MptPerPoint);
 
@@ -95,7 +99,46 @@ public sealed class PdfRenderer
             }
         }
 
+        // Emit the document outline (PDF bookmarks) after the pages exist, so each entry can point at
+        // its target PdfPage. Guarded so we never touch document.Outlines when there is nothing to add:
+        // the getter materializes an /Outlines catalog entry, which we avoid for bookmark-free documents.
+        if (tree.Outline.Count > 0 && pdfPages.Count > 0)
+        {
+            AddOutline(document.Outlines, tree.Outline, pdfPages);
+        }
+
         document.Save(output);
+    }
+
+    /// <summary>
+    /// Adds <paramref name="entries"/> to <paramref name="collection"/> (the document's top-level
+    /// outline collection, or a parent entry's child collection) as PdfSharp outline nodes, recursing
+    /// into each entry's children. Each entry targets the <see cref="PdfPage"/> at its
+    /// <see cref="OutlineEntry.TargetPageIndex"/>; an entry whose target is missing falls back to the
+    /// first page so it stays clickable. <see cref="PdfOutline.Outlines"/> holds an entry's children.
+    /// </summary>
+    private static void AddOutline(PdfOutlineCollection collection, IReadOnlyList<OutlineEntry> entries,
+        IReadOnlyList<PdfPage> pdfPages)
+    {
+        if (entries.Count == 0 || pdfPages.Count == 0)
+        {
+            return;
+        }
+
+        foreach (OutlineEntry entry in entries)
+        {
+            // Map the 0-based target page index to its PdfPage. PdfSharp outlines are page-targeted and
+            // require a destination page, so we clamp to a valid page and default to the first page when
+            // the entry has no resolved target (e.g. an unresolved ref-id or a URI-only bookmark).
+            // TODO: external-destination bookmarks cannot be expressed as a web link in a PdfSharp
+            // outline node (outlines are page destinations), so a URI-only bookmark navigates to a page
+            // rather than opening the URI.
+            int index = entry.TargetPageIndex is int i && i >= 0 && i < pdfPages.Count ? i : 0;
+            PdfPage destination = pdfPages[index];
+
+            PdfOutline node = collection.Add(entry.Title, destination, entry.Open);
+            AddOutline(node.Outlines, entry.Children, pdfPages);
+        }
     }
 
     private static void DrawImage(XGraphics gfx, ImageRun image)

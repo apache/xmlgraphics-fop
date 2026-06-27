@@ -139,7 +139,73 @@ public sealed class LayoutEngine
         currentIds = new Dictionary<string, int>(StringComparer.Ordinal);
         currentPageIndexes = new Dictionary<string, int>(StringComparer.Ordinal);
         markersByPage.Clear();
-        return LayOutAllSequences(root);
+        AreaTree tree = LayOutAllSequences(root);
+
+        // The document is now fully laid out and the id-to-page-index map (resolvedPageIndexes) is
+        // populated. Walk the fo:bookmark-tree (if any) to build the outline, resolving each bookmark's
+        // internal-destination to the page its target id lands on. Left empty when there is no tree.
+        tree.Outline = BuildOutline(root, tree.Pages.Count);
+        return tree;
+    }
+
+    /// <summary>
+    /// Builds the document outline (PDF bookmarks) from <paramref name="root"/>'s
+    /// <c>fo:bookmark-tree</c>, or an empty list when none is present. Each <c>fo:bookmark</c> becomes
+    /// an <see cref="OutlineEntry"/>: its title is the flattened <c>fo:bookmark-title</c> text, its
+    /// <see cref="OutlineEntry.Open"/> follows <c>starting-state</c> (show =&gt; open), and its target is
+    /// resolved from <c>internal-destination</c> via the pass-1 id-to-page-index map. Child bookmarks
+    /// recurse to nested entries.
+    /// </summary>
+    /// <remarks>
+    /// Target resolution:
+    /// <list type="bullet">
+    /// <item>An <c>internal-destination</c> ref-id that resolves maps to that 0-based page index.</item>
+    /// <item>A bookmark with only an <c>external-destination</c> carries that URI and, so the entry is
+    /// still navigable in renderers whose outlines are page-targeted, targets the first page (index 0).</item>
+    /// <item>An unresolved internal ref-id (unknown/missing id) and no external destination targets the
+    /// first page when one exists (index 0), else <c>null</c> -- documented best-effort, never throws.</item>
+    /// </list>
+    /// </remarks>
+    private IReadOnlyList<OutlineEntry> BuildOutline(FoRoot root, int pageCount)
+    {
+        FoBookmarkTree? bookmarkTree = root.BookmarkTree;
+        if (bookmarkTree is null)
+        {
+            return [];
+        }
+
+        int? firstPage = pageCount > 0 ? 0 : null;
+        return [.. bookmarkTree.Bookmarks.Select(b => BuildOutlineEntry(b, firstPage))];
+    }
+
+    private OutlineEntry BuildOutlineEntry(FoBookmark bookmark, int? firstPage)
+    {
+        string title = bookmark.Title?.Text ?? string.Empty;
+        bool open = bookmark.StartingState == StartingState.Show;
+
+        // Resolve the internal-destination ref-id to a 0-based page index via the pass-1 map. When it
+        // does not resolve, fall back to the first page (best-effort) so the entry stays navigable.
+        int? target;
+        string? uri = null;
+        if (bookmark.InternalDestination.Length > 0
+            && resolvedPageIndexes is not null
+            && resolvedPageIndexes.TryGetValue(bookmark.InternalDestination, out int index))
+        {
+            target = index;
+        }
+        else if (bookmark.ExternalDestination.Length > 0)
+        {
+            uri = bookmark.ExternalDestination;
+            target = firstPage;
+        }
+        else
+        {
+            target = firstPage;
+        }
+
+        IReadOnlyList<OutlineEntry> children =
+            [.. bookmark.Children.Select(c => BuildOutlineEntry(c, firstPage))];
+        return new OutlineEntry(title, target, uri, open, children);
     }
 
     private AreaTree LayOutAllSequences(FoRoot root)

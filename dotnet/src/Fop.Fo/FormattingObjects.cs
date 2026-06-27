@@ -26,6 +26,102 @@ public sealed class FoRoot(PropertyList properties) : FObj(properties)
 
     /// <summary>The page sequences in document order.</summary>
     public IEnumerable<FoPageSequence> PageSequences => ChildObjects.OfType<FoPageSequence>();
+
+    /// <summary>
+    /// The document's bookmark tree (<c>fo:bookmark-tree</c>), if present. It appears as a child of
+    /// <c>fo:root</c> after the page-sequences and is the source for the PDF document outline.
+    /// </summary>
+    public FoBookmarkTree? BookmarkTree => ChildObjects.OfType<FoBookmarkTree>().FirstOrDefault();
+}
+
+/// <summary>
+/// The bookmark tree, <c>fo:bookmark-tree</c>. A child of <c>fo:root</c> (after the page-sequences)
+/// whose top-level <c>fo:bookmark</c> children form the roots of the document outline (the PDF
+/// navigation tree). It carries no properties of its own.
+/// </summary>
+public sealed class FoBookmarkTree(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "bookmark-tree";
+
+    /// <summary>The top-level bookmarks, in document order.</summary>
+    public IEnumerable<FoBookmark> Bookmarks => ChildObjects.OfType<FoBookmark>();
+}
+
+/// <summary>
+/// The open/closed state of a bookmark, <c>starting-state</c>: whether the bookmark's children are
+/// shown (expanded) or hidden (collapsed) when the document is first opened.
+/// </summary>
+public enum StartingState
+{
+    /// <summary>The bookmark is expanded so its child bookmarks are visible (the default).</summary>
+    Show,
+
+    /// <summary>The bookmark is collapsed so its child bookmarks are hidden.</summary>
+    Hide,
+}
+
+/// <summary>
+/// A bookmark, <c>fo:bookmark</c>. One entry in the document outline. It targets an in-document area
+/// by its <see cref="InternalDestination"/> (a <c>ref-id</c>, resolved during layout to the page that
+/// id lands on) or an external <see cref="ExternalDestination"/> URI, carries a
+/// <see cref="FoBookmarkTitle"/> label, and may nest child <c>fo:bookmark</c>s to build a hierarchy.
+/// Its <see cref="StartingState"/> selects whether it opens expanded or collapsed.
+/// </summary>
+public sealed class FoBookmark(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "bookmark";
+
+    /// <summary>
+    /// The <c>internal-destination</c>: the <c>id</c>/<c>ref-id</c> of the in-document area to point
+    /// at, or the empty string when unset. Resolved to a page during layout.
+    /// </summary>
+    public string InternalDestination => Properties.GetString("internal-destination", string.Empty).Trim();
+
+    /// <summary>
+    /// The <c>external-destination</c> URI with any <c>url(...)</c> wrapper and surrounding quotes
+    /// stripped, or the empty string when unset. When both destinations are set the internal one wins
+    /// (matching FOP).
+    /// </summary>
+    public string ExternalDestination => FoBasicLink.UnwrapUri(Properties.GetString("external-destination", string.Empty));
+
+    /// <summary>
+    /// The <c>starting-state</c>, defaulting to <see cref="StartingState.Show"/> (expanded). Any value
+    /// other than <c>hide</c> is treated as <c>show</c>.
+    /// </summary>
+    public StartingState StartingState =>
+        Properties.GetString("starting-state", string.Empty).Trim().ToLowerInvariant() == "hide"
+            ? StartingState.Hide
+            : StartingState.Show;
+
+    /// <summary>The bookmark's title (its label), if present.</summary>
+    public FoBookmarkTitle? Title => ChildObjects.OfType<FoBookmarkTitle>().FirstOrDefault();
+
+    /// <summary>
+    /// The child bookmarks nested under this one, in document order. This typed accessor intentionally
+    /// shadows <see cref="FObj.Children"/> (which exposes all child nodes) to surface the bookmark
+    /// hierarchy directly.
+    /// </summary>
+    public new IEnumerable<FoBookmark> Children => ChildObjects.OfType<FoBookmark>();
+}
+
+/// <summary>
+/// A bookmark title, <c>fo:bookmark-title</c>. Holds the text shown for its parent
+/// <see cref="FoBookmark"/> in the outline. It is a text container, so its character data is retained
+/// and exposed via <see cref="Text"/>.
+/// </summary>
+public sealed class FoBookmarkTitle(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "bookmark-title";
+
+    /// <summary>
+    /// The title text: the concatenation of this object's direct <see cref="FOText"/> children, with
+    /// surrounding whitespace trimmed. Empty when the title has no text.
+    /// </summary>
+    public string Text =>
+        string.Concat(Children.OfType<FOText>().Select(t => t.Text)).Trim();
 }
 
 /// <summary>The set of page masters, <c>fo:layout-master-set</c>.</summary>
