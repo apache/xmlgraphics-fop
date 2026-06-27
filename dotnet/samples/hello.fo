@@ -1,18 +1,51 @@
-<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Helvetica" font-size="12pt">
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Helvetica" font-size="11pt">
   <fo:layout-master-set>
     <fo:simple-page-master master-name="A4" page-width="210mm" page-height="297mm"
-        margin-top="20mm" margin-bottom="20mm" margin-left="25mm" margin-right="25mm">
+        margin-top="20mm" margin-bottom="20mm" margin-left="22mm" margin-right="22mm">
       <fo:region-body/>
     </fo:simple-page-master>
   </fo:layout-master-set>
   <fo:page-sequence master-reference="A4">
     <fo:flow flow-name="xsl-region-body">
-      <fo:block font-size="26pt" font-weight="bold" color="#1a3c7b" space-after="14pt">Apache FOP, ported to .NET 10</fo:block>
-      <fo:block font-size="13pt" font-weight="bold" space-after="6pt">A working FO to PDF pipeline</fo:block>
-      <fo:block space-after="6pt" text-align="justify">This document was produced end to end by the C# port: the XSL-FO source was parsed by Fop.Fo into a formatting-object tree with resolved, inherited properties; Fop.Layout stacked the blocks and broke the text into lines with greedy line breaking and pagination; and Fop.Render.Pdf painted the area tree using the PdfSharp library, embedding the fonts.</fo:block>
-      <fo:block space-after="6pt" text-align="justify" font-style="italic">Inheritance works: this italic paragraph inherits its family and size from the document root, while overriding only font-style. Colour, font-weight, text-align, space-before/after and indents are all resolved from the property cascade.</fo:block>
-      <fo:block space-before="10pt" font-family="Courier" color="#444444">Courier (monospace): width measurement and rendering share the same font metrics.</fo:block>
-      <fo:block space-before="10pt" start-indent="20mm" end-indent="10mm" text-align="justify">This block is indented on both sides to demonstrate start-indent and end-indent narrowing the available inline-progression width before line breaking is applied to the text it contains.</fo:block>
+      <fo:block font-size="26pt" font-weight="bold" color="#1a3c7b" space-after="4pt">Apache FOP, ported to .NET 10</fo:block>
+      <fo:block font-size="11pt" color="#666666" space-after="14pt">A working XSL-FO to PDF pipeline (text, box model, tables)</fo:block>
+
+      <fo:block background-color="#eef2fb" border="1pt solid #1a3c7b" padding="8pt" space-after="14pt" text-align="justify">
+        This paragraph sits inside a bordered, padded block with a light background. The box model resolves border, padding and background-color from the property cascade; the layout engine insets the content and emits the background and border edges, and PdfSharp paints them behind the text.
+      </fo:block>
+
+      <fo:block font-size="14pt" font-weight="bold" space-after="6pt">A table</fo:block>
+      <fo:table width="100%" space-after="12pt">
+        <fo:table-column column-width="40%"/>
+        <fo:table-column column-width="30%"/>
+        <fo:table-column column-width="30%"/>
+        <fo:table-header>
+          <fo:table-row>
+            <fo:table-cell background-color="#1a3c7b" padding="4pt" border="0.5pt solid #1a3c7b"><fo:block color="#ffffff" font-weight="bold">Module</fo:block></fo:table-cell>
+            <fo:table-cell background-color="#1a3c7b" padding="4pt" border="0.5pt solid #1a3c7b"><fo:block color="#ffffff" font-weight="bold">Layer</fo:block></fo:table-cell>
+            <fo:table-cell background-color="#1a3c7b" padding="4pt" border="0.5pt solid #1a3c7b"><fo:block color="#ffffff" font-weight="bold">Status</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-header>
+        <fo:table-body>
+          <fo:table-row>
+            <fo:table-cell padding="4pt" border="0.5pt solid #bbbbbb"><fo:block>Fop.Fo</fo:block></fo:table-cell>
+            <fo:table-cell padding="4pt" border="0.5pt solid #bbbbbb"><fo:block>FO tree + properties</fo:block></fo:table-cell>
+            <fo:table-cell padding="4pt" border="0.5pt solid #bbbbbb"><fo:block>working</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell padding="4pt" background-color="#f5f5f5" border="0.5pt solid #bbbbbb"><fo:block>Fop.Layout</fo:block></fo:table-cell>
+            <fo:table-cell padding="4pt" background-color="#f5f5f5" border="0.5pt solid #bbbbbb"><fo:block>area tree + layout</fo:block></fo:table-cell>
+            <fo:table-cell padding="4pt" background-color="#f5f5f5" border="0.5pt solid #bbbbbb"><fo:block>working</fo:block></fo:table-cell>
+          </fo:table-row>
+          <fo:table-row>
+            <fo:table-cell padding="4pt" border="0.5pt solid #bbbbbb"><fo:block>Fop.Render.Pdf</fo:block></fo:table-cell>
+            <fo:table-cell padding="4pt" border="0.5pt solid #bbbbbb"><fo:block>PdfSharp renderer</fo:block></fo:table-cell>
+            <fo:table-cell padding="4pt" border="0.5pt solid #bbbbbb"><fo:block>working</fo:block></fo:table-cell>
+          </fo:table-row>
+        </fo:table-body>
+      </fo:table>
+
+      <fo:block font-style="italic" color="#444444">Generated end to end by the C# port: parsed by Fop.Fo, laid out by Fop.Layout, rendered with PdfSharp.</fo:block>
     </fo:flow>
   </fo:page-sequence>
 </fo:root>

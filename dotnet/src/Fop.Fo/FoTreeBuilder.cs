@@ -173,6 +173,13 @@ public static class FoTreeBuilder
         "block" => new FoBlock(properties),
         "inline" => new FoInline(properties),
         "external-graphic" => new FoExternalGraphic(properties),
+        "table" => new FoTable(properties),
+        "table-column" => new FoTableColumn(properties),
+        "table-header" => new FoTableHeader(properties),
+        "table-body" => new FoTableBody(properties),
+        "table-footer" => new FoTableFooter(properties),
+        "table-row" => new FoTableRow(properties),
+        "table-cell" => new FoTableCell(properties),
         _ => new FoGeneric(properties, localName),
     };
 

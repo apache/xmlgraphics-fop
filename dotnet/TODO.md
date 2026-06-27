@@ -79,8 +79,12 @@ package, as a rough size signal.
 - [x] `Fop.Layout` — flat area model (`AreaTree`/`PageArea`/`TextRun`/`RectFill`), `IFontMeasurer`,
       and a `LayoutEngine` doing block stacking, greedy line breaking, alignment/justification,
       nested-block indent, and pagination.
-- [ ] Knuth total-fit line/page breaking, lists, tables, footnotes, floats, keeps/breaks, a richer
-      nested area tree, multi-region pages and static content.
+- [x] **Tables** (`fo:table` + column/header/body/footer/row/cell): %/proportional/absolute column
+      widths, row heights, per-cell box model, column spanning, row-level pagination with best-effort
+      header repetition. (Row spanning + intra-row splitting are TODOs.)
+- [x] Box model (borders/padding/backgrounds) and `fo:external-graphic` images.
+- [ ] Knuth total-fit line/page breaking, lists, footnotes, floats, keeps/breaks, row spanning,
+      a richer nested area tree, multi-region pages and static content (headers/footers).
 
 ## Phase 6 — Renderers  `[ ]`  (~79,000 LOC)
 

@@ -152,9 +152,11 @@ that stack with modern, cross-platform, managed libraries:
   `IFontResolver`, a PdfSharp-backed `IFontMeasurer`, and the high-level `FopProcessor` facade
   (FO in → PDF out).
 
-A **working end-to-end FO→PDF pipeline** exists for a meaningful XSL-FO subset (block/inline text,
-fonts, colour, alignment/justification, indents, pagination). The solution has 12 library projects
-and **553 passing tests** on .NET 10. See `samples/hello.fo` for an example input.
+A **working end-to-end FO→PDF pipeline** exists for a meaningful XSL-FO subset: block/inline text,
+fonts, colour, alignment/justification, indents, pagination, the **box model** (borders, padding,
+backgrounds), **external-graphic images**, and **tables** (columns with %/proportional/absolute
+widths, header/body/footer, per-cell borders/padding/backgrounds, column spanning, row pagination).
+The solution has 12 library projects and **599 passing tests** on .NET 10. See `samples/hello.fo`.
 
 ---
 
