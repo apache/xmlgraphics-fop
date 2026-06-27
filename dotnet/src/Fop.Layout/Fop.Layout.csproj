@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Fop.Layout</RootNamespace>
+    <Description>Lays an XSL-FO tree out into an area tree (positioned pages/lines/text) ready for rendering.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Fop.Fo\Fop.Fo.csproj" />
+    <ProjectReference Include="..\Fop.Colors\Fop.Colors.csproj" />
+  </ItemGroup>
+
+</Project>

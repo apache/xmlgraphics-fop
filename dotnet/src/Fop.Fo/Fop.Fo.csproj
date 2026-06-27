@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Fop.Fo</RootNamespace>
+    <Description>XSL-FO object model: parses an FO document into a typed formatting-object tree with resolved, inherited properties.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Fop.Util\Fop.Util.csproj" />
+    <ProjectReference Include="..\Fop.DataTypes\Fop.DataTypes.csproj" />
+    <ProjectReference Include="..\Fop.Traits\Fop.Traits.csproj" />
+    <ProjectReference Include="..\Fop.Colors\Fop.Colors.csproj" />
+    <ProjectReference Include="..\Fop.Fonts\Fop.Fonts.csproj" />
+  </ItemGroup>
+
+</Project>

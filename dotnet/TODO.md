@@ -65,28 +65,36 @@ package, as a rough size signal.
 - [ ] `Fop.ComplexScripts` (bidi + shaping; `IPositionable`/`ISubstitutable` stand-ins exist) — large;
       can be deferred behind a feature flag.
 
-## Phase 4 — FO tree  `[ ]`  (~44,000 LOC)
+## Phase 4 — FO tree  `[~]`  (~44,000 LOC)
 
-- [ ] `Fop.Fo` core: `FONode`, `FObj`, `FOText`, `PropertyList`, `FOEventHandler`, `ElementMapping`.
-- [ ] `Fop.Fo.Properties` — the property subsystem (largest single area).
-- [ ] `Fop.Fo.Expr` — the XSL-FO property expression evaluator.
-- [ ] `Fop.Fo.Flow`, `Fop.Fo.Flow.Table`, `Fop.Fo.Pagination` — the formatting objects.
-- [ ] SAX/`XmlReader` driven `FOTreeBuilder`.
+- [x] `Fop.Fo` core: `FONode`, `FObj`, `FOText`, a modern inheriting `PropertyList`, `FoLength`,
+      and `FoTreeBuilder` (XmlReader). Concrete FOs: root, layout-master-set, simple-page-master,
+      region-body, page-sequence, flow, block, inline.
+- [ ] Full property subsystem (the ~290 properties, shorthands, refinement) and the `Fop.Fo.Expr`
+      expression evaluator — currently a curated subset is resolved directly in `PropertyList`.
+- [ ] Remaining flow/pagination/table FOs; `FOEventHandler`, validation.
 
-## Phase 5 — Area tree & layout  `[ ]`  (~46,000 LOC)
+## Phase 5 — Area tree & layout  `[~]`  (~46,000 LOC)
 
-- [ ] `Fop.Area` — area model + `AreaTreeHandler`/`AreaTreeModel`.
-- [ ] `Fop.LayoutManager` — Knuth-based line/page breaking, blocks, inlines, lists, tables, footnotes.
+- [x] `Fop.Layout` — flat area model (`AreaTree`/`PageArea`/`TextRun`/`RectFill`), `IFontMeasurer`,
+      and a `LayoutEngine` doing block stacking, greedy line breaking, alignment/justification,
+      nested-block indent, and pagination.
+- [ ] Knuth total-fit line/page breaking, lists, tables, footnotes, floats, keeps/breaks, a richer
+      nested area tree, multi-region pages and static content.
 
 ## Phase 6 — Renderers  `[ ]`  (~79,000 LOC)
 
 Independent back-ends; port in priority order. Each can be its own project (`Fop.Render.Pdf`, …).
 
 - [ ] `Fop.Render` shared: `Renderer`, `IFDocumentHandler` (intermediate format), painter abstractions.
-- [~] **PDF** (`Fop.Render.Pdf` + `Fop.Pdf`, ~24,000 LOC) — primary target. The low-level object
-      model (`Fop.Pdf`: PDFObject/Name/Number/String/Array/Dictionary/Reference/Null + serialization)
-      is ported; still need PDFDocument, the page/resource/font/image objects, encryption, filters,
-      and the `Fop.Render.Pdf` renderer.
+- [~] **PDF** — two tracks:
+      - `Fop.Render.Pdf` renders the area tree to PDF via **PdfSharp** today (text, fonts, colour,
+        rects) and exposes the `FopProcessor` facade — a working FO→PDF path.
+      - `Fop.Pdf` is a from-scratch port of FOP's low-level PDF object model (PDFObject/Name/Number/
+        String/Array/Dictionary/Reference/Null + serialization); the longer-term goal is a native
+        renderer on `Fop.Pdf` (PDFDocument, page/resource/font/image objects, encryption, filters)
+        so PdfSharp can become optional.
+      - Still needed in the PdfSharp renderer: borders/backgrounds, images, links, leaders, bookmarks.
 - [ ] Bitmap/Java2D → **ImageSharp** raster renderer (`Fop.Render.Bitmap`).
 - [ ] PostScript, AFP, PCL, RTF, TXT, intermediate XML — subsequent.
 - [ ] Image loading pipeline (`Fop.Imaging`) — built on ImageSharp; `ImageDimensions` started.

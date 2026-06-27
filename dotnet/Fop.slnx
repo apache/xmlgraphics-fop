@@ -5,9 +5,12 @@
     <Project Path="src/Fop.Core/Fop.Core.csproj" />
     <Project Path="src/Fop.DataTypes/Fop.DataTypes.csproj" />
     <Project Path="src/Fop.Events/Fop.Events.csproj" />
+    <Project Path="src/Fop.Fo/Fop.Fo.csproj" />
     <Project Path="src/Fop.Fonts/Fop.Fonts.csproj" />
     <Project Path="src/Fop.Hyphenation/Fop.Hyphenation.csproj" />
+    <Project Path="src/Fop.Layout/Fop.Layout.csproj" />
     <Project Path="src/Fop.Pdf/Fop.Pdf.csproj" />
+    <Project Path="src/Fop.Render.Pdf/Fop.Render.Pdf.csproj" />
     <Project Path="src/Fop.Traits/Fop.Traits.csproj" />
     <Project Path="src/Fop.Util/Fop.Util.csproj" />
   </Folder>
@@ -16,9 +19,12 @@
     <Project Path="tests/Fop.Configuration.Tests/Fop.Configuration.Tests.csproj" />
     <Project Path="tests/Fop.DataTypes.Tests/Fop.DataTypes.Tests.csproj" />
     <Project Path="tests/Fop.Events.Tests/Fop.Events.Tests.csproj" />
+    <Project Path="tests/Fop.Fo.Tests/Fop.Fo.Tests.csproj" />
     <Project Path="tests/Fop.Fonts.Tests/Fop.Fonts.Tests.csproj" />
     <Project Path="tests/Fop.Hyphenation.Tests/Fop.Hyphenation.Tests.csproj" />
+    <Project Path="tests/Fop.Layout.Tests/Fop.Layout.Tests.csproj" />
     <Project Path="tests/Fop.Pdf.Tests/Fop.Pdf.Tests.csproj" />
+    <Project Path="tests/Fop.Rendering.Tests/Fop.Rendering.Tests.csproj" />
     <Project Path="tests/Fop.Traits.Tests/Fop.Traits.Tests.csproj" />
     <Project Path="tests/Fop.Util.Tests/Fop.Util.Tests.csproj" />
   </Folder>
