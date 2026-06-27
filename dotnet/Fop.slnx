@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/Fop.Configuration/Fop.Configuration.csproj" />
     <Project Path="src/Fop.Core/Fop.Core.csproj" />
     <Project Path="src/Fop.DataTypes/Fop.DataTypes.csproj" />
     <Project Path="src/Fop.Events/Fop.Events.csproj" />
@@ -7,6 +8,7 @@
     <Project Path="src/Fop.Util/Fop.Util.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Fop.Configuration.Tests/Fop.Configuration.Tests.csproj" />
     <Project Path="tests/Fop.DataTypes.Tests/Fop.DataTypes.Tests.csproj" />
     <Project Path="tests/Fop.Events.Tests/Fop.Events.Tests.csproj" />
     <Project Path="tests/Fop.Traits.Tests/Fop.Traits.Tests.csproj" />
