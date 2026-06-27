@@ -127,13 +127,19 @@ that stack with modern, cross-platform, managed libraries:
   `WritingMode`, `BorderStyle`, `RuleStyle`, `Visibility` + `ITraitEnum`.
 - **`Fop.Configuration`** — `IConfiguration`/`DefaultConfiguration`/`DefaultConfigurationBuilder`
   over `System.Xml`.
-- **`Fop.Fonts`** — foundation value layer: `FontType`, `FontTriplet`, `FontUtil`, `IFontMetrics`,
-  abstract `Typeface`.
+- **`Fop.Fonts`** — `FontType`, `FontTriplet`, `FontUtil`, `IFontMetrics`, abstract `Typeface`,
+  `EmbeddingMode`, `CodePointMapping` (all 8 built-in single-byte encodings), the `Font` instance
+  (width/kerning/char-mapping) and the `FontInfo` registry with fuzzy lookup/fallback.
+- **`Fop.Colors`** — the managed `FopColor` model replacing `java.awt.Color`, plus colour
+  parsing/serialization (`#hex`, `rgb()`, `cmyk()`, `fop-rgb-icc()` pseudo-profiles, named/system
+  colours), `ColorWithFallback`, `OCAColor`/`OCAColorSpace`. Real ICC resolution deferred.
+- **`Fop.Hyphenation`** — `Hyphen`, `Hyphenation`, `ByteVector`/`CharVector`, and the `TernaryTree`
+  search tree (the SAX pattern loaders are deferred).
 - **`Fop.Core`** — project established with the SixLabors dependencies wired in;
   `Fop.Imaging.ImageDimensions` is the first ImageSharp-backed utility (image identify) and the seed
   of the image pipeline.
 
-As of the latest wave, the solution has 8 projects and **291 passing tests** on .NET 10.
+As of the latest wave, the solution has 9 library projects and **448 passing tests** on .NET 10.
 
 ---
 

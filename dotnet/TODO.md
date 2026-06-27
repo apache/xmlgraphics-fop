@@ -45,18 +45,25 @@ package, as a rough size signal.
       `Fop.Fo.Expr.PropertyException` stand-in).
 - [x] `Fop.Traits`: `MinOptMax` (readonly record struct), `Direction`, `WritingMode`,
       `BorderStyle`, `RuleStyle`, `Visibility`, `ITraitEnum`.
-- [ ] `Fop.Traits` remainder: `BorderProps`, `SpaceVal`, `WritingModeTraits*` (need colour + length
-      + property layers).
-- [ ] Colour handling on top of ImageSharp / `System.Drawing`-free colour model (`ColorUtil`,
-      `ColorWithFallback`, `OCAColor`).
+- [ ] `Fop.Traits` remainder: `BorderProps`, `SpaceVal`, `WritingModeTraits*` (need the property
+      layer; colour + length now available via `Fop.Colors` / `Fop.DataTypes`).
+- [x] Colour handling — `Fop.Colors`: managed `FopColor` model + `ColorUtil` parsing/serialization,
+      `ColorWithFallback`, `OCAColor`/`OCAColorSpace`. (ICC/named-profile/CIE-Lab resolution deferred
+      until `FOUserAgent` is ported.)
 
-## Phase 3 — Fonts  `[ ]`  (~26,000 LOC)
+## Phase 3 — Fonts  `[~]`  (~26,000 LOC)
 
-- [ ] `Fop.Fonts` core: `Font`, `FontInfo`, `FontMetrics`, `Typeface`, `FontTriplet`, `CodePointMapping`.
+- [x] `Fop.Fonts` core: `Font`, `FontInfo`, `IFontMetrics`, `Typeface`, `FontTriplet`, `FontType`,
+      `FontUtil`, `EmbeddingMode`, `CodePointMapping` (8 built-in single-byte encodings),
+      `ISingleByteEncoding`.
+- [ ] `LazyFont`, `CustomFont`/`CustomFontMetricsMapper`, `CIDFont`, `MultiByteFont`, `FontReader`,
+      `FontCache`, `FontManager`, `FontDetector` — the loading/instantiation machinery.
 - [ ] TrueType/OpenType/Type1 loading & metrics via **SixLabors.Fonts** (replacing FOP's own parsers
       where practical; port the parsers where embedding needs raw tables).
 - [ ] Font embedding/subsetting hooks for the PDF/PS/AFP renderers.
-- [ ] `Fop.ComplexScripts` (bidi + shaping) — large; can be deferred behind a feature flag.
+- [ ] `FontEventListener` wiring (currently stubbed in `Typeface`/`FontInfo`).
+- [ ] `Fop.ComplexScripts` (bidi + shaping; `IPositionable`/`ISubstitutable` stand-ins exist) — large;
+      can be deferred behind a feature flag.
 
 ## Phase 4 — FO tree  `[ ]`  (~44,000 LOC)
 
@@ -85,7 +92,8 @@ Independent back-ends; port in priority order. Each can be its own project (`Fop
 
 - [ ] `Fop.Cli` — command-line tool (port of `org.apache.fop.cli`).
 - [ ] `FopFactory` / `Fop` user-facing API, configuration (`Fop.Configuration`).
-- [ ] Hyphenation (`Fop.Hyphenation`) + bundled patterns.
+- [~] Hyphenation (`Fop.Hyphenation`): core data structures + `TernaryTree` done; still need the
+      SAX `PatternParser`, `Hyphenator`, `HyphenationTree`/cache, and bundled patterns.
 - [ ] Accessibility / tagged PDF, SVG (Batik) integration strategy.
 
 ## Cross-cutting / ongoing
