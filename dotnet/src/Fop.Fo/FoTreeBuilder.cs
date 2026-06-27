@@ -180,6 +180,10 @@ public static class FoTreeBuilder
         "table-footer" => new FoTableFooter(properties),
         "table-row" => new FoTableRow(properties),
         "table-cell" => new FoTableCell(properties),
+        "list-block" => new FoListBlock(properties),
+        "list-item" => new FoListItem(properties),
+        "list-item-label" => new FoListItemLabel(properties),
+        "list-item-body" => new FoListItemBody(properties),
         _ => new FoGeneric(properties, localName),
     };
 

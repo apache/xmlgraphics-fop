@@ -76,6 +76,9 @@ public sealed class LayoutEngine
                     case FoTable table:
                         flow.LayOutTable(table, geometry.ContentLeftMpt, geometry.ContentWidthMpt);
                         break;
+                    case FoListBlock list:
+                        flow.LayOutList(list, geometry.ContentLeftMpt, geometry.ContentWidthMpt);
+                        break;
                 }
             }
         }
@@ -409,6 +412,11 @@ public sealed class LayoutEngine
                         // Nested tables only flow in the main region (not inside table cells).
                         LayOutTable(table, childLeft, childWidth);
                         break;
+                    case FoListBlock list:
+                        // Lists flow both in the main region and inside a relocatable buffer (so a
+                        // list nested in a list-item body lays out via the same shared mechanism).
+                        LayOutList(list, childLeft, childWidth, target);
+                        break;
                 }
             }
 
@@ -682,6 +690,138 @@ public sealed class LayoutEngine
             }
 
             return target.LocalCursor;
+        }
+
+        /// <summary>
+        /// Lays out a sequence of block-level objects (blocks and nested list-blocks) within a fixed
+        /// content width into a relocatable buffer, returning the consumed height. Used for list label
+        /// and body content, where a body may contain a nested <see cref="FoListBlock"/> directly (not
+        /// only wrapped in a block). Reuses the same shared, non-paginating buffer walk as table cells.
+        /// </summary>
+        private double LayOutBlockLevelIntoBuffer(IEnumerable<FObj> children, BufferedSink buffer, double widthMpt)
+        {
+            var target = new BufferTarget(buffer);
+            foreach (FObj child in children)
+            {
+                switch (child)
+                {
+                    case FoBlock block:
+                        LayOutBlock(block, 0, widthMpt, target);
+                        break;
+                    case FoListBlock list:
+                        LayOutList(list, 0, widthMpt, target);
+                        break;
+                }
+            }
+
+            return target.LocalCursor;
+        }
+
+        // ----- Lists ------------------------------------------------------------------------
+
+        /// <summary>
+        /// Lays out an <see cref="FoListBlock"/> in the main block flow at border-box left
+        /// <paramref name="leftMpt"/> with the available width <paramref name="availableWidthMpt"/>.
+        /// </summary>
+        public void LayOutList(FoListBlock list, double leftMpt, double availableWidthMpt)
+            => LayOutList(list, leftMpt, availableWidthMpt, FlowTarget.Instance);
+
+        /// <summary>
+        /// Lays out an <see cref="FoListBlock"/> against the given <see cref="IBlockTarget"/> (the main
+        /// flow or a relocatable buffer, so nested lists "just work"). Items are stacked vertically with
+        /// their space-before/after; each item's label and body blocks are laid out into separate
+        /// relocatable buffers using the same shared block-layout walk the table cells use.
+        /// <para>
+        /// Within an item the label column starts at the item start edge and is
+        /// <c>provisional-distance-between-starts - provisional-label-separation</c> wide; the body
+        /// starts at <c>start + provisional-distance-between-starts</c>. The item height is the taller of
+        /// the two columns. A list honours its <c>start-indent</c> (so nested lists indent), and breaks
+        /// between items when an item would overflow the region bottom (in the paginating flow target).
+        /// </para>
+        /// </summary>
+        private void LayOutList(FoListBlock list, double leftMpt, double availableWidthMpt, IBlockTarget target)
+        {
+            target.Advance(this, list.SpaceBefore.Millipoints);
+
+            BoxProperties listBox = list.Box;
+
+            object listAnchor = target.BeginBox(this);
+            double listTop = target.Cursor(this);
+
+            // The list's content box is inset by its own border + padding, then by start/end indent.
+            double contentLeft = leftMpt + listBox.LeftInsetMpt + list.StartIndent.Millipoints;
+            double contentWidth = Math.Max(0, availableWidthMpt
+                - listBox.LeftInsetMpt - listBox.RightInsetMpt
+                - list.StartIndent.Millipoints - list.EndIndent.Millipoints);
+
+            target.Advance(this, listBox.TopInsetMpt);
+
+            double distance = list.ProvisionalDistanceBetweenStarts.Millipoints;
+            double separation = list.ProvisionalLabelSeparation.Millipoints;
+            double labelWidth = Math.Max(0, distance - separation);
+            double bodyLeftOffset = distance;
+            double bodyWidth = Math.Max(0, contentWidth - distance);
+
+            foreach (FoListItem item in list.Items)
+            {
+                LayOutListItem(item, contentLeft, labelWidth, bodyLeftOffset, bodyWidth, target);
+            }
+
+            target.Advance(this, listBox.BottomInsetMpt);
+            target.EndBox(this, listAnchor, listBox, leftMpt, listTop, availableWidthMpt);
+            target.Advance(this, list.SpaceAfter.Millipoints);
+        }
+
+        /// <summary>
+        /// Lays out a single <see cref="FoListItem"/>: label into the label column and body into the body
+        /// column (both relocatable buffers), positions them at the item top, and paginates the item as a
+        /// unit. The item height is the taller of its label and body, plus the item's own insets.
+        /// </summary>
+        private void LayOutListItem(FoListItem item, double contentLeft, double labelWidth,
+            double bodyLeftOffset, double bodyWidth, IBlockTarget target)
+        {
+            target.Advance(this, item.SpaceBefore.Millipoints);
+
+            BoxProperties itemBox = item.Box;
+            double innerLeft = contentLeft + itemBox.LeftInsetMpt;
+            double bodyLeft = innerLeft + bodyLeftOffset;
+
+            // The label and body content widths are reduced by the item's insets only on the side they
+            // touch the item border box; the gap between them is fixed by the provisional distance.
+            double labelContentWidth = Math.Max(0, labelWidth - itemBox.LeftInsetMpt);
+            double bodyContentWidth = Math.Max(0, bodyWidth - itemBox.RightInsetMpt);
+
+            var labelBuffer = new BufferedSink();
+            double labelHeight = item.Label is { } label
+                ? LayOutBlockLevelIntoBuffer(label.ChildObjects, labelBuffer, labelContentWidth)
+                : 0;
+
+            var bodyBuffer = new BufferedSink();
+            double bodyHeight = item.Body is { } body
+                ? LayOutBlockLevelIntoBuffer(body.ChildObjects, bodyBuffer, bodyContentWidth)
+                : 0;
+
+            double contentHeight = Math.Max(labelHeight, bodyHeight);
+            double itemHeight = contentHeight + itemBox.TopInsetMpt + itemBox.BottomInsetMpt;
+
+            // Place the whole item as a unit, paginating first if it would overflow the region bottom.
+            // TODO: a single item taller than the region is not split; it overflows the page (consistent
+            // with the current block/table behaviour). Knuth-style item splitting is future work.
+            IPrimitiveSink sink = target.SinkForAdvance(this, itemHeight);
+            double itemTop = target.Cursor(this);
+
+            // The item's own border box spans the full content width (label column + gap + body column),
+            // plus the item's own insets. The inner content width is bodyLeftOffset + bodyWidth (the
+            // provisional distance carries the label column and the label separation).
+            double itemBorderWidth = bodyLeftOffset + bodyWidth + itemBox.LeftInsetMpt + itemBox.RightInsetMpt;
+            EmitBox(sink, itemBox, contentLeft, itemTop, itemBorderWidth, itemHeight);
+
+            double innerTop = itemTop + itemBox.TopInsetMpt;
+            labelBuffer.FlushTo(sink, innerLeft, innerTop);
+            bodyBuffer.FlushTo(sink, bodyLeft, innerTop);
+
+            target.SetCursor(this, itemTop + itemHeight);
+            target.Advance(this, item.SpaceAfter.Millipoints);
         }
 
         // ----- Block-target abstraction -----------------------------------------------------
