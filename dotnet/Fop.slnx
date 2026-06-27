@@ -8,6 +8,7 @@
     <Project Path="src/Fop.Fo/Fop.Fo.csproj" />
     <Project Path="src/Fop.Fonts/Fop.Fonts.csproj" />
     <Project Path="src/Fop.Hyphenation/Fop.Hyphenation.csproj" />
+    <Project Path="src/Fop.Layout/Fop.Layout.csproj" />
     <Project Path="src/Fop.Pdf/Fop.Pdf.csproj" />
     <Project Path="src/Fop.Traits/Fop.Traits.csproj" />
     <Project Path="src/Fop.Util/Fop.Util.csproj" />
