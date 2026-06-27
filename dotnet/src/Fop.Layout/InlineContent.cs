@@ -29,6 +29,26 @@ namespace Fop.Layout;
 internal readonly record struct StyledWord(string Text, FontKey Font, FopColor Color);
 
 /// <summary>
+/// Optional resolution context threaded through <see cref="InlineContent.Flatten"/>.
+/// <para>
+/// <see cref="ResolveCitation"/> maps an <c>fo:page-number-citation</c>/<c>-last</c> <c>ref-id</c> to
+/// the page-number text it should render. It is <c>null</c> on the engine's first (measuring) pass, in
+/// which case citations render a placeholder ("?") -- they are re-laid in the second pass once the
+/// id-to-page map is known. <see cref="OnFootnote"/>, when set, is invoked for each
+/// <see cref="FoFootnote"/> encountered, in inline order, so the flow can place its body at the page
+/// bottom.
+/// </para>
+/// </summary>
+internal sealed class FlattenContext
+{
+    /// <summary>Maps a citation <c>ref-id</c> to its resolved page-number text, or <c>null</c> if unknown.</summary>
+    public Func<string, string?>? ResolveCitation { get; init; }
+
+    /// <summary>Invoked (in inline order) for each footnote encountered while flattening.</summary>
+    public Action<FoFootnote>? OnFootnote { get; init; }
+}
+
+/// <summary>
 /// Flattens a block's mixed <see cref="FOText"/>/<see cref="FoInline"/> content into a flat sequence
 /// of <see cref="StyledWord"/>s, resolving font and colour from each owning formatting object.
 /// Nested <see cref="FoBlock"/>s are <em>not</em> flattened here; the block-stacking walk recurses
@@ -36,6 +56,9 @@ internal readonly record struct StyledWord(string Text, FontKey Font, FopColor C
 /// </summary>
 internal static class InlineContent
 {
+    /// <summary>The placeholder rendered for an unresolved citation (or one resolved on the first pass).</summary>
+    public const string UnresolvedCitation = "?";
+
     /// <summary>
     /// Builds the styled word list for the direct inline content of <paramref name="owner"/>.
     /// <para>
@@ -44,15 +67,20 @@ internal static class InlineContent
     /// resolved font and colour). For body flow content the caller passes the page index where the
     /// containing block begins (see the engine's body page-number handling).
     /// </para>
+    /// <para>
+    /// <paramref name="context"/> optionally supplies a citation resolver and a footnote sink (see
+    /// <see cref="FlattenContext"/>). When omitted, citations render the
+    /// <see cref="UnresolvedCitation"/> placeholder and footnotes contribute only their inline anchor.
+    /// </para>
     /// </summary>
-    public static List<StyledWord> Flatten(FObj owner, int pageNumber = 1)
+    public static List<StyledWord> Flatten(FObj owner, int pageNumber = 1, FlattenContext? context = null)
     {
         var words = new List<StyledWord>();
-        Collect(owner, words, pageNumber);
+        Collect(owner, words, pageNumber, context);
         return words;
     }
 
-    private static void Collect(FObj owner, List<StyledWord> words, int pageNumber)
+    private static void Collect(FObj owner, List<StyledWord> words, int pageNumber, FlattenContext? context)
     {
         FontKey font = FontKeyFor(owner);
         FopColor color = owner.Properties.GetColor();
@@ -73,16 +101,43 @@ internal static class InlineContent
                         pageNum.Properties.GetColor()));
                     break;
 
+                // fo:page-number-citation[-last] resolves to the referenced id's page number via the
+                // context resolver (a placeholder on the first/measuring pass or for an unknown ref-id).
+                case FoPageNumberCitation citation:
+                    AppendCitation(citation, citation.RefId, words, context);
+                    break;
+                case FoPageNumberCitationLast citationLast:
+                    AppendCitation(citationLast, citationLast.RefId, words, context);
+                    break;
+
+                // fo:footnote: its inline anchor flows here; its body is placed at the page bottom by
+                // the flow (notified via the context). The body is never flattened inline.
+                case FoFootnote footnote:
+                    context?.OnFootnote?.Invoke(footnote);
+                    foreach (FObj anchor in footnote.AnchorChildren)
+                    {
+                        Collect(anchor, words, pageNumber, context);
+                    }
+
+                    break;
+
                 // Nested blocks are stacked by the engine, not flowed inline here.
                 case FoBlock:
                     break;
 
                 // Inlines (and neutral wrappers) contribute inline content with their own style.
                 case FObj inline:
-                    Collect(inline, words, pageNumber);
+                    Collect(inline, words, pageNumber, context);
                     break;
             }
         }
+    }
+
+    private static void AppendCitation(FObj citation, string refId, List<StyledWord> words,
+        FlattenContext? context)
+    {
+        string text = context?.ResolveCitation?.Invoke(refId) ?? UnresolvedCitation;
+        AppendWords(text, FontKeyFor(citation), citation.Properties.GetColor(), words);
     }
 
     private static void AppendWords(string text, FontKey font, FopColor color, List<StyledWord> words)

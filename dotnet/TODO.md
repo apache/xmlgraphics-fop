@@ -88,11 +88,18 @@ package, as a rough size signal.
       headers/footers + `fo:page-number`.
 - [x] **Keeps & breaks**: `break-before`/`break-after` (page/column/even-page/odd-page),
       `keep-together.within-page` (move-whole-to-next-page).
-- [ ] Knuth total-fit line/page breaking, footnotes, floats, intra-row splitting, multi-region
-      side regions (start/end), `page-number-citation`/`-last` & total page count, richer nested
-      area tree. (Residual TODOs: kept block taller than a page overflows; a row-spanning cell that
-      crosses a page break paints on its origin page only; tables don't lay out inside buffered
-      contexts such as kept blocks / list bodies / cells.)
+- [x] **Nesting** — tables and lists lay out inside table cells / list bodies / kept blocks (unified
+      block/table/list layout over the paginating-or-buffered target abstraction). Kept blocks taller
+      than a page now split instead of overflowing.
+- [x] **Footnotes** (`fo:footnote`/`footnote-body`): body at the page bottom with a separator; the
+      footnote reserve reduces body height.
+- [x] **`fo:page-number-citation`/`-last`**: forward/backward `ref-id` references resolved via a
+      two-pass layout (unknown ref-ids → "?").
+- [ ] Knuth total-fit line/page breaking, floats, intra-row splitting, multi-region side regions
+      (start/end), markers/`retrieve-marker`. (Residual TODOs: footnote reserve is greedy not
+      iterative; a row-spanning cell crossing a page break paints on its origin page only; ids inside
+      buffered contexts (cells/footnote bodies) aren't recorded for citations; citation-last uses the
+      single recorded page under the flat model.)
 
 ## Phase 6 — Renderers  `[ ]`  (~79,000 LOC)
 

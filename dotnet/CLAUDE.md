@@ -161,9 +161,14 @@ A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subse
 - **lists** (`fo:list-block` with provisional label/body geometry, nesting);
 - **static content** — running headers/footers via `fo:region-before`/`after` + `fo:static-content`,
   with `fo:page-number`;
-- **keeps & breaks** (`break-before`/`after` page/even/odd, `keep-together.within-page`).
+- **keeps & breaks** (`break-before`/`after` page/even/odd, `keep-together.within-page`);
+- **nesting** — tables and lists lay out inside table cells / list bodies / kept blocks (a unified
+  block/table/list layout over one paginating-or-buffered target abstraction);
+- **footnotes** (`fo:footnote`/`footnote-body`, rendered at the page bottom with the reserve
+  reducing body height) and **`fo:page-number-citation`/`-last`** (forward/backward references
+  resolved by a two-pass layout).
 
-The solution has 12 library projects and **653 passing tests** on .NET 10. See `samples/hello.fo`.
+The solution has 12 library projects and **677 passing tests** on .NET 10. See `samples/hello.fo`.
 
 ---
 

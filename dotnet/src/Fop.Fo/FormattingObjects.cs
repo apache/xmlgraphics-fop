@@ -228,6 +228,73 @@ public sealed class FoPageNumber(PropertyList properties) : FObj(properties)
     public override string LocalName => "page-number";
 }
 
+/// <summary>
+/// A page-number citation, <c>fo:page-number-citation</c>. An empty inline-level FO whose rendered
+/// text is the page number of the page on which the area with id <see cref="RefId"/> was generated
+/// (resolved during layout, not here). An unresolved <c>ref-id</c> renders as "?".
+/// </summary>
+public sealed class FoPageNumberCitation(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "page-number-citation";
+
+    /// <summary>The <c>ref-id</c> naming the referenced formatting object's <c>id</c>.</summary>
+    public string RefId => Properties.GetString("ref-id", string.Empty);
+}
+
+/// <summary>
+/// A last-page-number citation, <c>fo:page-number-citation-last</c>. An empty inline-level FO whose
+/// rendered text is the number of the last page on which any area with id <see cref="RefId"/> was
+/// generated. With the engine's flat (single-page-per-id) model this is the same page recorded for
+/// the id, so it renders identically to <see cref="FoPageNumberCitation"/>; an unresolved
+/// <c>ref-id</c> renders as "?".
+/// </summary>
+public sealed class FoPageNumberCitationLast(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "page-number-citation-last";
+
+    /// <summary>The <c>ref-id</c> naming the referenced formatting object's <c>id</c>.</summary>
+    public string RefId => Properties.GetString("ref-id", string.Empty);
+}
+
+/// <summary>
+/// A footnote, <c>fo:footnote</c>. An inline-level FO whose content is an inline anchor (typically an
+/// <c>fo:inline</c>) that flows inline in the body text, plus an <see cref="FoFootnoteBody"/> whose
+/// block content is laid out at the bottom of the page on which the anchor lands.
+/// </summary>
+public sealed class FoFootnote(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "footnote";
+
+    /// <summary>The footnote body (the block content shown at the page bottom), if present.</summary>
+    public FoFootnoteBody? Body => ChildObjects.OfType<FoFootnoteBody>().FirstOrDefault();
+
+    /// <summary>
+    /// The inline anchor children: every direct child <em>except</em> the footnote-body. These flow
+    /// inline in the body text where the footnote occurs (typically a single <c>fo:inline</c>).
+    /// </summary>
+    public IEnumerable<FObj> AnchorChildren => ChildObjects.Where(c => c is not FoFootnoteBody);
+}
+
+/// <summary>
+/// A footnote body, <c>fo:footnote-body</c>. A block container whose block-level children are laid
+/// out at the bottom of the anchor's page, above the region-after band.
+/// </summary>
+public sealed class FoFootnoteBody(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "footnote-body";
+
+    /// <summary>
+    /// The block-level children of this body in document order: blocks, nested tables and
+    /// list-blocks. A footnote body is normally one or more blocks.
+    /// </summary>
+    public IEnumerable<FObj> BlockLevelChildren =>
+        ChildObjects.Where(c => c is FoBlock or FoTable or FoListBlock);
+}
+
 /// <summary>An external image, <c>fo:external-graphic</c>.</summary>
 public sealed class FoExternalGraphic(PropertyList properties) : FObj(properties)
 {
