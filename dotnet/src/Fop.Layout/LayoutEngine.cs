@@ -75,13 +75,19 @@ public sealed class LayoutEngine
                 switch (child)
                 {
                     case FoBlock block:
+                        flow.ApplyBreak(block.BreakBefore);
                         flow.LayOutBlock(block, geometry.ContentLeftMpt, geometry.ContentWidthMpt);
+                        flow.ApplyBreak(block.BreakAfter);
                         break;
                     case FoTable table:
+                        flow.ApplyBreak(table.BreakBefore);
                         flow.LayOutTable(table, geometry.ContentLeftMpt, geometry.ContentWidthMpt);
+                        flow.ApplyBreak(table.BreakAfter);
                         break;
                     case FoListBlock list:
+                        flow.ApplyBreak(list.BreakBefore);
                         flow.LayOutList(list, geometry.ContentLeftMpt, geometry.ContentWidthMpt);
+                        flow.ApplyBreak(list.BreakAfter);
                         break;
                 }
             }
@@ -332,6 +338,17 @@ public sealed class LayoutEngine
     /// </summary>
     private static void EmitBox(IPrimitiveSink target, BoxProperties box, double leftMpt, double topMpt,
         double widthMpt, double heightMpt)
+        => EmitBoxSegment(target, box, leftMpt, topMpt, widthMpt, heightMpt, paintTop: true, paintBottom: true);
+
+    /// <summary>
+    /// Emits one segment of a (possibly page-spanning) border box. <paramref name="paintTop"/> /
+    /// <paramref name="paintBottom"/> control whether the top/bottom border edges paint on this
+    /// segment: when a box is split across pages only the first segment paints the top border and only
+    /// the last segment paints the bottom border, while the side borders and background paint on every
+    /// segment. With both flags set this is the ordinary single-box case.
+    /// </summary>
+    private static void EmitBoxSegment(IPrimitiveSink target, BoxProperties box, double leftMpt,
+        double topMpt, double widthMpt, double heightMpt, bool paintTop, bool paintBottom)
     {
         if (box.IsEmpty || widthMpt <= 0 || heightMpt <= 0)
         {
@@ -346,13 +363,13 @@ public sealed class LayoutEngine
         double rightMpt = leftMpt + widthMpt;
         double bottomMpt = topMpt + heightMpt;
 
-        if (box.BorderTop.IsVisible)
+        if (paintTop && box.BorderTop.IsVisible)
         {
             target.Add(new RectFill(leftMpt, topMpt, widthMpt, box.BorderTop.Width.Millipoints,
                 box.BorderTop.Color));
         }
 
-        if (box.BorderBottom.IsVisible)
+        if (paintBottom && box.BorderBottom.IsVisible)
         {
             double h = box.BorderBottom.Width.Millipoints;
             target.Add(new RectFill(leftMpt, bottomMpt - h, widthMpt, h, box.BorderBottom.Color));
@@ -412,6 +429,44 @@ public sealed class LayoutEngine
         }
 
         /// <summary>
+        /// Applies a forced <c>break-before</c> on a flow-level object: starts a new page (unless the
+        /// current page is still empty, in which case the break is a no-op) and, for even/odd breaks,
+        /// inserts one more blank page when needed so the object lands on a page of the requested parity.
+        /// </summary>
+        public void ApplyBreak(BreakKind kind)
+        {
+            if (kind == BreakKind.Auto)
+            {
+                return;
+            }
+
+            // A break at the very top of a fresh page is a no-op (no spurious blank pages). A page that
+            // has not been started yet, or whose cursor is still at the content top, is "fresh".
+            bool atPageTop = page is null || cursorY <= geometry.ContentTopMpt;
+            if (!atPageTop)
+            {
+                StartNewPage();
+            }
+            else
+            {
+                EnsurePage();
+            }
+
+            // Even/odd: insert blank pages until the current page number has the requested parity.
+            while (NeedsParityBreak(kind))
+            {
+                StartNewPage();
+            }
+        }
+
+        private bool NeedsParityBreak(BreakKind kind) => kind switch
+        {
+            BreakKind.EvenPage => currentPageNumber % 2 != 0,
+            BreakKind.OddPage => currentPageNumber % 2 == 0,
+            _ => false,
+        };
+
+        /// <summary>
         /// Lays out <paramref name="block"/> (and its nested blocks) at inline-progression offset
         /// <paramref name="leftMpt"/> (absolute page-left edge of the block's <em>border box</em>) with
         /// the available width <paramref name="widthMpt"/> for that border box.
@@ -423,7 +478,53 @@ public sealed class LayoutEngine
         /// </para>
         /// </summary>
         public void LayOutBlock(FoBlock block, double leftMpt, double widthMpt)
-            => LayOutBlock(block, leftMpt, widthMpt, FlowTarget.Instance);
+            => LayOutBlockInFlow(block, leftMpt, widthMpt);
+
+        /// <summary>
+        /// Lays out a block in the paginating main flow, honouring <c>keep-together.within-page</c>.
+        /// A non-keep block uses the normal line-by-line walk (which paginates per line). A keep block
+        /// is laid out into a relocatable buffer first so its full height is known, then placed whole:
+        /// if it does not fit in the remaining space on the current page but would fit on an empty page,
+        /// it is moved to a fresh page rather than split. A block taller than a full page is placed at
+        /// the top of a fresh page and allowed to overflow.
+        /// <para>
+        /// TODO: a kept block placed via the buffer resolves any <c>fo:page-number</c> it contains to
+        /// the page it lands on (correct for the common single-page case); a kept block that overflows a
+        /// full page still paints on a single page (no per-page box fragments for the keep path); and a
+        /// nested <c>fo:table</c> inside a kept block is not laid out (tables only flow in the paginating
+        /// main flow, not into a relocatable buffer).
+        /// </para>
+        /// </summary>
+        private void LayOutBlockInFlow(FoBlock block, double leftMpt, double widthMpt)
+        {
+            if (block.KeepTogetherWithinPage != KeepStrength.Always)
+            {
+                LayOutBlock(block, leftMpt, widthMpt, FlowTarget.Instance);
+                return;
+            }
+
+            EnsurePage();
+
+            // Lay the whole block (space-before/after included) into a relocatable buffer to measure it.
+            var buffer = new BufferedSink();
+            var probe = new BufferTarget(buffer);
+            LayOutBlock(block, leftMpt, widthMpt, probe);
+            double blockHeight = probe.LocalCursor;
+
+            bool atPageTop = cursorY <= geometry.ContentTopMpt;
+            bool fitsHere = cursorY + blockHeight <= geometry.ContentBottomMpt;
+            bool fitsOnEmptyPage = blockHeight <= geometry.ContentHeightMpt;
+
+            if (!fitsHere && !atPageTop && fitsOnEmptyPage)
+            {
+                StartNewPage();
+            }
+
+            // Flush the buffered block at the current cursor. The buffer was laid out in absolute
+            // inline (x) coordinates already, so only the vertical offset is applied.
+            buffer.FlushTo(new PageSink(page!), 0, cursorY);
+            cursorY += blockHeight;
+        }
 
         /// <summary>
         /// The shared block-stacking walk. It applies space-before/after, insets, lays out inline
@@ -464,22 +565,47 @@ public sealed class LayoutEngine
                 contentWidth - block.StartIndent.Millipoints - block.EndIndent.Millipoints);
             foreach (FObj child in block.ChildObjects)
             {
+                // break-before/after only force pagination in the paginating main flow; inside a
+                // relocatable buffer (table cell / list body) there is no page to break to.
+                bool paginating = target == FlowTarget.Instance;
                 switch (child)
                 {
                     case FoBlock childBlock:
-                        LayOutBlock(childBlock, childLeft, childWidth, target);
+                        if (paginating)
+                        {
+                            ApplyBreak(childBlock.BreakBefore);
+                            LayOutBlockInFlow(childBlock, childLeft, childWidth);
+                            ApplyBreak(childBlock.BreakAfter);
+                        }
+                        else
+                        {
+                            LayOutBlock(childBlock, childLeft, childWidth, target);
+                        }
+
                         break;
                     case FoExternalGraphic graphic:
                         LayOutImage(graphic, childLeft, childWidth, target);
                         break;
-                    case FoTable table when target == FlowTarget.Instance:
+                    case FoTable table when paginating:
                         // Nested tables only flow in the main region (not inside table cells).
+                        ApplyBreak(table.BreakBefore);
                         LayOutTable(table, childLeft, childWidth);
+                        ApplyBreak(table.BreakAfter);
                         break;
                     case FoListBlock list:
                         // Lists flow both in the main region and inside a relocatable buffer (so a
                         // list nested in a list-item body lays out via the same shared mechanism).
+                        if (paginating)
+                        {
+                            ApplyBreak(list.BreakBefore);
+                        }
+
                         LayOutList(list, childLeft, childWidth, target);
+                        if (paginating)
+                        {
+                            ApplyBreak(list.BreakAfter);
+                        }
+
                         break;
                 }
             }
@@ -605,31 +731,29 @@ public sealed class LayoutEngine
             PageArea tableStartPage = page!;
             double tableTop = cursorY;
 
-            // Header rows repeat on each page. Lay them out once and re-emit per page.
+            // Header rows repeat on each page. Lay them out once (as a grid) and re-emit per page.
             // TODO: header repetition emits a fresh copy on every page; this is best-effort and does not
             // de-duplicate when a body fits entirely on the first page.
-            var laidHeader = headerRows.Select(r => LayOutRow(r, columnWidths)).ToList();
+            List<LaidRow> laidHeader = LayOutRows(headerRows, columnWidths);
             double headerHeight = laidHeader.Sum(r => r.Height);
 
             EmitTableHeaderIfRoom(laidHeader, contentLeft, columnWidths);
 
-            foreach (RowModel row in bodyRows)
+            foreach (LaidRow laid in LayOutRows(bodyRows, columnWidths))
             {
-                LaidRow laid = LayOutRow(row, columnWidths);
                 PlaceRowPaginated(laid, contentLeft, columnWidths, laidHeader, headerHeight);
             }
 
-            foreach (RowModel row in footerRows)
+            foreach (LaidRow laid in LayOutRows(footerRows, columnWidths))
             {
-                LaidRow laid = LayOutRow(row, columnWidths);
                 PlaceRowPaginated(laid, contentLeft, columnWidths, laidHeader, headerHeight);
             }
 
-            // Paint the table's own border/background over the grid extent on the page it started on.
-            // TODO: a table split across pages paints its own box only on the first page.
-            double tableBottom = tableStartPage == page ? cursorY + tableBox.BottomInsetMpt : geometry.ContentBottomMpt;
-            EmitBox(new PageSink(tableStartPage), tableBox, leftMpt, tableTop,
-                tableBox.LeftInsetMpt + gridWidth + tableBox.RightInsetMpt, tableBottom - tableTop);
+            // Paint the table's own border/background over the grid extent. When the table spilled onto
+            // later pages the box is segmented per page (top border on the first segment, bottom on the
+            // last, side borders/background on every segment).
+            EmitBoxAcrossPages(tableStartPage, page!, tableBox, leftMpt, tableTop,
+                tableBox.LeftInsetMpt + gridWidth + tableBox.RightInsetMpt, cursorY + tableBox.BottomInsetMpt);
 
             cursorY += tableBox.BottomInsetMpt;
             cursorY += table.SpaceAfter.Millipoints;
@@ -698,8 +822,13 @@ public sealed class LayoutEngine
                 double cellLeft = contentLeft + ColumnOffset(columnWidths, cell.StartColumn);
                 double cellWidth = SpannedWidth(columnWidths, cell.StartColumn, cell.ColumnSpan);
 
-                // Cell border box fills the full row height so adjacent cell borders align.
-                EmitBox(sink, cell.Box, cellLeft, rowTop, cellWidth, row.Height);
+                // A cell's border box fills its full (row- and column-spanned) extent so a spanning
+                // cell covers the rows below it and adjacent cell borders align.
+                // TODO: a row-spanning cell whose extent crosses a page break is painted at its origin
+                // page only (it may overflow that page's region bottom); per-page span fragments are
+                // future work.
+                double cellHeight = cell.SpannedHeightMpt > 0 ? cell.SpannedHeightMpt : row.Height;
+                EmitBox(sink, cell.Box, cellLeft, rowTop, cellWidth, cellHeight);
 
                 double contentX = cellLeft + cell.Box.LeftInsetMpt;
                 double contentY = rowTop + cell.Box.TopInsetMpt;
@@ -707,35 +836,121 @@ public sealed class LayoutEngine
             }
         }
 
-        /// <summary>Lays out a single row's cells into relocatable buffers and computes the row height.</summary>
-        private LaidRow LayOutRow(RowModel row, double[] columnWidths)
+        /// <summary>
+        /// Lays out all rows of a table part as a grid, honouring <c>number-columns-spanned</c> and
+        /// <c>number-rows-spanned</c>. Each cell is assigned a grid origin that skips any slots already
+        /// occupied by a cell spanning down from an earlier row; row band heights are computed from the
+        /// cells that fit within a single row, then grown so the rows a spanning cell covers are jointly
+        /// tall enough; finally each spanning cell records the combined height it should be painted with.
+        /// </summary>
+        private List<LaidRow> LayOutRows(IReadOnlyList<RowModel> rows, double[] columnWidths)
         {
-            var laidCells = new List<LaidCell>();
-            double maxContentHeight = 0;
+            int columnCount = columnWidths.Length;
+            int rowCount = rows.Count;
 
-            int autoColumn = 0;
-            foreach (FoTableCell cell in row.Cells)
+            // occupiedUntil[c] = the first row index at which column c becomes free again.
+            var occupiedUntil = new int[columnCount];
+
+            // Per-origin-row cells, and the spanning metadata needed to resolve heights afterwards.
+            var perRow = new List<LaidCell>[rowCount];
+            var spanInfo = new List<(LaidCell Cell, int StartRow)>();
+            var rowHeights = new double[rowCount];
+
+            for (int r = 0; r < rowCount; r++)
             {
-                int span = Math.Max(1, cell.NumberColumnsSpanned);
-                int startColumn = (cell.ColumnNumber.HasValue ? cell.ColumnNumber.Value - 1 : autoColumn);
-                startColumn = Math.Clamp(startColumn, 0, Math.Max(0, columnWidths.Length - 1));
-                span = Math.Min(span, Math.Max(1, columnWidths.Length - startColumn));
-
-                double cellWidth = SpannedWidth(columnWidths, startColumn, span);
-                BoxProperties cellBox = cell.Box;
-                double contentWidth = Math.Max(0, cellWidth - cellBox.LeftInsetMpt - cellBox.RightInsetMpt);
-
-                var buffer = new BufferedSink();
-                double consumed = LayOutBlocksIntoBuffer(cell.Blocks, buffer, contentWidth);
-
-                laidCells.Add(new LaidCell(startColumn, span, cellBox, buffer, consumed));
-                maxContentHeight = Math.Max(maxContentHeight, consumed + cellBox.TopInsetMpt + cellBox.BottomInsetMpt);
-
-                autoColumn = startColumn + span;
+                perRow[r] = new List<LaidCell>();
+                rowHeights[r] = rows[r].MinHeightMpt;
             }
 
-            double rowHeight = Math.Max(maxContentHeight, row.MinHeightMpt);
-            return new LaidRow(laidCells, rowHeight, row.Box);
+            for (int r = 0; r < rowCount; r++)
+            {
+                int autoColumn = 0;
+                foreach (FoTableCell cell in rows[r].Cells)
+                {
+                    int colSpan = Math.Max(1, cell.NumberColumnsSpanned);
+                    int rowSpan = Math.Max(1, cell.NumberRowsSpanned);
+
+                    // Resolve the start column: an explicit column-number, else the next free slot,
+                    // skipping any columns still occupied by a cell spanning down from an earlier row.
+                    int startColumn = cell.ColumnNumber.HasValue ? cell.ColumnNumber.Value - 1 : autoColumn;
+                    startColumn = Math.Clamp(startColumn, 0, Math.Max(0, columnCount - 1));
+                    while (startColumn < columnCount && occupiedUntil[startColumn] > r)
+                    {
+                        startColumn++;
+                    }
+
+                    startColumn = Math.Clamp(startColumn, 0, Math.Max(0, columnCount - 1));
+                    colSpan = Math.Min(colSpan, Math.Max(1, columnCount - startColumn));
+                    rowSpan = Math.Min(rowSpan, Math.Max(1, rowCount - r));
+
+                    double cellWidth = SpannedWidth(columnWidths, startColumn, colSpan);
+                    BoxProperties cellBox = cell.Box;
+                    double contentWidth = Math.Max(0, cellWidth - cellBox.LeftInsetMpt - cellBox.RightInsetMpt);
+
+                    var buffer = new BufferedSink();
+                    double consumed = LayOutBlocksIntoBuffer(cell.Blocks, buffer, contentWidth);
+                    double cellHeight = consumed + cellBox.TopInsetMpt + cellBox.BottomInsetMpt;
+
+                    var laid = new LaidCell(startColumn, colSpan, rowSpan, cellBox, buffer, consumed);
+                    perRow[r].Add(laid);
+
+                    if (rowSpan == 1)
+                    {
+                        rowHeights[r] = Math.Max(rowHeights[r], cellHeight);
+                    }
+                    else
+                    {
+                        spanInfo.Add((laid, r));
+                    }
+
+                    // Mark the spanned grid slots occupied for the rows this cell covers.
+                    for (int c = startColumn; c < startColumn + colSpan && c < columnCount; c++)
+                    {
+                        occupiedUntil[c] = r + rowSpan;
+                    }
+
+                    autoColumn = startColumn + colSpan;
+                }
+            }
+
+            // Grow rows so each spanning cell's covered rows are jointly tall enough; if short, the
+            // shortfall is added to the cell's last spanned row.
+            foreach (var (cell, startRow) in spanInfo)
+            {
+                int lastRow = Math.Min(rowCount - 1, startRow + cell.RowSpan - 1);
+                double needed = cell.ContentHeightMpt + cell.Box.TopInsetMpt + cell.Box.BottomInsetMpt;
+                double have = 0;
+                for (int r = startRow; r <= lastRow; r++)
+                {
+                    have += rowHeights[r];
+                }
+
+                if (needed > have)
+                {
+                    rowHeights[lastRow] += needed - have;
+                }
+            }
+
+            // Resolve each cell's painted (spanned) height now that all row heights are final.
+            var laidRows = new List<LaidRow>(rowCount);
+            for (int r = 0; r < rowCount; r++)
+            {
+                foreach (LaidCell cell in perRow[r])
+                {
+                    int lastRow = Math.Min(rowCount - 1, r + cell.RowSpan - 1);
+                    double h = 0;
+                    for (int rr = r; rr <= lastRow; rr++)
+                    {
+                        h += rowHeights[rr];
+                    }
+
+                    cell.SpannedHeightMpt = h;
+                }
+
+                laidRows.Add(new LaidRow(perRow[r], rowHeights[r], rows[r].Box));
+            }
+
+            return laidRows;
         }
 
         /// <summary>
@@ -939,10 +1154,10 @@ public sealed class LayoutEngine
             {
                 var startPage = (PageArea)anchor;
 
-                // TODO: when a bordered block splits across pages the box is painted only on the page where
-                // it started; per-page box fragments are not yet emitted.
-                double boxBottom = startPage == ctx.page ? ctx.cursorY : ctx.ContentBottomMpt;
-                EmitBox(new PageSink(startPage), box, leftMpt, boxTop, widthMpt, boxBottom - boxTop);
+                // A bordered block that splits across pages paints a box segment on each page it covers:
+                // top border only on the first page, bottom border only on the last, side borders and
+                // background on every segment.
+                ctx.EmitBoxAcrossPages(startPage, ctx.page!, box, leftMpt, boxTop, widthMpt, ctx.cursorY);
             }
         }
 
@@ -993,6 +1208,56 @@ public sealed class LayoutEngine
             tree.AddPage(page);
             cursorY = geometry.ContentTopMpt;
         }
+
+        /// <summary>
+        /// Paints a border box that began at <paramref name="boxTop"/> on <paramref name="startPage"/>
+        /// and ends at <paramref name="boxBottom"/> on <paramref name="endPage"/>. When the box stays on
+        /// one page this paints a single box; when it spans pages it paints one segment per page using
+        /// that page's content band (full from the box top to the region bottom on the first page, the
+        /// whole region on any middle pages, and the region top down to the box bottom on the last),
+        /// with the top border only on the first segment and the bottom border only on the last.
+        /// </summary>
+        private void EmitBoxAcrossPages(PageArea startPage, PageArea endPage, BoxProperties box,
+            double leftMpt, double boxTop, double widthMpt, double boxBottom)
+        {
+            if (box.IsEmpty || widthMpt <= 0)
+            {
+                return;
+            }
+
+            int startIndex = IndexOfPage(startPage);
+            int endIndex = IndexOfPage(endPage);
+            if (startIndex < 0 || endIndex < 0 || endIndex <= startIndex)
+            {
+                // Single page (or pages not both attached): one box from top to bottom.
+                EmitBox(new PageSink(startPage), box, leftMpt, boxTop, widthMpt, boxBottom - boxTop);
+                return;
+            }
+
+            for (int i = startIndex; i <= endIndex; i++)
+            {
+                PageArea seg = tree.Pages[i];
+                bool first = i == startIndex;
+                bool last = i == endIndex;
+                double segTop = first ? boxTop : geometry.ContentTopMpt;
+                double segBottom = last ? boxBottom : geometry.ContentBottomMpt;
+                EmitBoxSegment(new PageSink(seg), box, leftMpt, segTop, widthMpt, segBottom - segTop,
+                    paintTop: first, paintBottom: last);
+            }
+        }
+
+        private int IndexOfPage(PageArea target)
+        {
+            for (int i = 0; i < tree.Pages.Count; i++)
+            {
+                if (ReferenceEquals(tree.Pages[i], target))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
     }
 
     // ----- Table model helpers --------------------------------------------------------------
@@ -1000,11 +1265,21 @@ public sealed class LayoutEngine
     /// <summary>A row of cells with its minimum height and box, in source order.</summary>
     private sealed record RowModel(IReadOnlyList<FoTableCell> Cells, double MinHeightMpt, BoxProperties Box);
 
-    /// <summary>A laid-out cell: its grid position/span, box, buffered content and content height.</summary>
+    /// <summary>
+    /// A laid-out cell: its grid position/span (columns and rows), box, buffered content and content
+    /// height. <paramref name="RowSpan"/> is how many rows the cell covers; its painted box height (the
+    /// combined height of the rows it spans) is resolved once all row heights are known and stored in
+    /// <see cref="SpannedHeightMpt"/>.
+    /// </summary>
     private sealed record LaidCell(
-        int StartColumn, int ColumnSpan, BoxProperties Box, BufferedSink Content, double ContentHeightMpt);
+        int StartColumn, int ColumnSpan, int RowSpan, BoxProperties Box, BufferedSink Content,
+        double ContentHeightMpt)
+    {
+        /// <summary>The painted box height (spanned rows combined); set after row heights are resolved.</summary>
+        public double SpannedHeightMpt { get; set; }
+    }
 
-    /// <summary>A laid-out row: its cells, final height and box.</summary>
+    /// <summary>A laid-out row: the cells that <em>originate</em> in it, its final band height and box.</summary>
     private sealed record LaidRow(IReadOnlyList<LaidCell> Cells, double Height, BoxProperties Box);
 
     /// <summary>

@@ -33,6 +33,35 @@ public enum TextAlign
     Justify,
 }
 
+/// <summary>
+/// The resolved kind of a <c>break-before</c>/<c>break-after</c> property: where (if anywhere) a
+/// forced break is placed relative to the object.
+/// </summary>
+public enum BreakKind
+{
+    /// <summary>No forced break (the <c>auto</c> default).</summary>
+    Auto,
+
+    /// <summary>Break to the next page (also used for <c>column</c> in this single-column engine).</summary>
+    Page,
+
+    /// <summary>Break to the next even-numbered page (inserting a blank page if required).</summary>
+    EvenPage,
+
+    /// <summary>Break to the next odd-numbered page (inserting a blank page if required).</summary>
+    OddPage,
+}
+
+/// <summary>The resolved <c>keep-together</c> strength, scoped to the within-page constraint.</summary>
+public enum KeepStrength
+{
+    /// <summary>No keep constraint (the <c>auto</c> default).</summary>
+    Auto,
+
+    /// <summary>The object must not be split (treated as <c>keep-together = always</c>).</summary>
+    Always,
+}
+
 /// <summary>The <c>font-style</c> property values.</summary>
 public enum FontStyle
 {
@@ -93,6 +122,35 @@ public static class FoEnumParsing
 
                 return 400;
         }
+    }
+
+    /// <summary>
+    /// Parses a <c>break-before</c>/<c>break-after</c> keyword. <c>column</c> is treated as
+    /// <see cref="BreakKind.Page"/> (this engine is single-column); unset/<c>auto</c> yields
+    /// <see cref="BreakKind.Auto"/>.
+    /// </summary>
+    public static BreakKind ParseBreak(string? value) => value?.Trim().ToLowerInvariant() switch
+    {
+        "page" or "column" => BreakKind.Page,
+        "even-page" => BreakKind.EvenPage,
+        "odd-page" => BreakKind.OddPage,
+        _ => BreakKind.Auto,
+    };
+
+    /// <summary>
+    /// Parses a <c>keep-together</c> value into a <see cref="KeepStrength"/>. A bare keyword
+    /// (<c>always</c>/<c>auto</c>) or the <c>.within-page</c> component is honoured; an integer keep
+    /// strength is treated as <see cref="KeepStrength.Always"/> (any positive keep forces no split).
+    /// </summary>
+    public static KeepStrength ParseKeep(string? value)
+    {
+        string? v = value?.Trim().ToLowerInvariant();
+        if (string.IsNullOrEmpty(v) || v == "auto")
+        {
+            return KeepStrength.Auto;
+        }
+
+        return KeepStrength.Always;
     }
 
     /// <summary>

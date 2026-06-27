@@ -155,6 +155,20 @@ public sealed class PropertyList
     /// </summary>
     public BoxProperties GetBox() => BoxPropertyResolver.Resolve(this);
 
+    /// <summary>The resolved <c>break-before</c> (not inherited; defaults to <see cref="BreakKind.Auto"/>).</summary>
+    public BreakKind BreakBefore => FoEnumParsing.ParseBreak(GetRaw("break-before"));
+
+    /// <summary>The resolved <c>break-after</c> (not inherited; defaults to <see cref="BreakKind.Auto"/>).</summary>
+    public BreakKind BreakAfter => FoEnumParsing.ParseBreak(GetRaw("break-after"));
+
+    /// <summary>
+    /// The resolved <c>keep-together</c> within-page strength (not inherited; defaults to
+    /// <see cref="KeepStrength.Auto"/>). The <c>keep-together.within-page</c> component takes
+    /// precedence over the <c>keep-together</c> shorthand when both are set.
+    /// </summary>
+    public KeepStrength KeepTogetherWithinPage =>
+        FoEnumParsing.ParseKeep(GetRaw("keep-together.within-page") ?? GetRaw("keep-together"));
+
     /// <summary>The resolved <c>text-align</c>.</summary>
     public TextAlign TextAlign => FoEnumParsing.ParseTextAlign(GetRaw("text-align"));
 

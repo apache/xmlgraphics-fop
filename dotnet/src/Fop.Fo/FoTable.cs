@@ -313,10 +313,7 @@ public sealed class FoTableCell(PropertyList properties) : FObj(properties)
     /// <summary>The <c>number-columns-spanned</c> (default 1).</summary>
     public int NumberColumnsSpanned => ReadSpan("number-columns-spanned");
 
-    /// <summary>
-    /// The <c>number-rows-spanned</c> (default 1). Row spanning is parsed but not yet honoured by the
-    /// layout engine -- see the layout TODO.
-    /// </summary>
+    /// <summary>The <c>number-rows-spanned</c> (default 1), honoured by the layout engine's table grid.</summary>
     public int NumberRowsSpanned => ReadSpan("number-rows-spanned");
 
     /// <summary>The explicit 1-based <c>column-number</c> for this cell, or <c>null</c> when unset.</summary>

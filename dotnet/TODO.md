@@ -80,11 +80,19 @@ package, as a rough size signal.
       and a `LayoutEngine` doing block stacking, greedy line breaking, alignment/justification,
       nested-block indent, and pagination.
 - [x] **Tables** (`fo:table` + column/header/body/footer/row/cell): %/proportional/absolute column
-      widths, row heights, per-cell box model, column spanning, row-level pagination with best-effort
-      header repetition. (Row spanning + intra-row splitting are TODOs.)
-- [x] Box model (borders/padding/backgrounds) and `fo:external-graphic` images.
-- [ ] Knuth total-fit line/page breaking, lists, footnotes, floats, keeps/breaks, row spanning,
-      a richer nested area tree, multi-region pages and static content (headers/footers).
+      widths, row heights, per-cell box model, column spanning, **row spanning**, row-level
+      pagination with best-effort header repetition.
+- [x] Box model (borders/padding/backgrounds), painted **across page breaks**, + `fo:external-graphic`.
+- [x] **Lists** (`fo:list-block`/item/label/body) with provisional label/body geometry and nesting.
+- [x] **Static content / regions**: `fo:region-before`/`after` bands + `fo:static-content` running
+      headers/footers + `fo:page-number`.
+- [x] **Keeps & breaks**: `break-before`/`break-after` (page/column/even-page/odd-page),
+      `keep-together.within-page` (move-whole-to-next-page).
+- [ ] Knuth total-fit line/page breaking, footnotes, floats, intra-row splitting, multi-region
+      side regions (start/end), `page-number-citation`/`-last` & total page count, richer nested
+      area tree. (Residual TODOs: kept block taller than a page overflows; a row-spanning cell that
+      crosses a page break paints on its origin page only; tables don't lay out inside buffered
+      contexts such as kept blocks / list bodies / cells.)
 
 ## Phase 6 — Renderers  `[ ]`  (~79,000 LOC)
 

@@ -66,6 +66,15 @@ public abstract class FObj : FONode
     /// <summary>The resolved line height in millipoints.</summary>
     public double LineHeightMpt => Properties.LineHeightMpt;
 
+    /// <summary>The resolved <c>break-before</c> kind.</summary>
+    public BreakKind BreakBefore => Properties.BreakBefore;
+
+    /// <summary>The resolved <c>break-after</c> kind.</summary>
+    public BreakKind BreakAfter => Properties.BreakAfter;
+
+    /// <summary>The resolved <c>keep-together.within-page</c> strength.</summary>
+    public KeepStrength KeepTogetherWithinPage => Properties.KeepTogetherWithinPage;
+
     /// <inheritdoc/>
     public override string ToString() => $"{GetType().Name}({LocalName})";
 }
