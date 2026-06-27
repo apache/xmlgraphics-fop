@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Fop.Events</RootNamespace>
+    <Description>Type-safe event broadcasting infrastructure for the C# port of Apache FOP.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Fop.Util\Fop.Util.csproj" />
+  </ItemGroup>
+
+</Project>

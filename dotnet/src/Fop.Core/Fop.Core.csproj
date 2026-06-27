@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Fop</RootNamespace>
+    <Description>Core of the C# port of Apache FOP: the XSL-FO formatting object processor.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Fop.Util\Fop.Util.csproj" />
+    <ProjectReference Include="..\Fop.Events\Fop.Events.csproj" />
+  </ItemGroup>
+
+  <!--
+    Modern managed replacements for the Java AWT / java2d / font stack that the
+    original FOP relies on. These drive image decoding/encoding and font handling
+    in the renderers as they are ported.
+  -->
+  <ItemGroup>
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
+    <PackageReference Include="SixLabors.Fonts" Version="2.1.3" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Fop.Core/Fop.Core.csproj" />
+    <Project Path="src/Fop.Events/Fop.Events.csproj" />
+    <Project Path="src/Fop.Util/Fop.Util.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Fop.Events.Tests/Fop.Events.Tests.csproj" />
+    <Project Path="tests/Fop.Util.Tests/Fop.Util.Tests.csproj" />
+  </Folder>
+</Solution>

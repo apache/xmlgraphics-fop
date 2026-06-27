@@ -1,0 +1,20 @@
+# .NET build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+artifacts/
+
+# NuGet
+*.nupkg
+.packages/
+
+# Test results
+[Tt]est[Rr]esults/
+*.trx
+*.coverage
+coverage*.json
+
+# IDE / tooling
+.vs/
+*.user

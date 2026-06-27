@@ -1,0 +1,152 @@
+# Apache FOP — C# / .NET 10 Port
+
+This directory hosts a modern, idiomatic C# port of [Apache FOP](https://xmlgraphics.apache.org/fop/)
+(Formatting Objects Processor): an engine that reads an XSL-FO document and renders it to PDF,
+PostScript, AFP, PCL, RTF, plain text and bitmap images.
+
+The Java sources live in the sibling module directories at the repository root
+(`fop-core/`, `fop-events/`, `fop-util/`, `fop/`, …). They are the **source of truth** for the
+port: every C# type should be traceable to the Java type it derives from.
+
+---
+
+## Scope and reality check
+
+The Java codebase is large: **~2,100 source files / ~384,000 lines** across the modules below.
+
+| Java module        | Java files | Notes                                                          |
+|--------------------|-----------:|----------------------------------------------------------------|
+| `fop-core`         | ~2,013     | The whole engine: fo tree, layout, area tree, renderers, fonts |
+| `fop-events`       | 18         | Event infrastructure (**ported**)                              |
+| `fop-util`         | 3          | Small text utilities                                           |
+| `fop`              | 41         | CLI front-end, examples, tests                                 |
+| `fop-sandbox`      | 22         | Experimental renderers                                         |
+
+A faithful port is a multi-month, incremental effort. This repository is structured so that work
+can proceed **bottom-up, one self-contained slice at a time**, each slice built and tested before
+the next begins. `TODO.md` tracks the phased plan; the section below records the conventions every
+slice must follow.
+
+---
+
+## Solution layout
+
+```
+dotnet/
+  Fop.slnx                  # solution (new XML format)
+  global.json               # pins the .NET 10 SDK
+  Directory.Build.props     # shared settings: net10.0, nullable, implicit usings, doc gen
+  src/
+    Fop.Util/               # dependency-free utilities  (port of fop-util + org.apache.fop.util)
+    Fop.Events/             # event broadcasting          (port of fop-events)
+    Fop.Core/               # the engine                  (port of fop-core) — in progress
+  tests/
+    Fop.Util.Tests/         # xUnit
+    Fop.Events.Tests/       # xUnit (mirrors fop-events test cases)
+```
+
+Dependency direction: `Fop.Util` ← `Fop.Events` ← `Fop.Core`. Nothing depends on `Fop.Core`.
+
+### Build & test
+
+```bash
+cd dotnet
+dotnet build Fop.slnx
+dotnet test  Fop.slnx
+```
+
+Requires the .NET 10 SDK (see `global.json`).
+
+---
+
+## Porting conventions
+
+These rules keep the port consistent and reviewable against the Java original.
+
+1. **Namespaces mirror packages.** `org.apache.fop.events` → `Fop.Events`,
+   `org.apache.fop.util` → `Fop.Util`, `org.apache.fop.fo.flow` → `Fop.Fo.Flow`, etc.
+   Drop the `org.apache` prefix; PascalCase each segment.
+
+2. **One Java type per file**, named the same (interfaces gain the C# `I` prefix:
+   `EventListener` → `IEventListener`).
+
+3. **Idiomatic C#, not transliterated Java.** Prefer:
+   - Properties over `getX()`/`setX()`.
+   - `enum` over the Java "typesafe enum" singleton pattern (see `EventSeverity`).
+   - Expression-bodied members, pattern matching, `switch` expressions, collection expressions.
+   - Nullable reference types (`Nullable` is enabled solution-wide) — annotate honestly.
+   - `IReadOnlyDictionary<,>` / `IReadOnlyList<>` for the Java `Collections.unmodifiable*` views.
+   - `System.Threading.Lock` for `synchronized` blocks.
+   - `ArgumentNullException.ThrowIfNull` / `ArgumentOutOfRangeException.ThrowIf*` guards.
+
+4. **Preserve observable behaviour.** When Java behaviour is quirky but observable, match it and
+   leave a comment (e.g. `CharUtilities.Format` emits lowercase hex because Java's
+   `Integer.toString(c,16)` does; `CharUtilities.Rlm` keeps FOP's `U+202F` value).
+
+5. **Keep source files pure ASCII.** Express non-ASCII characters as `'\uXXXX'` escapes, never as
+   literal glyphs — invisible/control characters in source are a correctness and review hazard.
+
+6. **Every ported type gets tests.** Where a JUnit test exists, port it (same scenarios, same
+   assertions) so equivalence is demonstrable — `Fop.Events.Tests.BasicEventTests` mirrors
+   `org.apache.fop.events.BasicEventTestCase`.
+
+---
+
+## Library mapping (Java → modern .NET)
+
+The original FOP leans heavily on Java AWT/Java2D and Apache XML Graphics Commons. The port replaces
+that stack with modern, cross-platform, managed libraries:
+
+| Java / Apache dependency                     | .NET replacement                                  |
+|----------------------------------------------|---------------------------------------------------|
+| `java.awt.image`, `javax.imageio`            | **SixLabors.ImageSharp** (decode/encode/identify) |
+| `java.awt.geom`, 2D drawing                  | **SixLabors.ImageSharp.Drawing**                  |
+| `java.awt.Font`, font metrics/TrueType/OpenType | **SixLabors.Fonts**                            |
+| `java.util.logging` / commons-logging        | `Microsoft.Extensions.Logging` abstractions       |
+| `javax.xml.transform` / SAX / DOM            | `System.Xml` (`XmlReader`, `XDocument`, `XslCompiledTransform`) |
+| `java.lang.reflect.Proxy` (dynamic proxies)  | `System.Reflection.DispatchProxy`                 |
+| Java `ServiceLoader` / `META-INF/services`   | DI registration / `[assembly:]` discovery / explicit registries |
+| Resource bundles (`*.properties`/XML bundles)| `System.Resources` / embedded resources           |
+| `BigDecimal`, `BitSet`                       | `decimal`, `System.Collections.BitArray`          |
+
+### What has been done so far
+
+- **`Fop.Events`** — full port of the event infrastructure. The Java `event-model.xml` +
+  dynamic-proxy mechanism is replaced by `DispatchProxy` plus an `[Event(Severity=…)]` attribute and
+  reflection over producer-method parameter names. See `DefaultEventBroadcaster`.
+- **`Fop.Util`** — `CharUtilities` (whitespace/codepoint helpers) and `CompareUtil` ported with
+  full behavioural fidelity (including Java `Double.doubleToLongBits` NaN canonicalisation).
+- **`Fop.Core`** — project established with the SixLabors dependencies wired in;
+  `Fop.Imaging.ImageDimensions` is the first ImageSharp-backed utility (image identify) and the seed
+  of the image pipeline.
+
+---
+
+## Architecture of the engine (target design)
+
+FOP's pipeline, which the port reproduces stage by stage:
+
+```
+XSL-FO (XML)
+   │  SAX/XmlReader parse
+   ▼
+FO Tree            org.apache.fop.fo[.flow|.pagination|.properties|.expr]  → Fop.Fo.*
+   │  property resolution, refinement
+   ▼
+Layout Managers    org.apache.fop.layoutmgr.*                              → Fop.LayoutManager.*
+   │  line/page breaking (Knuth), tables, lists
+   ▼
+Area Tree          org.apache.fop.area.*                                   → Fop.Area.*
+   │
+   ▼
+Renderers          org.apache.fop.render.{pdf,ps,afp,pcl,rtf,txt,bitmap}   → Fop.Render.*
+   │  fonts (Fop.Fonts) + images (Fop.Imaging) + complexscripts
+   ▼
+PDF / PS / AFP / PCL / RTF / TXT / PNG / TIFF
+```
+
+Cross-cutting subsystems: `Fop.Fonts` (font loading/metrics/embedding),
+`Fop.ComplexScripts` (bidi & shaping), `Fop.Hyphenation`, `Fop.DataTypes`/`Fop.Traits`
+(lengths, colours, percentages), `Fop.Configuration`, `Fop.Events` (done).
+
+See `TODO.md` for the phase ordering and current status.
