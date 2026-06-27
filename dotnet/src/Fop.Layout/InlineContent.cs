@@ -36,15 +36,23 @@ internal readonly record struct StyledWord(string Text, FontKey Font, FopColor C
 /// </summary>
 internal static class InlineContent
 {
-    /// <summary>Builds the styled word list for the direct inline content of <paramref name="owner"/>.</summary>
-    public static List<StyledWord> Flatten(FObj owner)
+    /// <summary>
+    /// Builds the styled word list for the direct inline content of <paramref name="owner"/>.
+    /// <para>
+    /// <paramref name="pageNumber"/> is the 1-based number of the page the content is being laid out
+    /// on; an <see cref="FoPageNumber"/> contributes a single word with that number (in its own
+    /// resolved font and colour). For body flow content the caller passes the page index where the
+    /// containing block begins (see the engine's body page-number handling).
+    /// </para>
+    /// </summary>
+    public static List<StyledWord> Flatten(FObj owner, int pageNumber = 1)
     {
         var words = new List<StyledWord>();
-        Collect(owner, words);
+        Collect(owner, words, pageNumber);
         return words;
     }
 
-    private static void Collect(FObj owner, List<StyledWord> words)
+    private static void Collect(FObj owner, List<StyledWord> words, int pageNumber)
     {
         FontKey font = FontKeyFor(owner);
         FopColor color = owner.Properties.GetColor();
@@ -57,13 +65,21 @@ internal static class InlineContent
                     AppendWords(text.Text, font, color, words);
                     break;
 
+                // fo:page-number resolves to the current page number as a single styled word.
+                case FoPageNumber pageNum:
+                    words.Add(new StyledWord(
+                        pageNumber.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        FontKeyFor(pageNum),
+                        pageNum.Properties.GetColor()));
+                    break;
+
                 // Nested blocks are stacked by the engine, not flowed inline here.
                 case FoBlock:
                     break;
 
                 // Inlines (and neutral wrappers) contribute inline content with their own style.
                 case FObj inline:
-                    Collect(inline, words);
+                    Collect(inline, words, pageNumber);
                     break;
             }
         }

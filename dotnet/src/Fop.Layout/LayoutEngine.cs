@@ -61,7 +61,11 @@ public sealed class LayoutEngine
     private void LayOutSequence(FoRoot root, FoPageSequence seq, AreaTree tree)
     {
         PageGeometry geometry = PageGeometry.Resolve(root.LayoutMasterSet?.GetSimplePageMaster(seq.MasterReference));
-        var flow = new FlowContext(this, geometry, tree);
+        int initialPageNumber = seq.InitialPageNumber ?? 1;
+        var flow = new FlowContext(this, geometry, tree, initialPageNumber);
+
+        // Remember which pages already exist so we only attach static content to this sequence's pages.
+        int firstPageIndex = tree.Pages.Count;
 
         FoFlow? flowFo = seq.Flow;
         if (flowFo is not null)
@@ -85,6 +89,47 @@ public sealed class LayoutEngine
 
         // A page-sequence always occupies at least one page, even with empty/absent content.
         flow.EnsurePage();
+
+        // The body flow has now created all of this sequence's pages. Render the running header/footer
+        // static content into the region-before/after bands of each page, with the page number set to
+        // that page's 1-based number (so a fo:page-number in a header increments across pages).
+        FoStaticContent? before = seq.GetStaticContent("xsl-region-before");
+        FoStaticContent? after = seq.GetStaticContent("xsl-region-after");
+        if (before is not null || after is not null)
+        {
+            for (int i = firstPageIndex; i < tree.Pages.Count; i++)
+            {
+                int pageNumber = initialPageNumber + (i - firstPageIndex);
+                PageArea page = tree.Pages[i];
+                if (before is not null)
+                {
+                    LayOutStaticContent(before, page, geometry, geometry.RegionBeforeTopMpt, pageNumber);
+                }
+
+                if (after is not null)
+                {
+                    LayOutStaticContent(after, page, geometry, geometry.RegionAfterTopMpt, pageNumber);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Lays out the block-level children of a <see cref="FoStaticContent"/> into a region band of the
+    /// given page, with its content top-aligned at <paramref name="bandTopMpt"/> and the page number
+    /// fixed at <paramref name="pageNumber"/>. The same block-stacking/line-breaking mechanism the body
+    /// flow uses is reused via a relocatable buffer (so the band never paginates), then flushed to the
+    /// page at the band origin.
+    /// </summary>
+    private void LayOutStaticContent(FoStaticContent content, PageArea page, PageGeometry geometry,
+        double bandTopMpt, int pageNumber)
+    {
+        // A throwaway flow context drives the shared block walk; the band itself never paginates, so
+        // the content is collected into a relocatable buffer and flushed to the page at the band origin.
+        var flow = new FlowContext(this, geometry, new AreaTree(), pageNumber);
+        var buffer = new BufferedSink();
+        flow.LayOutStaticBlocks(content, geometry.RegionWidthMpt, buffer);
+        buffer.FlushTo(new PageSink(page), geometry.RegionLeftMpt, bandTopMpt);
     }
 
     // ----- Greedy line fill -----------------------------------------------------------------
@@ -332,13 +377,30 @@ public sealed class LayoutEngine
     /// Per-page-sequence layout state: holds the current page, the vertical cursor and the page
     /// geometry, and drives block stacking, line breaking and pagination.
     /// </summary>
-    private sealed class FlowContext(LayoutEngine engine, PageGeometry geometry, AreaTree tree)
+    private sealed class FlowContext(LayoutEngine engine, PageGeometry geometry, AreaTree tree,
+        int initialPageNumber)
     {
         private PageArea? page;
         private double cursorY = geometry.ContentTopMpt;
 
+        /// <summary>
+        /// The 1-based number of the page currently being filled. Starts at the sequence's
+        /// initial-page-number and increments on each new page, so a <c>fo:page-number</c> in the body
+        /// resolves to the page on which its containing block begins.
+        /// </summary>
+        private int currentPageNumber = initialPageNumber;
+
         /// <summary>The bottom of the body content rectangle, in millipoints.</summary>
         private double ContentBottomMpt => geometry.ContentBottomMpt;
+
+        /// <summary>
+        /// Lays out the block-level children of a <see cref="FoStaticContent"/> into a relocatable
+        /// buffer at the given content width, reusing the shared non-paginating block walk. The buffer
+        /// is in band-local coordinates (origin at 0,0) and the caller flushes it to a page at the band
+        /// origin. The page number this context was created with is used for any <c>fo:page-number</c>.
+        /// </summary>
+        public void LayOutStaticBlocks(FoStaticContent content, double widthMpt, BufferedSink buffer)
+            => LayOutBlockLevelIntoBuffer(content.ChildObjects, buffer, widthMpt);
 
         /// <summary>Ensures a page exists, creating a blank one if none has been started yet.</summary>
         public void EnsurePage()
@@ -388,7 +450,9 @@ public sealed class LayoutEngine
             target.Advance(this, box.TopInsetMpt);
 
             // Inline content of this block (text + inlines), excluding nested blocks and images.
-            List<StyledWord> words = InlineContent.Flatten(block);
+            // The page number is resolved to the page on which the containing block begins (best-effort;
+            // a block that spans pages still uses its start page for any fo:page-number it contains).
+            List<StyledWord> words = InlineContent.Flatten(block, currentPageNumber);
             if (words.Count > 0)
             {
                 LayOutLines(block, words, contentLeft, contentWidth, target);
@@ -919,6 +983,12 @@ public sealed class LayoutEngine
 
         private void StartNewPage()
         {
+            // The first page keeps the initial page number; each subsequent page increments it.
+            if (page is not null)
+            {
+                currentPageNumber++;
+            }
+
             page = new PageArea(geometry.PageWidthMpt, geometry.PageHeightMpt);
             tree.AddPage(page);
             cursorY = geometry.ContentTopMpt;
