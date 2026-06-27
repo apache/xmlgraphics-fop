@@ -5,6 +5,7 @@
     <Project Path="src/Fop.Core/Fop.Core.csproj" />
     <Project Path="src/Fop.DataTypes/Fop.DataTypes.csproj" />
     <Project Path="src/Fop.Events/Fop.Events.csproj" />
+    <Project Path="src/Fop.Fo/Fop.Fo.csproj" />
     <Project Path="src/Fop.Fonts/Fop.Fonts.csproj" />
     <Project Path="src/Fop.Hyphenation/Fop.Hyphenation.csproj" />
     <Project Path="src/Fop.Pdf/Fop.Pdf.csproj" />
@@ -16,6 +17,7 @@
     <Project Path="tests/Fop.Configuration.Tests/Fop.Configuration.Tests.csproj" />
     <Project Path="tests/Fop.DataTypes.Tests/Fop.DataTypes.Tests.csproj" />
     <Project Path="tests/Fop.Events.Tests/Fop.Events.Tests.csproj" />
+    <Project Path="tests/Fop.Fo.Tests/Fop.Fo.Tests.csproj" />
     <Project Path="tests/Fop.Fonts.Tests/Fop.Fonts.Tests.csproj" />
     <Project Path="tests/Fop.Hyphenation.Tests/Fop.Hyphenation.Tests.csproj" />
     <Project Path="tests/Fop.Pdf.Tests/Fop.Pdf.Tests.csproj" />
