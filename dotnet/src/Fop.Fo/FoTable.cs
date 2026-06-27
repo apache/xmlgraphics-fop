@@ -342,8 +342,16 @@ public sealed class FoTableCell(PropertyList properties) : FObj(properties)
     /// <summary>The resolved box-model properties (borders, padding, background colour).</summary>
     public BoxProperties Box => Properties.GetBox();
 
-    /// <summary>The block-level children of this cell.</summary>
+    /// <summary>The <c>fo:block</c> children of this cell.</summary>
     public IEnumerable<FoBlock> Blocks => ChildObjects.OfType<FoBlock>();
+
+    /// <summary>
+    /// The block-level children of this cell in document order: blocks, nested tables and list-blocks.
+    /// A cell may contain any block-level content (including another <c>fo:table</c> or
+    /// <c>fo:list-block</c>), so the layout engine walks this rather than just <see cref="Blocks"/>.
+    /// </summary>
+    public IEnumerable<FObj> BlockLevelChildren =>
+        ChildObjects.Where(c => c is FoBlock or FoTable or FoListBlock);
 
     private int ReadSpan(string name)
     {

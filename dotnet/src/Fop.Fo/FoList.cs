@@ -102,8 +102,15 @@ public sealed class FoListItemLabel(PropertyList properties) : FObj(properties)
     /// <inheritdoc/>
     public override string LocalName => "list-item-label";
 
-    /// <summary>The block-level children of this label, in document order.</summary>
+    /// <summary>The <c>fo:block</c> children of this label, in document order.</summary>
     public IEnumerable<FoBlock> Blocks => ChildObjects.OfType<FoBlock>();
+
+    /// <summary>
+    /// The block-level children of this label in document order: blocks, nested tables and
+    /// list-blocks. A label is normally a single block but may hold any block-level content.
+    /// </summary>
+    public IEnumerable<FObj> BlockLevelChildren =>
+        ChildObjects.Where(c => c is FoBlock or FoTable or FoListBlock);
 }
 
 /// <summary>
@@ -116,6 +123,14 @@ public sealed class FoListItemBody(PropertyList properties) : FObj(properties)
     /// <inheritdoc/>
     public override string LocalName => "list-item-body";
 
-    /// <summary>The block-level children of this body, in document order.</summary>
+    /// <summary>The <c>fo:block</c> children of this body, in document order.</summary>
     public IEnumerable<FoBlock> Blocks => ChildObjects.OfType<FoBlock>();
+
+    /// <summary>
+    /// The block-level children of this body in document order: blocks, nested tables and
+    /// list-blocks (which may themselves nest further). The layout engine walks this so a table or
+    /// list nested directly in a list-item body lays out via the same shared mechanism.
+    /// </summary>
+    public IEnumerable<FObj> BlockLevelChildren =>
+        ChildObjects.Where(c => c is FoBlock or FoTable or FoListBlock);
 }

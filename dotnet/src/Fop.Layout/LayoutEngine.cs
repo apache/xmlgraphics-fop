@@ -485,14 +485,19 @@ public sealed class LayoutEngine
         /// A non-keep block uses the normal line-by-line walk (which paginates per line). A keep block
         /// is laid out into a relocatable buffer first so its full height is known, then placed whole:
         /// if it does not fit in the remaining space on the current page but would fit on an empty page,
-        /// it is moved to a fresh page rather than split. A block taller than a full page is placed at
-        /// the top of a fresh page and allowed to overflow.
+        /// it is moved to a fresh page rather than split.
+        /// <para>
+        /// A kept block that does not fit even on an empty page cannot be honoured without overflowing,
+        /// so it degrades gracefully: the keep is abandoned and the block is laid out with the normal
+        /// line-by-line walk, which paginates across pages instead of overflowing a single one.
+        /// </para>
         /// <para>
         /// TODO: a kept block placed via the buffer resolves any <c>fo:page-number</c> it contains to
-        /// the page it lands on (correct for the common single-page case); a kept block that overflows a
-        /// full page still paints on a single page (no per-page box fragments for the keep path); and a
-        /// nested <c>fo:table</c> inside a kept block is not laid out (tables only flow in the paginating
-        /// main flow, not into a relocatable buffer).
+        /// the page it lands on (correct for the common single-page case), and a kept block that fits on
+        /// an empty page but carries a border that would itself span pages paints on a single page (no
+        /// per-page box fragments for the buffered keep path). A single line/word taller than a full page
+        /// still overflows even on the line-by-line fallback (the line-fill loop always places at least
+        /// one line so it cannot stall).
         /// </para>
         /// </summary>
         private void LayOutBlockInFlow(FoBlock block, double leftMpt, double widthMpt)
@@ -515,7 +520,16 @@ public sealed class LayoutEngine
             bool fitsHere = cursorY + blockHeight <= geometry.ContentBottomMpt;
             bool fitsOnEmptyPage = blockHeight <= geometry.ContentHeightMpt;
 
-            if (!fitsHere && !atPageTop && fitsOnEmptyPage)
+            if (!fitsOnEmptyPage)
+            {
+                // The block is taller than a full page: the keep cannot be satisfied without overflow.
+                // Fall back to the normal line-by-line walk so it paginates (degrades) gracefully rather
+                // than spilling off a single page. Discard the probe buffer and re-lay against the flow.
+                LayOutBlock(block, leftMpt, widthMpt, FlowTarget.Instance);
+                return;
+            }
+
+            if (!fitsHere && !atPageTop)
             {
                 StartNewPage();
             }
@@ -586,11 +600,21 @@ public sealed class LayoutEngine
                     case FoExternalGraphic graphic:
                         LayOutImage(graphic, childLeft, childWidth, target);
                         break;
-                    case FoTable table when paginating:
-                        // Nested tables only flow in the main region (not inside table cells).
-                        ApplyBreak(table.BreakBefore);
-                        LayOutTable(table, childLeft, childWidth);
-                        ApplyBreak(table.BreakAfter);
+                    case FoTable table:
+                        // Tables flow both in the main region and inside a relocatable buffer (so a
+                        // table nested in a block lays out via the same shared, target-driven mechanism).
+                        // break-before/after only force pagination in the paginating main flow.
+                        if (paginating)
+                        {
+                            ApplyBreak(table.BreakBefore);
+                        }
+
+                        LayOutTable(table, childLeft, childWidth, target);
+                        if (paginating)
+                        {
+                            ApplyBreak(table.BreakAfter);
+                        }
+
                         break;
                     case FoListBlock list:
                         // Lists flow both in the main region and inside a relocatable buffer (so a
@@ -693,8 +717,19 @@ public sealed class LayoutEngine
         /// </para>
         /// </summary>
         public void LayOutTable(FoTable table, double leftMpt, double availableWidthMpt)
+            => LayOutTable(table, leftMpt, availableWidthMpt, FlowTarget.Instance);
+
+        /// <summary>
+        /// Lays out an <see cref="FoTable"/> against the given <see cref="IBlockTarget"/> -- the
+        /// paginating main flow or a relocatable buffer (a table cell, list body, kept block, or static
+        /// content). All vertical advancement and box painting go through the target, so the pagination
+        /// behaviour is a property of the target: the flow target breaks rows across pages and repeats
+        /// the header, while a buffer target simply advances a local cursor (a nested table contributes
+        /// its measured height to the surrounding cell/item, exactly like a nested block does).
+        /// </summary>
+        private void LayOutTable(FoTable table, double leftMpt, double availableWidthMpt, IBlockTarget target)
         {
-            cursorY += table.SpaceBefore.Millipoints;
+            target.Advance(this, table.SpaceBefore.Millipoints);
 
             BoxProperties tableBox = table.Box;
             double tableWidth = table.Width?.Millipoints ?? availableWidthMpt;
@@ -727,87 +762,89 @@ public sealed class LayoutEngine
 
             double[] columnWidths = ResolveColumnWidths(table, gridWidth, maxCellColumns);
 
-            EnsurePage();
-            PageArea tableStartPage = page!;
-            double tableTop = cursorY;
+            // Capture the box anchor at the table top (a page in the flow, nothing in a buffer).
+            object tableAnchor = target.BeginBox(this);
+            double tableTop = target.Cursor(this);
 
-            // Header rows repeat on each page. Lay them out once (as a grid) and re-emit per page.
+            // Header rows repeat on each page. Lay them out once (as a grid) and re-emit per page (a
+            // buffer target never paginates, so the header is emitted once at the top).
             // TODO: header repetition emits a fresh copy on every page; this is best-effort and does not
             // de-duplicate when a body fits entirely on the first page.
             List<LaidRow> laidHeader = LayOutRows(headerRows, columnWidths);
             double headerHeight = laidHeader.Sum(r => r.Height);
 
-            EmitTableHeaderIfRoom(laidHeader, contentLeft, columnWidths);
+            foreach (LaidRow row in laidHeader)
+            {
+                PlaceRow(row, contentLeft, columnWidths, target);
+            }
 
             foreach (LaidRow laid in LayOutRows(bodyRows, columnWidths))
             {
-                PlaceRowPaginated(laid, contentLeft, columnWidths, laidHeader, headerHeight);
+                PlaceRowPaginated(laid, contentLeft, columnWidths, laidHeader, headerHeight, target);
             }
 
             foreach (LaidRow laid in LayOutRows(footerRows, columnWidths))
             {
-                PlaceRowPaginated(laid, contentLeft, columnWidths, laidHeader, headerHeight);
+                PlaceRowPaginated(laid, contentLeft, columnWidths, laidHeader, headerHeight, target);
             }
 
-            // Paint the table's own border/background over the grid extent. When the table spilled onto
-            // later pages the box is segmented per page (top border on the first segment, bottom on the
-            // last, side borders/background on every segment).
-            EmitBoxAcrossPages(tableStartPage, page!, tableBox, leftMpt, tableTop,
-                tableBox.LeftInsetMpt + gridWidth + tableBox.RightInsetMpt, cursorY + tableBox.BottomInsetMpt);
+            target.Advance(this, tableBox.BottomInsetMpt);
 
-            cursorY += tableBox.BottomInsetMpt;
-            cursorY += table.SpaceAfter.Millipoints;
-        }
+            // Paint the table's own border/background over the grid extent. In the flow the box is
+            // segmented per page when the table spilled onto later pages (top border on the first
+            // segment, bottom on the last, side borders/background on every segment); in a buffer it is
+            // a single box covering the table's local extent.
+            target.EndBox(this, tableAnchor, tableBox, leftMpt, tableTop,
+                tableBox.LeftInsetMpt + gridWidth + tableBox.RightInsetMpt);
 
-        /// <summary>Emits the header rows at the current cursor if there is room; advances the cursor.</summary>
-        private void EmitTableHeaderIfRoom(List<LaidRow> header, double contentLeft, double[] columnWidths)
-        {
-            foreach (LaidRow row in header)
-            {
-                PageArea target = PageForLine(row.Height);
-                EmitRowAt(target, row, contentLeft, cursorY, columnWidths);
-                cursorY += row.Height;
-            }
+            target.Advance(this, table.SpaceAfter.Millipoints);
         }
 
         /// <summary>
-        /// Places a laid-out row, paginating first if it would overflow the region bottom. When a new
-        /// page is started, the header rows are re-emitted at the top before the row.
+        /// Places a laid-out row at the current cursor, paginating first (in the flow) if it would
+        /// overflow the region bottom and, when a new page is started, re-emitting the header rows.
+        /// Against a buffer target this never paginates -- the row is simply emitted at the local cursor.
         /// </summary>
         private void PlaceRowPaginated(LaidRow row, double contentLeft, double[] columnWidths,
-            List<LaidRow> header, double headerHeight)
+            List<LaidRow> header, double headerHeight, IBlockTarget target)
         {
-            EnsurePage();
+            // SinkForAdvance paginates the flow target if the row would overflow the page; the buffer
+            // target returns its buffer unchanged. When the flow target moved to a fresh page the cursor
+            // is now at the content top, which is how we detect that the header should be repeated.
+            bool wasAtPageTop = target.Cursor(this) <= geometry.ContentTopMpt;
+            _ = target.SinkForAdvance(this, row.Height);
+            bool movedToNewPage = target.CanPaginate && !wasAtPageTop
+                && target.Cursor(this) <= geometry.ContentTopMpt;
 
-            bool overflow = cursorY + row.Height > geometry.ContentBottomMpt && cursorY > geometry.ContentTopMpt;
-            if (overflow)
+            if (movedToNewPage && header.Count > 0
+                && target.Cursor(this) + headerHeight <= geometry.ContentBottomMpt)
             {
-                StartNewPage();
-
-                // Repeat the header on the new page (best-effort).
-                if (header.Count > 0 && cursorY + headerHeight <= geometry.ContentBottomMpt)
+                foreach (LaidRow h in header)
                 {
-                    foreach (LaidRow h in header)
-                    {
-                        EmitRowAt(page!, h, contentLeft, cursorY, columnWidths);
-                        cursorY += h.Height;
-                    }
+                    EmitRowAt(target.SinkForAdvance(this, h.Height), h, contentLeft, target.Cursor(this), columnWidths);
+                    target.Advance(this, h.Height);
                 }
             }
 
-            EmitRowAt(page!, row, contentLeft, cursorY, columnWidths);
-            cursorY += row.Height;
+            PlaceRow(row, contentLeft, columnWidths, target);
+        }
+
+        /// <summary>Emits a laid-out row at the current cursor (no pagination) and advances the cursor.</summary>
+        private void PlaceRow(LaidRow row, double contentLeft, double[] columnWidths, IBlockTarget target)
+        {
+            IPrimitiveSink sink = target.SinkForAdvance(this, row.Height);
+            EmitRowAt(sink, row, contentLeft, target.Cursor(this), columnWidths);
+            target.Advance(this, row.Height);
         }
 
         /// <summary>
-        /// Emits one laid-out row at (<paramref name="contentLeft"/>, <paramref name="rowTop"/>): each
-        /// cell's box (background + borders) then its buffered content offset to its content origin.
+        /// Emits one laid-out row onto <paramref name="sink"/> at (<paramref name="contentLeft"/>,
+        /// <paramref name="rowTop"/>): each cell's box (background + borders) then its buffered content
+        /// offset to its content origin.
         /// </summary>
-        private static void EmitRowAt(PageArea target, LaidRow row, double contentLeft, double rowTop,
+        private static void EmitRowAt(IPrimitiveSink sink, LaidRow row, double contentLeft, double rowTop,
             double[] columnWidths)
         {
-            var sink = new PageSink(target);
-
             // Row background/border spanning the whole row width.
             double rowWidth = 0;
             for (int c = 0; c < columnWidths.Length; c++)
@@ -887,8 +924,10 @@ public sealed class LayoutEngine
                     BoxProperties cellBox = cell.Box;
                     double contentWidth = Math.Max(0, cellWidth - cellBox.LeftInsetMpt - cellBox.RightInsetMpt);
 
+                    // A cell's content is any block-level children (blocks, nested tables, lists),
+                    // laid into a relocatable buffer via the shared non-paginating walk.
                     var buffer = new BufferedSink();
-                    double consumed = LayOutBlocksIntoBuffer(cell.Blocks, buffer, contentWidth);
+                    double consumed = LayOutBlockLevelIntoBuffer(cell.BlockLevelChildren, buffer, contentWidth);
                     double cellHeight = consumed + cellBox.TopInsetMpt + cellBox.BottomInsetMpt;
 
                     var laid = new LaidCell(startColumn, colSpan, rowSpan, cellBox, buffer, consumed);
@@ -954,28 +993,16 @@ public sealed class LayoutEngine
         }
 
         /// <summary>
-        /// Lays out a sequence of blocks within a fixed content width into a relocatable buffer,
-        /// returning the consumed height. Reuses the exact same block-stacking, line-breaking and
-        /// box-model logic as the main flow via the shared <see cref="LayOutBlock(FoBlock, double, double, IBlockTarget)"/>
-        /// walk, driven by a non-paginating <see cref="BufferTarget"/>. The buffer is in content-local
-        /// coordinates (origin at 0,0).
-        /// </summary>
-        private double LayOutBlocksIntoBuffer(IEnumerable<FoBlock> blocks, BufferedSink buffer, double widthMpt)
-        {
-            var target = new BufferTarget(buffer);
-            foreach (FoBlock block in blocks)
-            {
-                LayOutBlock(block, 0, widthMpt, target);
-            }
-
-            return target.LocalCursor;
-        }
-
-        /// <summary>
-        /// Lays out a sequence of block-level objects (blocks and nested list-blocks) within a fixed
-        /// content width into a relocatable buffer, returning the consumed height. Used for list label
-        /// and body content, where a body may contain a nested <see cref="FoListBlock"/> directly (not
-        /// only wrapped in a block). Reuses the same shared, non-paginating buffer walk as table cells.
+        /// Lays out a sequence of block-level objects (blocks, nested tables and list-blocks) within a
+        /// fixed content width into a relocatable buffer, returning the consumed height. This is the one
+        /// non-paginating block walk shared by table cells, list label/body content, static content and
+        /// kept blocks: each child is dispatched to the same target-driven
+        /// <see cref="LayOutBlock(FoBlock, double, double, IBlockTarget)"/> /
+        /// <see cref="LayOutTable(FoTable, double, double, IBlockTarget)"/> /
+        /// <see cref="LayOutList(FoListBlock, double, double, IBlockTarget)"/> core that the main flow
+        /// uses, but against a <see cref="BufferTarget"/> whose local cursor never paginates. The buffer is in
+        /// content-local coordinates (origin at 0,0), so arbitrary nesting (a table in a cell, a list in
+        /// a cell, a table in a list-item body) just works.
         /// </summary>
         private double LayOutBlockLevelIntoBuffer(IEnumerable<FObj> children, BufferedSink buffer, double widthMpt)
         {
@@ -986,6 +1013,9 @@ public sealed class LayoutEngine
                 {
                     case FoBlock block:
                         LayOutBlock(block, 0, widthMpt, target);
+                        break;
+                    case FoTable table:
+                        LayOutTable(table, 0, widthMpt, target);
                         break;
                     case FoListBlock list:
                         LayOutList(list, 0, widthMpt, target);
@@ -1072,12 +1102,12 @@ public sealed class LayoutEngine
 
             var labelBuffer = new BufferedSink();
             double labelHeight = item.Label is { } label
-                ? LayOutBlockLevelIntoBuffer(label.ChildObjects, labelBuffer, labelContentWidth)
+                ? LayOutBlockLevelIntoBuffer(label.BlockLevelChildren, labelBuffer, labelContentWidth)
                 : 0;
 
             var bodyBuffer = new BufferedSink();
             double bodyHeight = item.Body is { } body
-                ? LayOutBlockLevelIntoBuffer(body.ChildObjects, bodyBuffer, bodyContentWidth)
+                ? LayOutBlockLevelIntoBuffer(body.BlockLevelChildren, bodyBuffer, bodyContentWidth)
                 : 0;
 
             double contentHeight = Math.Max(labelHeight, bodyHeight);
@@ -1113,6 +1143,9 @@ public sealed class LayoutEngine
         /// </summary>
         private interface IBlockTarget
         {
+            /// <summary>Whether this target paginates (the main flow does; a relocatable buffer does not).</summary>
+            bool CanPaginate { get; }
+
             double Cursor(FlowContext ctx);
 
             void SetCursor(FlowContext ctx, double value);
@@ -1133,6 +1166,8 @@ public sealed class LayoutEngine
         private sealed class FlowTarget : IBlockTarget
         {
             public static readonly FlowTarget Instance = new();
+
+            public bool CanPaginate => true;
 
             public double Cursor(FlowContext ctx) => ctx.cursorY;
 
@@ -1165,6 +1200,8 @@ public sealed class LayoutEngine
         private sealed class BufferTarget(BufferedSink buffer) : IBlockTarget
         {
             public double LocalCursor { get; private set; }
+
+            public bool CanPaginate => false;
 
             public double Cursor(FlowContext ctx) => LocalCursor;
 

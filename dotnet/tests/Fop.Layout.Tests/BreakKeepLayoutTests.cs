@@ -164,6 +164,35 @@ public sealed class BreakKeepLayoutTests
     }
 
     [Fact]
+    public void KeepTogether_TallerThanPage_FallsBackToLineSplitting()
+    {
+        // Page content height 50pt = 50000 => 4 lines (48000) fit per page. A keep-together block of 8
+        // lines (96000) is taller than a full page, so the keep cannot be honoured without overflow:
+        // it must degrade to the normal line-by-line walk and split across pages rather than overflow
+        // a single page.
+        string lines = string.Join(' ', Enumerable.Range(1, 8).Select(i => $"k{i}"));
+        string body = $"""
+            <fo:block keep-together="always">{lines}</fo:block>
+            """;
+        AreaTree tree = LayOut(Document(body, pageWidthPt: 20, pageHeightPt: 50));
+
+        // The block paginates instead of overflowing: its lines appear on more than one page.
+        Assert.True(tree.Pages.Count >= 2);
+        Assert.Contains(tree.Pages[0].TextRuns, r => r.Text.Contains('k'));
+        Assert.Contains(tree.Pages[1].TextRuns, r => r.Text.Contains('k'));
+
+        // No page is over-filled: every line top stays within the content box (no overflow).
+        foreach (PageArea p in tree.Pages)
+        {
+            foreach (TextRun run in p.TextRuns)
+            {
+                // baseline 9000 below a line top; the line top must be < content bottom (50000).
+                Assert.True(run.BaselineYMpt - 9_000 < 50_000 + 0.001);
+            }
+        }
+    }
+
+    [Fact]
     public void NonKeepBlock_StillSplitsLineByLine()
     {
         // Without keep-together, a block taller than the remaining space splits across pages.
