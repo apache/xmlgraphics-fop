@@ -63,6 +63,11 @@ public sealed class PdfRenderer
                     rect.HeightMpt / MptPerPoint);
             }
 
+            foreach (ImageRun image in pageArea.Images)
+            {
+                DrawImage(gfx, image);
+            }
+
             foreach (TextRun run in pageArea.TextRuns)
             {
                 if (run.Text.Length == 0)
@@ -83,6 +88,54 @@ public sealed class PdfRenderer
         }
 
         document.Save(output);
+    }
+
+    private static void DrawImage(XGraphics gfx, ImageRun image)
+    {
+        double x = image.XMpt / MptPerPoint;
+        double y = image.YMpt / MptPerPoint;
+        double w = image.WidthMpt / MptPerPoint;
+        double h = image.HeightMpt / MptPerPoint;
+
+        XImage? loaded = TryLoadImage(image);
+        if (loaded is not null)
+        {
+            using (loaded)
+            {
+                gfx.DrawImage(loaded, x, y, w, h);
+            }
+
+            return;
+        }
+
+        // TODO: PdfSharp image decoding can fail (missing file, unsupported codec, or PdfSharp's
+        // platform image support being unavailable on this OS). As a graceful fallback we paint a
+        // light-grey placeholder box with a thin border so the image's reserved area is still visible.
+        gfx.DrawRectangle(new XSolidBrush(XColor.FromArgb(255, 230, 230, 230)), x, y, w, h);
+        gfx.DrawRectangle(new XPen(XColor.FromArgb(255, 160, 160, 160), 0.5), x, y, w, h);
+    }
+
+    private static XImage? TryLoadImage(ImageRun image)
+    {
+        try
+        {
+            if (image.SourceBytes is { Length: > 0 } bytes)
+            {
+                var stream = new MemoryStream(bytes, writable: false);
+                return XImage.FromStream(stream);
+            }
+
+            if (!string.IsNullOrEmpty(image.SourcePath) && File.Exists(image.SourcePath))
+            {
+                return XImage.FromFile(image.SourcePath);
+            }
+        }
+        catch (Exception)
+        {
+            // Fall through to the placeholder. Image loading is best-effort.
+        }
+
+        return null;
     }
 
     private static XColor ToXColor(FopColor color)

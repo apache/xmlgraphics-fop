@@ -147,6 +147,14 @@ public sealed class PropertyList
         return FopColor.FromRgb(0, 0, 0);
     }
 
+    /// <summary>
+    /// Resolves the box-model properties (background colour, per-edge borders and padding). Border,
+    /// padding and background are not inherited; <c>border-color</c> defaults to the current
+    /// <c>color</c>. Edges are physical (top/right/bottom/left), mapping the writing-mode-relative
+    /// before/after/start/end edges under the default lr-tb writing mode.
+    /// </summary>
+    public BoxProperties GetBox() => BoxPropertyResolver.Resolve(this);
+
     /// <summary>The resolved <c>text-align</c>.</summary>
     public TextAlign TextAlign => FoEnumParsing.ParseTextAlign(GetRaw("text-align"));
 

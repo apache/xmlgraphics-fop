@@ -172,6 +172,7 @@ public static class FoTreeBuilder
         "flow" => new FoFlow(properties),
         "block" => new FoBlock(properties),
         "inline" => new FoInline(properties),
+        "external-graphic" => new FoExternalGraphic(properties),
         _ => new FoGeneric(properties, localName),
     };
 

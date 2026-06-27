@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Fop.Traits;
+
 namespace Fop.Fo;
 
 /// <summary>The <c>text-align</c> property values.</summary>
@@ -92,4 +94,22 @@ public static class FoEnumParsing
                 return 400;
         }
     }
+
+    /// <summary>
+    /// Parses a CSS/XSL-FO <c>border-style</c> keyword, defaulting to <see cref="BorderStyle.None"/>
+    /// for unset or unrecognised values.
+    /// </summary>
+    public static BorderStyle ParseBorderStyle(string? value) => value?.Trim().ToLowerInvariant() switch
+    {
+        "hidden" => BorderStyle.Hidden,
+        "dotted" => BorderStyle.Dotted,
+        "dashed" => BorderStyle.Dashed,
+        "solid" => BorderStyle.Solid,
+        "double" => BorderStyle.Double,
+        "groove" => BorderStyle.Groove,
+        "ridge" => BorderStyle.Ridge,
+        "inset" => BorderStyle.Inset,
+        "outset" => BorderStyle.Outset,
+        _ => BorderStyle.None,
+    };
 }

@@ -131,6 +131,9 @@ public sealed class FoBlock(PropertyList properties) : FObj(properties)
 
     /// <summary>End indent.</summary>
     public FoLength EndIndent => Properties.GetLength("end-indent", FoLength.Zero);
+
+    /// <summary>The resolved box-model properties (borders, padding, background colour).</summary>
+    public BoxProperties Box => Properties.GetBox();
 }
 
 /// <summary>An inline, <c>fo:inline</c>.</summary>
@@ -138,6 +141,61 @@ public sealed class FoInline(PropertyList properties) : FObj(properties)
 {
     /// <inheritdoc/>
     public override string LocalName => "inline";
+}
+
+/// <summary>An external image, <c>fo:external-graphic</c>.</summary>
+public sealed class FoExternalGraphic(PropertyList properties) : FObj(properties)
+{
+    /// <inheritdoc/>
+    public override string LocalName => "external-graphic";
+
+    /// <summary>The <c>src</c> URI/path of the image (the <c>url(...)</c> wrapper, if any, stripped).</summary>
+    public string Source => UnwrapUri(Properties.GetString("src", string.Empty));
+
+    /// <summary>
+    /// The specified content width (<c>content-width</c>), or <c>null</c> for <c>auto</c>/unset
+    /// (use the intrinsic width).
+    /// </summary>
+    public FoLength? ContentWidth => ParseSizeProperty("content-width");
+
+    /// <summary>
+    /// The specified content height (<c>content-height</c>), or <c>null</c> for <c>auto</c>/unset
+    /// (use the intrinsic height).
+    /// </summary>
+    public FoLength? ContentHeight => ParseSizeProperty("content-height");
+
+    /// <summary>The resolved box-model properties (borders, padding, background colour).</summary>
+    public BoxProperties Box => Properties.GetBox();
+
+    private FoLength? ParseSizeProperty(string name)
+    {
+        string? raw = Properties.GetRaw(name);
+        if (raw is null)
+        {
+            return null;
+        }
+
+        string trimmed = raw.Trim();
+        if (trimmed.Length == 0
+            || trimmed.Equals("auto", StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals("scale-to-fit", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        return FoLength.TryParse(trimmed, Properties.FontSizeMpt);
+    }
+
+    private static string UnwrapUri(string value)
+    {
+        string trimmed = value.Trim();
+        if (trimmed.StartsWith("url(", StringComparison.OrdinalIgnoreCase) && trimmed.EndsWith(')'))
+        {
+            trimmed = trimmed[4..^1].Trim();
+        }
+
+        return trimmed.Trim('\'', '"');
+    }
 }
 
 /// <summary>A neutral wrapper, <c>fo:wrapper</c>, and the fallback for unmodelled elements.</summary>

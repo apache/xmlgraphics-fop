@@ -15,6 +15,7 @@
 
 using System.Text;
 
+using Fop.Colors;
 using Fop.Fo;
 
 namespace Fop.Layout;
@@ -224,30 +225,151 @@ public sealed class LayoutEngine
 
         /// <summary>
         /// Lays out <paramref name="block"/> (and its nested blocks) at inline-progression offset
-        /// <paramref name="leftMpt"/> (absolute page-left edge of the block's content) with the
-        /// available content width <paramref name="widthMpt"/>.
+        /// <paramref name="leftMpt"/> (absolute page-left edge of the block's <em>border box</em>) with
+        /// the available width <paramref name="widthMpt"/> for that border box.
+        /// <para>
+        /// The block's content is inset on every edge by border-width + padding: the inline-progression
+        /// width is reduced accordingly and the vertical cursor advances by the top inset before content
+        /// and the bottom inset after it (in addition to space-before/after). After the content extent is
+        /// known, a background rectangle and up to four border edges are emitted covering the border box.
+        /// </para>
         /// </summary>
         public void LayOutBlock(FoBlock block, double leftMpt, double widthMpt)
         {
             cursorY += block.SpaceBefore.Millipoints;
 
-            // Inline content of this block (text + inlines), excluding nested blocks.
+            BoxProperties box = block.Box;
+
+            // Make sure a page exists and record where the border box starts (for box painting). If the
+            // content forces pagination this start page/Y still anchors the box on the page it began on.
+            EnsurePage();
+            PageArea startPage = page!;
+            double boxTop = cursorY;
+
+            // The content box is inset from the border box by border-width + padding on every edge.
+            double contentLeft = leftMpt + box.LeftInsetMpt;
+            double contentWidth = Math.Max(0, widthMpt - box.LeftInsetMpt - box.RightInsetMpt);
+
+            cursorY += box.TopInsetMpt;
+
+            // Inline content of this block (text + inlines), excluding nested blocks and images.
             List<StyledWord> words = InlineContent.Flatten(block);
             if (words.Count > 0)
             {
-                LayOutLines(block, words, leftMpt, widthMpt);
+                LayOutLines(block, words, contentLeft, contentWidth);
             }
 
-            // Recurse into nested blocks, narrowing the content rectangle by this block's indents.
-            double childLeft = leftMpt + block.StartIndent.Millipoints;
+            // Recurse into nested blocks and images, narrowing the content rectangle by this block's indents.
+            double childLeft = contentLeft + block.StartIndent.Millipoints;
             double childWidth = Math.Max(0,
-                widthMpt - block.StartIndent.Millipoints - block.EndIndent.Millipoints);
-            foreach (FoBlock child in block.ChildObjects.OfType<FoBlock>())
+                contentWidth - block.StartIndent.Millipoints - block.EndIndent.Millipoints);
+            foreach (FObj child in block.ChildObjects)
             {
-                LayOutBlock(child, childLeft, childWidth);
+                switch (child)
+                {
+                    case FoBlock childBlock:
+                        LayOutBlock(childBlock, childLeft, childWidth);
+                        break;
+                    case FoExternalGraphic graphic:
+                        LayOutImage(graphic, childLeft, childWidth);
+                        break;
+                }
             }
+
+            cursorY += box.BottomInsetMpt;
+
+            // Paint the border box behind the content. RectFills always render before text/images, so
+            // emitting them now (after content) still places the background behind the content.
+            // TODO: when a bordered block splits across pages the box is painted only on the page where
+            // it started; per-page box fragments are not yet emitted.
+            double boxBottom = startPage == page ? cursorY : geometry.ContentBottomMpt;
+            EmitBox(startPage, box, leftMpt, boxTop, widthMpt, boxBottom - boxTop);
 
             cursorY += block.SpaceAfter.Millipoints;
+        }
+
+        /// <summary>
+        /// Lays out an <see cref="FoExternalGraphic"/> as a block-level box of its specified size,
+        /// paginating if it would overflow the current page.
+        /// </summary>
+        private void LayOutImage(FoExternalGraphic graphic, double leftMpt, double widthMpt)
+        {
+            BoxProperties box = graphic.Box;
+
+            // Intrinsic/specified size. Without a decoder in the layout layer we use the specified
+            // content-width/height, defaulting to a square placeholder when unset.
+            double defaultSize = FoLength.FromPoints(72).Millipoints;
+            double imageWidth = graphic.ContentWidth?.Millipoints ?? defaultSize;
+            double imageHeight = graphic.ContentHeight?.Millipoints ?? defaultSize;
+
+            double borderBoxWidth = imageWidth + box.LeftInsetMpt + box.RightInsetMpt;
+            double borderBoxHeight = imageHeight + box.TopInsetMpt + box.BottomInsetMpt;
+
+            cursorY += graphic.Properties.GetLength("space-before", FoLength.Zero).Millipoints;
+
+            PageArea target = PageForLine(borderBoxHeight);
+            double boxTop = cursorY;
+
+            double imageX = leftMpt + box.LeftInsetMpt;
+            double imageY = boxTop + box.TopInsetMpt;
+
+            string source = graphic.Source;
+            string? path = source.Length > 0 ? source : null;
+            target.Add(new ImageRun(imageX, imageY, imageWidth, imageHeight, path, SourceBytes: null));
+
+            EmitBox(target, box, leftMpt, boxTop, borderBoxWidth, borderBoxHeight);
+
+            cursorY = boxTop + borderBoxHeight;
+            cursorY += graphic.Properties.GetLength("space-after", FoLength.Zero).Millipoints;
+
+            _ = widthMpt;
+        }
+
+        /// <summary>
+        /// Emits the background fill and border edges for a border box at (<paramref name="leftMpt"/>,
+        /// <paramref name="topMpt"/>) of the given size onto <paramref name="target"/>. Each border edge
+        /// is a thin filled rectangle laid along its side of the box; an edge only paints when it is
+        /// visible (width &gt; 0 and a paintable style).
+        /// </summary>
+        private static void EmitBox(PageArea target, BoxProperties box, double leftMpt, double topMpt,
+            double widthMpt, double heightMpt)
+        {
+            if (box.IsEmpty || widthMpt <= 0 || heightMpt <= 0)
+            {
+                return;
+            }
+
+            if (box.BackgroundColor is FopColor background)
+            {
+                target.Add(new RectFill(leftMpt, topMpt, widthMpt, heightMpt, background));
+            }
+
+            double rightMpt = leftMpt + widthMpt;
+            double bottomMpt = topMpt + heightMpt;
+
+            if (box.BorderTop.IsVisible)
+            {
+                target.Add(new RectFill(leftMpt, topMpt, widthMpt, box.BorderTop.Width.Millipoints,
+                    box.BorderTop.Color));
+            }
+
+            if (box.BorderBottom.IsVisible)
+            {
+                double h = box.BorderBottom.Width.Millipoints;
+                target.Add(new RectFill(leftMpt, bottomMpt - h, widthMpt, h, box.BorderBottom.Color));
+            }
+
+            if (box.BorderLeft.IsVisible)
+            {
+                target.Add(new RectFill(leftMpt, topMpt, box.BorderLeft.Width.Millipoints, heightMpt,
+                    box.BorderLeft.Color));
+            }
+
+            if (box.BorderRight.IsVisible)
+            {
+                double w = box.BorderRight.Width.Millipoints;
+                target.Add(new RectFill(rightMpt - w, topMpt, w, heightMpt, box.BorderRight.Color));
+            }
         }
 
         private void LayOutLines(FoBlock block, List<StyledWord> words, double leftMpt, double widthMpt)

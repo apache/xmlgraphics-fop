@@ -19,7 +19,7 @@ namespace Fop.Layout;
 
 /// <summary>
 /// The laid-out document: an ordered list of pages, each carrying positioned primitives ready for a
-/// renderer to paint. This is a pragmatic, flat "intermediate format" — richer nested area trees
+/// renderer to paint. This is a pragmatic, flat "intermediate format" -- richer nested area trees
 /// (block/line areas) can layer on later, but positioned runs are sufficient to render text.
 /// <para>All coordinates are in millipoints, measured from the top-left of the page.</para>
 /// </summary>
@@ -43,6 +43,7 @@ public sealed class PageArea
 {
     private readonly List<TextRun> textRuns = new();
     private readonly List<RectFill> rectFills = new();
+    private readonly List<ImageRun> images = new();
 
     /// <summary>Creates a page of the given size (millipoints).</summary>
     public PageArea(double widthMpt, double heightMpt)
@@ -63,6 +64,9 @@ public sealed class PageArea
     /// <summary>Filled rectangles (e.g. backgrounds, rules) on this page.</summary>
     public IReadOnlyList<RectFill> RectFills => rectFills;
 
+    /// <summary>Positioned images on this page.</summary>
+    public IReadOnlyList<ImageRun> Images => images;
+
     /// <summary>Adds a text run.</summary>
     public void Add(TextRun run)
     {
@@ -72,6 +76,13 @@ public sealed class PageArea
 
     /// <summary>Adds a filled rectangle.</summary>
     public void Add(RectFill rect) => rectFills.Add(rect);
+
+    /// <summary>Adds a positioned image.</summary>
+    public void Add(ImageRun image)
+    {
+        ArgumentNullException.ThrowIfNull(image);
+        images.Add(image);
+    }
 }
 
 /// <summary>
@@ -92,3 +103,22 @@ public sealed record TextRun(double XMpt, double BaselineYMpt, string Text, Font
 /// <param name="HeightMpt">Height.</param>
 /// <param name="Color">Fill colour.</param>
 public sealed record RectFill(double XMpt, double YMpt, double WidthMpt, double HeightMpt, FopColor Color);
+
+/// <summary>
+/// A positioned image on a page (top-left origin, millipoints). The source is resolved either as a
+/// filesystem path (<see cref="SourcePath"/>) or as already-loaded bytes (<see cref="SourceBytes"/>);
+/// at least one is set.
+/// </summary>
+/// <param name="XMpt">Left edge.</param>
+/// <param name="YMpt">Top edge.</param>
+/// <param name="WidthMpt">Drawn width.</param>
+/// <param name="HeightMpt">Drawn height.</param>
+/// <param name="SourcePath">The resolved filesystem path of the image, or <c>null</c> when bytes are supplied.</param>
+/// <param name="SourceBytes">The image bytes, or <c>null</c> when a path is supplied.</param>
+public sealed record ImageRun(
+    double XMpt,
+    double YMpt,
+    double WidthMpt,
+    double HeightMpt,
+    string? SourcePath,
+    byte[]? SourceBytes);

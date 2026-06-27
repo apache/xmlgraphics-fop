@@ -18,7 +18,7 @@ using System.Globalization;
 namespace Fop.Fo;
 
 /// <summary>
-/// An absolute length, stored in millipoints (1pt = 1000mpt) — the internal unit FOP uses
+/// An absolute length, stored in millipoints (1pt = 1000mpt) -- the internal unit FOP uses
 /// throughout the layout engine. Provides a parser for CSS/XSL-FO length expressions.
 /// </summary>
 /// <param name="Millipoints">The length in millipoints.</param>
