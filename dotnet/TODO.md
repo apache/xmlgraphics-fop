@@ -26,13 +26,16 @@ package, as a rough size signal.
 - [x] `org.apache.fop.util` helpers: `StringUtils`, `HexEncoder`, `ListUtil`, `LanguageTags`,
       `ConversionUtils`, `XMLUtil`, `QName`, `UnitConv` (+ a `Locale` stand-in). `UnitConv` uses
       `System.Numerics.Matrix3x2` in place of `AffineTransform`.
-- [ ] More `org.apache.fop.util`: `ColorUtil`, `DataURLUtil`, `XMLResourceBundle`, `LogUtil`,
-      `ContentHandlerFactory*`, `CompareUtil` (done), color helpers.
-- [ ] `fop-util` text: `AdvancedMessageFormat` (needed by `EventFormatter`).
-- [ ] `Fop.Events` extras: `EventFormatter` (localised messages via `System.Resources`),
-      `EventExceptionManager` parity, model classes if still needed.
-- [ ] Replace the `StringUtils.ISoftHyphenSupport` and `XMLUtil` SAX TODOs once the painter/SAX
-      layers are ported.
+- [x] `fop-util` text: `AdvancedMessageFormat` (+ parts: if/equals/choice/hex/glyph-name/locator
+      and a `java.text.ChoiceFormat` port) in `Fop.Util.Text`. Service-loader registration replaced
+      with explicit `RegisterPartFactory`/`RegisterObjectFormatter`/`RegisterFunction`.
+- [x] `Fop.Events` extras: `EventFormatter` (template rendering via `AdvancedMessageFormat` with a
+      pluggable `IEventModelMessageSource` replacing Java XML resource bundles) and
+      `EventExceptionManager` (`IExceptionFactory` registry).
+- [ ] More `org.apache.fop.util`: `ColorUtil`, `DataURLUtil`, `LogUtil`, `ContentHandlerFactory*`,
+      color helpers.
+- [ ] Replace the `StringUtils.ISoftHyphenSupport`, `XMLUtil` SAX, and
+      `GlyphNameFieldPart.GlyphNameResolver` TODOs once the painter/SAX/glyph layers are ported.
 
 ## Phase 2 — Data types & traits  `[~]`  (~2,500 LOC)
 

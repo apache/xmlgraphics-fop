@@ -111,14 +111,29 @@ that stack with modern, cross-platform, managed libraries:
 
 ### What has been done so far
 
+- **`Fop.Util`** — `CharUtilities`, `CompareUtil`, and the helper set `StringUtils`, `HexEncoder`,
+  `ConversionUtils`, `LanguageTags`, `ListUtil`, `QName`, `UnitConv` (via `System.Numerics.Matrix3x2`),
+  `XMLUtil`, plus a `Locale` stand-in. `Fop.Util.Text` holds the `AdvancedMessageFormat` engine
+  (with its part handlers and a `ChoiceFormat` port).
 - **`Fop.Events`** — full port of the event infrastructure. The Java `event-model.xml` +
   dynamic-proxy mechanism is replaced by `DispatchProxy` plus an `[Event(Severity=…)]` attribute and
-  reflection over producer-method parameter names. See `DefaultEventBroadcaster`.
-- **`Fop.Util`** — `CharUtilities` (whitespace/codepoint helpers) and `CompareUtil` ported with
-  full behavioural fidelity (including Java `Double.doubleToLongBits` NaN canonicalisation).
+  reflection over producer-method parameter names (`DefaultEventBroadcaster`). `EventFormatter`
+  renders templates via `AdvancedMessageFormat` over a pluggable `IEventModelMessageSource`;
+  `EventExceptionManager` uses an `IExceptionFactory` registry.
+- **`Fop.DataTypes`** — the XSL-FO datatype layer: `INumeric`/`ILength`/`IPercentBase` interfaces,
+  `LengthBase`, `FODimension`, `KeepValue`, `URISpecification`, percent-base contexts (with a
+  temporary `Fop.Fo.Expr.PropertyException` stand-in).
+- **`Fop.Traits`** — `MinOptMax` (readonly record struct) and the trait enums `Direction`,
+  `WritingMode`, `BorderStyle`, `RuleStyle`, `Visibility` + `ITraitEnum`.
+- **`Fop.Configuration`** — `IConfiguration`/`DefaultConfiguration`/`DefaultConfigurationBuilder`
+  over `System.Xml`.
+- **`Fop.Fonts`** — foundation value layer: `FontType`, `FontTriplet`, `FontUtil`, `IFontMetrics`,
+  abstract `Typeface`.
 - **`Fop.Core`** — project established with the SixLabors dependencies wired in;
   `Fop.Imaging.ImageDimensions` is the first ImageSharp-backed utility (image identify) and the seed
   of the image pipeline.
+
+As of the latest wave, the solution has 8 projects and **291 passing tests** on .NET 10.
 
 ---
 
