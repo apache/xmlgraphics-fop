@@ -102,6 +102,13 @@ public sealed class LayoutEngine
     /// <summary>The font measurer used by this engine.</summary>
     public IFontMeasurer Measurer => measurer;
 
+    /// <summary>
+    /// The hyphenator consulted when a block enables <c>hyphenate</c> and a word does not fit on a line.
+    /// Defaults to the embedded-pattern-backed <see cref="DefaultLineHyphenator"/>; tests may replace it
+    /// with a deterministic stub. Setting it to <c>null</c> disables hyphenation entirely.
+    /// </summary>
+    public ILineHyphenator? Hyphenator { get; set; } = new DefaultLineHyphenator();
+
     /// <summary>Lays out the document rooted at <paramref name="root"/>.</summary>
     /// <returns>The paginated area tree.</returns>
     /// <remarks>
@@ -471,6 +478,102 @@ public sealed class LayoutEngine
         }
 
         return new LineBox(placed, naturalWidth, maxFontHeight, i, hasLeader);
+    }
+
+    /// <summary>
+    /// Attempts to hyphenate a word that does not fit on a greedily-filled <paramref name="line"/> so a
+    /// leading fragment plus the block's hyphenation character fits in the line's remaining width. Two
+    /// cases are handled: the next word that did not fit after one or more words were placed, and a lone
+    /// first word that is itself wider than the whole line. On success the words list is mutated in place
+    /// -- the candidate word is replaced by its trailing fragment (so the next line picks it up) and a new
+    /// line is returned with the leading fragment (carrying the hyphenation character). On failure (no
+    /// configured hyphenator, a leader line, no candidate, no points, or no point whose prefix fits) the
+    /// original line is returned unchanged, so layout falls back to the existing behaviour (the word moves
+    /// to the next line / overflows).
+    /// </summary>
+    private LineBox TryHyphenateLine(FoBlock block, List<StyledWord> words, int start, LineBox line,
+        double availableMpt)
+    {
+        ILineHyphenator? hyphenator = Hyphenator;
+        if (hyphenator is null || line.HasLeader || line.Words.Count == 0)
+        {
+            return line;
+        }
+
+        // Determine the candidate word and the line-prefix that precedes it on this line.
+        //  - Case 1: words fit and the NEXT word did not. The candidate is words[line.NextIndex]; the
+        //    placed words (line.Words) stay on the line, the candidate's leading fragment is appended.
+        //  - Case 2: a lone first word is wider than the whole line. The candidate is that placed word;
+        //    the line is rebuilt with just its leading fragment.
+        int candidateIndex;
+        List<StyledWord> linePrefix;
+        double prefixWidth;
+        double spaceBefore;
+        if (line.NextIndex < words.Count && line.NextIndex != start)
+        {
+            candidateIndex = line.NextIndex;
+            linePrefix = new List<StyledWord>(line.Words);
+            prefixWidth = line.NaturalWidth;
+            spaceBefore = SpaceWidth(words[candidateIndex - 1].Font);
+        }
+        else if (line.Words.Count == 1 && line.NaturalWidth > availableMpt)
+        {
+            // Lone over-wide word: hyphenate it from scratch on an otherwise empty line.
+            candidateIndex = start;
+            linePrefix = new List<StyledWord>();
+            prefixWidth = 0;
+            spaceBefore = 0;
+        }
+        else
+        {
+            return line;
+        }
+
+        StyledWord candidate = words[candidateIndex];
+        if (candidate.IsLeader || candidate.Text.Length == 0)
+        {
+            return line;
+        }
+
+        int[]? points = hyphenator.Hyphenate(block.Language, block.Country, candidate.Text,
+            block.HyphenationRemainCharacterCount, block.HyphenationPushCharacterCount);
+        if (points is null || points.Length == 0)
+        {
+            return line;
+        }
+
+        string hyphenChar = block.HyphenationCharacter;
+        double hyphenWidth = measurer.MeasureWidthMpt(hyphenChar, candidate.Font);
+        double remaining = availableMpt - prefixWidth - spaceBefore;
+        if (remaining <= 0)
+        {
+            return line;
+        }
+
+        // Find the LAST hyphenation point whose leading fragment + hyphen char fits in the remaining
+        // width (the longest fragment that fits, for a tight line).
+        for (int i = points.Length - 1; i >= 0; i--)
+        {
+            int cut = points[i];
+            string fragment = candidate.Text[..cut];
+            double fragmentWidth = measurer.MeasureWidthMpt(fragment, candidate.Font);
+            if (fragmentWidth + hyphenWidth <= remaining)
+            {
+                // Carry the trailing fragment to the next line (picked up at candidateIndex next time).
+                words[candidateIndex] = candidate with { Text = candidate.Text[cut..] };
+
+                // The leading fragment carries the hyphenation character so it renders as "frag-".
+                var head = candidate with { Text = fragment + hyphenChar };
+                linePrefix.Add(head);
+                double newNaturalWidth = prefixWidth + spaceBefore + fragmentWidth + hyphenWidth;
+                double newHeight = Math.Max(line.Height, FontHeight(head.Font));
+
+                // The line ends at the leading fragment; the next line resumes at candidateIndex.
+                return new LineBox(linePrefix, newNaturalWidth, newHeight, candidateIndex, line.HasLeader);
+            }
+        }
+
+        return line;
     }
 
     /// <summary>
@@ -1277,10 +1380,25 @@ public sealed class LayoutEngine
             double lineHeight = block.LineHeightMpt;
             TextAlign align = block.TextAlign;
 
+            // Hyphenation is attempted only when the block enables it, a hyphenator is configured and the
+            // block has a language with bundled patterns (the hyphenator returns no points otherwise, so
+            // an unknown language degrades to the existing greedy behaviour).
+            bool hyphenate = block.Hyphenate && engine.Hyphenator is not null;
+
             int index = 0;
             while (index < words.Count)
             {
                 LineBox line = engine.FillLine(words, index, widthMpt);
+
+                if (hyphenate)
+                {
+                    // If a word remains that did not fit, try to split it so a leading fragment (+ the
+                    // hyphenation character) fits in the space this line still has. On success the words
+                    // list is mutated in place: the overflow word becomes its trailing fragment (carried
+                    // to the next iteration) and the line gains the leading fragment.
+                    line = engine.TryHyphenateLine(block, words, index, line, widthMpt);
+                }
+
                 bool isLastLine = line.NextIndex >= words.Count;
                 double advance = Math.Max(lineHeight, line.Height);
 

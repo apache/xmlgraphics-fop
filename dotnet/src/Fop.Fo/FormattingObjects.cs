@@ -250,6 +250,34 @@ public sealed class FoBlock(PropertyList properties) : FObj(properties)
     /// matching <c>fo:retrieve-marker</c> in a region's static content can render them.
     /// </summary>
     public IEnumerable<FoMarker> Markers => ChildObjects.OfType<FoMarker>();
+
+    /// <summary>Whether hyphenation is enabled for this block (<c>hyphenate</c>, inherited, default off).</summary>
+    public bool Hyphenate => Properties.Hyphenate;
+
+    /// <summary>The block's <c>language</c> (inherited), or <c>null</c> when unset.</summary>
+    public string? Language => Properties.Language;
+
+    /// <summary>The block's <c>country</c> (inherited), or <c>null</c> when unset.</summary>
+    public string? Country => Properties.Country;
+
+    /// <summary>
+    /// The hyphenation character to render at a break, defaulting to "-". The <c>hyphenation-character</c>
+    /// default is the soft hyphen (<c>U+00AD</c>), which is rendered visually as a plain hyphen here.
+    /// </summary>
+    public string HyphenationCharacter
+    {
+        get
+        {
+            string ch = Properties.HyphenationCharacter;
+            return ch == "\u00AD" ? "-" : ch;
+        }
+    }
+
+    /// <summary>The minimum characters that must remain before a hyphenation point (default 2).</summary>
+    public int HyphenationRemainCharacterCount => Properties.HyphenationRemainCharacterCount;
+
+    /// <summary>The minimum characters that must be pushed after a hyphenation point (default 2).</summary>
+    public int HyphenationPushCharacterCount => Properties.HyphenationPushCharacterCount;
 }
 
 /// <summary>An inline, <c>fo:inline</c>.</summary>

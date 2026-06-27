@@ -46,6 +46,10 @@ public sealed class PropertyList
         "country",
         "white-space-collapse",
         "wrap-option",
+        "hyphenate",
+        "hyphenation-character",
+        "hyphenation-remain-character-count",
+        "hyphenation-push-character-count",
     };
 
     private const double DefaultFontSizeMpt = 12_000;
@@ -254,6 +258,74 @@ public sealed class PropertyList
     private static bool HasUnit(string value)
         => value.Contains("pt") || value.Contains("mm") || value.Contains("cm") || value.Contains("in")
            || value.Contains("px") || value.Contains("pc") || value.Contains("em") || value.Contains('%');
+
+    // ---- Hyphenation properties (all inherited) ----------------------------------------------
+
+    /// <summary>
+    /// The resolved <c>hyphenate</c> flag (inherited, default <c>false</c>). Any value other than the
+    /// keyword <c>true</c> (case-insensitively) -- including the unset state and <c>false</c> -- is
+    /// treated as off.
+    /// </summary>
+    public bool Hyphenate
+    {
+        get
+        {
+            string? raw = GetRaw("hyphenate");
+            return raw is not null && raw.Trim().Equals("true", StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
+    /// <summary>
+    /// The resolved <c>language</c> (inherited), trimmed and lower-cased, or <c>null</c> when unset or
+    /// set to the <c>none</c>/<c>auto</c> keywords.
+    /// </summary>
+    public string? Language => NormalizeLangCountry(GetRaw("language"));
+
+    /// <summary>
+    /// The resolved <c>country</c> (inherited), trimmed and lower-cased, or <c>null</c> when unset or
+    /// set to the <c>none</c>/<c>auto</c> keywords.
+    /// </summary>
+    public string? Country => NormalizeLangCountry(GetRaw("country"));
+
+    private static string? NormalizeLangCountry(string? raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+        {
+            return null;
+        }
+
+        string v = raw.Trim();
+        return v.Equals("none", StringComparison.OrdinalIgnoreCase)
+            || v.Equals("auto", StringComparison.OrdinalIgnoreCase)
+            ? null
+            : v.ToLowerInvariant();
+    }
+
+    /// <summary>
+    /// The resolved <c>hyphenation-character</c> (inherited), defaulting to the soft hyphen
+    /// (<c>U+00AD</c>). The default soft hyphen is rendered as "-" by callers (see the layout engine).
+    /// </summary>
+    public string HyphenationCharacter => GetString("hyphenation-character", "\u00AD");
+
+    /// <summary>The resolved <c>hyphenation-remain-character-count</c> (inherited, default 2, minimum 1).</summary>
+    public int HyphenationRemainCharacterCount => GetPositiveInt("hyphenation-remain-character-count", 2);
+
+    /// <summary>The resolved <c>hyphenation-push-character-count</c> (inherited, default 2, minimum 1).</summary>
+    public int HyphenationPushCharacterCount => GetPositiveInt("hyphenation-push-character-count", 2);
+
+    private int GetPositiveInt(string name, int @default)
+    {
+        string? raw = GetRaw(name);
+        if (raw is not null
+            && int.TryParse(raw.Trim(), System.Globalization.NumberStyles.Integer,
+                System.Globalization.CultureInfo.InvariantCulture, out int value)
+            && value >= 1)
+        {
+            return value;
+        }
+
+        return @default;
+    }
 
     // ---- XSL-FO expression integration -------------------------------------------------------
 
