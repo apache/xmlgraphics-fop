@@ -119,10 +119,12 @@ package, as a rough size signal.
       surfaces as a page-space link annotation. Its rect is the axis-aligned bounding box of the four
       group-local link corners mapped through the group's translate-then-clockwise-rotate transform
       (PDF link rectangles cannot themselves rotate).
+- [x] **native renderer paints transformed groups**: rotated `fo:block-container`s now render in the
+      PdfSharp-free native renderer too, under a content-stream CTM (translate-then-clockwise-rotate),
+      with their links mapped to page-space annotations -- closing the gap with the PdfSharp path.
 - [ ] Total-fit *page* breaking, floats, intra-row splitting. (Residual approximations: footnote reserve
       is greedy not iterative; a row-spanning cell crossing a page break paints on its origin page only;
-      citation-last equals the single recorded page under the flat area model. The native renderer does
-      not paint `AreaGroup`s, so links/content in rotated containers appear only via the PdfSharp path.)
+      citation-last equals the single recorded page under the flat area model.)
 
 ## Phase 6 — Renderers  `[ ]`  (~79,000 LOC)
 

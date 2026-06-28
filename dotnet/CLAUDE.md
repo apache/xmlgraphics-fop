@@ -159,7 +159,8 @@ that stack with modern, cross-platform, managed libraries:
   `VectorPath`s/`TextRun`s; the PdfSharp renderer paints them.
 - **`Fop.Render.Pdf.Native`** — a native, **PdfSharp-free** PDF renderer built on the `Fop.Pdf` object
   model: it writes the file structure (objects/xref/trailer) directly and emits pages, text, vector
-  graphics, rules/backgrounds, link annotations and the document outline. It **embeds raster images**
+  graphics, rules/backgrounds, link annotations, transformed groups (rotated containers under a
+  content-stream CTM) and the document outline. It **embeds raster images**
   (`Fop.Imaging.RasterImage`: JPEG → DCTDecode pass-through, other formats → FlateDecode RGB with an
   `/SMask` for alpha) and **embeds + subsets TrueType/OpenType fonts** as Type0 composite fonts
   (Identity-H, `CIDFontType2`, `/ToUnicode`) so any Unicode the face covers renders -- not just WinAnsi
@@ -217,7 +218,7 @@ A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subse
   `baseline - 1.1*capHeight`, line-through `baseline - 0.45*capHeight`); and **letter-spacing**
   (per-glyph tracking between glyphs, `(n-1)` gaps per word, drawn glyph-by-glyph).
 
-The solution has 17 library projects and **994 passing tests** on .NET 10. See `samples/hello.fo`
+The solution has 17 library projects and **996 passing tests** on .NET 10. See `samples/hello.fo`
 (a clickable TOC with leaders, links, a marker header, and page-number citations) and
 `samples/svg-decoration.fo` (embedded SVG, text-decoration and letter-spacing). The `fop` CLI renders
 a document with `fop in.fo out.pdf`.

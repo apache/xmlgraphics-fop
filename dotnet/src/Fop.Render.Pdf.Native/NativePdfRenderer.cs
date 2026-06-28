@@ -25,10 +25,14 @@ namespace Fop.Render.Pdf.Native;
 
 /// <summary>
 /// Renders a laid-out <see cref="AreaTree"/> to a PDF document by writing the file directly on the
-/// <c>Fop.Pdf</c> object model -- no PdfSharp. Text is drawn with the 14 standard PDF fonts
-/// (WinAnsi-encoded, no embedding), vector graphics as path operators, rules/backgrounds as filled
-/// rectangles, plus link annotations and a document outline (bookmarks). Raster images are drawn as a
-/// placeholder box for now (native image embedding is future work).
+/// <c>Fop.Pdf</c> object model -- no PdfSharp. Text is drawn either with a subsetted, embedded
+/// Type0/CIDFontType2 (Identity-H) face supplied by the font provider, or with a metric-compatible
+/// standard-14 fallback (WinAnsi-encoded); vector graphics as path operators, rules/backgrounds as
+/// filled rectangles, raster images as embedded XObjects (DCTDecode for JPEG, FlateDecode RGB plus an
+/// optional soft mask), plus link annotations and a document outline (bookmarks). Transformed groups
+/// (rotated <c>fo:block-container</c>s) paint under a content-stream CTM, with their links mapped to
+/// page-space annotations. Content streams are FlateDecode-compressed and the document may be
+/// RC4-encrypted.
 /// <para>
 /// An <see cref="IFontMeasurer"/> is used only to position text decorations (descender/cap-height);
 /// glyph positions come straight from the area tree. The renderer itself has no PdfSharp dependency.
@@ -129,7 +133,8 @@ public sealed class NativePdfRenderer
                 xobjectRes.Append('/').Append(key).Append(' ').Append(num).Append(" 0 R ");
             }
 
-            // Link annotations.
+            // Link annotations. Group-local links are mapped through the group transform to a page-space
+            // axis-aligned bounding box (PDF link rectangles cannot themselves rotate).
             var annotRefs = new List<int>();
             foreach (LinkArea link in page.Links)
             {
@@ -137,6 +142,18 @@ public sealed class NativePdfRenderer
                 if (annot is int a)
                 {
                     annotRefs.Add(a);
+                }
+            }
+
+            foreach (AreaGroup group in page.Groups)
+            {
+                foreach (LinkArea link in group.Links)
+                {
+                    int? annot = BuildLink(doc, MapGroupLink(group, link), page.HeightMpt, pageObjectNumbers, enc);
+                    if (annot is int a)
+                    {
+                        annotRefs.Add(a);
+                    }
                 }
             }
 
@@ -261,7 +278,58 @@ public sealed class NativePdfRenderer
             EmitText(sb, run, pageHeightPt, fonts, fontsOnPage);
         }
 
+        // Transformed groups (e.g. rotated block-containers) paint last, each under its own CTM.
+        foreach (AreaGroup group in page.Groups)
+        {
+            EmitGroup(sb, group, pageHeightPt, fonts, fontsOnPage, doc, imageCache, xobjectsOnPage, enc);
+        }
+
         return sb.ToString();
+    }
+
+    /// <summary>
+    /// Paints an <see cref="AreaGroup"/> under a content-stream CTM that maps the group's local
+    /// coordinates (top-left origin, y-down, millipoints) onto the page: translate to the group origin
+    /// then rotate clockwise by the group's angle. The group's primitives are emitted with a zero
+    /// flip-height, which makes the usual page y-flip cancel against the CTM, so the six matrix terms
+    /// reduce to <c>cos, -sin, sin, cos, tx, (pageH - ty)</c> (points). Mirrors the PdfSharp renderer's
+    /// translate-then-rotate transform group.
+    /// </summary>
+    private void EmitGroup(StringBuilder sb, AreaGroup group, double pageHeightPt, FontResources fonts,
+        Dictionary<string, int> fontsOnPage, PdfFile doc, Dictionary<string, int> imageCache,
+        Dictionary<string, int> xobjectsOnPage, IObjectEncryptor enc)
+    {
+        double rad = group.RotationDegrees * Math.PI / 180.0;
+        double cos = Math.Cos(rad);
+        double sin = Math.Sin(rad);
+        double txp = group.TranslateXMpt / MptPerPoint;
+        double typ = group.TranslateYMpt / MptPerPoint;
+
+        sb.Append("q\n");
+        sb.Append(F(cos)).Append(' ').Append(F(-sin)).Append(' ').Append(F(sin)).Append(' ')
+            .Append(F(cos)).Append(' ').Append(F(txp)).Append(' ').Append(F(pageHeightPt - typ)).Append(" cm\n");
+
+        foreach (RectFill rect in group.RectFills)
+        {
+            EmitRect(sb, rect, 0);
+        }
+
+        foreach (ImageRun image in group.Images)
+        {
+            EmitImage(sb, image, 0, doc, imageCache, xobjectsOnPage, enc);
+        }
+
+        foreach (VectorPath path in group.Vectors)
+        {
+            EmitVector(sb, path, 0);
+        }
+
+        foreach (TextRun run in group.TextRuns)
+        {
+            EmitText(sb, run, 0, fonts, fontsOnPage);
+        }
+
+        sb.Append("Q\n");
     }
 
     private static void EmitRect(StringBuilder sb, RectFill rect, double pageHeightPt)
@@ -543,6 +611,35 @@ public sealed class NativePdfRenderer
     }
 
     // ----- Links & outline ------------------------------------------------------------------
+
+    /// <summary>
+    /// Maps a group-local link rectangle into page coordinates by transforming its four corners through
+    /// the group's translate-then-(clockwise)-rotate transform and taking their axis-aligned bounding
+    /// box. The result is a page-space <see cref="LinkArea"/> carrying the same target.
+    /// </summary>
+    private static LinkArea MapGroupLink(AreaGroup group, LinkArea link)
+    {
+        double rad = group.RotationDegrees * Math.PI / 180.0;
+        double cos = Math.Cos(rad);
+        double sin = Math.Sin(rad);
+
+        (double X, double Y) Map(double lx, double ly) =>
+            (group.TranslateXMpt + lx * cos - ly * sin, group.TranslateYMpt + lx * sin + ly * cos);
+
+        (double X, double Y)[] corners =
+        [
+            Map(link.XMpt, link.YMpt),
+            Map(link.XMpt + link.WidthMpt, link.YMpt),
+            Map(link.XMpt, link.YMpt + link.HeightMpt),
+            Map(link.XMpt + link.WidthMpt, link.YMpt + link.HeightMpt),
+        ];
+
+        double minX = corners.Min(c => c.X);
+        double minY = corners.Min(c => c.Y);
+        double maxX = corners.Max(c => c.X);
+        double maxY = corners.Max(c => c.Y);
+        return new LinkArea(minX, minY, maxX - minX, maxY - minY, link.TargetPageIndex, link.Uri);
+    }
 
     private static int? BuildLink(PdfFile doc, LinkArea link, double pageHeightMpt,
         IReadOnlyList<int> pageObjectNumbers, IObjectEncryptor enc)
