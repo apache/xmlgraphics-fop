@@ -95,14 +95,29 @@ public sealed class LayoutEngine
         public Dictionary<string, MarkerContent> Carryover { get; } = new(StringComparer.Ordinal);
     }
 
+    private readonly IImageResolver? imageResolver;
+
     /// <summary>Creates a layout engine that measures text via <paramref name="measurer"/>.</summary>
     public LayoutEngine(IFontMeasurer measurer)
+        : this(measurer, imageResolver: null)
+    {
+    }
+
+    /// <summary>
+    /// Creates a layout engine with the given text <paramref name="measurer"/> and an optional
+    /// <paramref name="imageResolver"/> used to size <c>fo:external-graphic</c> images intrinsically.
+    /// </summary>
+    public LayoutEngine(IFontMeasurer measurer, IImageResolver? imageResolver)
     {
         this.measurer = measurer ?? throw new ArgumentNullException(nameof(measurer));
+        this.imageResolver = imageResolver;
     }
 
     /// <summary>The font measurer used by this engine.</summary>
     public IFontMeasurer Measurer => measurer;
+
+    /// <summary>The image resolver used to size external graphics, or <c>null</c> when none is set.</summary>
+    public IImageResolver? ImageResolver => imageResolver;
 
     /// <summary>
     /// The hyphenator consulted when a block enables <c>hyphenate</c> and a word does not fit on a line.
@@ -1675,11 +1690,19 @@ public sealed class LayoutEngine
         {
             BoxProperties box = graphic.Box;
 
-            // Intrinsic/specified size. Without a decoder in the layout layer we use the specified
-            // content-width/height, defaulting to a square placeholder when unset.
+            string source = graphic.Source;
+            string? path = source.Length > 0 ? source : null;
+
+            // Intrinsic size from the image (via the injected resolver, which reads pixel size + DPI).
+            // When no resolver is set or the image cannot be read, fall back to a 72pt square so an
+            // unsized graphic still reserves a visible, square placeholder area.
             double defaultSize = FoLength.FromPoints(72).Millipoints;
-            double imageWidth = graphic.ContentWidth?.Millipoints ?? defaultSize;
-            double imageHeight = graphic.ContentHeight?.Millipoints ?? defaultSize;
+            ImageIntrinsics? intrinsic = engine.ImageResolver?.Resolve(path, bytes: null);
+            double intrinsicWidth = intrinsic?.WidthMpt ?? defaultSize;
+            double intrinsicHeight = intrinsic?.HeightMpt ?? defaultSize;
+
+            // content-width/content-height (with scaling + percentages) over the intrinsic size.
+            (double imageWidth, double imageHeight) = graphic.ResolveContentSize(intrinsicWidth, intrinsicHeight);
 
             double borderBoxWidth = imageWidth + box.LeftInsetMpt + box.RightInsetMpt;
             double borderBoxHeight = imageHeight + box.TopInsetMpt + box.BottomInsetMpt;
@@ -1692,8 +1715,6 @@ public sealed class LayoutEngine
             double imageX = leftMpt + box.LeftInsetMpt;
             double imageY = boxTop + box.TopInsetMpt;
 
-            string source = graphic.Source;
-            string? path = source.Length > 0 ? source : null;
             sink.Add(new ImageRun(imageX, imageY, imageWidth, imageHeight, path, SourceBytes: null));
 
             EmitBox(sink, box, leftMpt, boxTop, borderBoxWidth, borderBoxHeight);

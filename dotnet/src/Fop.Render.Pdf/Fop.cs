@@ -42,7 +42,7 @@ public sealed class FopProcessor
     {
         // Installs the FOP global resolver (idempotent) and binds to its shared registry.
         measurer = new PdfSharpFontMeasurer();
-        layoutEngine = new LayoutEngine(measurer);
+        layoutEngine = new LayoutEngine(measurer, new PdfSharpImageResolver());
         renderer = new PdfRenderer(measurer);
     }
 

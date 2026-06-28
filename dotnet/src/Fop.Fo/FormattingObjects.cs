@@ -742,6 +742,80 @@ public sealed class FoExternalGraphic(PropertyList properties) : FObj(properties
     /// <summary>The resolved box-model properties (borders, padding, background colour).</summary>
     public BoxProperties Box => Properties.GetBox();
 
+    /// <summary>
+    /// Whether <c>scaling</c> is <c>uniform</c> (the default) -- when one of content-width/height is
+    /// <c>auto</c>, the other drives a proportional scale that preserves the aspect ratio. <c>false</c>
+    /// for <c>non-uniform</c>, where an <c>auto</c> dimension takes the intrinsic size independently.
+    /// </summary>
+    public bool UniformScaling =>
+        !Properties.GetString("scaling", "uniform").Trim().Equals("non-uniform", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Resolves the drawn content size (millipoints) from the intrinsic image size and the
+    /// <c>content-width</c>/<c>content-height</c> (falling back to <c>width</c>/<c>height</c>)
+    /// properties, honouring percentages (of the intrinsic dimension), the <c>auto</c> keyword and
+    /// <c>scaling</c>. Mirrors the common cases of FOP's external-graphic sizing:
+    /// <list type="bullet">
+    /// <item>both auto -&gt; the intrinsic size;</item>
+    /// <item>one given, the other auto, uniform scaling -&gt; the other is scaled to preserve aspect;</item>
+    /// <item>both given -&gt; both honoured;</item>
+    /// <item>non-uniform scaling -&gt; an auto dimension keeps its intrinsic length.</item>
+    /// </list>
+    /// </summary>
+    public (double WidthMpt, double HeightMpt) ResolveContentSize(double intrinsicWidthMpt, double intrinsicHeightMpt)
+    {
+        double? w = ResolveDimension("content-width", intrinsicWidthMpt) ?? ResolveDimension("width", intrinsicWidthMpt);
+        double? h = ResolveDimension("content-height", intrinsicHeightMpt) ?? ResolveDimension("height", intrinsicHeightMpt);
+
+        if (w is null && h is null)
+        {
+            return (intrinsicWidthMpt, intrinsicHeightMpt);
+        }
+
+        if (w is not null && h is null)
+        {
+            double height = UniformScaling && intrinsicWidthMpt > 0
+                ? w.Value * intrinsicHeightMpt / intrinsicWidthMpt
+                : intrinsicHeightMpt;
+            return (w.Value, height);
+        }
+
+        if (w is null && h is not null)
+        {
+            double width = UniformScaling && intrinsicHeightMpt > 0
+                ? h.Value * intrinsicWidthMpt / intrinsicHeightMpt
+                : intrinsicWidthMpt;
+            return (width, h.Value);
+        }
+
+        return (w!.Value, h!.Value);
+    }
+
+    /// <summary>
+    /// Resolves a content dimension property to millipoints, returning <c>null</c> for <c>auto</c>,
+    /// <c>scale-to-fit</c> or an unset value. A percentage is taken against
+    /// <paramref name="intrinsicMpt"/> (the intrinsic dimension), matching the XSL-FO base for
+    /// content-width/content-height.
+    /// </summary>
+    private double? ResolveDimension(string name, double intrinsicMpt)
+    {
+        string? raw = Properties.GetRaw(name);
+        if (raw is null)
+        {
+            return null;
+        }
+
+        string trimmed = raw.Trim();
+        if (trimmed.Length == 0
+            || trimmed.Equals("auto", StringComparison.OrdinalIgnoreCase)
+            || trimmed.Equals("scale-to-fit", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        return FoLength.TryParse(trimmed, Properties.FontSizeMpt, intrinsicMpt)?.Millipoints;
+    }
+
     private FoLength? ParseSizeProperty(string name)
     {
         string? raw = Properties.GetRaw(name);
