@@ -26,7 +26,7 @@ namespace Fop.Render.Pdf.Native;
 /// </summary>
 internal sealed class PdfFile
 {
-    private readonly List<string?> bodies = new() { null }; // index 0 unused (objects are 1-based)
+    private readonly List<byte[]?> bodies = new() { null }; // index 0 unused (objects are 1-based)
 
     /// <summary>Reserves the next object number (its body is supplied later via <see cref="Write"/>).</summary>
     public int Reserve()
@@ -36,7 +36,10 @@ internal sealed class PdfFile
     }
 
     /// <summary>Sets the body of a previously reserved object (the inner content, without the obj wrapper).</summary>
-    public void Write(int number, string body)
+    public void Write(int number, string body) => Write(number, Encoding.Latin1.GetBytes(body));
+
+    /// <summary>Sets the body of a previously reserved object to raw bytes (e.g. a stream object).</summary>
+    public void Write(int number, byte[] body)
     {
         if (number <= 0 || number >= bodies.Count)
         {
@@ -44,6 +47,22 @@ internal sealed class PdfFile
         }
 
         bodies[number] = body;
+    }
+
+    /// <summary>
+    /// Builds a stream object body: the stream dictionary entries in <paramref name="dictEntries"/>
+    /// (without the enclosing <c>&lt;&lt; &gt;&gt;</c>), an automatically-added <c>/Length</c>, and the
+    /// raw <paramref name="data"/> between <c>stream</c>/<c>endstream</c>.
+    /// </summary>
+    public static byte[] StreamObject(string dictEntries, byte[] data)
+    {
+        byte[] head = Encoding.Latin1.GetBytes($"<< {dictEntries} /Length {data.Length} >>\nstream\n");
+        byte[] tail = Encoding.Latin1.GetBytes("\nendstream");
+        var result = new byte[head.Length + data.Length + tail.Length];
+        Buffer.BlockCopy(head, 0, result, 0, head.Length);
+        Buffer.BlockCopy(data, 0, result, head.Length, data.Length);
+        Buffer.BlockCopy(tail, 0, result, head.Length + data.Length, tail.Length);
+        return result;
     }
 
     /// <summary>Serializes the whole document to <paramref name="output"/>.</summary>
@@ -62,8 +81,9 @@ internal sealed class PdfFile
         for (int n = 1; n < bodies.Count; n++)
         {
             offsets[n] = buffer.Position;
-            string body = bodies[n] ?? "null"; // a reserved-but-unwritten object becomes the null object
-            Emit($"{n} 0 obj\n{body}\nendobj\n");
+            Emit($"{n} 0 obj\n");
+            buffer.Write(bodies[n] ?? Encoding.Latin1.GetBytes("null")); // unwritten -> null object
+            Emit("\nendobj\n");
         }
 
         long xrefOffset = buffer.Position;

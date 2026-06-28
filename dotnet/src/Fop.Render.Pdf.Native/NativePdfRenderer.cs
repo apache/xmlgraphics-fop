@@ -14,9 +14,11 @@
 // limitations under the License.
 
 using System.Globalization;
+using System.IO.Compression;
 using System.Text;
 using Fop.Colors;
 using Fop.Fo;
+using Fop.Imaging;
 using Fop.Layout;
 
 namespace Fop.Render.Pdf.Native;
@@ -73,12 +75,16 @@ public sealed class NativePdfRenderer
             pageObjectNumbers.Add(doc.Reserve());
         }
 
+        // Image XObjects are shared across pages, deduped by source path.
+        var imageCache = new Dictionary<string, int>(StringComparer.Ordinal);
+
         // Build each page's content stream, font resource map and annotations.
         for (int i = 0; i < tree.Pages.Count; i++)
         {
             PageArea page = tree.Pages[i];
             var fontsOnPage = new Dictionary<string, string>(StringComparer.Ordinal); // resourceKey -> baseFont
-            string content = BuildPageContent(page, fontsOnPage);
+            var xobjectsOnPage = new Dictionary<string, int>(StringComparer.Ordinal); // resourceKey -> object
+            string content = BuildPageContent(page, fontsOnPage, doc, imageCache, xobjectsOnPage);
 
             int contentObj = doc.Reserve();
             doc.Write(contentObj, Stream(content));
@@ -88,6 +94,12 @@ public sealed class NativePdfRenderer
             foreach ((string key, string baseFont) in fontsOnPage)
             {
                 fontRes.Append('/').Append(key).Append(' ').Append(FontObject(baseFont)).Append(" 0 R ");
+            }
+
+            var xobjectRes = new StringBuilder();
+            foreach ((string key, int num) in xobjectsOnPage)
+            {
+                xobjectRes.Append('/').Append(key).Append(' ').Append(num).Append(" 0 R ");
             }
 
             // Link annotations.
@@ -105,7 +117,13 @@ public sealed class NativePdfRenderer
             pageDict.Append("<< /Type /Page /Parent ").Append(pagesTree).Append(" 0 R");
             pageDict.Append(" /MediaBox [0 0 ")
                 .Append(F(page.WidthMpt / MptPerPoint)).Append(' ').Append(F(page.HeightMpt / MptPerPoint)).Append(']');
-            pageDict.Append(" /Resources << /Font << ").Append(fontRes).Append(">> >>");
+            pageDict.Append(" /Resources << /Font << ").Append(fontRes).Append(">>");
+            if (xobjectRes.Length > 0)
+            {
+                pageDict.Append(" /XObject << ").Append(xobjectRes).Append(">>");
+            }
+
+            pageDict.Append(" >>");
             pageDict.Append(" /Contents ").Append(contentObj).Append(" 0 R");
             if (annotRefs.Count > 0)
             {
@@ -154,7 +172,8 @@ public sealed class NativePdfRenderer
 
     // ----- Content stream -------------------------------------------------------------------
 
-    private string BuildPageContent(PageArea page, Dictionary<string, string> fontsOnPage)
+    private string BuildPageContent(PageArea page, Dictionary<string, string> fontsOnPage,
+        PdfFile doc, Dictionary<string, int> imageCache, Dictionary<string, int> xobjectsOnPage)
     {
         double pageHeightPt = page.HeightMpt / MptPerPoint;
         var sb = new StringBuilder();
@@ -167,7 +186,7 @@ public sealed class NativePdfRenderer
 
         foreach (ImageRun image in page.Images)
         {
-            EmitImagePlaceholder(sb, image, pageHeightPt);
+            EmitImage(sb, image, pageHeightPt, doc, imageCache, xobjectsOnPage);
         }
 
         foreach (VectorPath path in page.Vectors)
@@ -199,10 +218,9 @@ public sealed class NativePdfRenderer
             .Append(" re f\n");
     }
 
-    private static void EmitImagePlaceholder(StringBuilder sb, ImageRun image, double pageHeightPt)
+    private static void EmitImage(StringBuilder sb, ImageRun image, double pageHeightPt,
+        PdfFile doc, Dictionary<string, int> imageCache, Dictionary<string, int> xobjectsOnPage)
     {
-        // Native raster-image embedding is not yet implemented; reserve the area with a light box so
-        // the layout stays visible (matching the PdfSharp renderer's decode-failure fallback).
         double x = image.XMpt / MptPerPoint;
         double y = pageHeightPt - (image.YMpt + image.HeightMpt) / MptPerPoint;
         double w = image.WidthMpt / MptPerPoint;
@@ -212,10 +230,99 @@ public sealed class NativePdfRenderer
             return;
         }
 
+        int? xobject = ResolveImageObject(image, doc, imageCache);
+        if (xobject is int num)
+        {
+            // Register a per-page resource key for the (possibly shared) XObject and draw it: the image
+            // fills the unit square, scaled and translated into place by the CTM.
+            string key = "Im" + num;
+            xobjectsOnPage[key] = num;
+            sb.Append("q ").Append(F(w)).Append(" 0 0 ").Append(F(h)).Append(' ')
+                .Append(F(x)).Append(' ').Append(F(y)).Append(" cm /").Append(key).Append(" Do Q\n");
+            return;
+        }
+
+        // Decode failed (missing/unsupported): reserve the area with a light placeholder box.
         sb.Append("0.9 0.9 0.9 rg ").Append(F(x)).Append(' ').Append(F(y)).Append(' ')
             .Append(F(w)).Append(' ').Append(F(h)).Append(" re f\n");
         sb.Append("0.63 0.63 0.63 RG 0.5 w ").Append(F(x)).Append(' ').Append(F(y)).Append(' ')
             .Append(F(w)).Append(' ').Append(F(h)).Append(" re S\n");
+    }
+
+    /// <summary>
+    /// Returns the image XObject object number for <paramref name="image"/>, decoding and creating it
+    /// (and a soft-mask XObject for any alpha channel) on first use, or <c>null</c> when the image
+    /// cannot be decoded. Path-sourced images are shared across pages via <paramref name="imageCache"/>.
+    /// </summary>
+    private static int? ResolveImageObject(ImageRun image, PdfFile doc, Dictionary<string, int> imageCache)
+    {
+        string? cacheKey = image.SourcePath;
+        if (cacheKey is not null && imageCache.TryGetValue(cacheKey, out int cached))
+        {
+            return cached;
+        }
+
+        EmbeddableImage? decoded = RasterImage.Load(image.SourcePath, image.SourceBytes);
+        if (decoded is null)
+        {
+            return null;
+        }
+
+        int obj = CreateImageObject(doc, decoded);
+        if (cacheKey is not null)
+        {
+            imageCache[cacheKey] = obj;
+        }
+
+        return obj;
+    }
+
+    private static int CreateImageObject(PdfFile doc, EmbeddableImage image)
+    {
+        string common = $"/Type /XObject /Subtype /Image /Width {image.Width} /Height {image.Height} " +
+                        "/BitsPerComponent 8";
+
+        if (image.Encoding == ImageEncoding.Jpeg)
+        {
+            string colorSpace = image.Components switch
+            {
+                1 => "/DeviceGray",
+                4 => "/DeviceCMYK",
+                _ => "/DeviceRGB",
+            };
+            int jpeg = doc.Reserve();
+            doc.Write(jpeg, PdfFile.StreamObject($"{common} /ColorSpace {colorSpace} /Filter /DCTDecode", image.Data));
+            return jpeg;
+        }
+
+        // Decoded RGB, optionally with an 8-bit grayscale soft mask for alpha.
+        string smaskEntry = string.Empty;
+        if (image.Alpha is { } alpha)
+        {
+            int smask = doc.Reserve();
+            doc.Write(smask, PdfFile.StreamObject(
+                $"/Type /XObject /Subtype /Image /Width {image.Width} /Height {image.Height} " +
+                "/BitsPerComponent 8 /ColorSpace /DeviceGray /Filter /FlateDecode",
+                Deflate(alpha)));
+            smaskEntry = $" /SMask {smask} 0 R";
+        }
+
+        int obj = doc.Reserve();
+        doc.Write(obj, PdfFile.StreamObject(
+            $"{common} /ColorSpace /DeviceRGB /Filter /FlateDecode{smaskEntry}", Deflate(image.Data)));
+        return obj;
+    }
+
+    /// <summary>Compresses bytes with zlib (the PDF <c>FlateDecode</c> filter format).</summary>
+    private static byte[] Deflate(byte[] data)
+    {
+        using var output = new MemoryStream();
+        using (var zlib = new ZLibStream(output, CompressionLevel.Optimal, leaveOpen: true))
+        {
+            zlib.Write(data);
+        }
+
+        return output.ToArray();
     }
 
     private static void EmitVector(StringBuilder sb, VectorPath path, double pageHeightPt)
