@@ -61,7 +61,13 @@ public sealed class NativePdfRenderer
     }
 
     /// <summary>Renders <paramref name="tree"/> and writes the PDF bytes to <paramref name="output"/>.</summary>
-    public void Render(AreaTree tree, Stream output)
+    public void Render(AreaTree tree, Stream output) => Render(tree, output, encryption: null);
+
+    /// <summary>
+    /// Renders <paramref name="tree"/> to <paramref name="output"/>, optionally encrypting the document
+    /// with the standard security handler when <paramref name="encryption"/> is supplied.
+    /// </summary>
+    public void Render(AreaTree tree, Stream output, PdfEncryptionOptions? encryption)
     {
         ArgumentNullException.ThrowIfNull(tree);
         ArgumentNullException.ThrowIfNull(output);
@@ -70,10 +76,24 @@ public sealed class NativePdfRenderer
         int catalog = doc.Reserve();
         int pagesTree = doc.Reserve();
 
+        // Encryption: derive the handler from a fresh file id, publish the /Encrypt dict (its own
+        // strings are never encrypted) and the trailer /ID. When off, a no-op encryptor is used.
+        IObjectEncryptor enc = NoEncryption.Instance;
+        if (encryption is not null)
+        {
+            byte[] fileId = Guid.NewGuid().ToByteArray();
+            var handler = new StandardSecurityHandler(encryption, fileId);
+            int encryptObj = doc.Reserve();
+            doc.Write(encryptObj, $"<< {handler.EncryptDictionary()} >>");
+            doc.EncryptReference = encryptObj;
+            doc.FileIdHex = Convert.ToHexString(fileId);
+            enc = handler;
+        }
+
         // Shared font resources: embedded TrueType faces (when a provider supplies them) and/or the
         // standard-14 fallback, each created once and reused across pages. The per-font set of used
         // code points (collected up front) drives glyph subsetting.
-        var fonts = new FontResources(doc, fontProvider, CollectFontUsage(tree));
+        var fonts = new FontResources(doc, fontProvider, CollectFontUsage(tree), enc);
 
         var pageObjectNumbers = new List<int>(tree.Pages.Count);
         foreach (PageArea _ in tree.Pages)
@@ -90,11 +110,11 @@ public sealed class NativePdfRenderer
             PageArea page = tree.Pages[i];
             var fontsOnPage = new Dictionary<string, int>(StringComparer.Ordinal); // resourceKey -> font object
             var xobjectsOnPage = new Dictionary<string, int>(StringComparer.Ordinal); // resourceKey -> object
-            string content = BuildPageContent(page, fonts, fontsOnPage, doc, imageCache, xobjectsOnPage);
+            string content = BuildPageContent(page, fonts, fontsOnPage, doc, imageCache, xobjectsOnPage, enc);
 
             int contentObj = doc.Reserve();
             doc.Write(contentObj, PdfFile.StreamObject("/Filter /FlateDecode",
-                Deflate(Encoding.Latin1.GetBytes(content))));
+                enc.EncryptStream(contentObj, Deflate(Encoding.Latin1.GetBytes(content)))));
 
             // Font resource dictionary entries (resourceKey -> indirect font object).
             var fontRes = new StringBuilder();
@@ -113,7 +133,7 @@ public sealed class NativePdfRenderer
             var annotRefs = new List<int>();
             foreach (LinkArea link in page.Links)
             {
-                int? annot = BuildLink(doc, link, page.HeightMpt, pageObjectNumbers);
+                int? annot = BuildLink(doc, link, page.HeightMpt, pageObjectNumbers, enc);
                 if (annot is int a)
                 {
                     annotRefs.Add(a);
@@ -160,7 +180,7 @@ public sealed class NativePdfRenderer
 
         // Optional document outline (bookmarks).
         int? outlineRoot = tree.Outline.Count > 0 && pageObjectNumbers.Count > 0
-            ? BuildOutline(doc, tree.Outline, pageObjectNumbers)
+            ? BuildOutline(doc, tree.Outline, pageObjectNumbers, enc)
             : null;
 
         // Catalog.
@@ -214,7 +234,8 @@ public sealed class NativePdfRenderer
     // ----- Content stream -------------------------------------------------------------------
 
     private string BuildPageContent(PageArea page, FontResources fonts, Dictionary<string, int> fontsOnPage,
-        PdfFile doc, Dictionary<string, int> imageCache, Dictionary<string, int> xobjectsOnPage)
+        PdfFile doc, Dictionary<string, int> imageCache, Dictionary<string, int> xobjectsOnPage,
+        IObjectEncryptor enc)
     {
         double pageHeightPt = page.HeightMpt / MptPerPoint;
         var sb = new StringBuilder();
@@ -227,7 +248,7 @@ public sealed class NativePdfRenderer
 
         foreach (ImageRun image in page.Images)
         {
-            EmitImage(sb, image, pageHeightPt, doc, imageCache, xobjectsOnPage);
+            EmitImage(sb, image, pageHeightPt, doc, imageCache, xobjectsOnPage, enc);
         }
 
         foreach (VectorPath path in page.Vectors)
@@ -260,7 +281,8 @@ public sealed class NativePdfRenderer
     }
 
     private static void EmitImage(StringBuilder sb, ImageRun image, double pageHeightPt,
-        PdfFile doc, Dictionary<string, int> imageCache, Dictionary<string, int> xobjectsOnPage)
+        PdfFile doc, Dictionary<string, int> imageCache, Dictionary<string, int> xobjectsOnPage,
+        IObjectEncryptor enc)
     {
         double x = image.XMpt / MptPerPoint;
         double y = pageHeightPt - (image.YMpt + image.HeightMpt) / MptPerPoint;
@@ -271,7 +293,7 @@ public sealed class NativePdfRenderer
             return;
         }
 
-        int? xobject = ResolveImageObject(image, doc, imageCache);
+        int? xobject = ResolveImageObject(image, doc, imageCache, enc);
         if (xobject is int num)
         {
             // Register a per-page resource key for the (possibly shared) XObject and draw it: the image
@@ -295,7 +317,8 @@ public sealed class NativePdfRenderer
     /// (and a soft-mask XObject for any alpha channel) on first use, or <c>null</c> when the image
     /// cannot be decoded. Path-sourced images are shared across pages via <paramref name="imageCache"/>.
     /// </summary>
-    private static int? ResolveImageObject(ImageRun image, PdfFile doc, Dictionary<string, int> imageCache)
+    private static int? ResolveImageObject(ImageRun image, PdfFile doc, Dictionary<string, int> imageCache,
+        IObjectEncryptor enc)
     {
         string? cacheKey = image.SourcePath;
         if (cacheKey is not null && imageCache.TryGetValue(cacheKey, out int cached))
@@ -309,7 +332,7 @@ public sealed class NativePdfRenderer
             return null;
         }
 
-        int obj = CreateImageObject(doc, decoded);
+        int obj = CreateImageObject(doc, decoded, enc);
         if (cacheKey is not null)
         {
             imageCache[cacheKey] = obj;
@@ -318,7 +341,7 @@ public sealed class NativePdfRenderer
         return obj;
     }
 
-    private static int CreateImageObject(PdfFile doc, EmbeddableImage image)
+    private static int CreateImageObject(PdfFile doc, EmbeddableImage image, IObjectEncryptor enc)
     {
         string common = $"/Type /XObject /Subtype /Image /Width {image.Width} /Height {image.Height} " +
                         "/BitsPerComponent 8";
@@ -332,7 +355,8 @@ public sealed class NativePdfRenderer
                 _ => "/DeviceRGB",
             };
             int jpeg = doc.Reserve();
-            doc.Write(jpeg, PdfFile.StreamObject($"{common} /ColorSpace {colorSpace} /Filter /DCTDecode", image.Data));
+            doc.Write(jpeg, PdfFile.StreamObject($"{common} /ColorSpace {colorSpace} /Filter /DCTDecode",
+                enc.EncryptStream(jpeg, image.Data)));
             return jpeg;
         }
 
@@ -344,13 +368,14 @@ public sealed class NativePdfRenderer
             doc.Write(smask, PdfFile.StreamObject(
                 $"/Type /XObject /Subtype /Image /Width {image.Width} /Height {image.Height} " +
                 "/BitsPerComponent 8 /ColorSpace /DeviceGray /Filter /FlateDecode",
-                Deflate(alpha)));
+                enc.EncryptStream(smask, Deflate(alpha))));
             smaskEntry = $" /SMask {smask} 0 R";
         }
 
         int obj = doc.Reserve();
         doc.Write(obj, PdfFile.StreamObject(
-            $"{common} /ColorSpace /DeviceRGB /Filter /FlateDecode{smaskEntry}", Deflate(image.Data)));
+            $"{common} /ColorSpace /DeviceRGB /Filter /FlateDecode{smaskEntry}",
+            enc.EncryptStream(obj, Deflate(image.Data))));
         return obj;
     }
 
@@ -520,11 +545,17 @@ public sealed class NativePdfRenderer
     // ----- Links & outline ------------------------------------------------------------------
 
     private static int? BuildLink(PdfFile doc, LinkArea link, double pageHeightMpt,
-        IReadOnlyList<int> pageObjectNumbers)
+        IReadOnlyList<int> pageObjectNumbers, IObjectEncryptor enc)
     {
         double w = link.WidthMpt / MptPerPoint;
         double h = link.HeightMpt / MptPerPoint;
         if (w <= 0 || h <= 0)
+        {
+            return null;
+        }
+
+        bool internalLink = link.TargetPageIndex is int t && t >= 0 && t < pageObjectNumbers.Count;
+        if (!internalLink && string.IsNullOrEmpty(link.Uri))
         {
             return null;
         }
@@ -534,31 +565,22 @@ public sealed class NativePdfRenderer
         double lowerY = pageHeightPt - (link.YMpt + link.HeightMpt) / MptPerPoint;
         string rect = $"[{F(x)} {F(lowerY)} {F(x + w)} {F(lowerY + h)}]";
 
-        string action;
-        if (link.TargetPageIndex is int target && target >= 0 && target < pageObjectNumbers.Count)
-        {
-            action = $" /Dest [{pageObjectNumbers[target]} 0 R /Fit]";
-        }
-        else if (!string.IsNullOrEmpty(link.Uri))
-        {
-            action = $" /A << /S /URI /URI {EscapeWinAnsi(link.Uri)} >>";
-        }
-        else
-        {
-            return null;
-        }
-
+        // Reserve the object first so the URI string can be encrypted under its key.
         int obj = doc.Reserve();
+        string action = internalLink
+            ? $" /Dest [{pageObjectNumbers[link.TargetPageIndex!.Value]} 0 R /Fit]"
+            : $" /A << /S /URI /URI {enc.LiteralString(obj, link.Uri!)} >>";
+
         doc.Write(obj, $"<< /Type /Annot /Subtype /Link /Rect {rect} /Border [0 0 0]{action} >>");
         return obj;
     }
 
     /// <summary>Builds the outline tree and returns the outlines-root object number.</summary>
     private static int BuildOutline(PdfFile doc, IReadOnlyList<OutlineEntry> roots,
-        IReadOnlyList<int> pageObjectNumbers)
+        IReadOnlyList<int> pageObjectNumbers, IObjectEncryptor enc)
     {
         int rootObj = doc.Reserve();
-        (int first, int last, int count) = BuildOutlineItems(doc, roots, rootObj, pageObjectNumbers);
+        (int first, int last, int count) = BuildOutlineItems(doc, roots, rootObj, pageObjectNumbers, enc);
         doc.Write(rootObj, $"<< /Type /Outlines /First {first} 0 R /Last {last} 0 R /Count {count} >>");
         return rootObj;
     }
@@ -568,7 +590,8 @@ public sealed class NativePdfRenderer
     /// the sibling First/Last/Prev/Next links, and returns (firstObj, lastObj, openCount).
     /// </summary>
     private static (int First, int Last, int Count) BuildOutlineItems(PdfFile doc,
-        IReadOnlyList<OutlineEntry> entries, int parent, IReadOnlyList<int> pageObjectNumbers)
+        IReadOnlyList<OutlineEntry> entries, int parent, IReadOnlyList<int> pageObjectNumbers,
+        IObjectEncryptor enc)
     {
         // Reserve a number for each sibling so Prev/Next can reference neighbours.
         var nums = new int[entries.Count];
@@ -582,7 +605,7 @@ public sealed class NativePdfRenderer
         {
             OutlineEntry e = entries[i];
             var sb = new StringBuilder();
-            sb.Append("<< /Title ").Append(EscapeWinAnsi(e.Title));
+            sb.Append("<< /Title ").Append(enc.LiteralString(nums[i], e.Title));
             sb.Append(" /Parent ").Append(parent).Append(" 0 R");
             if (i > 0)
             {
@@ -599,7 +622,7 @@ public sealed class NativePdfRenderer
 
             if (e.Children.Count > 0)
             {
-                (int cf, int cl, int cc) = BuildOutlineItems(doc, e.Children, nums[i], pageObjectNumbers);
+                (int cf, int cl, int cc) = BuildOutlineItems(doc, e.Children, nums[i], pageObjectNumbers, enc);
                 sb.Append(" /First ").Append(cf).Append(" 0 R /Last ").Append(cl).Append(" 0 R");
                 // A closed entry hides its descendants and reports a negative count (PDF convention).
                 sb.Append(" /Count ").Append(e.Open ? cc : -cc);
@@ -641,7 +664,8 @@ public sealed class NativePdfRenderer
     private readonly record struct UsedFont(string ResourceKey, TrueTypeFont? Embedded);
 
     private sealed class FontResources(
-        PdfFile doc, INativeFontProvider? provider, IReadOnlyDictionary<FontKey, HashSet<int>> usage)
+        PdfFile doc, INativeFontProvider? provider, IReadOnlyDictionary<FontKey, HashSet<int>> usage,
+        IObjectEncryptor enc)
     {
         private readonly Dictionary<FontKey, (string Key, int Obj, TrueTypeFont Ttf)> embedded = new();
         private readonly Dictionary<string, (string Key, int Obj)> standard = new(StringComparer.Ordinal);
@@ -721,7 +745,8 @@ public sealed class NativePdfRenderer
             // FontFile2: the (deflated) font program, with /Length1 = the uncompressed length.
             int fontFile = doc.Reserve();
             doc.Write(fontFile, PdfFile.StreamObject(
-                $"/Length1 {embedProgram.Length} /Filter /FlateDecode", Deflate(embedProgram)));
+                $"/Length1 {embedProgram.Length} /Filter /FlateDecode",
+                enc.EncryptStream(fontFile, Deflate(embedProgram))));
 
             int flags = 32 | (ttf.Italic || font.IsItalic ? 64 : 0); // Nonsymbolic [+ Italic]
             int stemV = font.IsBold || ttf.Bold ? 120 : 80;
@@ -742,12 +767,13 @@ public sealed class NativePdfRenderer
             int cidFont = doc.Reserve();
             doc.Write(cidFont,
                 $"<< /Type /Font /Subtype /CIDFontType2 /BaseFont /{name} " +
-                "/CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> " +
+                $"/CIDSystemInfo << /Registry {enc.LiteralString(cidFont, "Adobe")} " +
+                $"/Ordering {enc.LiteralString(cidFont, "Identity")} /Supplement 0 >> " +
                 $"/FontDescriptor {descriptor} 0 R /CIDToGIDMap /Identity /DW 0 /W [{w.ToString().TrimEnd()}] >>");
 
             int toUnicode = doc.Reserve();
             doc.Write(toUnicode, PdfFile.StreamObject("/Filter /FlateDecode",
-                Deflate(Encoding.Latin1.GetBytes(ToUnicodeCMap(ttf, codePoints)))));
+                enc.EncryptStream(toUnicode, Deflate(Encoding.Latin1.GetBytes(ToUnicodeCMap(ttf, codePoints))))));
 
             int fontObj = doc.Reserve();
             doc.Write(fontObj,

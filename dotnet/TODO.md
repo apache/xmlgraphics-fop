@@ -131,14 +131,15 @@ Independent back-ends; port in priority order. Each can be its own project (`Fop
         the file structure (objects/xref/trailer) directly and emits pages, text, vector graphics,
         rules/backgrounds, link annotations and the document outline. It **embeds raster images**
         (`Fop.Imaging.RasterImage`: JPEG pass-through as DCTDecode, other formats decoded to FlateDecode
-        RGB + an `/SMask` for alpha) and **embeds TrueType/OpenType fonts** (a self-contained
-        `TrueTypeFont` parser reads `cmap`/`hmtx`/`head`/`hhea`/`OS-2`/`post` for the `/Widths` and
-        descriptor; the face is embedded as `/FontFile2`) **and subsets** them to the glyphs actually
-        used (`TrueTypeSubsetter` rebuilds `glyf`/`loca` keeping glyph ids, so `cmap`/`hmtx`/`/Widths`
-        stay valid; e.g. a sample drops from ~630 KB to ~80 KB), falling back to a metric-compatible
-        standard-14 font when no program is available. Exposed via `FopProcessor.ConvertNative` and the
-        CLI `-native` flag; PdfSharp's reader (and SixLabors.Fonts, independently) re-open the output.
-        Remaining: CID/Unicode fonts beyond WinAnsi, encryption, stream filters.
+        RGB + an `/SMask` for alpha) and **embeds + subsets TrueType/OpenType fonts** as Type0 composite
+        fonts (Identity-H, CIDFontType2, `/ToUnicode`), so any Unicode the face covers renders -- not
+        just WinAnsi -- with the standard-14 fonts as a metric-compatible fallback; `TrueTypeSubsetter`
+        rebuilds `glyf`/`loca` keeping glyph ids so subsetting stays valid (a sample drops ~630 KB →
+        ~80 KB). Content streams are **FlateDecode-compressed**, and the document can be **encrypted**
+        (standard RC4-128 handler with owner/user passwords + permission flags via `PdfEncryptionOptions`).
+        Exposed via `FopProcessor.ConvertNative` and the CLI `-native` flag; PdfSharp's reader (and, for
+        fonts, SixLabors.Fonts, independently) re-open the output. Remaining: AES encryption,
+        object/xref streams, tagged/accessible PDF.
 - [ ] Bitmap/Java2D → **ImageSharp** raster renderer (`Fop.Render.Bitmap`).
 - [x] **Text-family back-ends** (`Fop.Render.Text`): plain text, Markdown and HTML, rendered from the
       FO tree's logical structure (a shared `DocExtractor` → paragraphs/headings/lists/tables/links/

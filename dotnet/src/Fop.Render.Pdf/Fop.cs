@@ -133,4 +133,18 @@ public sealed class FopProcessor
         nativeRenderer.Render(tree, buffer);
         return buffer.ToArray();
     }
+
+    /// <summary>
+    /// Converts an FO document stream to PDF using the native renderer, encrypting the result with the
+    /// standard security handler per <paramref name="encryption"/> (passing <c>null</c> leaves it
+    /// unencrypted, equivalent to <see cref="ConvertNative(Stream, Stream)"/>).
+    /// </summary>
+    public void ConvertNative(Stream foInput, Stream pdfOutput, PdfEncryptionOptions? encryption)
+    {
+        ArgumentNullException.ThrowIfNull(foInput);
+        ArgumentNullException.ThrowIfNull(pdfOutput);
+        FoRoot root = FoTreeBuilder.Parse(foInput);
+        AreaTree tree = layoutEngine.LayOut(root);
+        nativeRenderer.Render(tree, pdfOutput, encryption);
+    }
 }

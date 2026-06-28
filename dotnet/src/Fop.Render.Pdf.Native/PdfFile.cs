@@ -28,6 +28,12 @@ internal sealed class PdfFile
 {
     private readonly List<byte[]?> bodies = new() { null }; // index 0 unused (objects are 1-based)
 
+    /// <summary>The object number of the <c>/Encrypt</c> dictionary, added to the trailer when set.</summary>
+    public int? EncryptReference { get; set; }
+
+    /// <summary>The hex file id emitted as the trailer <c>/ID</c> (both array entries), when set.</summary>
+    public string? FileIdHex { get; set; }
+
     /// <summary>Reserves the next object number (its body is supplied later via <c>Write</c>).</summary>
     public int Reserve()
     {
@@ -94,7 +100,9 @@ internal sealed class PdfFile
             Emit(offsets[n].ToString("D10", CultureInfo.InvariantCulture) + " 00000 n \n");
         }
 
-        Emit($"trailer\n<< /Size {count + 1} /Root 1 0 R >>\n");
+        string encrypt = EncryptReference is int e ? $" /Encrypt {e} 0 R" : string.Empty;
+        string id = FileIdHex is { } fid ? $" /ID [<{fid}> <{fid}>]" : string.Empty;
+        Emit($"trailer\n<< /Size {count + 1} /Root 1 0 R{encrypt}{id} >>\n");
         Emit($"startxref\n{xrefOffset.ToString(CultureInfo.InvariantCulture)}\n%%EOF\n");
 
         buffer.Position = 0;
