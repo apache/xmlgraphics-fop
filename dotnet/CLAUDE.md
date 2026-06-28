@@ -163,9 +163,11 @@ that stack with modern, cross-platform, managed libraries:
   (`Fop.Imaging.RasterImage`: JPEG → DCTDecode pass-through, other formats → FlateDecode RGB with an
   `/SMask` for alpha) and **embeds TrueType/OpenType fonts** (a self-contained `TrueTypeFont` parser
   computes the `/Widths` + descriptor from `cmap`/`hmtx`/`head`/`hhea`/`OS-2`/`post`, embedded as
-  `/FontFile2`), falling back to a metric-compatible standard-14 font otherwise. Exposed via
-  `FopProcessor.ConvertNative` and the CLI `-native` flag. (Font subsetting and CID/Unicode fonts are
-  future work; full faces are embedded today.)
+  `/FontFile2`) **and subsets** them to the used glyphs (`TrueTypeSubsetter` rebuilds `glyf`/`loca`
+  keeping glyph ids, so `cmap`/`hmtx`/`/Widths` stay valid -- a sample drops ~630 KB → ~80 KB),
+  falling back to a metric-compatible standard-14 font otherwise. Exposed via
+  `FopProcessor.ConvertNative` and the CLI `-native` flag. (CID/Unicode fonts beyond WinAnsi are future
+  work.)
 - **`Fop.Render.Text`** — text-family back-ends (plain text, Markdown, HTML) rendered from the FO
   tree's *logical* structure via a shared `DocExtractor` (paragraphs/headings/lists/tables/links/
   images), rather than from the positioned area tree.
@@ -213,7 +215,7 @@ A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subse
   `baseline - 1.1*capHeight`, line-through `baseline - 0.45*capHeight`); and **letter-spacing**
   (per-glyph tracking between glyphs, `(n-1)` gaps per word, drawn glyph-by-glyph).
 
-The solution has 17 library projects and **978 passing tests** on .NET 10. See `samples/hello.fo`
+The solution has 17 library projects and **981 passing tests** on .NET 10. See `samples/hello.fo`
 (a clickable TOC with leaders, links, a marker header, and page-number citations) and
 `samples/svg-decoration.fo` (embedded SVG, text-decoration and letter-spacing). The `fop` CLI renders
 a document with `fop in.fo out.pdf`.

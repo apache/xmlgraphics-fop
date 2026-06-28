@@ -28,7 +28,7 @@ internal sealed class PdfFile
 {
     private readonly List<byte[]?> bodies = new() { null }; // index 0 unused (objects are 1-based)
 
-    /// <summary>Reserves the next object number (its body is supplied later via <see cref="Write"/>).</summary>
+    /// <summary>Reserves the next object number (its body is supplied later via <c>Write</c>).</summary>
     public int Reserve()
     {
         bodies.Add(null);

@@ -60,6 +60,12 @@ internal sealed class TrueTypeFont
 
     public bool Bold { get; }
 
+    /// <summary>The number of glyphs in the font.</summary>
+    public int NumGlyphs => advanceWidths.Length;
+
+    /// <summary>The glyph index <paramref name="codePoint"/> maps to via the font's cmap (0 = .notdef).</summary>
+    public int GlyphIndex(int codePoint) => cmapLookup(codePoint);
+
     /// <summary>The advance width (1000-em units) of the glyph mapped from <paramref name="codePoint"/>.</summary>
     public int AdvanceWidth(int codePoint)
     {

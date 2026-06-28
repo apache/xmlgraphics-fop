@@ -71,8 +71,9 @@ public sealed class NativePdfRenderer
         int pagesTree = doc.Reserve();
 
         // Shared font resources: embedded TrueType faces (when a provider supplies them) and/or the
-        // standard-14 fallback, each created once and reused across pages.
-        var fonts = new FontResources(doc, fontProvider);
+        // standard-14 fallback, each created once and reused across pages. The per-font set of used
+        // code points (collected up front) drives glyph subsetting.
+        var fonts = new FontResources(doc, fontProvider, CollectFontUsage(tree));
 
         var pageObjectNumbers = new List<int>(tree.Pages.Count);
         foreach (PageArea _ in tree.Pages)
@@ -166,6 +167,47 @@ public sealed class NativePdfRenderer
         doc.Write(catalog, $"<< /Type /Catalog /Pages {pagesTree} 0 R{outlineEntry} >>");
 
         doc.WriteTo(output);
+    }
+
+    /// <summary>
+    /// Collects, per font, the set of code points used in the document's text (page runs and the runs
+    /// inside transformed groups), so each embedded face can be subset to just those glyphs.
+    /// </summary>
+    private static Dictionary<FontKey, HashSet<int>> CollectFontUsage(AreaTree tree)
+    {
+        var usage = new Dictionary<FontKey, HashSet<int>>();
+
+        void Add(TextRun run)
+        {
+            if (!usage.TryGetValue(run.Font, out HashSet<int>? set))
+            {
+                set = new HashSet<int>();
+                usage[run.Font] = set;
+            }
+
+            foreach (char c in run.Text)
+            {
+                set.Add(c);
+            }
+        }
+
+        foreach (PageArea page in tree.Pages)
+        {
+            foreach (TextRun run in page.TextRuns)
+            {
+                Add(run);
+            }
+
+            foreach (AreaGroup group in page.Groups)
+            {
+                foreach (TextRun run in group.TextRuns)
+                {
+                    Add(run);
+                }
+            }
+        }
+
+        return usage;
     }
 
     // ----- Content stream -------------------------------------------------------------------
@@ -587,7 +629,8 @@ public sealed class NativePdfRenderer
     /// reusing each across pages. <see cref="Use"/> registers the font in a page's resource map and
     /// returns the resource key the content stream references.
     /// </summary>
-    private sealed class FontResources(PdfFile doc, INativeFontProvider? provider)
+    private sealed class FontResources(
+        PdfFile doc, INativeFontProvider? provider, IReadOnlyDictionary<FontKey, HashSet<int>> usage)
     {
         private readonly Dictionary<FontKey, (string Key, int Obj)> embedded = new();
         private readonly Dictionary<string, (string Key, int Obj)> standard = new(StringComparer.Ordinal);
@@ -639,12 +682,32 @@ public sealed class NativePdfRenderer
                 return null;
             }
 
-            string name = EmbeddedFontName(font, embeddedCounter);
+            // Subset the program to the glyphs actually used (widths/metrics still come from the full
+            // ttf, whose hmtx/cmap the subset preserves). On failure, embed the full face.
+            byte[] embedProgram = program;
+            string prefix = string.Empty;
+            if (usage.TryGetValue(font, out HashSet<int>? codePoints))
+            {
+                var glyphIds = new HashSet<int>();
+                foreach (int cp in codePoints)
+                {
+                    glyphIds.Add(ttf.GlyphIndex(cp));
+                }
+
+                byte[]? subset = TrueTypeSubsetter.Subset(program, glyphIds);
+                if (subset is not null)
+                {
+                    embedProgram = subset;
+                    prefix = SubsetPrefix(font) + "+";
+                }
+            }
+
+            string name = prefix + EmbeddedFontName(font, embeddedCounter);
 
             // FontFile2: the (deflated) font program, with /Length1 = the uncompressed length.
             int fontFile = doc.Reserve();
             doc.Write(fontFile, PdfFile.StreamObject(
-                $"/Length1 {program.Length} /Filter /FlateDecode", Deflate(program)));
+                $"/Length1 {embedProgram.Length} /Filter /FlateDecode", Deflate(embedProgram)));
 
             int flags = 32 | (ttf.Italic || font.IsItalic ? 64 : 0); // Nonsymbolic [+ Italic]
             int stemV = font.IsBold || ttf.Bold ? 120 : 80;
@@ -672,7 +735,30 @@ public sealed class NativePdfRenderer
             return (key, fontObj);
         }
 
-        /// <summary>A unique PostScript-style font name for an embedded face (no subset prefix; full embed).</summary>
+        /// <summary>
+        /// A deterministic 6-uppercase-letter subset tag for a font (PDF requires a <c>XXXXXX+</c>
+        /// prefix on a subset font's name), derived from the font's identity.
+        /// </summary>
+        private static string SubsetPrefix(FontKey font)
+        {
+            // A small FNV-1a hash over the font identity, rendered as six letters A-Z.
+            uint hash = 2166136261u;
+            foreach (char c in $"{font.Family}|{font.Weight}|{font.Style}|{font.SizeMpt}")
+            {
+                hash = (hash ^ c) * 16777619u;
+            }
+
+            var letters = new char[6];
+            for (int i = 0; i < 6; i++)
+            {
+                letters[i] = (char)('A' + (int)(hash % 26));
+                hash /= 26;
+            }
+
+            return new string(letters);
+        }
+
+        /// <summary>A unique PostScript-style font name for an embedded face (without the subset prefix).</summary>
         private static string EmbeddedFontName(FontKey font, int index)
         {
             string family = new string(font.Family.Where(char.IsLetterOrDigit).ToArray());

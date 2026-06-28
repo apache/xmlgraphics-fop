@@ -133,10 +133,12 @@ Independent back-ends; port in priority order. Each can be its own project (`Fop
         (`Fop.Imaging.RasterImage`: JPEG pass-through as DCTDecode, other formats decoded to FlateDecode
         RGB + an `/SMask` for alpha) and **embeds TrueType/OpenType fonts** (a self-contained
         `TrueTypeFont` parser reads `cmap`/`hmtx`/`head`/`hhea`/`OS-2`/`post` for the `/Widths` and
-        descriptor; the face is embedded as `/FontFile2`), falling back to a metric-compatible
+        descriptor; the face is embedded as `/FontFile2`) **and subsets** them to the glyphs actually
+        used (`TrueTypeSubsetter` rebuilds `glyf`/`loca` keeping glyph ids, so `cmap`/`hmtx`/`/Widths`
+        stay valid; e.g. a sample drops from ~630 KB to ~80 KB), falling back to a metric-compatible
         standard-14 font when no program is available. Exposed via `FopProcessor.ConvertNative` and the
-        CLI `-native` flag; PdfSharp's reader re-opens the output. Remaining: font **subsetting** (full
-        faces are embedded today), CID/Unicode fonts beyond WinAnsi, encryption, stream filters.
+        CLI `-native` flag; PdfSharp's reader (and SixLabors.Fonts, independently) re-open the output.
+        Remaining: CID/Unicode fonts beyond WinAnsi, encryption, stream filters.
 - [ ] Bitmap/Java2D → **ImageSharp** raster renderer (`Fop.Render.Bitmap`).
 - [x] **Text-family back-ends** (`Fop.Render.Text`): plain text, Markdown and HTML, rendered from the
       FO tree's logical structure (a shared `DocExtractor` → paragraphs/headings/lists/tables/links/
