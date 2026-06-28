@@ -15,7 +15,10 @@
 
 using System.Text;
 
+using Fop.Layout;
 using Fop.Render.Pdf;
+
+using PdfSharp.Pdf.IO;
 
 using Xunit;
 
@@ -70,5 +73,51 @@ public class BlockContainerPdfTests
         var groups = tree.Pages.SelectMany(p => p.Groups).ToList();
         Assert.Contains(groups, g => g.RotationDegrees == 90);
         Assert.Single(tree.Pages);
+    }
+
+    private const string LinkInRotatedContainerFo = """
+        <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" font-family="Helvetica" font-size="12pt">
+          <fo:layout-master-set>
+            <fo:simple-page-master master-name="A4" page-width="210mm" page-height="297mm"
+                margin-top="20mm" margin-bottom="20mm" margin-left="25mm" margin-right="25mm">
+              <fo:region-body/>
+            </fo:simple-page-master>
+          </fo:layout-master-set>
+          <fo:page-sequence master-reference="A4">
+            <fo:flow flow-name="xsl-region-body">
+              <fo:block-container absolute-position="absolute" left="120mm" top="120mm"
+                  width="80mm" reference-orientation="90">
+                <fo:block><fo:basic-link external-destination="url(https://example.com/)">Rotated link</fo:basic-link></fo:block>
+              </fo:block-container>
+            </fo:flow>
+          </fo:page-sequence>
+        </fo:root>
+        """;
+
+    [Fact]
+    public void LinkInsideRotatedContainerIsAGroupLocalLink()
+    {
+        var processor = new FopProcessor();
+        var tree = processor.LayOut(Fo.FoTreeBuilder.ParseString(LinkInRotatedContainerFo));
+
+        // The link lives inside the rotated group (group-local coordinates), not on the flat page, so it
+        // can later be mapped through the group's transform into a page-space annotation.
+        AreaGroup group = Assert.Single(tree.Pages.SelectMany(p => p.Groups), g => g.RotationDegrees == 90);
+        Assert.Contains(group.Links, l => l.Uri == "https://example.com/");
+        Assert.DoesNotContain(tree.Pages.SelectMany(p => p.Links), l => l.Uri == "https://example.com/");
+    }
+
+    [Fact]
+    public void LinkInsideRotatedContainerBecomesAPageAnnotation()
+    {
+        var processor = new FopProcessor();
+        byte[] pdf = processor.Convert(LinkInRotatedContainerFo);
+
+        // Re-open the rendered PDF: the group-local link must surface as a link annotation on the page
+        // (its rect is the axis-aligned bounding box of the rotated link region).
+        using var stream = new MemoryStream(pdf);
+        using var doc = PdfReader.Open(stream, PdfDocumentOpenMode.Import);
+        var page = doc.Pages[0];
+        Assert.True(page.Annotations.Count >= 1, "Expected a link annotation from the rotated container.");
     }
 }

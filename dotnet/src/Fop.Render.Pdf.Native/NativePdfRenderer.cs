@@ -653,7 +653,7 @@ public sealed class NativePdfRenderer
     /// <summary>
     /// Owns the document's font objects: it embeds a TrueType/OpenType face (via the optional provider)
     /// the first time a <see cref="FontKey"/> is used, or creates a standard-14 fallback font,
-    /// reusing each across pages. <see cref="Use"/> registers the font in a page's resource map and
+    /// reusing each across pages. <c>Use</c> registers the font in a page's resource map and
     /// returns the resource key the content stream references.
     /// </summary>
     /// <summary>

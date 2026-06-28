@@ -115,10 +115,14 @@ package, as a rough size signal.
 - [x] **widows/orphans** control: a block split across a page break keeps at least `orphans` lines at
       the bottom of the first page (pushing the whole block forward when too few fit) and at least
       `widows` lines on the continuation page (pulling lines back), defaulting to 2/2.
-- [ ] Total-fit *page* breaking, floats, intra-row splitting; rotated-group link annotations. (Residual
-      approximations: footnote reserve is greedy not iterative; a row-spanning cell crossing a page
-      break paints on its origin page only; citation-last equals the single recorded page under the flat
-      area model.)
+- [x] **rotated-group link annotations**: a `fo:basic-link` inside a rotated `fo:block-container`
+      surfaces as a page-space link annotation. Its rect is the axis-aligned bounding box of the four
+      group-local link corners mapped through the group's translate-then-clockwise-rotate transform
+      (PDF link rectangles cannot themselves rotate).
+- [ ] Total-fit *page* breaking, floats, intra-row splitting. (Residual approximations: footnote reserve
+      is greedy not iterative; a row-spanning cell crossing a page break paints on its origin page only;
+      citation-last equals the single recorded page under the flat area model. The native renderer does
+      not paint `AreaGroup`s, so links/content in rotated containers appear only via the PdfSharp path.)
 
 ## Phase 6 — Renderers  `[ ]`  (~79,000 LOC)
 

@@ -68,16 +68,19 @@ public sealed class PdfRenderer
 
             DrawRuns(gfx, pageArea.TextRuns, baseline);
 
+            double pageHeightPt = pageArea.HeightMpt / MptPerPoint;
+
             // Transformed groups (e.g. rotated block-containers) paint after the page's flat content,
             // each under its own translate+rotate transform applied around the group's local origin.
+            // The page and its height are passed through so group-local links become annotations whose
+            // clickable rect is the axis-aligned bounding box of the transformed link region.
             foreach (AreaGroup group in pageArea.Groups)
             {
-                DrawGroup(gfx, group, baseline);
+                DrawGroup(gfx, group, baseline, page, pageHeightPt);
             }
 
             // Link annotations are emitted after the visible content so the clickable region overlays
             // the text/rule it wraps. They do not paint anything themselves.
-            double pageHeightPt = pageArea.HeightMpt / MptPerPoint;
             foreach (LinkArea link in pageArea.Links)
             {
                 AddLink(page, link, pageHeightPt);
@@ -372,10 +375,12 @@ public sealed class PdfRenderer
     /// positive <c>RotateTransform</c> angle rotates clockwise about the current origin. The transforms
     /// are applied as translate-then-rotate (so the rotation pivots about the group's local origin), the
     /// group's primitives are drawn in their local coordinates, then the graphics state is restored.
-    /// Link annotations inside a group are not emitted (PDF link rectangles are axis-aligned page-space
-    /// boxes and cannot follow a rotation); rotated containers are visual, not interactive, here.
+    /// A link inside a group is emitted as the axis-aligned bounding box of its transformed corners
+    /// (PDF link rectangles cannot themselves rotate), so the clickable region still covers a rotated
+    /// link -- approximately, for a non-right-angle rotation.
     /// </summary>
-    private void DrawGroup(XGraphics gfx, AreaGroup group, XStringFormat baseline)
+    private void DrawGroup(XGraphics gfx, AreaGroup group, XStringFormat baseline, PdfPage page,
+        double pageHeightPt)
     {
         XGraphicsState state = gfx.Save();
         try
@@ -400,6 +405,43 @@ public sealed class PdfRenderer
         {
             gfx.Restore(state);
         }
+
+        // Link annotations are page-space, axis-aligned boxes, so they are added outside the transform:
+        // each group-local link rect is mapped through the group's translate+rotation and its bounding
+        // box becomes the clickable region.
+        foreach (LinkArea link in group.Links)
+        {
+            AddLink(page, MapGroupLink(group, link), pageHeightPt);
+        }
+    }
+
+    /// <summary>
+    /// Maps a group-local link rectangle into page coordinates by transforming its four corners through
+    /// the group's translate-then-(clockwise)-rotate transform and taking their axis-aligned bounding
+    /// box. The result is a page-space <see cref="LinkArea"/> carrying the same target.
+    /// </summary>
+    private static LinkArea MapGroupLink(AreaGroup group, LinkArea link)
+    {
+        double rad = group.RotationDegrees * Math.PI / 180.0;
+        double cos = Math.Cos(rad);
+        double sin = Math.Sin(rad);
+
+        (double X, double Y) Map(double lx, double ly) =>
+            (group.TranslateXMpt + lx * cos - ly * sin, group.TranslateYMpt + lx * sin + ly * cos);
+
+        (double X, double Y)[] corners =
+        [
+            Map(link.XMpt, link.YMpt),
+            Map(link.XMpt + link.WidthMpt, link.YMpt),
+            Map(link.XMpt, link.YMpt + link.HeightMpt),
+            Map(link.XMpt + link.WidthMpt, link.YMpt + link.HeightMpt),
+        ];
+
+        double minX = corners.Min(c => c.X);
+        double minY = corners.Min(c => c.Y);
+        double maxX = corners.Max(c => c.X);
+        double maxY = corners.Max(c => c.Y);
+        return new LinkArea(minX, minY, maxX - minX, maxY - minY, link.TargetPageIndex, link.Uri);
     }
 
     private static void DrawImage(XGraphics gfx, ImageRun image)
