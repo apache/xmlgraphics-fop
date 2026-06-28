@@ -15,7 +15,9 @@
 
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
+using System.Text.RegularExpressions;
 using Fop.Layout;
 using Fop.Render.Pdf;
 using Fop.Render.Pdf.Native;
@@ -50,6 +52,39 @@ public class NativeImageEmbeddingTests
 
     private static string Latin1(byte[] pdf) => Encoding.Latin1.GetString(pdf);
 
+    /// <summary>
+    /// Inflates every FlateDecode stream in the PDF and concatenates the results, so tests can search
+    /// for content-stream operators that are no longer stored uncompressed.
+    /// </summary>
+    private static string InflatedStreams(byte[] pdf)
+    {
+        var sb = new StringBuilder();
+        foreach (Match m in Regex.Matches(Latin1(pdf), "stream\r?\n", RegexOptions.None))
+        {
+            int start = m.Index + m.Length;
+            int end = Latin1(pdf).IndexOf("endstream", start, StringComparison.Ordinal);
+            if (end < 0)
+            {
+                continue;
+            }
+
+            byte[] raw = pdf[start..end];
+            try
+            {
+                using var zin = new ZLibStream(new MemoryStream(raw), CompressionMode.Decompress);
+                using var outMs = new MemoryStream();
+                zin.CopyTo(outMs);
+                sb.Append(Encoding.Latin1.GetString(outMs.ToArray()));
+            }
+            catch
+            {
+                // Not a zlib stream (e.g. raw JPEG/DCTDecode); skip.
+            }
+        }
+
+        return sb.ToString();
+    }
+
     [Fact]
     public void RgbPngEmbedsAsFlateImage()
     {
@@ -58,7 +93,7 @@ public class NativeImageEmbeddingTests
         Assert.Contains("/Subtype /Image", text);
         Assert.Contains("/ColorSpace /DeviceRGB", text);
         Assert.Contains("/Filter /FlateDecode", text);
-        Assert.Contains(" Do", text); // the image is actually drawn
+        Assert.Contains(" Do", InflatedStreams(pdf)); // the image is actually drawn (in the content stream)
         Assert.DoesNotContain("/SMask", text); // opaque -> no soft mask
     }
 
@@ -105,8 +140,7 @@ public class NativeImageEmbeddingTests
     public void UndecodableImageFallsBackToPlaceholder()
     {
         byte[] pdf = RenderImage([1, 2, 3, 4]);
-        string text = Latin1(pdf);
-        Assert.DoesNotContain("/Subtype /Image", text);
-        Assert.Contains(" re f", text); // placeholder box
+        Assert.DoesNotContain("/Subtype /Image", Latin1(pdf));
+        Assert.Contains(" re f", InflatedStreams(pdf)); // placeholder box (in the content stream)
     }
 }

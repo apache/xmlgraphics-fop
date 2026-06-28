@@ -93,7 +93,8 @@ public sealed class NativePdfRenderer
             string content = BuildPageContent(page, fonts, fontsOnPage, doc, imageCache, xobjectsOnPage);
 
             int contentObj = doc.Reserve();
-            doc.Write(contentObj, Stream(content));
+            doc.Write(contentObj, PdfFile.StreamObject("/Filter /FlateDecode",
+                Deflate(Encoding.Latin1.GetBytes(content))));
 
             // Font resource dictionary entries (resourceKey -> indirect font object).
             var fontRes = new StringBuilder();
@@ -433,14 +434,14 @@ public sealed class NativePdfRenderer
             return;
         }
 
-        string resourceKey = fonts.Use(run.Font, fontsOnPage);
+        UsedFont used = fonts.Use(run.Font, fontsOnPage);
 
         double sizePt = run.Font.SizeMpt / MptPerPoint;
         double x = run.XMpt / MptPerPoint;
         double y = pageHeightPt - run.BaselineYMpt / MptPerPoint;
 
         sb.Append("BT\n");
-        sb.Append('/').Append(resourceKey).Append(' ').Append(F(sizePt)).Append(" Tf\n");
+        sb.Append('/').Append(used.ResourceKey).Append(' ').Append(F(sizePt)).Append(" Tf\n");
         SetFill(sb, run.Color);
         if (run.LetterSpacingMpt != 0)
         {
@@ -448,7 +449,10 @@ public sealed class NativePdfRenderer
         }
 
         sb.Append(F(x)).Append(' ').Append(F(y)).Append(" Td\n");
-        sb.Append(EscapeWinAnsi(run.Text)).Append(" Tj\n");
+
+        // An embedded Identity-H font is addressed by 2-byte glyph ids; a standard-14 font by WinAnsi
+        // single-byte codes.
+        sb.Append(used.Embedded is { } ttf ? GlyphHex(run.Text, ttf) : EscapeWinAnsi(run.Text)).Append(" Tj\n");
         sb.Append("ET\n");
 
         if (!run.Decoration.IsNone)
@@ -629,28 +633,35 @@ public sealed class NativePdfRenderer
     /// reusing each across pages. <see cref="Use"/> registers the font in a page's resource map and
     /// returns the resource key the content stream references.
     /// </summary>
+    /// <summary>
+    /// How a run's font is realized in the content stream: the resource key to select with <c>Tf</c>,
+    /// and -- for an embedded Identity-H font -- the parsed face used to encode text as 2-byte glyph
+    /// ids. <see cref="Embedded"/> is <c>null</c> for a standard-14 fallback (WinAnsi single bytes).
+    /// </summary>
+    private readonly record struct UsedFont(string ResourceKey, TrueTypeFont? Embedded);
+
     private sealed class FontResources(
         PdfFile doc, INativeFontProvider? provider, IReadOnlyDictionary<FontKey, HashSet<int>> usage)
     {
-        private readonly Dictionary<FontKey, (string Key, int Obj)> embedded = new();
+        private readonly Dictionary<FontKey, (string Key, int Obj, TrueTypeFont Ttf)> embedded = new();
         private readonly Dictionary<string, (string Key, int Obj)> standard = new(StringComparer.Ordinal);
         private int embeddedCounter;
 
-        public string Use(FontKey font, Dictionary<string, int> fontsOnPage)
+        public UsedFont Use(FontKey font, Dictionary<string, int> fontsOnPage)
         {
             if (provider is not null)
             {
                 if (embedded.TryGetValue(font, out var e))
                 {
                     fontsOnPage[e.Key] = e.Obj;
-                    return e.Key;
+                    return new UsedFont(e.Key, e.Ttf);
                 }
 
-                if (TryEmbed(font) is (string ek, int eo))
+                if (TryEmbed(font) is (string ek, int eo, TrueTypeFont ettf))
                 {
-                    embedded[font] = (ek, eo);
+                    embedded[font] = (ek, eo, ettf);
                     fontsOnPage[ek] = eo;
-                    return ek;
+                    return new UsedFont(ek, ettf);
                 }
             }
 
@@ -665,10 +676,16 @@ public sealed class NativePdfRenderer
             }
 
             fontsOnPage[s.Key] = s.Obj;
-            return s.Key;
+            return new UsedFont(s.Key, Embedded: null);
         }
 
-        private (string Key, int Obj)? TryEmbed(FontKey font)
+        /// <summary>
+        /// Builds an embedded, subsetted font as a Type0 (composite) font with Identity-H encoding and
+        /// a CIDFontType2 descendant. Identity-H means the content stream addresses glyphs by their
+        /// 2-byte glyph id directly, so any Unicode character the face covers can be shown (not just
+        /// WinAnsi). Returns the Type0 font object and the parsed face for glyph-id encoding.
+        /// </summary>
+        private (string Key, int Obj, TrueTypeFont Ttf)? TryEmbed(FontKey font)
         {
             byte[]? program = provider!.GetFontProgram(font);
             if (program is null)
@@ -682,24 +699,21 @@ public sealed class NativePdfRenderer
                 return null;
             }
 
-            // Subset the program to the glyphs actually used (widths/metrics still come from the full
-            // ttf, whose hmtx/cmap the subset preserves). On failure, embed the full face.
+            // The glyphs actually used (always include .notdef). Subset to them; on failure embed full.
+            usage.TryGetValue(font, out HashSet<int>? codePoints);
+            var usedGlyphs = new SortedSet<int> { 0 };
+            foreach (int cp in codePoints ?? [])
+            {
+                usedGlyphs.Add(ttf.GlyphIndex(cp));
+            }
+
             byte[] embedProgram = program;
             string prefix = string.Empty;
-            if (usage.TryGetValue(font, out HashSet<int>? codePoints))
+            byte[]? subset = TrueTypeSubsetter.Subset(program, usedGlyphs);
+            if (subset is not null)
             {
-                var glyphIds = new HashSet<int>();
-                foreach (int cp in codePoints)
-                {
-                    glyphIds.Add(ttf.GlyphIndex(cp));
-                }
-
-                byte[]? subset = TrueTypeSubsetter.Subset(program, glyphIds);
-                if (subset is not null)
-                {
-                    embedProgram = subset;
-                    prefix = SubsetPrefix(font) + "+";
-                }
+                embedProgram = subset;
+                prefix = SubsetPrefix(font) + "+";
             }
 
             string name = prefix + EmbeddedFontName(font, embeddedCounter);
@@ -718,21 +732,67 @@ public sealed class NativePdfRenderer
                 $"/ItalicAngle {F(ttf.ItalicAngle)} /Ascent {ttf.Ascent} /Descent {ttf.Descent} " +
                 $"/CapHeight {ttf.CapHeight} /StemV {stemV} /FontFile2 {fontFile} 0 R >>");
 
-            // /Widths for character codes 32..255 (WinAnsi codes map to the same Latin-1 code points).
-            var widths = new StringBuilder();
-            for (int c = 32; c <= 255; c++)
+            // /W: per-CID (== glyph id, Identity map) advance widths, only for the used glyphs.
+            var w = new StringBuilder();
+            foreach (int gid in usedGlyphs)
             {
-                widths.Append(ttf.AdvanceWidth(c)).Append(' ');
+                w.Append(gid).Append(" [").Append(ttf.AdvanceWidthByGlyph(gid)).Append("] ");
             }
+
+            int cidFont = doc.Reserve();
+            doc.Write(cidFont,
+                $"<< /Type /Font /Subtype /CIDFontType2 /BaseFont /{name} " +
+                "/CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> " +
+                $"/FontDescriptor {descriptor} 0 R /CIDToGIDMap /Identity /DW 0 /W [{w.ToString().TrimEnd()}] >>");
+
+            int toUnicode = doc.Reserve();
+            doc.Write(toUnicode, PdfFile.StreamObject("/Filter /FlateDecode",
+                Deflate(Encoding.Latin1.GetBytes(ToUnicodeCMap(ttf, codePoints)))));
 
             int fontObj = doc.Reserve();
             doc.Write(fontObj,
-                $"<< /Type /Font /Subtype /TrueType /BaseFont /{name} /FirstChar 32 /LastChar 255 " +
-                $"/Widths [{widths.ToString().TrimEnd()}] /FontDescriptor {descriptor} 0 R " +
-                "/Encoding /WinAnsiEncoding >>");
+                $"<< /Type /Font /Subtype /Type0 /BaseFont /{name} /Encoding /Identity-H " +
+                $"/DescendantFonts [{cidFont} 0 R] /ToUnicode {toUnicode} 0 R >>");
 
             string key = "FE" + embeddedCounter++;
-            return (key, fontObj);
+            return (key, fontObj, ttf);
+        }
+
+        /// <summary>
+        /// Builds a ToUnicode CMap mapping each used glyph id (CID, Identity) back to its Unicode code
+        /// point, so text in the embedded Identity-H font remains searchable / copyable.
+        /// </summary>
+        private static string ToUnicodeCMap(TrueTypeFont ttf, HashSet<int>? codePoints)
+        {
+            var mappings = new SortedDictionary<int, int>(); // glyph id -> code point
+            foreach (int cp in codePoints ?? [])
+            {
+                int gid = ttf.GlyphIndex(cp);
+                if (gid > 0 && !mappings.ContainsKey(gid))
+                {
+                    mappings[gid] = cp;
+                }
+            }
+
+            var sb = new StringBuilder();
+            sb.Append("/CIDInit /ProcSet findresource begin\n12 dict begin\nbegincmap\n");
+            sb.Append("/CIDSystemInfo << /Registry (Adobe) /Ordering (UCS) /Supplement 0 >> def\n");
+            sb.Append("/CMapName /Adobe-Identity-UCS def\n/CMapType 2 def\n");
+            sb.Append("1 begincodespacerange\n<0000> <FFFF>\nendcodespacerange\n");
+            if (mappings.Count > 0)
+            {
+                sb.Append(mappings.Count).Append(" beginbfchar\n");
+                foreach ((int gid, int cp) in mappings)
+                {
+                    sb.Append('<').Append(gid.ToString("X4")).Append("> <")
+                        .Append(cp.ToString("X4")).Append(">\n");
+                }
+
+                sb.Append("endbfchar\n");
+            }
+
+            sb.Append("endcmap\nCMapName currentdict /CMap defineresource pop\nend\nend\n");
+            return sb.ToString();
         }
 
         /// <summary>
@@ -794,6 +854,31 @@ public sealed class NativePdfRenderer
     /// emitted as single bytes (escaping the special characters), and anything outside that range is
     /// replaced with '?'. Suitable for the WinAnsi-encoded standard fonts.
     /// </summary>
+    /// <summary>
+    /// Encodes text as a hex string of 2-byte glyph ids for an embedded Identity-H font, mapping each
+    /// character through the font's cmap. Surrogate pairs are combined into a single code point.
+    /// </summary>
+    private static string GlyphHex(string text, TrueTypeFont ttf)
+    {
+        var sb = new StringBuilder(text.Length * 4 + 2);
+        sb.Append('<');
+        for (int i = 0; i < text.Length; i++)
+        {
+            int codePoint = text[i];
+            if (char.IsHighSurrogate(text[i]) && i + 1 < text.Length && char.IsLowSurrogate(text[i + 1]))
+            {
+                codePoint = char.ConvertToUtf32(text[i], text[i + 1]);
+                i++;
+            }
+
+            int glyph = ttf.GlyphIndex(codePoint) & 0xFFFF;
+            sb.Append(glyph.ToString("X4"));
+        }
+
+        sb.Append('>');
+        return sb.ToString();
+    }
+
     private static string EscapeWinAnsi(string text)
     {
         var sb = new StringBuilder(text.Length + 2);
@@ -838,9 +923,4 @@ public sealed class NativePdfRenderer
         return sb.ToString();
     }
 
-    private static string Stream(string content)
-    {
-        byte[] bytes = Encoding.Latin1.GetBytes(content);
-        return $"<< /Length {bytes.Length} >>\nstream\n{content}\nendstream";
-    }
 }

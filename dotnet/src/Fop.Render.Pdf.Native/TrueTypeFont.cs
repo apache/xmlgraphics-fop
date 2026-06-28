@@ -67,15 +67,22 @@ internal sealed class TrueTypeFont
     public int GlyphIndex(int codePoint) => cmapLookup(codePoint);
 
     /// <summary>The advance width (1000-em units) of the glyph mapped from <paramref name="codePoint"/>.</summary>
-    public int AdvanceWidth(int codePoint)
+    public int AdvanceWidth(int codePoint) => AdvanceWidthByGlyph(cmapLookup(codePoint));
+
+    /// <summary>The advance width (1000-em units) of glyph <paramref name="glyph"/>.</summary>
+    public int AdvanceWidthByGlyph(int glyph)
     {
-        int glyph = cmapLookup(codePoint);
+        if (advanceWidths.Length == 0)
+        {
+            return 0;
+        }
+
         if (glyph < 0 || glyph >= advanceWidths.Length)
         {
             glyph = 0;
         }
 
-        return advanceWidths.Length == 0 ? 0 : Scale(advanceWidths[glyph]);
+        return Scale(advanceWidths[glyph]);
     }
 
     private int Scale(int fontUnits) => unitsPerEm == 0 ? 0 : (int)Math.Round(fontUnits * 1000.0 / unitsPerEm);
