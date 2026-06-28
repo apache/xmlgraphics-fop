@@ -86,6 +86,14 @@ public sealed class PropertyList
             return value;
         }
 
+        // A shorthand declared on this element (e.g. margin, font, size) supplies the longhand before
+        // we fall back to inheritance, giving longhand-on-element > shorthand-on-element > inherited.
+        string? fromShorthand = PropertyShorthands.FromShorthand(name, own);
+        if (fromShorthand is not null)
+        {
+            return fromShorthand;
+        }
+
         if (InheritedProperties.Contains(name) && parent is not null)
         {
             return parent.GetRaw(name);
@@ -106,7 +114,7 @@ public sealed class PropertyList
     private double ResolveFontSize()
     {
         double parentSize = parent?.FontSizeMpt ?? DefaultFontSizeMpt;
-        string? raw = own.TryGetValue("font-size", out var v) ? v : null;
+        string? raw = own.TryGetValue("font-size", out var v) ? v : PropertyShorthands.FromShorthand("font-size", own);
         if (raw is null)
         {
             // font-size inherits.

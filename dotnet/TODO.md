@@ -75,8 +75,13 @@ package, as a rough size signal.
 - [x] `Fop.Fo.Expr` property-expression evaluator (arithmetic with `div`/`mod`, unit math,
       `from-parent`/`from-nearest-specified-value`/`inherited-property-value`, `max`/`min`/`abs`/
       `round`/`ceiling`/`floor`, `rgb`/`system-color`), gated into `PropertyList`.
-- [ ] Full property subsystem (the remaining ~290 properties, shorthands, refinement) — a curated
-      subset is resolved in `PropertyList`, now backed by the expression evaluator.
+- [~] Full property subsystem (the remaining ~290 properties, shorthands, refinement) — a curated
+      subset is resolved in `PropertyList`, backed by the expression evaluator and a **shorthand
+      expansion layer** (`PropertyShorthands`): `margin`, `size`, `font`, `background`,
+      `page-break-before/after/inside` and `white-space` expand to their longhands, with the cascade
+      longhand-on-element &gt; shorthand-on-element &gt; inherited. (border/padding shorthands are
+      handled by `BoxPropertyResolver`.) Remaining: the full ~290-property maker set, corresponding
+      writing-mode-relative property mapping, and validation.
 - [ ] Remaining flow/pagination/table FOs; `FOEventHandler`, validation.
 
 ## Phase 5 — Area tree & layout  `[~]`  (~46,000 LOC)
