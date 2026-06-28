@@ -63,8 +63,8 @@ public abstract class FObj : FONode
     /// <summary>The resolved text alignment.</summary>
     public TextAlign TextAlign => Properties.TextAlign;
 
-    /// <summary>The resolved set of active <c>text-decoration</c> lines.</summary>
-    public TextDecoration TextDecoration => Properties.TextDecoration;
+    /// <summary>The resolved <c>text-decoration</c> state (active lines and their colours).</summary>
+    public TextDecorationTraits TextDecorationTraits => Properties.TextDecorationTraits;
 
     /// <summary>The resolved <c>letter-spacing</c> in millipoints (0 when normal/unset).</summary>
     public double LetterSpacingMpt => Properties.LetterSpacingMpt;

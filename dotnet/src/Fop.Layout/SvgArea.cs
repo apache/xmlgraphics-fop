@@ -84,6 +84,22 @@ internal static class SvgArea
         double vbH = graphic.ViewBoxHeight > 0 ? graphic.ViewBoxHeight : 1;
         double scaleX = widthMpt / vbW;
         double scaleY = heightMpt / vbH;
+
+        // preserveAspectRatio: unless "none" (stretch), scale uniformly (meet = fit, slice = cover)
+        // and align the scaled viewBox within the viewport, mirroring the SVG viewport algorithm Batik
+        // applies in the original.
+        SvgAspectRatio aspect = graphic.AspectRatio;
+        if (aspect.Align != SvgAspectAlign.None)
+        {
+            double s = aspect.Slice ? Math.Max(scaleX, scaleY) : Math.Min(scaleX, scaleY);
+            double extraX = widthMpt - vbW * s;
+            double extraY = heightMpt - vbH * s;
+            leftMpt += AlignFactorX(aspect.Align) * extraX;
+            topMpt += AlignFactorY(aspect.Align) * extraY;
+            scaleX = s;
+            scaleY = s;
+        }
+
         double scaleMean = Math.Sqrt(Math.Abs(scaleX * scaleY));
 
         double MapX(double ux) => leftMpt + (ux - graphic.ViewBoxX) * scaleX;
@@ -131,4 +147,20 @@ internal static class SvgArea
 
         return new PlacedSvg(paths, texts);
     }
+
+    /// <summary>The horizontal alignment fraction (0=min, 0.5=mid, 1=max) of an aspect alignment.</summary>
+    private static double AlignFactorX(SvgAspectAlign a) => a switch
+    {
+        SvgAspectAlign.XMinYMin or SvgAspectAlign.XMinYMid or SvgAspectAlign.XMinYMax => 0.0,
+        SvgAspectAlign.XMaxYMin or SvgAspectAlign.XMaxYMid or SvgAspectAlign.XMaxYMax => 1.0,
+        _ => 0.5,
+    };
+
+    /// <summary>The vertical alignment fraction (0=min, 0.5=mid, 1=max) of an aspect alignment.</summary>
+    private static double AlignFactorY(SvgAspectAlign a) => a switch
+    {
+        SvgAspectAlign.XMinYMin or SvgAspectAlign.XMidYMin or SvgAspectAlign.XMaxYMin => 0.0,
+        SvgAspectAlign.XMinYMax or SvgAspectAlign.XMidYMax or SvgAspectAlign.XMaxYMax => 1.0,
+        _ => 0.5,
+    };
 }

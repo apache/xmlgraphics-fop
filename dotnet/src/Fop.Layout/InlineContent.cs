@@ -55,10 +55,10 @@ internal readonly record struct LeaderInfo(LeaderPattern Pattern, double? FixedL
 /// <param name="Link">The link this word belongs to, or <c>null</c>.</param>
 /// <param name="Leader">The leader descriptor when this word is a leader token, or <c>null</c>.</param>
 /// <param name="LetterSpacingMpt">The resolved <c>letter-spacing</c> in millipoints (0 = natural).</param>
-/// <param name="Decoration">The active <c>text-decoration</c> lines on this word.</param>
+/// <param name="Decoration">The active <c>text-decoration</c> lines (and their colours) on this word.</param>
 internal readonly record struct StyledWord(
     string Text, FontKey Font, FopColor Color, LinkRef? Link = null, LeaderInfo? Leader = null,
-    double LetterSpacingMpt = 0, TextDecoration Decoration = TextDecoration.None)
+    double LetterSpacingMpt = 0, TextDecorationTraits Decoration = default)
 {
     /// <summary>Whether this word is an expandable leader token rather than rendered text.</summary>
     public bool IsLeader => Leader is not null;
@@ -179,7 +179,7 @@ internal static class InlineContent
         FontKey font = FontKeyFor(owner);
         FopColor color = owner.Properties.GetColor();
         double letterSpacing = owner.LetterSpacingMpt;
-        TextDecoration decoration = owner.TextDecoration;
+        TextDecorationTraits decoration = owner.TextDecorationTraits;
 
         foreach (FONode child in owner.Children)
         {
@@ -197,7 +197,7 @@ internal static class InlineContent
                         pageNum.Properties.GetColor(),
                         currentLink,
                         LetterSpacingMpt: pageNum.LetterSpacingMpt,
-                        Decoration: pageNum.TextDecoration));
+                        Decoration: pageNum.TextDecorationTraits));
                     break;
 
                 // fo:page-number-citation[-last] resolves to the referenced id's page number via the
@@ -302,11 +302,11 @@ internal static class InlineContent
     {
         string text = context?.ResolveCitation?.Invoke(refId) ?? UnresolvedCitation;
         AppendWords(text, FontKeyFor(citation), citation.Properties.GetColor(), words, currentLink,
-            citation.LetterSpacingMpt, citation.TextDecoration);
+            citation.LetterSpacingMpt, citation.TextDecorationTraits);
     }
 
     private static void AppendWords(string text, FontKey font, FopColor color, List<StyledWord> words,
-        LinkRef? currentLink, double letterSpacing = 0, TextDecoration decoration = TextDecoration.None)
+        LinkRef? currentLink, double letterSpacing = 0, TextDecorationTraits decoration = default)
     {
         foreach (string token in text.Split(' ', StringSplitOptions.RemoveEmptyEntries))
         {

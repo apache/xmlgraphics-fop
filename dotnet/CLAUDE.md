@@ -194,10 +194,13 @@ A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subse
   (90/180/270) via a transform group rendered with PdfSharp transforms;
 - **embedded SVG** (`fo:instream-foreign-object`) — a static SVG subset flattened to vector paths and
   painted to PDF (the `Fop.Svg` parser; no Batik dependency);
-- **text-decoration** (underline/overline/line-through, positioned from font metrics) and
-  **letter-spacing** (per-glyph tracking that widens line advance and is drawn glyph-by-glyph).
+- **text-decoration** (underline/overline/line-through) painted **over** the glyphs, positioned from
+  the font descender/cap-height and coloured by the FO that declares the decoration -- matching FOP's
+  `renderTextDecoration` (thickness `descender/8`, underline `baseline + descender/2`, overline
+  `baseline - 1.1*capHeight`, line-through `baseline - 0.45*capHeight`); and **letter-spacing**
+  (per-glyph tracking between glyphs, `(n-1)` gaps per word, drawn glyph-by-glyph).
 
-The solution has 14 library projects and **912 passing tests** on .NET 10. See `samples/hello.fo`
+The solution has 14 library projects and **925 passing tests** on .NET 10. See `samples/hello.fo`
 (a clickable TOC with leaders, links, a marker header, and page-number citations) and
 `samples/svg-decoration.fo` (embedded SVG, text-decoration and letter-spacing). The `fop` CLI renders
 a document with `fop in.fo out.pdf`.

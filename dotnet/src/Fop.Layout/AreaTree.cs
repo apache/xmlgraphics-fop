@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using Fop.Colors;
+using Fop.Fo;
 
 namespace Fop.Layout;
 
@@ -247,12 +248,18 @@ public sealed class AreaGroup
 /// <param name="Font">The font to render with.</param>
 /// <param name="Color">The fill colour.</param>
 /// <param name="LetterSpacingMpt">
-/// Extra space inserted after each glyph, in millipoints (the resolved <c>letter-spacing</c>). Zero
+/// Extra space inserted between glyphs, in millipoints (the resolved <c>letter-spacing</c>). Zero
 /// (the default) means natural spacing and lets a renderer draw the run as one string; a non-zero
 /// value asks the renderer to advance glyph-by-glyph.
 /// </param>
+/// <param name="Decoration">
+/// The active <c>text-decoration</c> lines (and their colours) for this run. The renderer paints them
+/// <em>after</em> the glyphs (so a line-through overlays the text), positioned from the font's
+/// descender/cap-height, mirroring FOP's <c>renderTextDecoration</c>.
+/// </param>
 public sealed record TextRun(
-    double XMpt, double BaselineYMpt, string Text, FontKey Font, FopColor Color, double LetterSpacingMpt = 0);
+    double XMpt, double BaselineYMpt, string Text, FontKey Font, FopColor Color,
+    double LetterSpacingMpt = 0, TextDecorationTraits Decoration = default);
 
 /// <summary>The kind of a <see cref="PathSegment"/> -- which drawing verb it represents.</summary>
 public enum PathVerb

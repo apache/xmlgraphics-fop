@@ -195,4 +195,31 @@ public sealed class SvgParserTests
     {
         Assert.ThrowsAny<System.Exception>(() => SvgParser.Parse("not xml at all <"));
     }
+
+    [Fact]
+    public void DefaultPreserveAspectRatioIsXMidYMidMeet()
+    {
+        SvgGraphic g = Parse("<rect x=\"0\" y=\"0\" width=\"1\" height=\"1\" fill=\"black\"/>");
+        Assert.Equal(SvgAspectAlign.XMidYMid, g.AspectRatio.Align);
+        Assert.False(g.AspectRatio.Slice);
+    }
+
+    [Fact]
+    public void PreserveAspectRatioNoneParsed()
+    {
+        SvgGraphic g = Parse(string.Empty,
+            "width=\"10\" height=\"10\" viewBox=\"0 0 10 10\" preserveAspectRatio=\"none\"");
+        Assert.Equal(SvgAspectAlign.None, g.AspectRatio.Align);
+    }
+
+    [Theory]
+    [InlineData("xMinYMax slice", SvgAspectAlign.XMinYMax, true)]
+    [InlineData("defer xMaxYMid", SvgAspectAlign.XMaxYMid, false)]
+    [InlineData("xMidYMid meet", SvgAspectAlign.XMidYMid, false)]
+    public void PreserveAspectRatioVariantsParse(string value, SvgAspectAlign align, bool slice)
+    {
+        SvgAspectRatio r = SvgAspectRatio.Parse(value);
+        Assert.Equal(align, r.Align);
+        Assert.Equal(slice, r.Slice);
+    }
 }

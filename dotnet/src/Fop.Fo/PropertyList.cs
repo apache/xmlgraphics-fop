@@ -218,15 +218,17 @@ public sealed class PropertyList
     public TextAlign TextAlign => FoEnumParsing.ParseTextAlign(GetRaw("text-align"));
 
     /// <summary>
-    /// The resolved set of active <c>text-decoration</c> lines. Although XSL-FO does not list
-    /// text-decoration as an inheriting property, its visual effect propagates to descendant inline
-    /// content, so this composes the ancestor chain: the parent's resolved decoration is the base over
-    /// which this object's own <c>text-decoration</c> (including the <c>no-*</c> clears) is applied.
+    /// The resolved <c>text-decoration</c> state (active lines and their colours). Although XSL-FO does
+    /// not list text-decoration as an inheriting property, its effect propagates to descendant inline
+    /// content, so this composes the ancestor chain (FOP's <c>CommonTextDecoration</c>): the parent's
+    /// resolved decoration is the base over which this object's own <c>text-decoration</c> is applied,
+    /// and a line turned on here records <em>this</em> object's <c>color</c>.
     /// </summary>
-    public TextDecoration TextDecoration =>
-        FoEnumParsing.ParseTextDecoration(
+    public TextDecorationTraits TextDecorationTraits =>
+        FoEnumParsing.ResolveTextDecoration(
             own.TryGetValue("text-decoration", out var v) ? v : null,
-            parent?.TextDecoration ?? TextDecoration.None);
+            parent?.TextDecorationTraits ?? TextDecorationTraits.None,
+            GetColor());
 
     /// <summary>
     /// The resolved <c>letter-spacing</c> in millipoints: the extra space inserted after each glyph

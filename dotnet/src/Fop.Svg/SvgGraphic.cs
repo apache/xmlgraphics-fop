@@ -83,6 +83,76 @@ public sealed record SvgTextItem(
     bool Italic,
     SvgTextAnchor Anchor);
 
+/// <summary>
+/// The alignment part of an SVG <c>preserveAspectRatio</c>: how the (uniformly scaled) viewBox is
+/// positioned within the viewport. <see cref="None"/> means non-uniform scaling to fill the viewport.
+/// </summary>
+public enum SvgAspectAlign
+{
+    /// <summary>No uniform scaling: stretch each axis to fill the viewport (<c>preserveAspectRatio="none"</c>).</summary>
+    None,
+
+    XMinYMin, XMidYMin, XMaxYMin,
+    XMinYMid, XMidYMid, XMaxYMid,
+    XMinYMax, XMidYMax, XMaxYMax,
+}
+
+/// <summary>
+/// A parsed SVG <c>preserveAspectRatio</c>: the alignment plus whether the meet (fit inside, may
+/// letterbox) or slice (cover, may clip) scaling rule applies. The SVG default is
+/// <c>xMidYMid meet</c>.
+/// </summary>
+/// <param name="Align">The alignment, or <see cref="SvgAspectAlign.None"/> for non-uniform fill.</param>
+/// <param name="Slice"><c>true</c> for the <c>slice</c> rule (cover), <c>false</c> for <c>meet</c>.</param>
+public readonly record struct SvgAspectRatio(SvgAspectAlign Align, bool Slice)
+{
+    /// <summary>The SVG default: <c>xMidYMid meet</c> (uniform scale, centred, letterboxed).</summary>
+    public static readonly SvgAspectRatio Default = new(SvgAspectAlign.XMidYMid, Slice: false);
+
+    /// <summary>
+    /// Parses a <c>preserveAspectRatio</c> value (e.g. <c>"xMidYMid meet"</c>, <c>"none"</c>,
+    /// <c>"xMinYMax slice"</c>), ignoring a leading <c>defer</c> keyword. Falls back to
+    /// <see cref="Default"/> for an unset or unrecognised value.
+    /// </summary>
+    public static SvgAspectRatio Parse(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Default;
+        }
+
+        string[] tokens = value.Trim().Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
+        int i = 0;
+        if (i < tokens.Length && tokens[i].Equals("defer", StringComparison.OrdinalIgnoreCase))
+        {
+            i++;
+        }
+
+        if (i >= tokens.Length)
+        {
+            return Default;
+        }
+
+        SvgAspectAlign align = tokens[i].ToLowerInvariant() switch
+        {
+            "none" => SvgAspectAlign.None,
+            "xminymin" => SvgAspectAlign.XMinYMin,
+            "xmidymin" => SvgAspectAlign.XMidYMin,
+            "xmaxymin" => SvgAspectAlign.XMaxYMin,
+            "xminymid" => SvgAspectAlign.XMinYMid,
+            "xmidymid" => SvgAspectAlign.XMidYMid,
+            "xmaxymid" => SvgAspectAlign.XMaxYMid,
+            "xminymax" => SvgAspectAlign.XMinYMax,
+            "xmidymax" => SvgAspectAlign.XMidYMax,
+            "xmaxymax" => SvgAspectAlign.XMaxYMax,
+            _ => SvgAspectAlign.XMidYMid,
+        };
+
+        bool slice = i + 1 < tokens.Length && tokens[i + 1].Equals("slice", StringComparison.OrdinalIgnoreCase);
+        return new SvgAspectRatio(align, slice);
+    }
+}
+
 /// <summary>The SVG <c>text-anchor</c> values: where the anchor point sits relative to the text.</summary>
 public enum SvgTextAnchor
 {
@@ -109,6 +179,7 @@ public enum SvgTextAnchor
 /// <param name="ViewBoxY">viewBox min-y.</param>
 /// <param name="ViewBoxWidth">viewBox width.</param>
 /// <param name="ViewBoxHeight">viewBox height.</param>
+/// <param name="AspectRatio">The <c>preserveAspectRatio</c> governing how the viewBox fits the viewport.</param>
 /// <param name="Shapes">The filled/stroked shapes, in document order (painted before text).</param>
 /// <param name="Texts">The text runs, in document order (painted after shapes).</param>
 public sealed record SvgGraphic(
@@ -118,5 +189,6 @@ public sealed record SvgGraphic(
     double ViewBoxY,
     double ViewBoxWidth,
     double ViewBoxHeight,
+    SvgAspectRatio AspectRatio,
     IReadOnlyList<SvgShape> Shapes,
     IReadOnlyList<SvgTextItem> Texts);

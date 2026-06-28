@@ -130,8 +130,13 @@ Independent back-ends; port in priority order. Each can be its own project (`Fop
       renderer-neutral vector primitives; `Fop.Layout` scales them onto the object's content box as
       area-tree `VectorPath`s/`TextRun`s and the PdfSharp renderer paints them (`Fop.Render.Pdf`
       replacing Batik). Not modelled: gradients/patterns, filters, clipping, `<use>`, animation.
-- [x] **text-decoration** (underline/overline/line-through as font-metric-positioned rules) and
-      **letter-spacing** (per-glyph tracking widening the line advance; drawn glyph-by-glyph).
+- [x] **text-decoration** (underline/overline/line-through): painted over the glyphs (a line-through
+      overlays the text) using FOP's `renderTextDecoration` geometry (thickness `descender/8`;
+      underline `baseline + descender/2`, overline `baseline - 1.1*capHeight`, line-through
+      `baseline - 0.45*capHeight`) with per-line colours taken from the FO that declares the
+      decoration (mirroring `CommonTextDecoration`); and **letter-spacing** (per-glyph tracking between
+      glyphs, `(n-1)` gaps per word, drawn glyph-by-glyph). SVG embedding honours `preserveAspectRatio`
+      (default `xMidYMid meet`).
 
 ## Phase 7 — Front-end & integration  `[~]`
 

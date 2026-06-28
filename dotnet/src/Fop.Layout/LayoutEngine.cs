@@ -711,13 +711,28 @@ public sealed class LayoutEngine
     }
 
     /// <summary>
-    /// The inline advance of <paramref name="text"/> in <paramref name="font"/>, including the extra
-    /// width that a non-zero <paramref name="letterSpacingMpt"/> inserts after each glyph. This is the
-    /// width the renderer reproduces when it draws the run glyph-by-glyph for letter-spacing.
+    /// The inline advance of <paramref name="text"/> in <paramref name="font"/>. With no
+    /// letter-spacing this is the measured string width. With letter-spacing it is the sum of the
+    /// individual glyph advances plus the tracking inserted <em>between</em> glyphs (n-1 gaps): FOP
+    /// positions each glyph by its own advance + the letter-space adjust and trims the trailing space
+    /// at a word end, so a non-spaced word of <c>n</c> glyphs gains <c>(n-1)*letter-spacing</c>. The
+    /// renderer reproduces the same per-glyph walk so layout and output agree.
     /// </summary>
     private double MeasuredAdvance(string text, FontKey font, double letterSpacingMpt)
-        => measurer.MeasureWidthMpt(text, font)
-           + (letterSpacingMpt != 0 ? letterSpacingMpt * text.Length : 0);
+    {
+        if (letterSpacingMpt == 0)
+        {
+            return measurer.MeasureWidthMpt(text, font);
+        }
+
+        double width = 0;
+        foreach (char c in text)
+        {
+            width += measurer.MeasureWidthMpt(c.ToString(), font);
+        }
+
+        return width + letterSpacingMpt * Math.Max(0, text.Length - 1);
+    }
 
     /// <summary>
     /// Builds the styled-word line slices for a block from the optimal breakpoints. Each returned
@@ -948,59 +963,16 @@ public sealed class LayoutEngine
                 text.Append(words[j].Text);
             }
 
-            double runWidth = positions[runEnd] + advances[runEnd] - positions[runStart];
+            // The decoration travels on the run as a trait: the renderer paints the lines after the
+            // glyphs (overlaying them), exactly as FOP's renderTextDecoration does.
             target.Add(new TextRun(positions[runStart], baseline, text.ToString(), first.Font, first.Color,
-                first.LetterSpacingMpt));
-
-            // Text-decoration lines span the run's inline extent, positioned from the font metrics.
-            if (first.Decoration != TextDecoration.None)
-            {
-                EmitDecoration(target, first, positions[runStart], runWidth, baseline);
-            }
+                first.LetterSpacingMpt, first.Decoration));
 
             runStart = runEnd + 1;
         }
 
         // Pass 3: record a LinkArea over each contiguous span of words sharing the same link target.
         EmitLinkAreas(target, words, positions, advances, lineHeightMpt, lineTopMpt);
-    }
-
-    /// <summary>
-    /// Emits the active <c>text-decoration</c> lines for a run as thin <see cref="RectFill"/>s spanning
-    /// [<paramref name="runX"/>, runX + <paramref name="width"/>]. Line positions are derived from the
-    /// font's ascent/size: the underline sits just below the baseline, the overline at the top of the
-    /// glyph box, and the line-through near the middle of the x-height. The line thickness scales with
-    /// the font size.
-    /// </summary>
-    private void EmitDecoration(IPrimitiveSink target, StyledWord word, double runX, double width,
-        double baseline)
-    {
-        if (width <= 0)
-        {
-            return;
-        }
-
-        TextDecoration decoration = word.Decoration;
-        double fontSize = word.Font.SizeMpt;
-        double ascender = measurer.AscenderMpt(word.Font);
-        double thickness = Math.Max(fontSize * 0.05, 250); // >= 0.25pt so it is always visible
-
-        void Line(double centreY) => target.Add(new RectFill(runX, centreY - thickness / 2, width, thickness, word.Color));
-
-        if (decoration.HasFlag(TextDecoration.Underline))
-        {
-            Line(baseline + fontSize * 0.12);
-        }
-
-        if (decoration.HasFlag(TextDecoration.LineThrough))
-        {
-            Line(baseline - ascender * 0.3);
-        }
-
-        if (decoration.HasFlag(TextDecoration.Overline))
-        {
-            Line(baseline - ascender);
-        }
     }
 
     /// <summary>

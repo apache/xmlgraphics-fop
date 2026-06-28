@@ -154,22 +154,114 @@ public sealed class PdfRenderer
 
             if (run.LetterSpacingMpt != 0)
             {
-                // Letter-spacing: draw each character at its own x, advancing by the glyph width plus
-                // the extra tracking. The layout engine measured the run's total advance the same way.
+                // Letter-spacing: draw each glyph at its own x, advancing by the glyph width plus the
+                // tracking between glyphs (no trailing space after the last glyph), matching the layout
+                // engine's MeasuredAdvance and FOP's per-glyph positioning.
                 double x = run.XMpt;
-                double spacing = run.LetterSpacingMpt;
-                foreach (char c in run.Text)
+                for (int i = 0; i < run.Text.Length; i++)
                 {
-                    string s = c.ToString();
+                    string s = run.Text[i].ToString();
                     gfx.DrawString(s, font, brush, x / MptPerPoint, y, baseline);
-                    x += measurer.MeasureWidthMpt(s, run.Font) + spacing;
+                    x += measurer.MeasureWidthMpt(s, run.Font);
+                    if (i < run.Text.Length - 1)
+                    {
+                        x += run.LetterSpacingMpt;
+                    }
                 }
-
-                continue;
+            }
+            else
+            {
+                gfx.DrawString(run.Text, font, brush, run.XMpt / MptPerPoint, y, baseline);
             }
 
-            gfx.DrawString(run.Text, font, brush, run.XMpt / MptPerPoint, y, baseline);
+            // Text-decoration is painted after the glyphs so a line-through overlays them.
+            if (!run.Decoration.IsNone)
+            {
+                DrawTextDecoration(gfx, run);
+            }
         }
+    }
+
+    /// <summary>
+    /// Paints the run's <c>text-decoration</c> lines over its glyphs. The line positions and thickness
+    /// follow FOP's <c>AbstractPathOrientedRenderer.renderTextDecoration</c>: the underline sits at
+    /// <c>baseline + descender/2</c>, the overline at <c>baseline - 1.1*capHeight</c>, the line-through
+    /// at <c>baseline - 0.45*capHeight</c>, and each line is <c>descender/8</c> thick.
+    /// </summary>
+    private void DrawTextDecoration(XGraphics gfx, TextRun run)
+    {
+        double widthMpt = RunAdvanceMpt(run);
+        if (widthMpt <= 0)
+        {
+            return;
+        }
+
+        double descenderMpt = measurer.DescenderMpt(run.Font);
+        double capHeightMpt = measurer.CapHeightMpt(run.Font);
+
+        foreach (RectFill line in BuildDecorationLines(
+            run.Decoration, run.XMpt, widthMpt, run.BaselineYMpt, descenderMpt, capHeightMpt))
+        {
+            gfx.DrawRectangle(new XSolidBrush(ToXColor(line.Color)),
+                line.XMpt / MptPerPoint, line.YMpt / MptPerPoint,
+                line.WidthMpt / MptPerPoint, line.HeightMpt / MptPerPoint);
+        }
+    }
+
+    /// <summary>The inline advance of a run in millipoints (matching the layout engine's measurement).</summary>
+    private double RunAdvanceMpt(TextRun run)
+    {
+        if (run.LetterSpacingMpt == 0)
+        {
+            return measurer.MeasureWidthMpt(run.Text, run.Font);
+        }
+
+        double width = 0;
+        foreach (char c in run.Text)
+        {
+            width += measurer.MeasureWidthMpt(c.ToString(), run.Font);
+        }
+
+        return width + run.LetterSpacingMpt * Math.Max(0, run.Text.Length - 1);
+    }
+
+    /// <summary>
+    /// Builds the decoration line rectangles (in millipoints) for <paramref name="decoration"/> over a
+    /// run that starts at <paramref name="runXMpt"/>, is <paramref name="widthMpt"/> wide and sits on
+    /// <paramref name="baselineMpt"/>, given the font's positive <paramref name="descenderMpt"/> and
+    /// <paramref name="capHeightMpt"/>. Each line is a thin rectangle centred on its target y and uses
+    /// the colour the decoration carries (the colour of the FO that turned the line on). The formulas
+    /// mirror FOP's <c>renderTextDecoration</c> (with FOP's negative descender folded into the positive
+    /// value used here). Exposed internally so the geometry can be unit-tested.
+    /// </summary>
+    internal static IEnumerable<RectFill> BuildDecorationLines(Fop.Fo.TextDecorationTraits decoration,
+        double runXMpt, double widthMpt, double baselineMpt, double descenderMpt, double capHeightMpt)
+    {
+        // FOP: halfLineWidth = (descender / -8) / 2 with a negative descender, so the full line
+        // thickness is |descender|/8.
+        double thickness = descenderMpt / 8.0;
+        var lines = new List<RectFill>(3);
+
+        void Add(double centreYMpt, FopColor color) =>
+            lines.Add(new RectFill(runXMpt, centreYMpt - thickness / 2, widthMpt, thickness, color));
+
+        // Order matches FOP: underline, overline, line-through. Each line uses its own recorded colour.
+        if (decoration.UnderlineColor is { } underline)
+        {
+            Add(baselineMpt + descenderMpt / 2.0, underline);
+        }
+
+        if (decoration.OverlineColor is { } overline)
+        {
+            Add(baselineMpt - 1.1 * capHeightMpt, overline);
+        }
+
+        if (decoration.LineThroughColor is { } lineThrough)
+        {
+            Add(baselineMpt - 0.45 * capHeightMpt, lineThrough);
+        }
+
+        return lines;
     }
 
     /// <summary>

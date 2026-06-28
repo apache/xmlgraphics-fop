@@ -102,4 +102,15 @@ public sealed class PdfSharpFontMeasurer : IFontMeasurer
         XFontMetrics metrics = xFont.Metrics;
         return Math.Abs((double)metrics.Descent) / metrics.UnitsPerEm * font.SizeMpt;
     }
+
+    /// <inheritdoc/>
+    public double CapHeightMpt(FontKey font)
+    {
+        XFont xFont = GetXFont(font);
+        XFontMetrics metrics = xFont.Metrics;
+        double capHeight = (double)metrics.CapHeight;
+        // Some faces leave CapHeight unset (0); fall back to the ascent, as FOP does for such fonts.
+        double units = capHeight > 0 ? capHeight : metrics.Ascent;
+        return units / metrics.UnitsPerEm * font.SizeMpt;
+    }
 }

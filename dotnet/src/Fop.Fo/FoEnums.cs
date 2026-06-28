@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Fop.Colors;
 using Fop.Traits;
 
 namespace Fop.Fo;
@@ -85,24 +86,31 @@ public enum AbsolutePosition
 }
 
 /// <summary>
-/// The active <c>text-decoration</c> lines, as a combinable flag set. XSL-FO/CSS allow several to be
-/// switched on at once (e.g. <c>underline overline</c>), and the <c>no-*</c> keywords clear a line
-/// that an ancestor turned on; <see cref="None"/> is the unset/cleared state.
+/// The resolved <c>text-decoration</c> state: which lines are active and, for each, the colour to
+/// paint it with. Mirrors FOP's <c>CommonTextDecoration</c>, where a line's colour is the <c>color</c>
+/// of the formatting object that <em>turned the line on</em> (an ancestor's colour, not the colour of
+/// the text the line eventually covers). A <c>null</c> colour means that line is inactive.
 /// </summary>
-[Flags]
-public enum TextDecoration
+/// <param name="UnderlineColor">The underline colour, or <c>null</c> when underline is off.</param>
+/// <param name="OverlineColor">The overline colour, or <c>null</c> when overline is off.</param>
+/// <param name="LineThroughColor">The line-through colour, or <c>null</c> when line-through is off.</param>
+public readonly record struct TextDecorationTraits(
+    FopColor? UnderlineColor, FopColor? OverlineColor, FopColor? LineThroughColor)
 {
-    /// <summary>No decoration.</summary>
-    None = 0,
+    /// <summary>No active decoration.</summary>
+    public static readonly TextDecorationTraits None = default;
 
-    /// <summary>A line beneath the text baseline (<c>underline</c>).</summary>
-    Underline = 1,
+    /// <summary>Whether the underline line is active.</summary>
+    public bool HasUnderline => UnderlineColor is not null;
 
-    /// <summary>A line above the text (<c>overline</c>).</summary>
-    Overline = 2,
+    /// <summary>Whether the overline line is active.</summary>
+    public bool HasOverline => OverlineColor is not null;
 
-    /// <summary>A line through the middle of the text (<c>line-through</c>).</summary>
-    LineThrough = 4,
+    /// <summary>Whether the line-through line is active.</summary>
+    public bool HasLineThrough => LineThroughColor is not null;
+
+    /// <summary>Whether no line is active.</summary>
+    public bool IsNone => UnderlineColor is null && OverlineColor is null && LineThroughColor is null;
 }
 
 /// <summary>The <c>font-style</c> property values.</summary>
@@ -228,33 +236,34 @@ public static class FoEnumParsing
     }
 
     /// <summary>
-    /// Parses a <c>text-decoration</c> value into the set of lines it leaves active, applied over an
-    /// <paramref name="inherited"/> set (text-decoration is not a normally-inheriting property in
-    /// XSL-FO, but its effect propagates to descendants, so callers thread the ancestor set through).
-    /// The value is a space-separated list of <c>underline</c>/<c>overline</c>/<c>line-through</c>
-    /// (each turning a line on), their <c>no-*</c> counterparts (turning it off), <c>none</c> (clears
-    /// all) and <c>blink</c> (ignored). An unset value leaves the inherited set unchanged.
+    /// Resolves an element's <c>text-decoration</c> over the <paramref name="inherited"/> decoration
+    /// of its parent, capturing <paramref name="color"/> (this element's <c>color</c>) as the colour of
+    /// any line this element turns on. Mirrors FOP's <c>CommonTextDecoration.calcTextDecoration</c>:
+    /// parent state first, then this element's space-separated keywords; <c>underline</c> etc. turn a
+    /// line on (with this colour), the <c>no-*</c> keywords turn it off, <c>none</c> clears everything
+    /// (and stops), and <c>blink</c> is ignored. An unset value leaves the inherited state unchanged.
     /// </summary>
-    public static TextDecoration ParseTextDecoration(string? value, TextDecoration inherited = TextDecoration.None)
+    public static TextDecorationTraits ResolveTextDecoration(string? value, TextDecorationTraits inherited,
+        FopColor color)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
             return inherited;
         }
 
-        TextDecoration result = inherited;
+        TextDecorationTraits result = inherited;
         foreach (string token in value.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries))
         {
             switch (token.Trim().ToLowerInvariant())
             {
-                case "none": result = TextDecoration.None; break;
-                case "underline": result |= TextDecoration.Underline; break;
-                case "overline": result |= TextDecoration.Overline; break;
-                case "line-through": result |= TextDecoration.LineThrough; break;
-                case "no-underline": result &= ~TextDecoration.Underline; break;
-                case "no-overline": result &= ~TextDecoration.Overline; break;
-                case "no-line-through": result &= ~TextDecoration.LineThrough; break;
-                // "blink" and any unknown keyword are ignored.
+                case "none": return TextDecorationTraits.None; // clears all; later tokens ignored (matches FOP)
+                case "underline": result = result with { UnderlineColor = color }; break;
+                case "overline": result = result with { OverlineColor = color }; break;
+                case "line-through": result = result with { LineThroughColor = color }; break;
+                case "no-underline": result = result with { UnderlineColor = null }; break;
+                case "no-overline": result = result with { OverlineColor = null }; break;
+                case "no-line-through": result = result with { LineThroughColor = null }; break;
+                // "blink"/"no-blink" and any unknown keyword are ignored.
                 default: break;
             }
         }

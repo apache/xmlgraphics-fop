@@ -28,6 +28,7 @@ public sealed class FakeFontMeasurer : IFontMeasurer
     private const double GlyphUnits = 500.0;
     private const double AscenderUnits = 800.0;
     private const double DescenderUnits = 200.0;
+    private const double CapHeightUnits = 700.0;
     private const double ReferenceSizeMpt = 1000.0;
 
     /// <summary>Advance width: 500 units per character, scaled by font size.</summary>
@@ -39,4 +40,7 @@ public sealed class FakeFontMeasurer : IFontMeasurer
 
     /// <summary>Descender: 200 units scaled by font size.</summary>
     public double DescenderMpt(FontKey font) => DescenderUnits * (font.SizeMpt / ReferenceSizeMpt);
+
+    /// <summary>Cap height: 700 units scaled by font size.</summary>
+    public double CapHeightMpt(FontKey font) => CapHeightUnits * (font.SizeMpt / ReferenceSizeMpt);
 }

@@ -87,11 +87,13 @@ public static class SvgParser
         if (intrinsicW <= 0) { intrinsicW = vbW; }
         if (intrinsicH <= 0) { intrinsicH = vbH; }
 
+        SvgAspectRatio aspect = SvgAspectRatio.Parse(Attr(svg, "preserveAspectRatio"));
+
         var shapes = new List<SvgShape>();
         var texts = new List<SvgTextItem>();
         Walk(svg, SvgMatrix.Identity, Style.Initial, shapes, texts);
 
-        return new SvgGraphic(intrinsicW, intrinsicH, vbX, vbY, vbW, vbH, shapes, texts);
+        return new SvgGraphic(intrinsicW, intrinsicH, vbX, vbY, vbW, vbH, aspect, shapes, texts);
     }
 
     private static void Walk(XElement el, SvgMatrix ctm, Style style,

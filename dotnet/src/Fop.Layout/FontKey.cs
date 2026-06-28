@@ -51,4 +51,12 @@ public interface IFontMeasurer
 
     /// <summary>Returns the descent (below the baseline, as a positive value) in millipoints.</summary>
     double DescenderMpt(FontKey font);
+
+    /// <summary>
+    /// Returns the cap height (the height of a capital letter above the baseline) in millipoints.
+    /// Used to position over-line and through-line text decorations, mirroring FOP's use of
+    /// <c>FontMetrics.getCapHeight</c>. Implementations may approximate when the font carries no
+    /// explicit cap-height metric.
+    /// </summary>
+    double CapHeightMpt(FontKey font);
 }

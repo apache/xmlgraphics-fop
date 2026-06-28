@@ -94,6 +94,33 @@ public sealed class SvgForeignObjectLayoutTests
     }
 
     [Fact]
+    public void PreserveAspectRatioMeetScalesUniformlyAndCentres()
+    {
+        // Square 100x100 viewBox into a 200pt x 100pt box: default xMidYMid meet -> uniform scale 1,
+        // centred horizontally, so the full-box rect spans x in [50pt, 150pt].
+        AreaTree tree = LayOut(Document(SimpleSvg, "content-width=\"200pt\" content-height=\"100pt\""));
+        VectorPath path = Assert.Single(tree.Pages[0].Vectors);
+        double minX = path.Segments.Where(s => s.Verb != PathVerb.Close).Min(s => s.X0);
+        double maxX = path.Segments.Max(s => System.Math.Max(s.X0, System.Math.Max(s.X1, s.X2)));
+        Assert.Equal(50_000, minX, 1);
+        Assert.Equal(150_000, maxX, 1);
+    }
+
+    [Fact]
+    public void PreserveAspectRatioNoneStretches()
+    {
+        const string stretchSvg =
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"100\" viewBox=\"0 0 100 100\" " +
+            "preserveAspectRatio=\"none\">" +
+            "<rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" fill=\"red\"/></svg>";
+        // With "none" the rect stretches to fill the full 200pt width (no centring).
+        AreaTree tree = LayOut(Document(stretchSvg, "content-width=\"200pt\" content-height=\"100pt\""));
+        VectorPath path = Assert.Single(tree.Pages[0].Vectors);
+        double maxX = path.Segments.Max(s => System.Math.Max(s.X0, System.Math.Max(s.X1, s.X2)));
+        Assert.Equal(200_000, maxX, 1);
+    }
+
+    [Fact]
     public void IntrinsicSizeUsedWhenNoContentSize()
     {
         // No content-width/height: the SVG's 100x100 intrinsic size (points) drives the box.
