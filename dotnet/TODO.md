@@ -104,10 +104,13 @@ package, as a rough size signal.
 - [x] **`fo:block-container`** — absolute/fixed/auto positioning + `reference-orientation` rotation
       (transform group in the area tree, PdfSharp transforms in the renderer).
 - [x] **PDF bookmarks** (`fo:bookmark-tree` → document outline).
-- [ ] Total-fit *page* breaking, floats, intra-row splitting; rotated-group link annotations. (Residual TODOs: footnote reserve is greedy not
-      iterative; a row-spanning cell crossing a page break paints on its origin page only; ids inside
-      buffered contexts (cells/footnote bodies) aren't recorded for citations; citation-last uses the
-      single recorded page under the flat model.)
+- [x] **ids inside buffered contexts** (table cells, list items, footnote bodies) are recorded against
+      the page their buffer is placed on, so `fo:page-number-citation` to such content resolves
+      (previously rendered "?").
+- [ ] Total-fit *page* breaking, floats, intra-row splitting; rotated-group link annotations. (Residual
+      approximations: footnote reserve is greedy not iterative; a row-spanning cell crossing a page
+      break paints on its origin page only; citation-last equals the single recorded page under the flat
+      area model.)
 
 ## Phase 6 — Renderers  `[ ]`  (~79,000 LOC)
 

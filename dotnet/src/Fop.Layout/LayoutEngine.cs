@@ -318,6 +318,23 @@ public sealed class LayoutEngine
         }
     }
 
+    /// <summary>
+    /// Records the <c>id</c> of <paramref name="root"/> and of <em>every</em> descendant formatting
+    /// object against <paramref name="pageNumber"/>. Used for content laid out into a relocatable
+    /// buffer (a table cell, list item label/body, footnote body) and then placed on a known page: the
+    /// whole buffer lands on one page in this model, so every id it contains resolves to that page.
+    /// This complements <see cref="RecordIdsOnPage"/>, which handles the paginating flow where nested
+    /// blocks self-record on their own pages.
+    /// </summary>
+    private void RecordIdsInSubtree(FObj root, int pageNumber, int pageIndex)
+    {
+        RecordId(IdOf(root), pageNumber, pageIndex);
+        foreach (FObj child in root.ChildObjects)
+        {
+            RecordIdsInSubtree(child, pageNumber, pageIndex);
+        }
+    }
+
     /// <summary>The declared <c>id</c> attribute of an object (keyed by local name), or empty if unset.</summary>
     private static string IdOf(FObj obj) => obj.Properties.GetString("id", string.Empty);
 
@@ -1372,6 +1389,10 @@ public sealed class LayoutEngine
             var buffer = new BufferedSink();
             double height = LayOutBlockLevelIntoBuffer(body.BlockLevelChildren, buffer, geometry.ContentWidthMpt);
 
+            // The footnote body is placed on the current (anchor's) page; record its ids so a citation
+            // to footnote content resolves to this page.
+            engine.RecordIdsInSubtree(body, currentPageNumber, IndexOfPage(page!));
+
             // The separator rule (+ gap) is added once, ahead of the first footnote on the page.
             if (pendingFootnotes.Count == 0)
             {
@@ -1550,8 +1571,9 @@ public sealed class LayoutEngine
 
             // Record this block's id (and any inline-descendant ids) against the page it begins on, for
             // page-number-citation resolution. Only the paginating flow has a meaningful page number;
-            // ids inside relocatable buffers (table cells, footnote bodies) are not recorded here
-            // (documented approximation -- such a ref-id resolves to "?").
+            // ids inside relocatable buffers (table cells, list items, footnote bodies) are recorded
+            // separately when those buffers are placed on a page (see PlaceRow/LayOutListItem/
+            // ReserveFootnote).
             if (target.CanPaginate)
             {
                 EnsurePage();
@@ -1941,6 +1963,21 @@ public sealed class LayoutEngine
         private void PlaceRow(LaidRow row, double contentLeft, double[] columnWidths, IBlockTarget target)
         {
             IPrimitiveSink sink = target.SinkForAdvance(this, row.Height);
+
+            // Record the ids inside each cell against the page the row lands on, so a
+            // page-number-citation referencing content in a table cell resolves (the cell's whole
+            // buffer is placed on this page). Only the paginating flow has a page to attribute to.
+            if (target.CanPaginate)
+            {
+                EnsurePage();
+                int pageNumber = currentPageNumber;
+                int pageIndex = IndexOfPage(page!);
+                foreach (LaidCell cell in row.Cells)
+                {
+                    engine.RecordIdsInSubtree(cell.Source, pageNumber, pageIndex);
+                }
+            }
+
             EmitRowAt(sink, row, contentLeft, target.Cursor(this), columnWidths);
             target.Advance(this, row.Height);
         }
@@ -2038,7 +2075,7 @@ public sealed class LayoutEngine
                     double consumed = LayOutBlockLevelIntoBuffer(cell.BlockLevelChildren, buffer, contentWidth);
                     double cellHeight = consumed + cellBox.TopInsetMpt + cellBox.BottomInsetMpt;
 
-                    var laid = new LaidCell(startColumn, colSpan, rowSpan, cellBox, buffer, consumed);
+                    var laid = new LaidCell(startColumn, colSpan, rowSpan, cellBox, buffer, consumed, cell);
                     perRow[r].Add(laid);
 
                     if (rowSpan == 1)
@@ -2232,6 +2269,14 @@ public sealed class LayoutEngine
             // with the current block/table behaviour). Knuth-style item splitting is future work.
             IPrimitiveSink sink = target.SinkForAdvance(this, itemHeight);
             double itemTop = target.Cursor(this);
+
+            // Record the ids in the item's label/body (buffered) against the page it lands on, so a
+            // citation to content inside a list item resolves. Flow-only (a buffer has no page).
+            if (target.CanPaginate)
+            {
+                EnsurePage();
+                engine.RecordIdsInSubtree(item, currentPageNumber, IndexOfPage(page!));
+            }
 
             // The item's own border box spans the full content width (label column + gap + body column),
             // plus the item's own insets. The inner content width is bodyLeftOffset + bodyWidth (the
@@ -2628,7 +2673,7 @@ public sealed class LayoutEngine
     /// </summary>
     private sealed record LaidCell(
         int StartColumn, int ColumnSpan, int RowSpan, BoxProperties Box, BufferedSink Content,
-        double ContentHeightMpt)
+        double ContentHeightMpt, FoTableCell Source)
     {
         /// <summary>The painted box height (spanned rows combined); set after row heights are resolved.</summary>
         public double SpannedHeightMpt { get; set; }
