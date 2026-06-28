@@ -374,6 +374,12 @@ public sealed class FoBlock(PropertyList properties) : FObj(properties)
 
     /// <summary>The minimum characters that must be pushed after a hyphenation point (default 2).</summary>
     public int HyphenationPushCharacterCount => Properties.HyphenationPushCharacterCount;
+
+    /// <summary>The <c>widows</c> count (inherited, default 2): min lines kept together at a page top.</summary>
+    public int Widows => Properties.Widows;
+
+    /// <summary>The <c>orphans</c> count (inherited, default 2): min lines kept together at a page bottom.</summary>
+    public int Orphans => Properties.Orphans;
 }
 
 /// <summary>

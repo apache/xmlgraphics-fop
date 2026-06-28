@@ -112,6 +112,9 @@ package, as a rough size signal.
 - [x] **ids inside buffered contexts** (table cells, list items, footnote bodies) are recorded against
       the page their buffer is placed on, so `fo:page-number-citation` to such content resolves
       (previously rendered "?").
+- [x] **widows/orphans** control: a block split across a page break keeps at least `orphans` lines at
+      the bottom of the first page (pushing the whole block forward when too few fit) and at least
+      `widows` lines on the continuation page (pulling lines back), defaulting to 2/2.
 - [ ] Total-fit *page* breaking, floats, intra-row splitting; rotated-group link annotations. (Residual
       approximations: footnote reserve is greedy not iterative; a row-spanning cell crossing a page
       break paints on its origin page only; citation-last equals the single recorded page under the flat

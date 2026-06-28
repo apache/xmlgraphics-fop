@@ -1812,22 +1812,109 @@ public sealed class LayoutEngine
             // are modelled inside the breaker as flagged penalties, so a word may be split mid-line when
             // that improves the paragraph; the chosen fragment is rendered with the hyphenation character
             // and the remainder carried to the next line by BreakIntoLines.
-            List<LineBox> lines = engine.BreakIntoLines(block, words, widthMpt);
-            for (int i = 0; i < lines.Count; i++)
+            List<LineBox> lines = engine.BreakIntoLines(block, words, widthMpt).FindAll(l => l.Words.Count > 0);
+            if (lines.Count == 0)
             {
-                LineBox line = lines[i];
-                if (line.Words.Count == 0)
+                return;
+            }
+
+            double Advance(LineBox l) => Math.Max(lineHeight, l.Height);
+
+            void Emit(LineBox line, bool isLast)
+            {
+                double advance = Advance(line);
+                IPrimitiveSink sink = target.SinkForAdvance(this, advance);
+                engine.EmitLine(sink, line, leftMpt, widthMpt, lineHeight, target.Cursor(this), align, isLast);
+                target.Advance(this, advance);
+            }
+
+            // Inside a relocatable buffer there is no page to break against; emit straight through.
+            if (!target.CanPaginate)
+            {
+                for (int i = 0; i < lines.Count; i++)
                 {
-                    continue;
+                    Emit(lines[i], i == lines.Count - 1);
                 }
 
-                bool isLastLine = i == lines.Count - 1;
-                double advance = Math.Max(lineHeight, line.Height);
+                return;
+            }
 
-                IPrimitiveSink sink = target.SinkForAdvance(this, advance);
-                engine.EmitLine(sink, line, leftMpt, widthMpt, lineHeight, target.Cursor(this), align, isLastLine);
+            // Paginating flow: place the block's lines page by page, honouring orphans (min lines kept
+            // at a page bottom) and widows (min lines carried to the next page).
+            int orphans = Math.Max(1, block.Orphans);
+            int widows = Math.Max(1, block.Widows);
+            int start = 0;
+            while (start < lines.Count)
+            {
+                EnsurePage();
 
-                target.Advance(this, advance);
+                // How many of the remaining lines fit from the current cursor (a line at the very top of
+                // a page is never pushed forward, matching PageForLine, so an over-tall block still
+                // makes progress).
+                int fit = 0;
+                double y = cursorY;
+                while (start + fit < lines.Count)
+                {
+                    double a = Advance(lines[start + fit]);
+                    if (y + a > ContentBottomMpt && y > geometry.ContentTopMpt)
+                    {
+                        break;
+                    }
+
+                    y += a;
+                    fit++;
+                }
+
+                int remaining = lines.Count - start;
+                int place;
+                if (fit >= remaining)
+                {
+                    place = remaining; // the rest of the block fits
+                }
+                else
+                {
+                    bool atTop = cursorY <= geometry.ContentTopMpt + 1;
+
+                    // Orphans: if too few of the block's first lines fit here, move the whole block to the
+                    // next page (only when it isn't already at the page top -- otherwise it cannot help).
+                    if (start == 0 && fit < orphans && !atTop)
+                    {
+                        StartNewPage();
+                        continue;
+                    }
+
+                    place = fit;
+
+                    // Widows: don't leave fewer than `widows` lines for the next page; pull lines back to
+                    // this page's break so the tail page keeps at least `widows` lines.
+                    if (remaining - place < widows)
+                    {
+                        int want = remaining - widows;
+                        int floor = start == 0 ? orphans : 1; // keep orphans intact on the block's first page
+                        if (want >= floor)
+                        {
+                            place = Math.Min(place, want);
+                        }
+                        else if (!atTop)
+                        {
+                            StartNewPage(); // can't satisfy both here; retry the chunk at a page top
+                            continue;
+                        }
+                    }
+
+                    place = Math.Max(1, place); // always make progress
+                }
+
+                for (int k = 0; k < place; k++)
+                {
+                    Emit(lines[start + k], start + k == lines.Count - 1);
+                }
+
+                start += place;
+                if (start < lines.Count)
+                {
+                    StartNewPage();
+                }
             }
         }
 

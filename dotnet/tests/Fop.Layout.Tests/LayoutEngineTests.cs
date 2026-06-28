@@ -267,8 +267,9 @@ public sealed class LayoutEngineTests
     [Fact]
     public void Pagination_SingleBlockSplitsAcrossPagesLineByLine()
     {
-        // One block, 5 words each on its own line (narrow width), page holds 2 lines.
-        string body = "<fo:block font-size=\"10pt\">aa bb cc dd ee</fo:block>";
+        // One block, 5 words each on its own line (narrow width), page holds 2 lines. widows/orphans
+        // are disabled here so the split is purely greedy line-by-line (they are tested separately).
+        string body = "<fo:block font-size=\"10pt\" widows=\"1\" orphans=\"1\">aa bb cc dd ee</fo:block>";
         // width 20pt => one "aa" (10000) fits, second word "bb" needs +5000+10000 = 25000 > 20000 => 1 word/line.
         AreaTree tree = LayOut(Document(body, pageWidthPt: 20, pageHeightPt: 25));
         Assert.Equal(3, tree.Pages.Count);

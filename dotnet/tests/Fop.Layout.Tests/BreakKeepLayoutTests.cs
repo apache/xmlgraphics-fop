@@ -198,9 +198,10 @@ public sealed class BreakKeepLayoutTests
         // Without keep-together, a block taller than the remaining space splits across pages.
         // Page height 50000. Leading 3 lines (36000) leaves 14000 = room for one more line. The second
         // block's two lines therefore split: line 1 on page 1, line 2 on page 2.
+        // widows/orphans disabled so the split is purely greedy line-by-line (tested separately).
         string body = """
-            <fo:block>l1 l2 l3 l4 l5 l6 l7</fo:block>
-            <fo:block>k1 k2 k3 k4 k5 k6</fo:block>
+            <fo:block widows="1" orphans="1">l1 l2 l3 l4 l5 l6 l7</fo:block>
+            <fo:block widows="1" orphans="1">k1 k2 k3 k4 k5 k6</fo:block>
             """;
         AreaTree tree = LayOut(Document(body, pageWidthPt: 45, pageHeightPt: 50));
         // The second block is allowed to split, so its lines appear across both pages.

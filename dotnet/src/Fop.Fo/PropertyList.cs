@@ -52,6 +52,8 @@ public sealed class PropertyList
         "hyphenation-push-character-count",
         "letter-spacing",
         "word-spacing",
+        "widows",
+        "orphans",
     };
 
     private const double DefaultFontSizeMpt = 12_000;
@@ -355,6 +357,18 @@ public sealed class PropertyList
 
     /// <summary>The resolved <c>hyphenation-push-character-count</c> (inherited, default 2, minimum 1).</summary>
     public int HyphenationPushCharacterCount => GetPositiveInt("hyphenation-push-character-count", 2);
+
+    /// <summary>
+    /// The resolved <c>widows</c> (inherited, default 2, minimum 1): the minimum number of lines of a
+    /// block that must be left together at the top of a page when the block is split across a break.
+    /// </summary>
+    public int Widows => GetPositiveInt("widows", 2);
+
+    /// <summary>
+    /// The resolved <c>orphans</c> (inherited, default 2, minimum 1): the minimum number of lines of a
+    /// block that must be kept together at the bottom of a page when the block is split across a break.
+    /// </summary>
+    public int Orphans => GetPositiveInt("orphans", 2);
 
     private int GetPositiveInt(string name, int @default)
     {
