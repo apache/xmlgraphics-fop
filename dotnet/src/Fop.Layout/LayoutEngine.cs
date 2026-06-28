@@ -1182,6 +1182,110 @@ public sealed class LayoutEngine
 
         public void Add(LinkArea link) => links.Add(link);
 
+        /// <summary>The buffered text runs, in buffer-local coordinates. Used to find safe split points.</summary>
+        public IReadOnlyList<TextRun> Runs => runs;
+
+        /// <summary>
+        /// Splits the buffered content at the buffer-local y <paramref name="cut"/> into a head (content
+        /// above the cut) and a tail (content below, shifted up so the cut becomes the tail's origin).
+        /// Text runs, images and vector paths are assigned whole by position (the caller chooses a cut on
+        /// a text-line boundary so no run straddles); rectangles and links are clipped at the cut so a
+        /// background/border that crosses the boundary paints a slice on each side. Used to break an
+        /// over-tall table row across a page boundary.
+        /// </summary>
+        public (BufferedSink Head, BufferedSink Tail) SplitAt(double cut)
+        {
+            var head = new BufferedSink();
+            var tail = new BufferedSink();
+
+            foreach (RectFill r in rects)
+            {
+                double top = r.YMpt;
+                double bottom = r.YMpt + r.HeightMpt;
+                if (bottom <= cut)
+                {
+                    head.rects.Add(r);
+                }
+                else if (top >= cut)
+                {
+                    tail.rects.Add(r with { YMpt = top - cut });
+                }
+                else
+                {
+                    head.rects.Add(r with { HeightMpt = cut - top });
+                    tail.rects.Add(r with { YMpt = 0, HeightMpt = bottom - cut });
+                }
+            }
+
+            foreach (TextRun run in runs)
+            {
+                if (run.BaselineYMpt <= cut)
+                {
+                    head.runs.Add(run);
+                }
+                else
+                {
+                    tail.runs.Add(run with { BaselineYMpt = run.BaselineYMpt - cut });
+                }
+            }
+
+            foreach (ImageRun img in images)
+            {
+                if (img.YMpt < cut)
+                {
+                    head.images.Add(img);
+                }
+                else
+                {
+                    tail.images.Add(img with { YMpt = img.YMpt - cut });
+                }
+            }
+
+            foreach (VectorPath v in vectors)
+            {
+                if (MinSegmentY(v.Segments) < cut)
+                {
+                    head.vectors.Add(v);
+                }
+                else
+                {
+                    tail.vectors.Add(v with { Segments = TranslateSegments(v.Segments, 0, -cut) });
+                }
+            }
+
+            foreach (LinkArea l in links)
+            {
+                double top = l.YMpt;
+                double bottom = l.YMpt + l.HeightMpt;
+                if (bottom <= cut)
+                {
+                    head.links.Add(l);
+                }
+                else if (top >= cut)
+                {
+                    tail.links.Add(l with { YMpt = top - cut });
+                }
+                else
+                {
+                    head.links.Add(l with { HeightMpt = cut - top });
+                    tail.links.Add(l with { YMpt = 0, HeightMpt = bottom - cut });
+                }
+            }
+
+            return (head, tail);
+        }
+
+        private static double MinSegmentY(IReadOnlyList<PathSegment> segments)
+        {
+            double min = double.MaxValue;
+            foreach (PathSegment s in segments)
+            {
+                min = Math.Min(min, s.Y0);
+            }
+
+            return min == double.MaxValue ? 0 : min;
+        }
+
         /// <summary>Replays the buffered primitives onto <paramref name="target"/>, offset by (dx, dy).</summary>
         public void FlushTo(IPrimitiveSink target, double dx, double dy)
         {
@@ -2025,6 +2129,27 @@ public sealed class LayoutEngine
         private void PlaceRowPaginated(LaidRow row, double contentLeft, double[] columnWidths,
             List<LaidRow> header, double headerHeight, IBlockTarget target)
         {
+            // A row taller than a whole empty content region can never fit on any page: rather than
+            // overflow the region bottom, split it across pages at text-line boundaries. Only the
+            // paginating flow can split, and only when no row-spanning cell is involved (a spanning cell
+            // crossing a break is handled at its origin page -- a documented approximation).
+            double fullPageHeight = ContentBottomMpt - geometry.ContentTopMpt;
+            bool hasSpanningCell = false;
+            foreach (LaidCell c in row.Cells)
+            {
+                if (c.RowSpan != 1 || Math.Abs(c.SpannedHeightMpt - row.Height) > 0.5)
+                {
+                    hasSpanningCell = true;
+                    break;
+                }
+            }
+
+            if (target.CanPaginate && !hasSpanningCell && row.Height > fullPageHeight)
+            {
+                PlaceRowSplit(row, contentLeft, columnWidths, header, headerHeight);
+                return;
+            }
+
             // SinkForAdvance paginates the flow target if the row would overflow the page; the buffer
             // target returns its buffer unchanged. When the flow target moved to a fresh page the cursor
             // is now at the content top, which is how we detect that the header should be repeated.
@@ -2044,6 +2169,209 @@ public sealed class LayoutEngine
             }
 
             PlaceRow(row, contentLeft, columnWidths, target);
+        }
+
+        /// <summary>
+        /// Places a row that is taller than a full content region by splitting it across pages. Each
+        /// iteration emits the slice of every cell that fits in the remaining space (cutting on a
+        /// text-line boundary), paints the cell/row box for that slice (top border only on the first
+        /// slice, bottom border only on the last), then starts a new page (repeating the header) and
+        /// continues with the remainder. Flow-only.
+        /// </summary>
+        private void PlaceRowSplit(LaidRow row, double contentLeft, double[] columnWidths,
+            List<LaidRow> header, double headerHeight)
+        {
+            // Attribute ids inside the row's cells to the page the row begins on (its content is anchored
+            // here even though later slices spill forward).
+            EnsurePage();
+            int pageNumber = currentPageNumber;
+            int pageIndex = IndexOfPage(page!);
+            foreach (LaidCell cell in row.Cells)
+            {
+                engine.RecordIdsInSubtree(cell.Source, pageNumber, pageIndex);
+            }
+
+            LaidRow current = row;
+            bool firstSlice = true;
+            while (true)
+            {
+                EnsurePage();
+                double rowTop = cursorY;
+                double remaining = ContentBottomMpt - rowTop;
+                bool atPageTop = rowTop <= geometry.ContentTopMpt + 0.5;
+
+                if (current.Height <= remaining + 0.5)
+                {
+                    EmitRowSegment(new PageSink(page!), current, contentLeft, rowTop, columnWidths,
+                        paintTop: firstSlice, paintBottom: true);
+                    cursorY = rowTop + current.Height;
+                    return;
+                }
+
+                double cut = LargestSafeCut(current, remaining, atPageTop);
+                if (cut <= 0.5 || cut >= current.Height - 0.5)
+                {
+                    if (atPageTop)
+                    {
+                        // Nothing splits cleanly and the page is already empty: emit the whole remainder
+                        // (it overflows, but advancing would loop forever).
+                        EmitRowSegment(new PageSink(page!), current, contentLeft, rowTop, columnWidths,
+                            paintTop: firstSlice, paintBottom: true);
+                        cursorY = rowTop + current.Height;
+                        return;
+                    }
+
+                    // Move the remainder to a fresh page and retry from its top.
+                    StartNewPage();
+                    RepeatHeader(header, headerHeight, contentLeft, columnWidths);
+                    continue;
+                }
+
+                (LaidRow head, LaidRow tail) = SplitRow(current, cut);
+                EmitRowSegment(new PageSink(page!), head, contentLeft, rowTop, columnWidths,
+                    paintTop: firstSlice, paintBottom: false);
+                StartNewPage();
+                RepeatHeader(header, headerHeight, contentLeft, columnWidths);
+                current = tail;
+                firstSlice = false;
+            }
+        }
+
+        /// <summary>Re-emits the repeating header rows at the current cursor when they fit on the page.</summary>
+        private void RepeatHeader(List<LaidRow> header, double headerHeight, double contentLeft,
+            double[] columnWidths)
+        {
+            if (header.Count == 0 || cursorY + headerHeight > ContentBottomMpt)
+            {
+                return;
+            }
+
+            foreach (LaidRow h in header)
+            {
+                EnsurePage();
+                EmitRowAt(new PageSink(page!), h, contentLeft, cursorY, columnWidths);
+                cursorY += h.Height;
+            }
+        }
+
+        /// <summary>
+        /// Returns the largest row-local y at which <paramref name="row"/> can be cut without bisecting a
+        /// line of text, no greater than <paramref name="limit"/>. A cut is valid when every cell's text
+        /// line sits wholly above or below it. When nothing fits and the page is already empty
+        /// (<paramref name="atPageTop"/>), returns the first line's bottom so at least one line is placed
+        /// (avoiding an infinite loop on an over-tall single line).
+        /// </summary>
+        private double LargestSafeCut(LaidRow row, double limit, bool atPageTop)
+        {
+            var bands = new List<(double Top, double Bottom)>();
+            var candidates = new SortedSet<double>();
+            foreach (LaidCell cell in row.Cells)
+            {
+                double off = cell.Box.TopInsetMpt;
+                foreach (TextRun run in cell.Content.Runs)
+                {
+                    double top = off + run.BaselineYMpt - engine.measurer.AscenderMpt(run.Font);
+                    double bottom = off + run.BaselineYMpt + engine.measurer.DescenderMpt(run.Font);
+                    bands.Add((top, bottom));
+                    candidates.Add(bottom);
+                }
+            }
+
+            double best = 0;
+            foreach (double c in candidates)
+            {
+                if (c > limit + 0.5)
+                {
+                    break;
+                }
+
+                bool straddles = false;
+                foreach ((double top, double bottom) in bands)
+                {
+                    if (c > top + 0.5 && c < bottom - 0.5)
+                    {
+                        straddles = true;
+                        break;
+                    }
+                }
+
+                if (!straddles)
+                {
+                    best = c;
+                }
+            }
+
+            if (best <= 0.5 && atPageTop && bands.Count > 0)
+            {
+                best = bands.Min(b => b.Bottom);
+            }
+
+            return best;
+        }
+
+        /// <summary>
+        /// Splits <paramref name="row"/> at the row-local y <paramref name="cut"/> into a head row of
+        /// height <paramref name="cut"/> and a tail row carrying the remainder, splitting each cell's
+        /// buffered content at the corresponding buffer-local boundary.
+        /// </summary>
+        private static (LaidRow Head, LaidRow Tail) SplitRow(LaidRow row, double cut)
+        {
+            var headCells = new List<LaidCell>(row.Cells.Count);
+            var tailCells = new List<LaidCell>(row.Cells.Count);
+            double tailHeight = row.Height - cut;
+
+            foreach (LaidCell cell in row.Cells)
+            {
+                double bufCut = cut - cell.Box.TopInsetMpt;
+                BufferedSink headContent;
+                BufferedSink tailContent;
+                if (bufCut <= 0)
+                {
+                    headContent = new BufferedSink();
+                    tailContent = cell.Content;
+                }
+                else
+                {
+                    (headContent, tailContent) = cell.Content.SplitAt(bufCut);
+                }
+
+                headCells.Add(new LaidCell(cell.StartColumn, cell.ColumnSpan, 1, cell.Box, headContent,
+                    Math.Max(0, bufCut), cell.Source) { SpannedHeightMpt = cut });
+                tailCells.Add(new LaidCell(cell.StartColumn, cell.ColumnSpan, 1, cell.Box, tailContent,
+                    Math.Max(0, cell.ContentHeightMpt - bufCut), cell.Source) { SpannedHeightMpt = tailHeight });
+            }
+
+            return (new LaidRow(headCells, cut, row.Box), new LaidRow(tailCells, tailHeight, row.Box));
+        }
+
+        /// <summary>
+        /// Emits one slice of a (possibly split) row: the row box, each cell box and each cell's buffered
+        /// content. <paramref name="paintTop"/>/<paramref name="paintBottom"/> control which horizontal
+        /// borders paint, so a split row's top border shows only on its first slice and its bottom border
+        /// only on its last.
+        /// </summary>
+        private static void EmitRowSegment(IPrimitiveSink sink, LaidRow row, double contentLeft,
+            double rowTop, double[] columnWidths, bool paintTop, bool paintBottom)
+        {
+            double rowWidth = 0;
+            for (int c = 0; c < columnWidths.Length; c++)
+            {
+                rowWidth += columnWidths[c];
+            }
+
+            EmitBoxSegment(sink, row.Box, contentLeft, rowTop, rowWidth, row.Height, paintTop, paintBottom);
+
+            foreach (LaidCell cell in row.Cells)
+            {
+                double cellLeft = contentLeft + ColumnOffset(columnWidths, cell.StartColumn);
+                double cellWidth = SpannedWidth(columnWidths, cell.StartColumn, cell.ColumnSpan);
+                double cellHeight = cell.SpannedHeightMpt > 0 ? cell.SpannedHeightMpt : row.Height;
+                EmitBoxSegment(sink, cell.Box, cellLeft, rowTop, cellWidth, cellHeight, paintTop, paintBottom);
+
+                double contentX = cellLeft + cell.Box.LeftInsetMpt;
+                double contentY = rowTop + cell.Box.TopInsetMpt;
+                cell.Content.FlushTo(sink, contentX, contentY);
+            }
         }
 
         /// <summary>Emits a laid-out row at the current cursor (no pagination) and advances the cursor.</summary>

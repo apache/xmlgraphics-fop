@@ -122,8 +122,15 @@ package, as a rough size signal.
 - [x] **native renderer paints transformed groups**: rotated `fo:block-container`s now render in the
       PdfSharp-free native renderer too, under a content-stream CTM (translate-then-clockwise-rotate),
       with their links mapped to page-space annotations -- closing the gap with the PdfSharp path.
-- [ ] Total-fit *page* breaking, floats, intra-row splitting. (Residual approximations: footnote reserve
-      is greedy not iterative; a row-spanning cell crossing a page break paints on its origin page only;
+- [x] **intra-row table splitting**: a table row taller than a whole content region splits across pages
+      at text-line boundaries instead of overflowing. Each slice paints its cell/row box (top border on
+      the first slice, bottom on the last, side borders/background on every slice) and the header repeats
+      on each continuation page. Scoped to rows with no row-spanning cell (those still paint at their
+      origin page); cuts fall between lines, with non-text content (images/vectors) assigned whole to the
+      slice its top falls in.
+- [ ] Total-fit *page* breaking, floats. (Residual approximations: footnote reserve is greedy not
+      iterative; a row-spanning cell crossing a page break paints on its origin page only; a row that
+      fits on a fresh page but not the remaining space still moves whole rather than splitting;
       citation-last equals the single recorded page under the flat area model.)
 
 ## Phase 6 — Renderers  `[ ]`  (~79,000 LOC)

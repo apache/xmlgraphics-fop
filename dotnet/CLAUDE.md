@@ -182,7 +182,8 @@ A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subse
 - the **box model** (borders, padding, backgrounds), painted across page breaks, and
   **external-graphic images**;
 - **tables** (%/proportional/absolute columns, header/body/footer, per-cell box, column & row
-  spanning, row pagination);
+  spanning, row pagination with repeating headers; a row taller than a whole page splits across pages
+  at text-line boundaries);
 - **lists** (`fo:list-block` with provisional label/body geometry, nesting);
 - **static content** — running headers/footers via `fo:region-before`/`after` + `fo:static-content`,
   with `fo:page-number`;
@@ -218,7 +219,7 @@ A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subse
   `baseline - 1.1*capHeight`, line-through `baseline - 0.45*capHeight`); and **letter-spacing**
   (per-glyph tracking between glyphs, `(n-1)` gaps per word, drawn glyph-by-glyph).
 
-The solution has 17 library projects and **996 passing tests** on .NET 10. See `samples/hello.fo`
+The solution has 17 library projects and **998 passing tests** on .NET 10. See `samples/hello.fo`
 (a clickable TOC with leaders, links, a marker header, and page-number citations) and
 `samples/svg-decoration.fo` (embedded SVG, text-decoration and letter-spacing). The `fop` CLI renders
 a document with `fop in.fo out.pdf`.

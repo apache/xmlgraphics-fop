@@ -383,4 +383,75 @@ public sealed class TableLayoutTests
         // 12000 (block) + 10000 (space-before) + 9000 = 31000.
         Assert.Equal(31_000, cell.BaselineYMpt, 3);
     }
+
+    // ----- intra-row splitting (a row taller than a full page) ----------------------------
+
+    [Fact]
+    public void OverTallRowSplitsAcrossPagesAtLineBoundaries()
+    {
+        // A single-cell row of six lines is 72000mpt tall; a zero-margin 40pt page holds 40000mpt, so
+        // the row is taller than a whole page and must split rather than overflow. Three 12000mpt lines
+        // (36000) fit per page, with the cut taken on the line boundary at 34000 (line 3's bottom).
+        string body = """
+            <fo:table>
+              <fo:table-body>
+                <fo:table-row>
+                  <fo:table-cell>
+                    <fo:block>l1</fo:block><fo:block>l2</fo:block><fo:block>l3</fo:block>
+                    <fo:block>l4</fo:block><fo:block>l5</fo:block><fo:block>l6</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+            """;
+        AreaTree tree = LayOut(Document(body, pageWidthPt: 100, pageHeightPt: 40));
+
+        Assert.Equal(2, tree.Pages.Count);
+
+        // Every line appears exactly once and none was lost in the split.
+        var all = tree.Pages.SelectMany(p => p.TextRuns).Select(r => r.Text).OrderBy(t => t).ToList();
+        Assert.Equal(new[] { "l1", "l2", "l3", "l4", "l5", "l6" }, all);
+
+        // The first three lines stay on page 1, the last three move to page 2.
+        Assert.Equal(new[] { "l1", "l2", "l3" },
+            tree.Pages[0].TextRuns.OrderBy(r => r.BaselineYMpt).Select(r => r.Text).ToArray());
+        Assert.Equal(new[] { "l4", "l5", "l6" },
+            tree.Pages[1].TextRuns.OrderBy(r => r.BaselineYMpt).Select(r => r.Text).ToArray());
+
+        // No line overflows the 40000mpt content region on its page (baseline + 2000 descender).
+        foreach (PageArea p in tree.Pages)
+        {
+            foreach (TextRun run in p.TextRuns)
+            {
+                Assert.True(run.BaselineYMpt + 2_000 <= 40_000 + 0.5,
+                    $"line {run.Text} at {run.BaselineYMpt} overflows the page");
+            }
+        }
+    }
+
+    [Fact]
+    public void OverTallRowPaintsCellBackgroundOnEverySlice()
+    {
+        // The cell carries a background; when the row splits, each page must show a background slice
+        // (a split box paints its background on every segment).
+        string body = """
+            <fo:table>
+              <fo:table-body>
+                <fo:table-row>
+                  <fo:table-cell background-color="#ddeeff">
+                    <fo:block>l1</fo:block><fo:block>l2</fo:block><fo:block>l3</fo:block>
+                    <fo:block>l4</fo:block><fo:block>l5</fo:block><fo:block>l6</fo:block>
+                  </fo:table-cell>
+                </fo:table-row>
+              </fo:table-body>
+            </fo:table>
+            """;
+        AreaTree tree = LayOut(Document(body, pageWidthPt: 100, pageHeightPt: 40));
+
+        Assert.Equal(2, tree.Pages.Count);
+        foreach (PageArea p in tree.Pages)
+        {
+            Assert.Contains(p.RectFills, r => r.Color.Red == 0xDD && r.Color.Green == 0xEE && r.Color.Blue == 0xFF);
+        }
+    }
 }
