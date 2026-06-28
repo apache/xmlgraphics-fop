@@ -110,6 +110,38 @@ public sealed class CommandLineOptionsTests
         Assert.Contains("requires a value", error);
     }
 
+    [Theory]
+    [InlineData("out.pdf", "Pdf")]
+    [InlineData("out.txt", "Text")]
+    [InlineData("out.md", "Markdown")]
+    [InlineData("out.markdown", "Markdown")]
+    [InlineData("out.html", "Html")]
+    [InlineData("out.htm", "Html")]
+    public void FormatInferredFromOutputExtension(string outFile, string expected)
+    {
+        CommandLineOptions? o = CommandLineOptions.Parse(["in.fo", outFile], out string? error);
+        Assert.Null(error);
+        Assert.Equal(expected, o!.Format.ToString());
+    }
+
+    [Fact]
+    public void FormatFlagOverridesExtension()
+    {
+        // -html with a .pdf-looking name still selects HTML.
+        CommandLineOptions? o = CommandLineOptions.Parse(["-fo", "in.fo", "-html", "out.pdf"], out string? error);
+        Assert.Null(error);
+        Assert.Equal("Html", o!.Format.ToString());
+        Assert.Equal("out.pdf", o.OutputFile);
+    }
+
+    [Fact]
+    public void UnknownExtensionDefaultsToPdf()
+    {
+        CommandLineOptions? o = CommandLineOptions.Parse(["in.fo", "out.dat"], out string? error);
+        Assert.Null(error);
+        Assert.Equal("Pdf", o!.Format.ToString());
+    }
+
     [Fact]
     public void FontDirectoriesAreCollected()
     {

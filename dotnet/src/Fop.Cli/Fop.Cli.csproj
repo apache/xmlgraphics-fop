@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Fop.Render.Pdf\Fop.Render.Pdf.csproj" />
+    <ProjectReference Include="..\Fop.Render.Text\Fop.Render.Text.csproj" />
   </ItemGroup>
 
   <ItemGroup>

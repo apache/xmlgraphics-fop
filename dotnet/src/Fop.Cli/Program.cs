@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Xsl;
 using Fop.Render.Pdf;
+using Fop.Render.Text;
 
 namespace Fop.Cli;
 
@@ -77,6 +78,48 @@ public static class Program
 
     private static void Run(CommandLineOptions options)
     {
+        // Obtain the XSL-FO source as a stream: either the FO file, or the result of the XSLT transform.
+        using Stream foStream = OpenFoSource(options);
+        using FileStream output = File.Create(options.OutputFile!);
+
+        switch (options.Format)
+        {
+            case OutputFormat.Text:
+                new PlainTextRenderer().Convert(foStream, output);
+                break;
+            case OutputFormat.Markdown:
+                new MarkdownRenderer().Convert(foStream, output);
+                break;
+            case OutputFormat.Html:
+                new HtmlRenderer().Convert(foStream, output);
+                break;
+            default:
+                RenderPdf(options, foStream, output);
+                break;
+        }
+    }
+
+    private static Stream OpenFoSource(CommandLineOptions options)
+    {
+        if (options.FoFile is not null)
+        {
+            if (!File.Exists(options.FoFile))
+            {
+                throw new FileNotFoundException("FO file not found.", options.FoFile);
+            }
+
+            return File.OpenRead(options.FoFile);
+        }
+
+        // XML + XSLT: transform to FO in memory.
+        var foStream = new MemoryStream();
+        Transform(options.XmlFile!, options.XsltFile!, foStream);
+        foStream.Position = 0;
+        return foStream;
+    }
+
+    private static void RenderPdf(CommandLineOptions options, Stream foStream, Stream output)
+    {
         var processor = new FopProcessor();
         foreach (string dir in options.FontDirectories)
         {
@@ -90,39 +133,13 @@ public static class Program
             }
         }
 
-        using FileStream output = File.Create(options.OutputFile!);
-
-        if (options.FoFile is not null)
+        if (options.Native)
         {
-            if (!File.Exists(options.FoFile))
-            {
-                throw new FileNotFoundException("FO file not found.", options.FoFile);
-            }
-
-            using FileStream input = File.OpenRead(options.FoFile);
-            if (options.Native)
-            {
-                processor.ConvertNative(input, output);
-            }
-            else
-            {
-                processor.Convert(input, output);
-            }
+            processor.ConvertNative(foStream, output);
         }
         else
         {
-            // XML + XSLT: transform to FO in memory, then render that.
-            using var foStream = new MemoryStream();
-            Transform(options.XmlFile!, options.XsltFile!, foStream);
-            foStream.Position = 0;
-            if (options.Native)
-            {
-                processor.ConvertNative(foStream, output);
-            }
-            else
-            {
-                processor.Convert(foStream, output);
-            }
+            processor.Convert(foStream, output);
         }
     }
 
@@ -156,16 +173,21 @@ public static class Program
 
     internal static void PrintUsage(TextWriter w)
     {
-        w.WriteLine("Usage: fop <input.fo> <output.pdf>");
+        w.WriteLine("Usage: fop <input.fo> <output.{pdf|txt|md|html}>");
         w.WriteLine("       fop -fo <input.fo> -pdf <output.pdf>");
-        w.WriteLine("       fop -xml <data.xml> -xsl <style.xsl> -pdf <output.pdf>");
+        w.WriteLine("       fop -xml <data.xml> -xsl <style.xsl> -html <output.html>");
+        w.WriteLine();
+        w.WriteLine("The output format is taken from the output file extension, or a format flag below.");
         w.WriteLine();
         w.WriteLine("Options:");
         w.WriteLine("  -fo <file>        XSL-FO input document");
         w.WriteLine("  -xml <file>       XML source to transform (with -xsl) into XSL-FO");
         w.WriteLine("  -xsl <file>       XSLT stylesheet that produces XSL-FO from the -xml source");
-        w.WriteLine("  -pdf <file>       PDF output file");
-        w.WriteLine("  -fontdir <dir>    register all TTF/OTF fonts in <dir> (repeatable)");
+        w.WriteLine("  -pdf <file>       PDF output (the default format)");
+        w.WriteLine("  -txt <file>       plain-text output");
+        w.WriteLine("  -md <file>        Markdown output");
+        w.WriteLine("  -html <file>      HTML output");
+        w.WriteLine("  -fontdir <dir>    register all TTF/OTF fonts in <dir> (repeatable, PDF only)");
         w.WriteLine("  -native           use the native (PdfSharp-free) PDF renderer");
         w.WriteLine("  -version          print the version and exit");
         w.WriteLine("  -help             print this help and exit");

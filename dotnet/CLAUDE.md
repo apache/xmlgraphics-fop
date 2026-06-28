@@ -163,9 +163,13 @@ that stack with modern, cross-platform, managed libraries:
   graphics, rules/backgrounds, link annotations and the document outline. Exposed via
   `FopProcessor.ConvertNative` and the CLI `-native` flag. (Raster-image embedding and font
   embedding/subsetting are future work; images draw as a placeholder box.)
+- **`Fop.Render.Text`** — text-family back-ends (plain text, Markdown, HTML) rendered from the FO
+  tree's *logical* structure via a shared `DocExtractor` (paragraphs/headings/lists/tables/links/
+  images), rather than from the positioned area tree.
 - **`Fop.Cli`** — the `fop` command-line front-end: `fop in.fo out.pdf`, `-fo`/`-pdf`, an
-  `-xml`/`-xsl` XSLT-to-FO path, `-fontdir` font registration, `-native` (native renderer), and
-  `-version`/`-help`. Packable as a global .NET tool (`ToolCommandName=fop`).
+  `-xml`/`-xsl` XSLT-to-FO path, `-fontdir` font registration, `-native` (native renderer), the
+  `-txt`/`-md`/`-html` output formats (also inferred from the output extension), and `-version`/
+  `-help`. Packable as a global .NET tool (`ToolCommandName=fop`).
 
 A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subset:
 - block/inline text, fonts, colour, alignment/justification, indents, pagination;
@@ -206,7 +210,7 @@ A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subse
   `baseline - 1.1*capHeight`, line-through `baseline - 0.45*capHeight`); and **letter-spacing**
   (per-glyph tracking between glyphs, `(n-1)` gaps per word, drawn glyph-by-glyph).
 
-The solution has 16 library projects and **956 passing tests** on .NET 10. See `samples/hello.fo`
+The solution has 17 library projects and **969 passing tests** on .NET 10. See `samples/hello.fo`
 (a clickable TOC with leaders, links, a marker header, and page-number citations) and
 `samples/svg-decoration.fo` (embedded SVG, text-decoration and letter-spacing). The `fop` CLI renders
 a document with `fop in.fo out.pdf`.

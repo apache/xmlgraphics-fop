@@ -15,6 +15,22 @@
 
 namespace Fop.Cli;
 
+/// <summary>The output formats the <c>fop</c> tool can produce.</summary>
+internal enum OutputFormat
+{
+    /// <summary>PDF (the default).</summary>
+    Pdf,
+
+    /// <summary>Plain UTF-8 text.</summary>
+    Text,
+
+    /// <summary>GitHub-flavoured Markdown.</summary>
+    Markdown,
+
+    /// <summary>A semantic HTML5 document.</summary>
+    Html,
+}
+
 /// <summary>
 /// The parsed command line for the <c>fop</c> tool: which input drives the run (a ready FO file, or an
 /// XML source plus an XSLT stylesheet to transform into FO), where the PDF is written, and the option
@@ -32,8 +48,13 @@ internal sealed class CommandLineOptions
     /// <summary>The XSLT stylesheet file, or <c>null</c>.</summary>
     public string? XsltFile { get; private set; }
 
-    /// <summary>The output PDF file, or <c>null</c> when unset.</summary>
+    /// <summary>The output file, or <c>null</c> when unset.</summary>
     public string? OutputFile { get; private set; }
+
+    /// <summary>The selected output format.</summary>
+    public OutputFormat Format { get; private set; } = OutputFormat.Pdf;
+
+    private bool formatExplicit;
 
     /// <summary>Directories to scan and register fonts from (TTF/OTF) before rendering.</summary>
     public IReadOnlyList<string> FontDirectories => fontDirectories;
@@ -97,6 +118,25 @@ internal sealed class CommandLineOptions
                 case "-pdf":
                     if (!TryNext(args, ref i, arg, out string? pdf, out error)) { return null; }
                     o.OutputFile = pdf;
+                    o.SetFormat(OutputFormat.Pdf);
+                    break;
+
+                case "-txt":
+                    if (!TryNext(args, ref i, arg, out string? txt, out error)) { return null; }
+                    o.OutputFile = txt;
+                    o.SetFormat(OutputFormat.Text);
+                    break;
+
+                case "-md":
+                    if (!TryNext(args, ref i, arg, out string? md, out error)) { return null; }
+                    o.OutputFile = md;
+                    o.SetFormat(OutputFormat.Markdown);
+                    break;
+
+                case "-html":
+                    if (!TryNext(args, ref i, arg, out string? html, out error)) { return null; }
+                    o.OutputFile = html;
+                    o.SetFormat(OutputFormat.Html);
                     break;
 
                 case "-fontdir" or "-fonts":
@@ -180,8 +220,29 @@ internal sealed class CommandLineOptions
             return false;
         }
 
+        // Infer the format from the output extension unless a format flag set it explicitly.
+        if (!o.formatExplicit)
+        {
+            o.Format = FormatFromExtension(o.OutputFile);
+        }
+
         return true;
     }
+
+    private void SetFormat(OutputFormat format)
+    {
+        Format = format;
+        formatExplicit = true;
+    }
+
+    private static OutputFormat FormatFromExtension(string path) =>
+        Path.GetExtension(path).ToLowerInvariant() switch
+        {
+            ".txt" or ".text" => OutputFormat.Text,
+            ".md" or ".markdown" => OutputFormat.Markdown,
+            ".html" or ".htm" => OutputFormat.Html,
+            _ => OutputFormat.Pdf,
+        };
 
     private static bool TryNext(string[] args, ref int i, string flag, out string? value, out string? error)
     {

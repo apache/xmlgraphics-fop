@@ -134,7 +134,11 @@ Independent back-ends; port in priority order. Each can be its own project (`Fop
         and the CLI `-native` flag; PdfSharp's reader re-opens the output. Remaining: native raster-image
         embedding (currently a placeholder box), font embedding/subsetting, encryption, stream filters.
 - [ ] Bitmap/Java2D → **ImageSharp** raster renderer (`Fop.Render.Bitmap`).
-- [ ] PostScript, AFP, PCL, RTF, TXT, intermediate XML — subsequent.
+- [x] **Text-family back-ends** (`Fop.Render.Text`): plain text, Markdown and HTML, rendered from the
+      FO tree's logical structure (a shared `DocExtractor` → paragraphs/headings/lists/tables/links/
+      images model) rather than the positioned area tree. Wired into the CLI via the output extension
+      or the `-txt`/`-md`/`-html` flags.
+- [ ] PostScript, AFP, PCL, RTF, intermediate XML — subsequent.
 - [ ] Image loading pipeline (`Fop.Imaging`) — built on ImageSharp; `ImageDimensions` started.
 - [x] **SVG** (`fo:instream-foreign-object`) — `Fop.Svg` parses a static SVG subset (basic shapes,
       `path` with arc→Bezier, `g`/`transform`, presentation attrs + `style`, simple `text`) into

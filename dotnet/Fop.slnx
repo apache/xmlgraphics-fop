@@ -13,6 +13,7 @@
     <Project Path="src/Fop.Pdf/Fop.Pdf.csproj" />
     <Project Path="src/Fop.Render.Pdf/Fop.Render.Pdf.csproj" />
     <Project Path="src/Fop.Render.Pdf.Native/Fop.Render.Pdf.Native.csproj" />
+    <Project Path="src/Fop.Render.Text/Fop.Render.Text.csproj" />
     <Project Path="src/Fop.Svg/Fop.Svg.csproj" />
     <Project Path="src/Fop.Traits/Fop.Traits.csproj" />
     <Project Path="src/Fop.Util/Fop.Util.csproj" />
@@ -28,6 +29,7 @@
     <Project Path="tests/Fop.Hyphenation.Tests/Fop.Hyphenation.Tests.csproj" />
     <Project Path="tests/Fop.Layout.Tests/Fop.Layout.Tests.csproj" />
     <Project Path="tests/Fop.Pdf.Tests/Fop.Pdf.Tests.csproj" />
+    <Project Path="tests/Fop.Render.Text.Tests/Fop.Render.Text.Tests.csproj" />
     <Project Path="tests/Fop.Rendering.Tests/Fop.Rendering.Tests.csproj" />
     <Project Path="tests/Fop.Svg.Tests/Fop.Svg.Tests.csproj" />
     <Project Path="tests/Fop.Traits.Tests/Fop.Traits.Tests.csproj" />

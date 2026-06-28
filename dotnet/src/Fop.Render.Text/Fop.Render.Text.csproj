@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Fop.Render.Text</RootNamespace>
+    <Description>Text-family back-ends: render an XSL-FO document's logical content to plain text, Markdown or HTML.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Fop.Fo\Fop.Fo.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Fop.Render.Text.Tests" />
+  </ItemGroup>
+
+</Project>
