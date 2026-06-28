@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Fop.Render.Pdf.Native</RootNamespace>
+    <Description>A native PDF renderer for the area tree, built on the Fop.Pdf object model (no PdfSharp). Emits pages, text (Base-14 standard fonts), vector graphics, rules, links and bookmarks.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Fop.Pdf\Fop.Pdf.csproj" />
+    <ProjectReference Include="..\Fop.Layout\Fop.Layout.csproj" />
+    <ProjectReference Include="..\Fop.Colors\Fop.Colors.csproj" />
+    <ProjectReference Include="..\Fop.Fo\Fop.Fo.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Fop.Rendering.Tests" />
+  </ItemGroup>
+
+</Project>

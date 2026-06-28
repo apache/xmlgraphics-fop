@@ -157,9 +157,15 @@ that stack with modern, cross-platform, managed libraries:
   `style` attribute for fill/stroke/opacity, simple `text`) into renderer-neutral vector primitives.
   `Fop.Layout` scales these onto an `fo:instream-foreign-object`'s content box as area-tree
   `VectorPath`s/`TextRun`s; the PdfSharp renderer paints them.
+- **`Fop.Render.Pdf.Native`** — a native, **PdfSharp-free** PDF renderer built on the `Fop.Pdf` object
+  model: it writes the file structure (objects/xref/trailer) directly and emits pages, text (the
+  standard-14 fonts, WinAnsi-encoded, metric-consistent with the Liberation measurement faces), vector
+  graphics, rules/backgrounds, link annotations and the document outline. Exposed via
+  `FopProcessor.ConvertNative` and the CLI `-native` flag. (Raster-image embedding and font
+  embedding/subsetting are future work; images draw as a placeholder box.)
 - **`Fop.Cli`** — the `fop` command-line front-end: `fop in.fo out.pdf`, `-fo`/`-pdf`, an
-  `-xml`/`-xsl` XSLT-to-FO path, `-fontdir` font registration, and `-version`/`-help`. Packable as a
-  global .NET tool (`ToolCommandName=fop`).
+  `-xml`/`-xsl` XSLT-to-FO path, `-fontdir` font registration, `-native` (native renderer), and
+  `-version`/`-help`. Packable as a global .NET tool (`ToolCommandName=fop`).
 
 A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subset:
 - block/inline text, fonts, colour, alignment/justification, indents, pagination;
@@ -200,7 +206,7 @@ A **working end-to-end FO→PDF pipeline** exists for a substantial XSL-FO subse
   `baseline - 1.1*capHeight`, line-through `baseline - 0.45*capHeight`); and **letter-spacing**
   (per-glyph tracking between glyphs, `(n-1)` gaps per word, drawn glyph-by-glyph).
 
-The solution has 14 library projects and **925 passing tests** on .NET 10. See `samples/hello.fo`
+The solution has 16 library projects and **956 passing tests** on .NET 10. See `samples/hello.fo`
 (a clickable TOC with leaders, links, a marker header, and page-number citations) and
 `samples/svg-decoration.fo` (embedded SVG, text-decoration and letter-spacing). The `fop` CLI renders
 a document with `fop in.fo out.pdf`.

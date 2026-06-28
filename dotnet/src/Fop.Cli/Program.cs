@@ -100,7 +100,14 @@ public static class Program
             }
 
             using FileStream input = File.OpenRead(options.FoFile);
-            processor.Convert(input, output);
+            if (options.Native)
+            {
+                processor.ConvertNative(input, output);
+            }
+            else
+            {
+                processor.Convert(input, output);
+            }
         }
         else
         {
@@ -108,7 +115,14 @@ public static class Program
             using var foStream = new MemoryStream();
             Transform(options.XmlFile!, options.XsltFile!, foStream);
             foStream.Position = 0;
-            processor.Convert(foStream, output);
+            if (options.Native)
+            {
+                processor.ConvertNative(foStream, output);
+            }
+            else
+            {
+                processor.Convert(foStream, output);
+            }
         }
     }
 
@@ -152,6 +166,7 @@ public static class Program
         w.WriteLine("  -xsl <file>       XSLT stylesheet that produces XSL-FO from the -xml source");
         w.WriteLine("  -pdf <file>       PDF output file");
         w.WriteLine("  -fontdir <dir>    register all TTF/OTF fonts in <dir> (repeatable)");
+        w.WriteLine("  -native           use the native (PdfSharp-free) PDF renderer");
         w.WriteLine("  -version          print the version and exit");
         w.WriteLine("  -help             print this help and exit");
     }

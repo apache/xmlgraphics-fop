@@ -126,10 +126,13 @@ Independent back-ends; port in priority order. Each can be its own project (`Fop
       - `Fop.Render.Pdf` renders the area tree to PDF via **PdfSharp** today (text, fonts, colour,
         rects) and exposes the `FopProcessor` facade — a working FO→PDF path.
       - `Fop.Pdf` is a from-scratch port of FOP's low-level PDF object model (PDFObject/Name/Number/
-        String/Array/Dictionary/Reference/Null + serialization); the longer-term goal is a native
-        renderer on `Fop.Pdf` (PDFDocument, page/resource/font/image objects, encryption, filters)
-        so PdfSharp can become optional.
-      - Still needed in the PdfSharp renderer: borders/backgrounds, images, links, leaders, bookmarks.
+        String/Array/Dictionary/Reference/Null + serialization).
+      - **`Fop.Render.Pdf.Native`** is a native, PdfSharp-free renderer built on that model: it writes
+        the file structure (objects/xref/trailer) directly and emits pages, text (the standard-14 fonts,
+        WinAnsi, metric-consistent with the Liberation measurement faces), vector graphics, rules/
+        backgrounds, link annotations and the document outline. Exposed via `FopProcessor.ConvertNative`
+        and the CLI `-native` flag; PdfSharp's reader re-opens the output. Remaining: native raster-image
+        embedding (currently a placeholder box), font embedding/subsetting, encryption, stream filters.
 - [ ] Bitmap/Java2D → **ImageSharp** raster renderer (`Fop.Render.Bitmap`).
 - [ ] PostScript, AFP, PCL, RTF, TXT, intermediate XML — subsequent.
 - [ ] Image loading pipeline (`Fop.Imaging`) — built on ImageSharp; `ImageDimensions` started.

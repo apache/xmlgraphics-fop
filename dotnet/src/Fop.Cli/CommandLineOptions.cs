@@ -40,6 +40,9 @@ internal sealed class CommandLineOptions
 
     private readonly List<string> fontDirectories = new();
 
+    /// <summary>Whether to render with the native (PdfSharp-free) PDF renderer.</summary>
+    public bool Native { get; private set; }
+
     /// <summary>Whether <c>-version</c> was requested.</summary>
     public bool ShowVersion { get; private set; }
 
@@ -99,6 +102,10 @@ internal sealed class CommandLineOptions
                 case "-fontdir" or "-fonts":
                     if (!TryNext(args, ref i, arg, out string? dir, out error)) { return null; }
                     o.fontDirectories.Add(dir!);
+                    break;
+
+                case "-native":
+                    o.Native = true;
                     break;
 
                 default:
