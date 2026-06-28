@@ -39,11 +39,25 @@ public sealed class NativePdfRenderer
     private const double MptPerPoint = 1000.0;
 
     private readonly IFontMeasurer measurer;
+    private readonly INativeFontProvider? fontProvider;
 
     /// <summary>Creates a native renderer using <paramref name="measurer"/> for decoration metrics.</summary>
     public NativePdfRenderer(IFontMeasurer measurer)
+        : this(measurer, fontProvider: null)
+    {
+    }
+
+    /// <summary>
+    /// Creates a native renderer with <paramref name="measurer"/> for decoration metrics and an
+    /// optional <paramref name="fontProvider"/>. When the provider supplies a font program for a used
+    /// font, that TrueType/OpenType face is embedded (so the output is self-contained and not limited
+    /// to the standard-14 fonts); otherwise the renderer falls back to a metric-compatible standard-14
+    /// font.
+    /// </summary>
+    public NativePdfRenderer(IFontMeasurer measurer, INativeFontProvider? fontProvider)
     {
         this.measurer = measurer ?? throw new ArgumentNullException(nameof(measurer));
+        this.fontProvider = fontProvider;
     }
 
     /// <summary>Renders <paramref name="tree"/> and writes the PDF bytes to <paramref name="output"/>.</summary>
@@ -56,18 +70,9 @@ public sealed class NativePdfRenderer
         int catalog = doc.Reserve();
         int pagesTree = doc.Reserve();
 
-        // Shared font resources (one object per distinct Base-14 face actually used).
-        var fontObjects = new Dictionary<string, int>(StringComparer.Ordinal);
-        int FontObject(string baseFont)
-        {
-            if (!fontObjects.TryGetValue(baseFont, out int num))
-            {
-                num = doc.Reserve();
-                fontObjects[baseFont] = num;
-            }
-
-            return num;
-        }
+        // Shared font resources: embedded TrueType faces (when a provider supplies them) and/or the
+        // standard-14 fallback, each created once and reused across pages.
+        var fonts = new FontResources(doc, fontProvider);
 
         var pageObjectNumbers = new List<int>(tree.Pages.Count);
         foreach (PageArea _ in tree.Pages)
@@ -82,18 +87,18 @@ public sealed class NativePdfRenderer
         for (int i = 0; i < tree.Pages.Count; i++)
         {
             PageArea page = tree.Pages[i];
-            var fontsOnPage = new Dictionary<string, string>(StringComparer.Ordinal); // resourceKey -> baseFont
+            var fontsOnPage = new Dictionary<string, int>(StringComparer.Ordinal); // resourceKey -> font object
             var xobjectsOnPage = new Dictionary<string, int>(StringComparer.Ordinal); // resourceKey -> object
-            string content = BuildPageContent(page, fontsOnPage, doc, imageCache, xobjectsOnPage);
+            string content = BuildPageContent(page, fonts, fontsOnPage, doc, imageCache, xobjectsOnPage);
 
             int contentObj = doc.Reserve();
             doc.Write(contentObj, Stream(content));
 
             // Font resource dictionary entries (resourceKey -> indirect font object).
             var fontRes = new StringBuilder();
-            foreach ((string key, string baseFont) in fontsOnPage)
+            foreach ((string key, int num) in fontsOnPage)
             {
-                fontRes.Append('/').Append(key).Append(' ').Append(FontObject(baseFont)).Append(" 0 R ");
+                fontRes.Append('/').Append(key).Append(' ').Append(num).Append(" 0 R ");
             }
 
             var xobjectRes = new StringBuilder();
@@ -140,13 +145,6 @@ public sealed class NativePdfRenderer
             doc.Write(pageObjectNumbers[i], pageDict.ToString());
         }
 
-        // Font objects.
-        foreach ((string baseFont, int num) in fontObjects)
-        {
-            doc.Write(num,
-                $"<< /Type /Font /Subtype /Type1 /BaseFont /{baseFont} /Encoding /WinAnsiEncoding >>");
-        }
-
         // Pages tree.
         var kids = new StringBuilder("[");
         foreach (int p in pageObjectNumbers)
@@ -172,7 +170,7 @@ public sealed class NativePdfRenderer
 
     // ----- Content stream -------------------------------------------------------------------
 
-    private string BuildPageContent(PageArea page, Dictionary<string, string> fontsOnPage,
+    private string BuildPageContent(PageArea page, FontResources fonts, Dictionary<string, int> fontsOnPage,
         PdfFile doc, Dictionary<string, int> imageCache, Dictionary<string, int> xobjectsOnPage)
     {
         double pageHeightPt = page.HeightMpt / MptPerPoint;
@@ -196,7 +194,7 @@ public sealed class NativePdfRenderer
 
         foreach (TextRun run in page.TextRuns)
         {
-            EmitText(sb, run, pageHeightPt, fontsOnPage);
+            EmitText(sb, run, pageHeightPt, fonts, fontsOnPage);
         }
 
         return sb.ToString();
@@ -385,17 +383,15 @@ public sealed class NativePdfRenderer
         sb.Append(fill && stroke ? "B\n" : fill ? "f\n" : "S\n");
     }
 
-    private void EmitText(StringBuilder sb, TextRun run, double pageHeightPt,
-        Dictionary<string, string> fontsOnPage)
+    private void EmitText(StringBuilder sb, TextRun run, double pageHeightPt, FontResources fonts,
+        Dictionary<string, int> fontsOnPage)
     {
         if (run.Text.Length == 0)
         {
             return;
         }
 
-        string baseFont = Base14Fonts.BaseFontName(run.Font);
-        string resourceKey = ResourceKey(baseFont);
-        fontsOnPage[resourceKey] = baseFont;
+        string resourceKey = fonts.Use(run.Font, fontsOnPage);
 
         double sizePt = run.Font.SizeMpt / MptPerPoint;
         double x = run.XMpt / MptPerPoint;
@@ -585,7 +581,116 @@ public sealed class NativePdfRenderer
 
     private static string Y(double yMpt, double pageHeightPt) => F(pageHeightPt - yMpt / MptPerPoint);
 
-    private static string ResourceKey(string baseFont) => "F" + baseFont.Replace("-", string.Empty);
+    /// <summary>
+    /// Owns the document's font objects: it embeds a TrueType/OpenType face (via the optional provider)
+    /// the first time a <see cref="FontKey"/> is used, or creates a standard-14 fallback font,
+    /// reusing each across pages. <see cref="Use"/> registers the font in a page's resource map and
+    /// returns the resource key the content stream references.
+    /// </summary>
+    private sealed class FontResources(PdfFile doc, INativeFontProvider? provider)
+    {
+        private readonly Dictionary<FontKey, (string Key, int Obj)> embedded = new();
+        private readonly Dictionary<string, (string Key, int Obj)> standard = new(StringComparer.Ordinal);
+        private int embeddedCounter;
+
+        public string Use(FontKey font, Dictionary<string, int> fontsOnPage)
+        {
+            if (provider is not null)
+            {
+                if (embedded.TryGetValue(font, out var e))
+                {
+                    fontsOnPage[e.Key] = e.Obj;
+                    return e.Key;
+                }
+
+                if (TryEmbed(font) is (string ek, int eo))
+                {
+                    embedded[font] = (ek, eo);
+                    fontsOnPage[ek] = eo;
+                    return ek;
+                }
+            }
+
+            string baseFont = Base14Fonts.BaseFontName(font);
+            if (!standard.TryGetValue(baseFont, out var s))
+            {
+                int obj = doc.Reserve();
+                doc.Write(obj,
+                    $"<< /Type /Font /Subtype /Type1 /BaseFont /{baseFont} /Encoding /WinAnsiEncoding >>");
+                s = ("F" + baseFont.Replace("-", string.Empty), obj);
+                standard[baseFont] = s;
+            }
+
+            fontsOnPage[s.Key] = s.Obj;
+            return s.Key;
+        }
+
+        private (string Key, int Obj)? TryEmbed(FontKey font)
+        {
+            byte[]? program = provider!.GetFontProgram(font);
+            if (program is null)
+            {
+                return null;
+            }
+
+            TrueTypeFont? ttf = TrueTypeFont.Parse(program);
+            if (ttf is null)
+            {
+                return null;
+            }
+
+            string name = EmbeddedFontName(font, embeddedCounter);
+
+            // FontFile2: the (deflated) font program, with /Length1 = the uncompressed length.
+            int fontFile = doc.Reserve();
+            doc.Write(fontFile, PdfFile.StreamObject(
+                $"/Length1 {program.Length} /Filter /FlateDecode", Deflate(program)));
+
+            int flags = 32 | (ttf.Italic || font.IsItalic ? 64 : 0); // Nonsymbolic [+ Italic]
+            int stemV = font.IsBold || ttf.Bold ? 120 : 80;
+            int descriptor = doc.Reserve();
+            doc.Write(descriptor,
+                $"<< /Type /FontDescriptor /FontName /{name} /Flags {flags} " +
+                $"/FontBBox [{ttf.FontBBox[0]} {ttf.FontBBox[1]} {ttf.FontBBox[2]} {ttf.FontBBox[3]}] " +
+                $"/ItalicAngle {F(ttf.ItalicAngle)} /Ascent {ttf.Ascent} /Descent {ttf.Descent} " +
+                $"/CapHeight {ttf.CapHeight} /StemV {stemV} /FontFile2 {fontFile} 0 R >>");
+
+            // /Widths for character codes 32..255 (WinAnsi codes map to the same Latin-1 code points).
+            var widths = new StringBuilder();
+            for (int c = 32; c <= 255; c++)
+            {
+                widths.Append(ttf.AdvanceWidth(c)).Append(' ');
+            }
+
+            int fontObj = doc.Reserve();
+            doc.Write(fontObj,
+                $"<< /Type /Font /Subtype /TrueType /BaseFont /{name} /FirstChar 32 /LastChar 255 " +
+                $"/Widths [{widths.ToString().TrimEnd()}] /FontDescriptor {descriptor} 0 R " +
+                "/Encoding /WinAnsiEncoding >>");
+
+            string key = "FE" + embeddedCounter++;
+            return (key, fontObj);
+        }
+
+        /// <summary>A unique PostScript-style font name for an embedded face (no subset prefix; full embed).</summary>
+        private static string EmbeddedFontName(FontKey font, int index)
+        {
+            string family = new string(font.Family.Where(char.IsLetterOrDigit).ToArray());
+            if (family.Length == 0)
+            {
+                family = "Font";
+            }
+
+            string style = (font.IsBold, font.IsItalic) switch
+            {
+                (true, true) => "-BoldItalic",
+                (true, false) => "-Bold",
+                (false, true) => "-Italic",
+                _ => string.Empty,
+            };
+            return $"{family}{style}-{index}";
+        }
+    }
 
     /// <summary>Formats a number for a content stream: invariant, up to 4 decimals, no trailing zeros.</summary>
     private static string F(double value)

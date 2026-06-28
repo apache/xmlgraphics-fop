@@ -46,7 +46,9 @@ public sealed class FopProcessor
         measurer = new PdfSharpFontMeasurer();
         layoutEngine = new LayoutEngine(measurer, new PdfSharpImageResolver());
         renderer = new PdfRenderer(measurer);
-        nativeRenderer = new NativePdfRenderer(measurer);
+        // The native renderer embeds the same faces the PdfSharp path resolves (Liberation/custom),
+        // via the shared resolver, so its output is self-contained rather than standard-14-only.
+        nativeRenderer = new NativePdfRenderer(measurer, new ResolverFontProvider(FopFontResolver.Shared));
     }
 
     /// <summary>
