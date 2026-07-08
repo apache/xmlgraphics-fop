@@ -101,7 +101,6 @@ public class GlyphMapping {
             int endIndex, final Font font, final char breakOpportunityChar,
             final boolean endsWithHyphen, int level,
             boolean dontOptimizeForIdentityMapping, boolean retainAssociations, boolean retainControls) {
-        int nLS = 0; // # of letter spaces
         String script = text.getScript();
         String language = text.getLanguage();
 
@@ -174,12 +173,29 @@ public class GlyphMapping {
             ipd = ipd.plus(w);
         }
 
-        // [TBD] - handle letter spacing
-
-        return new GlyphMapping(startIndex, endIndex, 0, nLS, ipd, endsWithHyphen, false,
+        return new GlyphMapping(startIndex, endIndex, 0,
+                calculateLetterSpaces(startIndex, endIndex, breakOpportunityChar), ipd, endsWithHyphen, false,
                 breakOpportunityChar != 0, font, level, gpa,
                 !dontOptimizeForIdentityMapping && CharUtilities.isSameSequence(mcs, ics) ? null : mcs.toString(),
                 associations);
+    }
+
+    private static int calculateLetterSpaces(int startIndex, int endIndex, char breakOpportunityChar) {
+        // shy+chars at start of word: wordLength == 0 && breakOpportunity
+        // shy only characters in word: wordLength == 0 && !breakOpportunity
+        int wordLength = endIndex - startIndex;
+        int letterSpaces = 0;
+        if (wordLength != 0) {
+            letterSpaces = wordLength - 1;
+            // if there is a break opportunity and the next one (break character)
+            // is not a space, it could be used as a line end;
+            // add one more letter space, in case other text follows
+            if (breakOpportunityChar != 0 && !isSpace(breakOpportunityChar)) {
+                letterSpaces++;
+            }
+        }
+
+        return letterSpaces;
     }
 
     private static boolean useKerningAdjustments(final Font font, String script, String language) {
@@ -287,19 +303,9 @@ public class GlyphMapping {
                 // TODO: add kern to wordIPD?
             }
         }
-        // shy+chars at start of word: wordLength == 0 && breakOpportunity
-        // shy only characters in word: wordLength == 0 && !breakOpportunity
-        int wordLength = endIndex - startIndex;
-        int letterSpaces = 0;
-        if (wordLength != 0) {
-            letterSpaces = wordLength - 1;
-            // if there is a break opportunity and the next one (break character)
-            // is not a space, it could be used as a line end;
-            // add one more letter space, in case other text follows
-            if ((breakOpportunityChar != 0) && !isSpace(breakOpportunityChar)) {
-                letterSpaces++;
-            }
-        }
+
+        int letterSpaces = calculateLetterSpaces(startIndex, endIndex, breakOpportunityChar);
+
         assert letterSpaces >= 0;
         wordIPD = wordIPD.plus(letterSpaceIPD.mult(letterSpaces));
 
