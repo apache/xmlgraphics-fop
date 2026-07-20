@@ -52,21 +52,42 @@ public class PSGraphicsPainterTestCase {
     @Test
     public void testDrawLineDotted() throws IOException {
         checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(SPACE_WIDTH), true, DEFAULT_MESSAGE,
-                "14.0] 0 setdash");
+                "1 setlinecap\n[0 14.0] 0 setdash");
         checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(SPACE_WIDTH), false, DEFAULT_MESSAGE,
-                "14.0] 0 setdash");
+                "1 setlinecap\n[0 14.0] 0 setdash");
         checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(0), true, ABOVE_ZERO_MESSAGE,
-                "0.002004008] 0 setdash");
+                "1 setlinecap\n[0 0.002004008] 0 setdash");
         checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(0), false, ABOVE_ZERO_MESSAGE,
-                "0.001] 0 setdash");
+                "1 setlinecap\n[0 0.001] 0 setdash");
         checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(-1), true, ABOVE_ZERO_MESSAGE,
-                "0.002004008] 0 setdash");
+                "1 setlinecap\n[0 0.002004008] 0 setdash");
         checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(-1), false, ABOVE_ZERO_MESSAGE,
-                "0.001] 0 setdash");
+                "1 setlinecap\n[0 0.001] 0 setdash");
         checkSpaceWidthUnit(BorderStyle.DOTTED, true, MESSAGE_NO_SPACE_WIDTH,
-                "0.002004008] 0 setdash");
+                "1 setlinecap\n[0 0.002004008] 0 setdash");
         checkSpaceWidthUnit(BorderStyle.DOTTED, false, MESSAGE_NO_SPACE_WIDTH,
-                "0.001] 0 setdash");
+                "1 setlinecap\n[0 0.001] 0 setdash");
+    }
+
+
+    @Test
+    public void testDrawLineSquare() throws IOException {
+        checkSpaceWidthUnit(BorderStyle.SQUARE.withSpaceWidth(SPACE_WIDTH), true, DEFAULT_MESSAGE,
+                "2 setlinecap\n[0 14.0] 0 setdash");
+        checkSpaceWidthUnit(BorderStyle.SQUARE.withSpaceWidth(SPACE_WIDTH), false, DEFAULT_MESSAGE,
+                "2 setlinecap\n[0 14.0] 0 setdash");
+        checkSpaceWidthUnit(BorderStyle.SQUARE.withSpaceWidth(0), true, ABOVE_ZERO_MESSAGE,
+                "2 setlinecap\n[0 0.002004008] 0 setdash");
+        checkSpaceWidthUnit(BorderStyle.SQUARE.withSpaceWidth(0), false, ABOVE_ZERO_MESSAGE,
+                "2 setlinecap\n[0 0.001] 0 setdash");
+        checkSpaceWidthUnit(BorderStyle.SQUARE.withSpaceWidth(-1), true, ABOVE_ZERO_MESSAGE,
+                "2 setlinecap\n[0 0.002004008] 0 setdash");
+        checkSpaceWidthUnit(BorderStyle.SQUARE.withSpaceWidth(-1), false, ABOVE_ZERO_MESSAGE,
+                "2 setlinecap\n[0 0.001] 0 setdash");
+        checkSpaceWidthUnit(BorderStyle.SQUARE, true, MESSAGE_NO_SPACE_WIDTH,
+                "2 setlinecap\n[0 0.002004008] 0 setdash");
+        checkSpaceWidthUnit(BorderStyle.SQUARE, false, MESSAGE_NO_SPACE_WIDTH,
+                "2 setlinecap\n[0 0.001] 0 setdash");
     }
 
     @Test

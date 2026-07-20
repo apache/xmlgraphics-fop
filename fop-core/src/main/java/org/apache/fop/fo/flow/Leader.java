@@ -89,6 +89,13 @@ public class Leader extends InlineLevel {
             // the following properties only apply
             // for leader-pattern = "rule"
             ruleStyle = pList.get(PR_RULE_STYLE).getEnum();
+
+            // allow fox:rule-style to override rule-style property
+            int foxRuleStyle = pList.get(PR_X_RULE_STYLE).getEnum();
+            if (foxRuleStyle != EN_NONE) {
+                ruleStyle = foxRuleStyle;
+            }
+
             // use specified rule thickness to override default (established above)
             ruleThickness = pList.get(PR_RULE_THICKNESS).getLength();
             break;

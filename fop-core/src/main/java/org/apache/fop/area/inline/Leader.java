@@ -61,6 +61,8 @@ public class Leader extends InlineArea {
     public void setRuleStyle(String style, int spaceWidth) {
         if ("dotted".equalsIgnoreCase(style)) {
             setRuleStyle(BorderStyle.DOTTED.withSpaceWidth(spaceWidth));
+        } else if ("square".equalsIgnoreCase(style)) {
+            setRuleStyle(BorderStyle.SQUARE.withSpaceWidth(spaceWidth));
         } else if ("dashed".equalsIgnoreCase(style)) {
             setRuleStyle(BorderStyle.DASHED.withSpaceWidth(spaceWidth));
         } else if ("solid".equalsIgnoreCase(style)) {
@@ -98,6 +100,7 @@ public class Leader extends InlineArea {
     public String getBorderStyleAsString() {
         switch (getRuleStyle().getEnumValue()) {
         case Constants.EN_DOTTED: return "dotted";
+        case Constants.EN_SQUARE: return "square";
         case Constants.EN_DASHED: return "dashed";
         case Constants.EN_SOLID: return "solid";
         case Constants.EN_DOUBLE: return "double";

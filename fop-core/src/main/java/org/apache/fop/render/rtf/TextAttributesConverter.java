@@ -262,6 +262,10 @@ final class TextAttributesConverter {
                 }
                 break;
             case Constants.EN_DOTTED:
+            case Constants.EN_SQUARE:
+                if (fobj.getRuleStyle() == Constants.EN_SQUARE) {
+                    log.warn("RTF: fo:leader style 'square' not supported, using 'dotted' instead");
+                }
                 if (tab) {
                     attrib.set(RtfLeader.LEADER_TABLEAD, RtfLeader.LEADER_TAB_DOTTED);
                 } else {

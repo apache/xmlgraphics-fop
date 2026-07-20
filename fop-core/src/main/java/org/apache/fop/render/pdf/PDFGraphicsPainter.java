@@ -87,18 +87,8 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             }
             break;
         case Constants.EN_DOTTED:
-            generator.setColor(col).setRoundCap();
-            if (horz) {
-                float ym = y1 + (h / 2);
-                generator.setDashLine(0, PainterUtils.getUnit(h, w, style.getSpaceWidth(), false))
-                        .setLineWidth(h)
-                        .strokeLine(x1, ym, x2, ym);
-            } else {
-                float xm = x1 + (w / 2);
-                generator.setDashLine(0, PainterUtils.getUnit(w, h, style.getSpaceWidth(), false))
-                        .setLineWidth(w)
-                        .strokeLine(xm, y1, xm, y2);
-            }
+        case Constants.EN_SQUARE:
+            drawRoundSquareDashLine(style, col, horz, x1, y1, x2, y2, w, h);
             break;
         case Constants.EN_DOUBLE:
             generator.setColor(col)
@@ -184,6 +174,26 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
         }
     }
 
+    private void drawRoundSquareDashLine(BorderStyle style, Color col, boolean horz, float x1, float y1, float x2,
+                                         float y2, float w, float h) {
+        if (style.getEnumValue() == Constants.EN_DOTTED) {
+            generator.setColor(col).setRoundCap();
+        } else {
+            generator.setColor(col).setSquareCap();
+        }
+        if (horz) {
+            float ym = y1 + (h / 2);
+            generator.setDashLine(0, PainterUtils.getUnit(h, w, style.getSpaceWidth(), false))
+                    .setLineWidth(h)
+                    .strokeLine(x1, ym, x2, ym);
+        } else {
+            float xm = x1 + (w / 2);
+            generator.setDashLine(0, PainterUtils.getUnit(w, h, style.getSpaceWidth(), false))
+                    .setLineWidth(w)
+                    .strokeLine(xm, y1, xm, y2);
+        }
+    }
+
     /** {@inheritDoc} */
     public void drawLine(Point start, Point end,
             int width, Color color, BorderStyle style) {
@@ -203,6 +213,7 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
                     true, true, style, color);
             break;
         case Constants.EN_DOTTED:
+        case Constants.EN_SQUARE:
             drawBorderLine(start.x + width + half, start.y - half, end.x - width - half, end.y + half,
                     true, true, style, color);
             break;
@@ -336,6 +347,10 @@ public class PDFGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
 
         public PDFContentGeneratorHelper setRoundCap() {
             return add("J", "1");
+        }
+
+        public PDFContentGeneratorHelper setSquareCap() {
+            return add("J", "2");
         }
 
         public PDFContentGeneratorHelper strokeLine(float xStart, float yStart, float xEnd, float yEnd) {

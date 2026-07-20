@@ -68,7 +68,7 @@ class Java2DGraphicsPainter implements GraphicsPainter {
             float unit = PainterUtils.getUnit(height, width, style.getSpaceWidth(), true);
 
             float[] dash = new float[] {unit};
-            if (cap == BasicStroke.CAP_ROUND) {
+            if (cap != BasicStroke.CAP_BUTT) {
                 dash = new float[] {0f, unit};
             }
 
@@ -81,7 +81,7 @@ class Java2DGraphicsPainter implements GraphicsPainter {
             float unit = PainterUtils.getUnit(width, height, style.getSpaceWidth(), true);
 
             float[] dash = new float[] {unit};
-            if (cap == BasicStroke.CAP_ROUND) {
+            if (cap != BasicStroke.CAP_BUTT) {
                 dash = new float[] {0f, unit};
             }
 
@@ -108,6 +108,9 @@ class Java2DGraphicsPainter implements GraphicsPainter {
             break;
         case Constants.EN_DOTTED:
             drawStrokeLine(getG2D(), style, color, horz, BasicStroke.CAP_ROUND, h, w, x1, y1, x2, y2);
+            break;
+        case Constants.EN_SQUARE:
+            drawStrokeLine(getG2D(), style, color, horz, BasicStroke.CAP_SQUARE, h, w, x1, y1, x2, y2);
             break;
         case Constants.EN_DOUBLE:
             getG2D().setColor(color);
@@ -213,6 +216,7 @@ class Java2DGraphicsPainter implements GraphicsPainter {
                     true, true, style, color);
             break;
         case Constants.EN_DOTTED:
+        case Constants.EN_SQUARE:
             drawBorderLine(start.x + width + half, start.y - half, end.x - width - half, end.y + half,
                     true, true, style, color);
             break;

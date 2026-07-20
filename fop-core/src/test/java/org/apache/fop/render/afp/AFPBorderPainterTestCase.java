@@ -21,6 +21,7 @@ package org.apache.fop.render.afp;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,8 +73,17 @@ public class AFPBorderPainterTestCase {
 
     @Test
     public void testDrawBorderLineDottedWithSpaceWidth() throws Exception {
+        assertDrawBorderLine(BorderStyle.DOTTED);
+    }
+
+    @Test
+    public void testDrawBorderLineSquareWithSpaceWidth() throws Exception {
+        assertDrawBorderLine(BorderStyle.SQUARE);
+    }
+
+    private void assertDrawBorderLine(BorderStyle style) throws IOException {
         BorderPaintingInfo paintInfo = new BorderPaintingInfo(0f, 0f, 20f, 1f, true,
-                BorderStyle.DOTTED.withSpaceWidth(14000), Color.BLACK);
+                style.withSpaceWidth(14000), Color.BLACK);
         borderPainter.paint(paintInfo);
         ds.endDocument();
 

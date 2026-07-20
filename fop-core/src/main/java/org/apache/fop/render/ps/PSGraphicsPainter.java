@@ -113,19 +113,8 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             }
             break;
         case Constants.EN_DOTTED:
-            gen.useColor(col);
-            gen.useLineCap(1); //Rounded!
-            if (horz) {
-                gen.useDash("[0 " + PainterUtils.getUnit(h, w, style.getSpaceWidth(), false) + "] 0");
-                gen.useLineWidth(h);
-                float ym = y1 + (h / 2);
-                drawLine(gen, x1, ym, x2, ym);
-            } else {
-                gen.useDash("[0 " + PainterUtils.getUnit(w, h, style.getSpaceWidth(), false) + "] 0");
-                gen.useLineWidth(w);
-                float xm = x1 + (w / 2);
-                drawLine(gen, xm, y1, xm, y2);
-            }
+        case Constants.EN_SQUARE:
+            drawRoundSquareDashLine(gen, col, horz, x1, y1, x2, y2, style);
             break;
         case Constants.EN_DOUBLE:
             gen.useColor(col);
@@ -212,6 +201,31 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
         }
     }
 
+    private static void drawRoundSquareDashLine(PSGenerator gen, Color col, boolean horz, float x1, float y1, float x2,
+                                                float y2, BorderStyle style) throws IOException {
+        float width = x2 - x1;
+        float height = y2 - y1;
+
+        gen.useColor(col);
+        if (style.getEnumValue() == Constants.EN_DOTTED) {
+            gen.useLineCap(1);
+        } else {
+            gen.useLineCap(2);
+        }
+
+        if (horz) {
+            gen.useDash("[0 " + PainterUtils.getUnit(height, width, style.getSpaceWidth(), false) + "] 0");
+            gen.useLineWidth(height);
+            float ym = y1 + (height / 2);
+            drawLine(gen, x1, ym, x2, ym);
+        } else {
+            gen.useDash("[0 " + PainterUtils.getUnit(width, height, style.getSpaceWidth(), false) + "] 0");
+            gen.useLineWidth(width);
+            float xm = x1 + (width / 2);
+            drawLine(gen, xm, y1, xm, y2);
+        }
+    }
+
     /** {@inheritDoc} */
     public void drawLine(Point start, Point end,
             int width, Color color, BorderStyle style) throws IOException {
@@ -233,6 +247,7 @@ public class PSGraphicsPainter implements GraphicsPainter, BezierCurvePainter {
             drawBorderLine(start.x, starty, end.x, starty + width, true, true, style, color);
             break;
         case Constants.EN_DOTTED:
+        case Constants.EN_SQUARE:
             drawBorderLine(start.x + width + half, starty, end.x - width - half, starty + width,
                     true, true, style, color);
             break;

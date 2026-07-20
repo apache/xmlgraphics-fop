@@ -165,6 +165,7 @@ public class AFPBorderPainter extends AbstractAFPPainter {
             }
             break;
         case Constants.EN_DOTTED:
+        case Constants.EN_SQUARE:
             if (borderPaintInfo.isHorizontal()) {
                 lineDataInfo.setX2(lineDataInfo.getX1() + lineDataInfo.getThickness());
                 lineDataInfo.setY2(lineDataInfo.getY1());

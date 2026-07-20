@@ -565,7 +565,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             float unit = PainterUtils.getUnit(height, width, style.getSpaceWidth(), true);
 
             float[] dash = new float[] {unit};
-            if (cap == BasicStroke.CAP_ROUND) {
+            if (cap != BasicStroke.CAP_BUTT) {
                 dash = new float[] {0f, unit};
             }
 
@@ -578,7 +578,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
             float unit = PainterUtils.getUnit(width, height, style.getSpaceWidth(), true);
 
             float[] dash = new float[] {unit};
-            if (cap == BasicStroke.CAP_ROUND) {
+            if (cap != BasicStroke.CAP_BUTT) {
                 dash = new float[] {0f, unit};
             }
 
@@ -618,6 +618,9 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
                 break;
             case Constants.EN_DOTTED:
                 drawStrokeLine(g2d, style, col, horz, BasicStroke.CAP_ROUND, h, w, x1, y1, x2, y2);
+                break;
+            case Constants.EN_SQUARE:
+                drawStrokeLine(g2d, style, col, horz, BasicStroke.CAP_SQUARE, h, w, x1, y1, x2, y2);
                 break;
             case Constants.EN_DOUBLE:
                 g2d.setColor(col);
@@ -842,6 +845,7 @@ public abstract class Java2DRenderer extends AbstractPathOrientedRenderer implem
         case EN_DASHED:
         case EN_DOUBLE:
         case EN_DOTTED:
+        case EN_SQUARE:
             drawBorderLine(startx, starty, endx, starty + ruleThickness,
                     true, true, area.getRuleStyle(), col);
             break;

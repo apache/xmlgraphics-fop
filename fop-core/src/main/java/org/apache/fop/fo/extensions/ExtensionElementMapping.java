@@ -73,6 +73,8 @@ public class ExtensionElementMapping extends ElementMapping {
         // used for scaling of background images
         PROPERTY_ATTRIBUTES.add("background-image-width");
         PROPERTY_ATTRIBUTES.add("background-image-height");
+        // non-standard fo:leader rule styles (square)
+        PROPERTY_ATTRIBUTES.add("rule-style");
     }
 
     /**

@@ -344,7 +344,7 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
             }
             //Simply delegates to drawBorderLine() as AFP line painting is not very sophisticated.
             int halfWidth = width / 2;
-            if (style.getEnumValue() == Constants.EN_DOTTED) {
+            if (style.getEnumValue() == Constants.EN_DOTTED || style.getEnumValue() == Constants.EN_SQUARE) {
                 drawBorderLine(start.x + width + halfWidth, start.y - halfWidth, end.x - width - halfWidth,
                         start.y + halfWidth, true, true, style, color);
             } else {

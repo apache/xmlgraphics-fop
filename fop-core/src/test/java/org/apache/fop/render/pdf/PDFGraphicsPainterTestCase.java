@@ -158,21 +158,39 @@ public class PDFGraphicsPainterTestCase {
 
     @Test
     public void testDrawLineDotted() {
-        checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(SPACE_WIDTH), DEFAULT_MESSAGE, "[0 14] 0 d ");
-        checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(0), ABOVE_ZERO_MESSAGE, "[0 2] 0 d ");
-        checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(-1), ABOVE_ZERO_MESSAGE, "[0 2] 0 d ");
-        checkSpaceWidthUnit(BorderStyle.DOTTED, MESSAGE_NO_SPACE_WIDTH, "[0 2] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(SPACE_WIDTH),
+                DEFAULT_MESSAGE, "1 J ", "[0 14] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(0),
+                ABOVE_ZERO_MESSAGE, "1 J ", "[0 2] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DOTTED.withSpaceWidth(-1),
+                ABOVE_ZERO_MESSAGE, "1 J ", "[0 2] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DOTTED, MESSAGE_NO_SPACE_WIDTH, "1 J ", "[0 2] 0 d ");
+    }
+
+    @Test
+    public void testDrawLineSquare() {
+        checkSpaceWidthUnit(BorderStyle.SQUARE.withSpaceWidth(SPACE_WIDTH),
+                DEFAULT_MESSAGE, "2 J ", "[0 14] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.SQUARE.withSpaceWidth(0),
+                ABOVE_ZERO_MESSAGE, "2 J ", "[0 2] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.SQUARE.withSpaceWidth(-1),
+                ABOVE_ZERO_MESSAGE, "2 J ", "[0 2] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.SQUARE, MESSAGE_NO_SPACE_WIDTH, "2 J ", "[0 2] 0 d ");
     }
 
     @Test
     public void testDrawLineDashed() {
-        checkSpaceWidthUnit(BorderStyle.DASHED.withSpaceWidth(SPACE_WIDTH), DEFAULT_MESSAGE, "[1 14] 0 d ");
-        checkSpaceWidthUnit(BorderStyle.DASHED.withSpaceWidth(0), ABOVE_ZERO_MESSAGE, "[1 0.5] 0 d ");
-        checkSpaceWidthUnit(BorderStyle.DASHED.withSpaceWidth(-1), ABOVE_ZERO_MESSAGE, "[1 0.5] 0 d ");
-        checkSpaceWidthUnit(BorderStyle.DASHED, MESSAGE_NO_SPACE_WIDTH, "[1 0.5] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DASHED.withSpaceWidth(SPACE_WIDTH),
+                DEFAULT_MESSAGE, null, "[1 14] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DASHED.withSpaceWidth(0),
+                ABOVE_ZERO_MESSAGE, null, "[1 0.5] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DASHED.withSpaceWidth(-1),
+                ABOVE_ZERO_MESSAGE, null, "[1 0.5] 0 d ");
+        checkSpaceWidthUnit(BorderStyle.DASHED, MESSAGE_NO_SPACE_WIDTH, null, "[1 0.5] 0 d ");
     }
 
-    private void checkSpaceWidthUnit(BorderStyle style, String message, String expectedValue) {
+    private void checkSpaceWidthUnit(BorderStyle style, String message, String styleExpectedValue,
+                                     String widthExpectedValue) {
         generator = mock(PDFContentGenerator.class);
         sut = new PDFGraphicsPainter(generator);
 
@@ -187,7 +205,10 @@ public class PDFGraphicsPainterTestCase {
         }
 
         List<String> allValues = captor.getAllValues();
-        assertEquals(message, expectedValue, allValues.get(index));
+        if (styleExpectedValue != null) {
+            assertEquals(message, styleExpectedValue, allValues.get(index - 1));
+        }
+        assertEquals(message, widthExpectedValue, allValues.get(index));
     }
 
     private void testTransformCoordinatesF(float... args) {

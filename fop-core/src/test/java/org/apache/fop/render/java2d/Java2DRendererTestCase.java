@@ -89,6 +89,18 @@ public class Java2DRendererTestCase {
     }
 
     @Test
+    public void testDrawBorderLineSquare() throws IOException {
+        checkDashArrayValue(BorderStyle.SQUARE.withSpaceWidth(SPACE_WIDTH), true, DEFAULT_MESSAGE, null);
+        checkDashArrayValue(BorderStyle.SQUARE.withSpaceWidth(SPACE_WIDTH), false, DEFAULT_MESSAGE, null);
+        checkDashArrayValue(BorderStyle.SQUARE.withSpaceWidth(0), true, ABOVE_ZERO_MESSAGE, 2);
+        checkDashArrayValue(BorderStyle.SQUARE.withSpaceWidth(0), false, ABOVE_ZERO_MESSAGE, 1);
+        checkDashArrayValue(BorderStyle.SQUARE.withSpaceWidth(-1), true, ABOVE_ZERO_MESSAGE, 2);
+        checkDashArrayValue(BorderStyle.SQUARE.withSpaceWidth(-1), false, ABOVE_ZERO_MESSAGE, 1);
+        checkDashArrayValue(BorderStyle.SQUARE, true, MESSAGE_NO_SPACE_WIDTH, 2);
+        checkDashArrayValue(BorderStyle.SQUARE, false, MESSAGE_NO_SPACE_WIDTH, 1);
+    }
+
+    @Test
     public void testDrawBorderLineDashed() throws IOException {
         checkDashArrayValue(BorderStyle.DASHED.withSpaceWidth(SPACE_WIDTH), true, DEFAULT_MESSAGE, null);
         checkDashArrayValue(BorderStyle.DASHED.withSpaceWidth(SPACE_WIDTH), false, DEFAULT_MESSAGE, null);
@@ -117,14 +129,22 @@ public class Java2DRendererTestCase {
         verify(mockGraphics2D).setStroke(captor.capture());
 
         int spaceWidthIndex = 0;
-        if (style.getEnumValue() == Constants.EN_DOTTED) {
+        int cap = BasicStroke.CAP_BUTT;
+        if (style.getEnumValue() != Constants.EN_DASHED) {
+            if (style.getEnumValue() == Constants.EN_DOTTED) {
+                cap = BasicStroke.CAP_ROUND;
+            } else {
+                cap = BasicStroke.CAP_SQUARE;
+            }
             spaceWidthIndex = 1;
         }
 
+        BasicStroke stroke = captor.getValue();
         if (expectedValue == null) {
-            assertEquals(assertionMessage, SPACE_WIDTH, captor.getValue().getDashArray()[spaceWidthIndex], 0.0f);
+            assertEquals(assertionMessage, SPACE_WIDTH, stroke.getDashArray()[spaceWidthIndex], 0.0f);
         } else {
-            assertEquals(assertionMessage, expectedValue, captor.getValue().getDashArray()[spaceWidthIndex], 0.0f);
+            assertEquals(assertionMessage, expectedValue, stroke.getDashArray()[spaceWidthIndex], 0.0f);
         }
+        assertEquals("Cap must match style", cap, stroke.getEndCap());
     }
 }

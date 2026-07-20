@@ -179,6 +179,15 @@ public class Java2DGraphicsState {
                 currentStrokeStyle = style;
 
                 break;
+            case Constants.EN_SQUARE:
+                currentStroke = new BasicStroke(width, BasicStroke.CAP_SQUARE,
+                        BasicStroke.JOIN_BEVEL, 0f, new float[] {0, 2 * width}, width);
+                currentGraphics.setStroke(currentStroke);
+
+                currentStrokeWidth = width;
+                currentStrokeStyle = style;
+
+                break;
 
             case Constants.EN_DASHED:
 

@@ -2052,6 +2052,15 @@ public final class FOPropertyMapping implements Constants {
         m.setInherited(true);
         m.setDefault("1.0pt");
         addPropertyMaker("rule-thickness", m);
+
+        // FOP extension for non-standard fo:leader rule styles (square) that are not part of XSL 1.1's rule-style.
+        // When unspecified, the standard rule-style property is used instead
+        m = new EnumProperty.Maker(PR_X_RULE_STYLE);
+        m.setInherited(true);
+        m.addEnum("none", getEnumProperty(EN_NONE, "NONE"));
+        m.addEnum("square", getEnumProperty(EN_SQUARE, "SQUARE"));
+        m.setDefault("none");
+        addPropertyMaker("fox:rule-style", m);
     }
 
     private void createDynamicProperties() {
