@@ -827,8 +827,15 @@ public interface Constants {
     /**For specifying extended text for abbreviation */
     int PR_X_ABBREVIATION = 294;
 
+    /**
+     * Property constant - FOP proprietary: for data cells of a table,
+     * referring to the id's of the header cells that apply to them.
+     * Used for accessibility.
+     */
+    int PR_X_HEADERS = 295;
+
     /** Number of property constants defined */
-    int PROPERTY_COUNT = 294;
+    int PROPERTY_COUNT = 295;
 
     // compound property constants
 

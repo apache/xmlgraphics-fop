@@ -22,6 +22,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -34,6 +38,15 @@ import javax.xml.transform.stream.StreamSource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
+
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.cos.COSArray;
+import org.apache.pdfbox.cos.COSBase;
+import org.apache.pdfbox.cos.COSDictionary;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.cos.COSObject;
+import org.apache.pdfbox.cos.COSString;
+import org.apache.pdfbox.pdmodel.PDDocument;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -90,6 +103,97 @@ public class PDFStructureTreeTestCase {
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);
         return bos;
+    }
+
+    @Test
+    public void testTableHeadersAttribute() throws Exception {
+        String fo = "<fo:root xmlns:fo=\"http://www.w3.org/1999/XSL/Format\""
+                + " xmlns:fox=\"http://xmlgraphics.apache.org/fop/extensions\">\n"
+                + "  <fo:layout-master-set>\n"
+                + "    <fo:simple-page-master master-name=\"simple\" page-height=\"27.9cm\" page-width=\"21.6cm\">\n"
+                + "      <fo:region-body />\n"
+                + "    </fo:simple-page-master>\n"
+                + "  </fo:layout-master-set>\n"
+                + "  <fo:page-sequence master-reference=\"simple\">\n"
+                + "    <fo:flow flow-name=\"xsl-region-body\">\n"
+                + "      <fo:table table-layout=\"fixed\" width=\"100%\">\n"
+                + "        <fo:table-column column-width=\"50%\"/>\n"
+                + "        <fo:table-column column-width=\"50%\"/>\n"
+                + "        <fo:table-header>\n"
+                + "          <fo:table-row>\n"
+                + "            <fo:table-cell id=\"h-product\"><fo:block>Product</fo:block></fo:table-cell>\n"
+                + "            <fo:table-cell id=\"h-price\"><fo:block>Price</fo:block></fo:table-cell>\n"
+                + "          </fo:table-row>\n"
+                + "        </fo:table-header>\n"
+                + "        <fo:table-body>\n"
+                + "          <fo:table-row>\n"
+                + "            <fo:table-cell fox:headers=\"h-product\"><fo:block>Widget</fo:block></fo:table-cell>\n"
+                + "            <fo:table-cell fox:headers=\"h-product h-price\" number-rows-spanned=\"1\">"
+                + "<fo:block>10</fo:block></fo:table-cell>\n"
+                + "          </fo:table-row>\n"
+                + "        </fo:table-body>\n"
+                + "      </fo:table>\n"
+                + "    </fo:flow>\n"
+                + "  </fo:page-sequence>\n"
+                + "</fo:root>\n";
+        ByteArrayOutputStream bos = foToOutput(fo);
+        Map<String, String> idToType = new HashMap<>();
+        List<String> headersEntries = new ArrayList<>();
+        try (PDDocument pdfDocument = Loader.loadPDF(bos.toByteArray())) {
+            COSDictionary structTreeRoot = pdfDocument.getDocumentCatalog().getCOSObject()
+                    .getCOSDictionary(COSName.getPDFName("StructTreeRoot"));
+            collectStructureInfo(structTreeRoot, idToType, headersEntries);
+        }
+        Assert.assertEquals("header cells must carry an ID entry", "TH", idToType.get("h-product"));
+        Assert.assertEquals("header cells must carry an ID entry", "TH", idToType.get("h-price"));
+        Assert.assertTrue("data cells must reference their header cells",
+                headersEntries.contains("h-product"));
+        Assert.assertTrue("multiple headers must all be referenced",
+                headersEntries.contains("h-product h-price"));
+    }
+
+    /**
+     * Walks the structure tree collecting for every element with an ID entry
+     * its structure type, and for every Table attribute dictionary with a
+     * Headers entry the referenced ids as a space-separated string.
+     */
+    private void collectStructureInfo(COSBase node, Map<String, String> idToType, List<String> headersEntries) {
+        if (node instanceof COSObject) {
+            collectStructureInfo(((COSObject) node).getObject(), idToType, headersEntries);
+        } else if (node instanceof COSArray) {
+            for (COSBase item : (COSArray) node) {
+                collectStructureInfo(item, idToType, headersEntries);
+            }
+        } else if (node instanceof COSDictionary) {
+            COSDictionary dict = (COSDictionary) node;
+            String id = dict.getString(COSName.getPDFName("ID"));
+            if (id != null) {
+                idToType.put(id, dict.getNameAsString(COSName.S));
+            }
+            collectHeaders(dict.getDictionaryObject(COSName.A), headersEntries);
+            collectStructureInfo(dict.getDictionaryObject(COSName.K), idToType, headersEntries);
+        }
+    }
+
+    private void collectHeaders(COSBase attributes, List<String> headersEntries) {
+        if (attributes instanceof COSObject) {
+            collectHeaders(((COSObject) attributes).getObject(), headersEntries);
+        } else if (attributes instanceof COSArray) {
+            for (COSBase item : (COSArray) attributes) {
+                collectHeaders(item, headersEntries);
+            }
+        } else if (attributes instanceof COSDictionary) {
+            COSBase headers = ((COSDictionary) attributes).getDictionaryObject(COSName.getPDFName("Headers"));
+            if (headers instanceof COSArray) {
+                List<String> ids = new ArrayList<>();
+                for (COSBase id : (COSArray) headers) {
+                    if (id instanceof COSString) {
+                        ids.add(((COSString) id).getString());
+                    }
+                }
+                headersEntries.add(String.join(" ", ids));
+            }
+        }
     }
 
     @Test

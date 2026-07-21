@@ -4040,6 +4040,8 @@
       <attribute name = "width" type = "fo:height_Type"/>
       <attributeGroup ref = "fo:inheritable_properties_List"/>
       <attribute name = "vertical-align" type = "fo:vertical_align_Type"/>
+      <!-- allows extension attributes such as fox:headers -->
+      <anyAttribute namespace = "http://xmlgraphics.apache.org/fop/extensions" processContents = "skip"/>
     </complexType>
   </element>
   <element name = "list-block">

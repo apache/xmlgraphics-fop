@@ -320,6 +320,10 @@ class StructureTreeEventTrigger extends FOEventHandler {
         AttributesImpl attributes = new AttributesImpl();
         addSpanAttribute(attributes, "number-columns-spanned", tc.getNumberColumnsSpanned());
         addSpanAttribute(attributes, "number-rows-spanned", tc.getNumberRowsSpanned());
+        String headers = tc.getHeaders();
+        if (headers != null && !headers.isEmpty()) {
+            addNoNamespaceAttribute(attributes, "headers", headers);
+        }
         boolean rowHeader = inTableHeader.peek();
         boolean columnHeader = tables.peek().getColumn(tc.getColumnNumber() - 1).isHeader();
         if (rowHeader || columnHeader) {
@@ -331,6 +335,10 @@ class StructureTreeEventTrigger extends FOEventHandler {
                 addNoNamespaceAttribute(attributes, "role", th);
             }
             if (role.equals(th)) {
+                String id = tc.getId();
+                if (id != null && !id.isEmpty()) {
+                    addNoNamespaceAttribute(attributes, "id", id);
+                }
                 if (columnHeader) {
                     String scope = rowHeader ? "Both" : "Row";
                     addAttribute(attributes, InternalElementMapping.URI, InternalElementMapping.SCOPE,
