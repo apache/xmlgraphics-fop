@@ -125,11 +125,13 @@ public class HyphenationTestCase {
         ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(hyp));
         out.writeObject(new Untrusted());
         out.close();
-        SecurityException ex = Assert.assertThrows(SecurityException.class, () -> Hyphenator.hyphenate("fr.hyp" + Hyphenator.HYPTYPE, null, resourceResolver, null,
+        SecurityException ex = Assert.assertThrows(SecurityException.class, () ->
+                Hyphenator.hyphenate("fr.hyp" + Hyphenator.HYPTYPE, null, resourceResolver, null,
                 "oello", 0, 0, fopFactory.newFOUserAgent()));
         hyp.delete();
         f.delete();
-        assertEquals("Unauthorized deserialization attempt: org.apache.fop.HyphenationTestCase$Untrusted", ex.getMessage());
+        assertEquals("Unauthorized deserialization attempt: org.apache.fop.HyphenationTestCase$Untrusted",
+                ex.getMessage());
     }
 
     static class Untrusted implements Serializable {

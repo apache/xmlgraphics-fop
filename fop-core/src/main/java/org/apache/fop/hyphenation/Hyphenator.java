@@ -143,7 +143,8 @@ public final class Hyphenator {
             ObjectInputStream ois = new ObjectInputStream(in) {
                 protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
                     String className = desc.getName();
-                    if (!className.startsWith("org.apache.fop.hyphenation.") && !className.startsWith("[") && !className.startsWith("java.")) {
+                    if (!className.startsWith("org.apache.fop.hyphenation.") && !className.startsWith("[")
+                            && !className.startsWith("java.")) {
                         throw new SecurityException("Unauthorized deserialization attempt: " + className);
                     }
                     return super.resolveClass(desc);
