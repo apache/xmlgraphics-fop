@@ -23,6 +23,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.net.URISyntaxException;
 import java.util.Map;
 
@@ -139,7 +140,15 @@ public final class Hyphenator {
     private static HyphenationTree readHyphenationTree(InputStream in) {
         HyphenationTree hTree = null;
         try {
-            ObjectInputStream ois = new ObjectInputStream(in);
+            ObjectInputStream ois = new ObjectInputStream(in) {
+                protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+                    String className = desc.getName();
+                    if (!className.startsWith("org.apache.fop.hyphenation.") && !className.startsWith("[") && !className.startsWith("java.")) {
+                        throw new SecurityException("Unauthorized deserialization attempt: " + className);
+                    }
+                    return super.resolveClass(desc);
+                }
+            };
             hTree = (HyphenationTree)ois.readObject();
         } catch (IOException ioe) {
             log.error("I/O error while loading precompiled hyphenation pattern file", ioe);

@@ -23,9 +23,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -110,5 +112,26 @@ public class HyphenationTestCase {
         Hyphenation hyph = Hyphenator.hyphenate("de", "CH", resourceResolver, hyphPatNames,
                 "hello", 0, 0, fopFactory.newFOUserAgent());
         assertEquals(hyph.toString(), "-hel-lo");
+    }
+
+    @Test
+    public void testHyphenatorBinaryUntrusted() throws Exception {
+        File f = File.createTempFile("hyp", "fop");
+        f.delete();
+        f.mkdir();
+        InternalResourceResolver resourceResolver = ResourceResolverFactory.createDefaultInternalResourceResolver(
+                f.toURI());
+        File hyp = new File(f, "fr.hyp");
+        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(hyp));
+        out.writeObject(new Untrusted());
+        out.close();
+        SecurityException ex = Assert.assertThrows(SecurityException.class, () -> Hyphenator.hyphenate("fr.hyp" + Hyphenator.HYPTYPE, null, resourceResolver, null,
+                "oello", 0, 0, fopFactory.newFOUserAgent()));
+        hyp.delete();
+        f.delete();
+        assertEquals("Unauthorized deserialization attempt: org.apache.fop.HyphenationTestCase$Untrusted", ex.getMessage());
+    }
+
+    static class Untrusted implements Serializable {
     }
 }
