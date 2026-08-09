@@ -192,7 +192,14 @@ public class PDFStructElem extends StructureHierarchyMember implements Structure
             if (attributes.size() == 1) {
                 put("A", attributes.get(0));
             } else {
-                PDFArray array = new PDFArray(attributes);
+                // build the array via add() so that every attribute dictionary
+                // gets this element as parent; the PDFArray(List) constructor
+                // does not set parents, which breaks the serialization of any
+                // string values inside the dictionaries (e.g. Table /Headers)
+                PDFArray array = new PDFArray();
+                for (PDFDictionary attribute : attributes) {
+                    array.add(attribute);
+                }
                 put("A", array);
             }
         }
@@ -260,6 +267,34 @@ public class PDFStructElem extends StructureHierarchyMember implements Structure
             attribute.put("Scope", scope.getName());
         }
 
+        if (attributes == null) {
+            attributes = new ArrayList<PDFDictionary>(2);
+        }
+        attributes.add(attribute);
+    }
+
+    /**
+     * Sets the ID entry of this structure element, so that other table cells
+     * can reference it from their Headers attribute.
+     * @param id the value of the ID entry
+     */
+    public void setElementId(String id) {
+        put("ID", id);
+    }
+
+    /**
+     * Adds a Table Headers attribute listing the IDs of the header cells that
+     * apply to this cell. Used for accessibility of complex tables.
+     * @param headers space-separated list of header cell IDs
+     */
+    public void setTableAttributeHeaders(String headers) {
+        PDFArray headerArray = new PDFArray();
+        for (String header : headers.trim().split("\\s+")) {
+            headerArray.add(header);
+        }
+        PDFDictionary attribute = new PDFDictionary();
+        attribute.put("O", Table.NAME);
+        attribute.put("Headers", headerArray);
         if (attributes == null) {
             attributes = new ArrayList<PDFDictionary>(2);
         }

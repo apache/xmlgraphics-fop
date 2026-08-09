@@ -52,6 +52,7 @@ public class ExtensionElementMapping extends ElementMapping {
         PROPERTY_ATTRIBUTES.add("auto-toggle");
         //These are FOP's extension properties for accessibility
         PROPERTY_ATTRIBUTES.add("alt-text");
+        PROPERTY_ATTRIBUTES.add("headers");
         PROPERTY_ATTRIBUTES.add("header");
         PROPERTY_ATTRIBUTES.add("abbreviation");
         //fox:border-*-radius-*

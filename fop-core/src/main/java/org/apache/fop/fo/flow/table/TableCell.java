@@ -48,6 +48,7 @@ public class TableCell extends TableFObj implements CommonAccessibilityHolder {
     private int numberRowsSpanned;
     private int startsRow;
     private Length width;
+    private String headers;
     // Unused but valid items, commented out for performance:
     //     private CommonAural commonAural;
     //     private CommonRelativePosition commonRelativePosition;
@@ -93,6 +94,12 @@ public class TableCell extends TableFObj implements CommonAccessibilityHolder {
         numberColumnsSpanned = pList.get(PR_NUMBER_COLUMNS_SPANNED).getNumeric().getValue();
         numberRowsSpanned = pList.get(PR_NUMBER_ROWS_SPANNED).getNumeric().getValue();
         width = pList.get(PR_WIDTH).getLength();
+        headers = pList.get(PR_X_HEADERS).getString();
+    }
+
+    /** @return the value of the fox:headers extension property */
+    public String getHeaders() {
+        return headers;
     }
 
     /** {@inheritDoc} */

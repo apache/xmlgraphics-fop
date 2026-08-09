@@ -332,6 +332,16 @@ public class PDFStructureTreeBuilder implements StructureTreeEventHandler {
             if (rowSpan != null) {
                 structElem.setTableAttributeRowSpan(Integer.parseInt(rowSpan));
             }
+            if (structElem.getStructureType() == Table.TH) {
+                String id = attributes.getValue("id");
+                if (id != null) {
+                    structElem.setElementId(id);
+                }
+            }
+            String headers = attributes.getValue("headers");
+            if (headers != null) {
+                structElem.setTableAttributeHeaders(headers);
+            }
         }
 
     }

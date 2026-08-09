@@ -110,9 +110,15 @@
   <xsl:template match="fo:table-cell">
     <xsl:variable name="header"><xsl:call-template name="get.column.header"/></xsl:variable>
     <xsl:copy>
+      <xsl:if test="@fox:headers">
+        <xsl:attribute name="headers"><xsl:value-of select="@fox:headers"/></xsl:attribute>
+      </xsl:if>
       <xsl:if test="$header = 'true'">
         <xsl:attribute name="role">TH</xsl:attribute>
         <xsl:attribute name="scope" namespace="http://xmlgraphics.apache.org/fop/internal">Row</xsl:attribute>
+        <xsl:if test="(not(@role) or @role = 'TH') and @id">
+          <xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
+        </xsl:if>
       </xsl:if>
       <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>
@@ -121,9 +127,15 @@
   <xsl:template match="fo:table-header/fo:table-cell|fo:table-header/fo:table-row/fo:table-cell">
     <xsl:variable name="header"><xsl:call-template name="get.column.header"/></xsl:variable>
     <xsl:copy>
+      <xsl:if test="@fox:headers">
+        <xsl:attribute name="headers"><xsl:value-of select="@fox:headers"/></xsl:attribute>
+      </xsl:if>
       <xsl:attribute name="role">TH</xsl:attribute>
       <xsl:if test="$header = 'true'">
         <xsl:attribute name="scope" namespace="http://xmlgraphics.apache.org/fop/internal">Both</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="(not(@role) or @role = 'TH') and @id">
+        <xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
       </xsl:if>
       <xsl:apply-templates select="@*|node()"/>
     </xsl:copy>

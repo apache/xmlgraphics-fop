@@ -2671,6 +2671,12 @@ public final class FOPropertyMapping implements Constants {
         m.setDefault("");
         addPropertyMaker("fox:abbreviation", m);
 
+        // fox:headers, used for accessibility
+        m = new StringProperty.Maker(PR_X_HEADERS);
+        m.setInherited(false);
+        m.setDefault("");
+        addPropertyMaker("fox:headers", m);
+
         // fox:auto-toggle, used only in fo:multi-switch
         m = new EnumProperty.Maker(PR_X_AUTO_TOGGLE);
         m.setInherited(false);
