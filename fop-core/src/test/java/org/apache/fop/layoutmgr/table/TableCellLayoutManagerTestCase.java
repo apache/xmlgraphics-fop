@@ -20,12 +20,15 @@
 package org.apache.fop.layoutmgr.table;
 
 import java.awt.Color;
+import java.io.File;
 
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 import org.apache.fop.fo.flow.table.PrimaryGridUnit;
 import org.apache.fop.fo.flow.table.Table;
 import org.apache.fop.fo.flow.table.TableCell;
@@ -71,6 +74,8 @@ public class TableCellLayoutManagerTestCase {
         when(tr.getParent()).thenReturn(th);
         // mock cell
         TableCell tc = mock(TableCell.class);
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        when(tc.getUserAgent()).thenReturn(ua);
         when(tc.hasRetrieveTableMarker()).thenReturn(true);
         when(tc.getTable()).thenReturn(t);
         when(tc.getId()).thenReturn("cellId");

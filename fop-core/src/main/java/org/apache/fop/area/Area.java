@@ -20,6 +20,7 @@
 package org.apache.fop.area;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -27,6 +28,7 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.fo.flow.ChangeBar;
 import org.apache.fop.traits.BorderProps;
 import org.apache.fop.traits.WritingModeTraitsGetter;
@@ -123,7 +125,7 @@ public class Area extends AreaTreeObject implements Serializable {
     /**
      * Traits for this area.
      */
-    protected TreeMap<Integer, Object> traits;
+    protected Map<Integer, Object> traits;
 
     /**
      * logging instance
@@ -168,7 +170,7 @@ public class Area extends AreaTreeObject implements Serializable {
     public Object clone() throws CloneNotSupportedException {
         Area area = (Area) super.clone();
         if (traits != null) {
-            area.traits = (TreeMap<Integer, Object>) traits.clone();
+            area.traits = new TreeMap<>(traits);
         }
         return area;
     }
@@ -437,7 +439,13 @@ public class Area extends AreaTreeObject implements Serializable {
         if (traits == null) {
             traits = new TreeMap<Integer, Object>();
         }
-        traits.put(traitCode, prop);
+        try {
+            traits.put(traitCode, prop);
+        } catch (UnsupportedOperationException e) {
+            //Allow add when traits is a unmodifiable Map
+            traits = new TreeMap<>(traits);
+            traits.put(traitCode, prop);
+        }
     }
 
     /**
@@ -450,6 +458,12 @@ public class Area extends AreaTreeObject implements Serializable {
             this.traits = new TreeMap<Integer, Object>(traits);
         } else {
             this.traits = null;
+        }
+    }
+
+    public void completeTraits(FOUserAgent userAgent) {
+        if (traits != null) {
+            traits = userAgent.getTraitCache().fetch(Collections.unmodifiableMap(traits));
         }
     }
 

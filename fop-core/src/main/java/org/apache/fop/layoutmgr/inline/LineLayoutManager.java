@@ -1664,6 +1664,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
         if (lineArea.getBidiLevel() >= 0) {
             BidiResolver.reorder(lineArea);
         }
+        lineArea.completeTraits(fobj.getUserAgent());
         parentLayoutManager.addChildArea(lineArea);
     }
 

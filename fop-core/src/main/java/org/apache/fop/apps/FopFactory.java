@@ -46,6 +46,7 @@ import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fo.ElementMapping;
 import org.apache.fop.fo.ElementMappingRegistry;
+import org.apache.fop.fo.properties.PropertyCache;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.hyphenation.HyphenationTreeCache;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
@@ -99,6 +100,7 @@ public final class FopFactory implements ImageContext {
 
     private CharacterSetBuilder singleByteCharacterSetBuilder;
     private CharacterSetBuilder doubleByteCharacterSetBuilder;
+    private final PropertyCache<Map<Integer, Object>> traitCache = new PropertyCache<>();
 
     private FopFactory(FopFactoryConfig config) {
         this.config = config;
@@ -544,5 +546,9 @@ public final class FopFactory implements ImageContext {
             singleByteCharacterSetBuilder = new CharacterSetBuilder.SingleByteLoader();
         }
         return singleByteCharacterSetBuilder;
+    }
+
+    public PropertyCache<Map<Integer, Object>> getTraitCache() {
+        return traitCache;
     }
 }

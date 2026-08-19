@@ -56,6 +56,7 @@ import org.apache.fop.events.EventBroadcaster;
 import org.apache.fop.events.EventListener;
 import org.apache.fop.fo.ElementMappingRegistry;
 import org.apache.fop.fo.FOEventHandler;
+import org.apache.fop.fo.properties.PropertyCache;
 import org.apache.fop.fonts.FontManager;
 import org.apache.fop.hyphenation.HyphenationTreeCache;
 import org.apache.fop.layoutmgr.LayoutManagerMaker;
@@ -907,5 +908,9 @@ public class FOUserAgent {
 
     public CharacterSetBuilder getSingleByteCharacterSetBuilder() {
         return factory.getSingleByteCharacterSetBuilder();
+    }
+
+    public PropertyCache<Map<Integer, Object>> getTraitCache() {
+        return factory.getTraitCache();
     }
 }

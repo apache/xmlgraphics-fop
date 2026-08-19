@@ -403,6 +403,7 @@ public class TextLayoutManager extends LeafNodeLayoutManager {
             if (!context.treatAsArtifact()) {
                 TraitSetter.addStructureTreeElement(textArea, foText.getStructureTreeElement());
             }
+            textArea.completeTraits(userAgent);
             return textArea;
         }
 

@@ -580,7 +580,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
             TraitSetter.addBackground(curBlockArea,
                     getTableCell().getCommonBorderPaddingBackground(), this);
         }
-
+        curBlockArea.completeTraits(fobj.getUserAgent());
         if (flushArea) {
             flush();
         } else {

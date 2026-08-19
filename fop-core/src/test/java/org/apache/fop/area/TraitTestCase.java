@@ -19,9 +19,15 @@
 
 package org.apache.fop.area;
 
+import java.io.File;
+
+import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.FopFactory;
 
 public class TraitTestCase {
 
@@ -38,4 +44,23 @@ public class TraitTestCase {
         assertTrue(background.toString().contains(Integer.toString(height)));
     }
 
+    @Test
+    public void testCaching() {
+        FOUserAgent userAgent = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        Area area = new Area();
+        area.addTrait(1, "v");
+        area.completeTraits(userAgent);
+        Area area2 = new Area();
+        area2.addTrait(1, "x");
+        area2.completeTraits(userAgent);
+        Area area3 = new Area();
+        area3.addTrait(1, "v");
+        area3.completeTraits(userAgent);
+        Assert.assertNotEquals(area.getTraits(), area2.getTraits());
+        Assert.assertSame(area.getTraits(), area3.getTraits());
+        assertEquals("v", area.getTraits().get(1));
+        assertEquals(1, area.getTraits().size());
+        assertEquals("x", area2.getTraits().get(1));
+        assertEquals(1, area2.getTraits().size());
+    }
 }
