@@ -22,7 +22,7 @@ package org.apache.fop.area;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.util.TreeMap;
+import java.util.Map;
 
 import org.apache.fop.traits.WritingModeTraitsGetter;
 
@@ -108,7 +108,7 @@ public class RegionViewport extends Area implements Viewport {
         out.writeFloat((float) viewArea.getWidth());
         out.writeFloat((float) viewArea.getHeight());
         out.writeBoolean(clip);
-        out.writeObject((TreeMap)traits);
+        out.writeObject(traits);
         out.writeObject(regionReference);
     }
 
@@ -117,7 +117,7 @@ public class RegionViewport extends Area implements Viewport {
         viewArea = new Rectangle2D.Float(in.readFloat(), in.readFloat(),
                                          in.readFloat(), in.readFloat());
         clip = in.readBoolean();
-        traits = (TreeMap)in.readObject();
+        traits = (Map<Integer, Object>) in.readObject();
         setRegionReference((RegionReference) in.readObject());
     }
 

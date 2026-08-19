@@ -22,7 +22,7 @@ package org.apache.fop.area.inline;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.util.TreeMap;
+import java.util.Map;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.Viewport;
@@ -132,7 +132,7 @@ public class InlineViewport extends InlineArea implements Viewport {
             out.writeFloat((float) contentPosition.getHeight());
         }
         out.writeBoolean(clip);
-        out.writeObject((TreeMap)traits);
+        out.writeObject(traits);
         out.writeObject(content);
     }
 
@@ -145,7 +145,7 @@ public class InlineViewport extends InlineArea implements Viewport {
                                                     in.readFloat());
         }
         this.clip = in.readBoolean();
-        this.traits = (TreeMap) in.readObject();
+        this.traits = (Map<Integer, Object>) in.readObject();
         this.content = (Area) in.readObject();
     }
 
