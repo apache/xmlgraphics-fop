@@ -53,8 +53,7 @@ public class ImageConverterWMF2G2D extends AbstractImageConverter {
         Graphics2DImagePainter painter;
         painter = new Graphics2DImagePainterWMF(wmf);
 
-        ImageGraphics2D g2dImage = new ImageGraphics2D(src.getInfo(), painter);
-        return g2dImage;
+        return new ImageGraphics2D(src.getInfo(), painter);
     }
 
     /** {@inheritDoc} */

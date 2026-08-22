@@ -102,8 +102,7 @@ public final class EventFormatter {
             replacements = processIncludesInner(input, sb, bundle);
             input = sb;
         } while (replacements > 0);
-        String s = sb.toString();
-        return s;
+        return sb.toString();
     }
 
     private static int processIncludesInner(CharSequence template, StringBuffer sb,

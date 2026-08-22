@@ -187,11 +187,9 @@ public class PDFStream extends AbstractPDFStream {
      * {@inheritDoc}
      */
     public int output(OutputStream stream) throws IOException {
-        final int len = super.output(stream);
-
         //Now that the data has been written, it can be discarded.
 //        this.data = null;
-        return len;
+        return super.output(stream);
     }
 
     public String streamHashCode() throws IOException {

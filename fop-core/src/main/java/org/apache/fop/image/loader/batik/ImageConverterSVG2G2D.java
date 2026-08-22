@@ -107,8 +107,7 @@ public class ImageConverterSVG2G2D extends AbstractImageConverter {
 
         //Create g2d image
         ImageInfo imageInfo = src.getInfo();
-        ImageGraphics2D g2dImage = new ImageGraphics2D(imageInfo, painter);
-        return g2dImage;
+        return new ImageGraphics2D(imageInfo, painter);
     }
 
     private float getResolution(Map hints, Object key) {

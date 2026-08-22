@@ -273,9 +273,8 @@ public class PageSequenceMaster extends FObj {
             }
         }
 
-        SimplePageMaster pageMaster = currentSubSequence.getLastPageMaster(isOddPage, isFirstPage, isBlank,
+        return currentSubSequence.getLastPageMaster(isOddPage, isFirstPage, isBlank,
                 blockLevelEventProducer);
-        return pageMaster;
     }
 
 }

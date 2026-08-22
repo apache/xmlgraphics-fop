@@ -351,8 +351,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
     /** {@inheritDoc} */
     @Override
     public boolean position(GlyphSequence gs, String script, String language, int fontSize, GlyphTable.UseSpec[] usa, int[] widths, int[][] adjustments, ScriptContextTester sct) {
-        boolean adjusted = super.position(gs, script, language, fontSize, usa, widths, adjustments, sct);
-        return adjusted;
+        return super.position(gs, script, language, fontSize, usa, widths, adjustments, sct);
     }
 
     /** Abstract syllabizer. */

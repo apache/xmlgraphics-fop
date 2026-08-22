@@ -236,7 +236,6 @@ implements IRtfTextContainer,
      * @throws IOException if not caught
      */
     public RtfTextrun getTextrun() throws IOException {
-        RtfTextrun textrun = RtfTextrun.getTextrun(this, writer, null);
-        return textrun;
+        return RtfTextrun.getTextrun(this, writer, null);
     }
 }

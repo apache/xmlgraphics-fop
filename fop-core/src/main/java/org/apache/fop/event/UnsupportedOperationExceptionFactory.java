@@ -33,8 +33,7 @@ public class UnsupportedOperationExceptionFactory implements ExceptionFactory {
     /** {@inheritDoc} */
     public Throwable createException(Event event) {
         String msg = EventFormatter.format(event, Locale.ENGLISH);
-        UnsupportedOperationException ex = new UnsupportedOperationException(msg);
-        return ex;
+        return new UnsupportedOperationException(msg);
     }
 
     /** {@inheritDoc} */
