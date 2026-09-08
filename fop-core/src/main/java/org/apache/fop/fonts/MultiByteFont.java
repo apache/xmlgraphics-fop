@@ -77,8 +77,11 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     private int firstUnmapped;
     private int lastUnmapped;
 
-    /** Contains the character bounding boxes for all characters in the font */
-    protected Rectangle[] boundingBoxes;
+    /** Contains the character bounding boxes for all characters in the font,
+     * packed as x, y, width, height per glyph. A Rectangle per glyph costs 36
+     * bytes (32 for the object, 4 for the array slot) where these cost 16, and
+     * the array is retained for as long as the font is loaded. */
+    protected int[] boundingBoxes;
 
     private boolean isOTFFile;
 
@@ -210,8 +213,9 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
 
     public Rectangle getBoundingBox(int glyphIndex, int size) {
         int index = isEmbeddable() ? cidSet.getOriginalGlyphIndex(glyphIndex) : glyphIndex;
-        Rectangle bbox = boundingBoxes[index];
-        return new Rectangle(bbox.x * size, bbox.y * size, bbox.width * size, bbox.height * size);
+        int i = index * 4;
+        return new Rectangle(boundingBoxes[i] * size, boundingBoxes[i + 1] * size,
+                boundingBoxes[i + 2] * size, boundingBoxes[i + 3] * size);
     }
 
     /**
@@ -451,6 +455,24 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * @param boundingBoxes array of bounding boxes.
      */
     public void setBBoxArray(Rectangle[] boundingBoxes) {
+        int[] packed = new int[boundingBoxes.length * 4];
+        for (int i = 0; i < boundingBoxes.length; i++) {
+            Rectangle bbox = boundingBoxes[i];
+            packed[i * 4] = bbox.x;
+            packed[i * 4 + 1] = bbox.y;
+            packed[i * 4 + 2] = bbox.width;
+            packed[i * 4 + 3] = bbox.height;
+        }
+        this.boundingBoxes = packed;
+    }
+
+    /**
+     * Sets the bounding boxes array, packed as x, y, width, height per glyph.
+     * Preferred over setBBoxArray(Rectangle[]), which allocates a Rectangle per
+     * glyph merely to pass the values in.
+     * @param boundingBoxes packed bounding boxes, 4 ints per glyph.
+     */
+    public void setBBoxArray(int[] boundingBoxes) {
         this.boundingBoxes = boundingBoxes;
     }
 
