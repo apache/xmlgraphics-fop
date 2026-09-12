@@ -25,6 +25,7 @@ import java.awt.color.ICC_Profile;
  * Helper methods for handling color profiles.
  * @deprecated use org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil directly
  */
+@Deprecated
 public final class ColorProfileUtil {
 
     private ColorProfileUtil() {
@@ -36,6 +37,7 @@ public final class ColorProfileUtil {
      * @return the description
      * @deprecated use org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil directly
      */
+    @Deprecated
     public static String getICCProfileDescription(ICC_Profile profile) {
         return org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil
                 .getICCProfileDescription(profile);
@@ -48,6 +50,7 @@ public final class ColorProfileUtil {
      * @return true if it is the default sRGB profile
      * @deprecated use org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil directly
      */
+    @Deprecated
     public static boolean isDefaultsRGB(ICC_Profile profile) {
         return org.apache.xmlgraphics.java2d.color.profile.ColorProfileUtil
                 .isDefaultsRGB(profile);

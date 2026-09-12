@@ -126,6 +126,7 @@ public final class TraitSetter {
      * @param context Property evaluation context
      * @deprecated Call the other addBorders() method and addPadding separately.
      */
+    @Deprecated
     public static void addBorders(Area area, CommonBorderPaddingBackground borderProps,
                                   PercentBaseContext context) {
         BorderProps bps = getBorderProps(borderProps, CommonBorderPaddingBackground.BEFORE, context);

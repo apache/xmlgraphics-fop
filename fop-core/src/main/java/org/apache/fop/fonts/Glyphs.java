@@ -23,6 +23,7 @@ package org.apache.fop.fonts;
  * This class provides a number of constants for glyph management.
  * @deprecated Use the Glyphs class from XML Graphics Commons instead!
  */
+@Deprecated
 public final class Glyphs {
 
     private Glyphs() {
