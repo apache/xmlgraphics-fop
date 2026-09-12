@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.intermediate.extensions;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,7 +30,7 @@ import java.util.Map;
 public class ActionSet {
 
     private int lastGeneratedID;
-    private Map actionRegistry = new java.util.HashMap();
+    private Map<String, AbstractAction> actionRegistry = new HashMap<>();
 
     /**
      * Generates a new synthetic ID for an action.
@@ -51,7 +52,7 @@ public class ActionSet {
      * @return the action or null if no action with this ID is stored
      */
     public AbstractAction get(String id) {
-        return (AbstractAction)this.actionRegistry.get(id);
+        return this.actionRegistry.get(id);
     }
 
     /**
@@ -79,8 +80,7 @@ public class ActionSet {
     }
 
     private AbstractAction normalize(AbstractAction action) {
-        for (Object o : this.actionRegistry.values()) {
-            AbstractAction a = (AbstractAction) o;
+        for (AbstractAction a : this.actionRegistry.values()) {
             if (a.isSame(action)) {
                 return a;
             }
