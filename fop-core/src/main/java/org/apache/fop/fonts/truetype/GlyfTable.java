@@ -35,6 +35,8 @@ public class GlyfTable {
 
     private final long tableOffset;
 
+    private final long tableLength;
+
     private final Set<Long> remappedComposites;
 
     protected final Map<Integer, Integer> subset;
@@ -51,6 +53,7 @@ public class GlyfTable {
                         Map<Integer, Integer> glyphs) throws IOException {
         mtxTab = metrics;
         tableOffset = dirTableEntry.getOffset();
+        tableLength = dirTableEntry.getLength();
         remappedComposites = new HashSet<Long>();
         this.subset = glyphs;
         this.in = in;
@@ -203,8 +206,31 @@ public class GlyfTable {
     }
 
     public boolean isComposite(int indexInOriginal) throws IOException {
+        if (isEmpty(indexInOriginal)) {
+            // An empty glyph has no glyph description at all, so there is no numberOfContours
+            // to read: the two bytes at its offset belong to the next glyph, or - when it is
+            // the last glyph in the table - are past the end of the font file, which made this
+            // throw an EOFException.  TTFFile.readGlyf guards its own read the same way.
+            return false;
+        }
         int numberOfContours = in.readTTFShort(tableOffset + mtxTab[indexInOriginal].getOffset());
         return numberOfContours < 0;
+    }
+
+    /**
+     * Whether this glyph has no glyph description, ie the loca table gives it a length of zero
+     * (a space, typically).  The next entry's offset is where this glyph ends; for the last
+     * glyph that is the end of the glyf table.
+     *
+     * @param indexInOriginal the glyph index in the original font
+     * @return true if the glyph is empty
+     */
+    private boolean isEmpty(int indexInOriginal) {
+        long offset = mtxTab[indexInOriginal].getOffset();
+        long end = (indexInOriginal + 1 < mtxTab.length)
+                ? mtxTab[indexInOriginal + 1].getOffset()
+                : tableLength;
+        return end <= offset;
     }
 
     /**

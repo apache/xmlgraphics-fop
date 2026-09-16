@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -129,6 +130,64 @@ public class GlyfTableTestCase {
         expected[1] = 2;
 
         assertArrayEquals(expected, composedIndices);
+    }
+
+    /**
+     * Tests that an empty last glyph is not read past the end of the font file.
+     *
+     * <p>A glyph whose loca entry gives it a length of zero has no glyph description at all,
+     * so there is no numberOfContours to read; when such a glyph is the last in the table and
+     * the glyf table is the last in the file, reading it runs off the end. Subsetting a font
+     * of that shape threw an EOFException. Arimo and Carlito, whose last glyph is U+00A0,
+     * are examples.</p>
+     *
+     * @throws IOException if an I/O error occurs
+     */
+    @Test
+    public void testEmptyLastGlyphIsNotReadPastTheEndOfTheFile() throws IOException {
+        GlyfTable glyfTable = syntheticGlyfTable();
+        assertFalse("an empty last glyph is not composite", glyfTable.isComposite(3));
+    }
+
+    /**
+     * Tests that an empty glyph in the middle of the table is not reported as composite: the
+     * two bytes at its offset are the <em>next</em> glyph's numberOfContours.
+     *
+     * @throws IOException if an I/O error occurs
+     */
+    @Test
+    public void testEmptyGlyphIsNotComposite() throws IOException {
+        GlyfTable glyfTable = syntheticGlyfTable();
+        assertFalse("a simple glyph is not composite", glyfTable.isComposite(0));
+        assertFalse("an empty glyph is not composite", glyfTable.isComposite(1));
+        assertTrue("a composite glyph is composite", glyfTable.isComposite(2));
+    }
+
+    /**
+     * A glyf table of 8 bytes at offset 12, the last thing in a 20 byte file:
+     * <ul>
+     *   <li>glyph 0 at 0, four bytes, numberOfContours 1 (a simple glyph)</li>
+     *   <li>glyph 1 at 4, empty</li>
+     *   <li>glyph 2 at 4, four bytes, numberOfContours -1 (a composite glyph)</li>
+     *   <li>glyph 3 at 8, empty - and 8 is the length of the table</li>
+     * </ul>
+     */
+    private GlyfTable syntheticGlyfTable() throws IOException {
+        byte[] font = new byte[20];
+        font[12] = 0x00;
+        font[13] = 0x01;
+        font[16] = (byte) 0xFF;
+        font[17] = (byte) 0xFF;
+
+        long[] offsets = {0, 4, 4, 8};
+        OFMtxEntry[] mtx = new OFMtxEntry[offsets.length];
+        for (int i = 0; i < offsets.length; i++) {
+            mtx[i] = new OFMtxEntry();
+            mtx[i].setOffset(offsets[i]);
+        }
+
+        return new GlyfTable(new FontFileReader(new ByteArrayInputStream(font)),
+                mtx, new OFDirTabEntry(12, 8), new HashMap<Integer, Integer>());
     }
 
     private int[] setupTest(int... glyphIndices) throws IOException {
