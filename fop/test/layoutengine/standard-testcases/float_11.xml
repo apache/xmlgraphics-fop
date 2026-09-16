@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testcase>
+  <info>
+    <p>
+      Test to check that a float does not overflow a page nor does it appear on top of other text
+    </p>
+  </info>
+  <fo>
+      <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xml:lang="en" writing-mode="lr">
+          <fo:layout-master-set>
+              <fo:simple-page-master master-name="sample" page-height="5.5in" page-width="4.25in" margin="1in">
+                  <fo:region-body/>
+                  <fo:region-after region-name="bottom-margin"/>
+              </fo:simple-page-master>
+          </fo:layout-master-set>
+          <fo:page-sequence master-reference="sample">
+              <fo:flow flow-name="xsl-region-body">
+                  <fo:block font-size="10pt">
+                      <fo:block-container>
+                          <fo:block>
+                              <fo:float float="left">
+                                  <fo:block color="red">FLOATING TEXT</fo:block>
+                              </fo:float>
+                              <fo:block-container>
+                                  <fo:block>
+                                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus eget diam accumsan, suscipit erat eu, sollicitudin felis.
+                                      Donec venenatis, augue sit amet ultrices tempus, libero odio mollis leo, eget convallis
+                                      massa velit at nulla. Curabitur velit erat, labcinia nec congue non, placerat nec massa.
+                                  </fo:block>
+                              </fo:block-container>
+                          </fo:block>
+                      </fo:block-container>
+                  </fo:block>
+                  <fo:block-container font-size="10pt">
+                      <fo:block>
+                          <fo:block>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus eget diam accumsan, suscipit erat eu, sollicitudin felis.
+                              Donec venenatis, augue sit amet ultrices tempus, libero odio mollis leo, eget convallis
+                              massa velit at nulla. Curabitur velit erat, labcinia nec congue non, placerat nec massa.</fo:block>
+                          <fo:float float="right">
+                              <fo:block><fo:block-container background-color="yellow" width="100px">
+                                  <fo:block>Aenean vitae diam turpis. Pellentesque vitae diam augue.</fo:block>
+                              </fo:block-container></fo:block>
+                          </fo:float>
+                          <fo:block color="red">Etiam pulvinar et lacus efficitur ultrices. Etiam id pharetra mauris. Fusce at lorem nec magna molestie tristique vel vitae mauris.
+                              Suspendisse potenti. Nam efficitur velit ac auctor scelerisque. Sed interdum
+                              enim magna, maximus varius ligula tempus sed.</fo:block>
+                      </fo:block>
+                  </fo:block-container>
+              </fo:flow>
+          </fo:page-sequence>
+      </fo:root>
+  </fo>
+  <checks>
+    <eval expected="252000" xpath="//pageViewport/page/regionViewport/regionBody/mainReference/span//@bpd"/>
+    <eval expected="-78350" xpath="//pageViewport/page/regionViewport/regionBody/mainReference/span/flow/block[2]/block/block/block//@left-offset"/>
+    <eval expected="2" xpath="count(//pageViewport)"/>
+    <eval expected="lacus efficitur ultrices. Etiam id" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block/block/block/block/lineArea"/>
+    <eval expected="162000" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block/block/block/block/lineArea//@ipd"/>
+    <eval expected="27520" xpath="//pageViewport[2]/page/regionViewport/regionBody/mainReference/span/flow/block/block/block/block/lineArea//@end-indent"/>
+  </checks>
+</testcase>
