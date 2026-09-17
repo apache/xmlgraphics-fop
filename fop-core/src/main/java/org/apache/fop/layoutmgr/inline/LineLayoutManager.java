@@ -671,6 +671,10 @@ public class LineLayoutManager extends InlineStackingLayoutManager
             ((Paragraph) paragraph).ignoreAtStart = 0;
             isFirstInBlock = false;
         }
+        if (restartPositionIdx == 0 && !paragraph.isEmpty()
+                && !((KnuthElement) paragraph.get(0)).isAuxiliary()) {
+            restartPositionIdx = -1;
+        }
         paragraph.subList(0, restartPositionIdx + 1).clear();
         Iterator<KnuthElement> iter = paragraph.iterator();
         while (iter.hasNext() && !iter.next().isBox()) {

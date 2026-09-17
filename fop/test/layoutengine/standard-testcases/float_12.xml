@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testcase>
+  <info>
+    <p>
+      Test first word from paragraph is not removed by left float
+    </p>
+  </info>
+  <fo>
+      <fo:root writing-mode="lr" xml:lang="dflt" xmlns:fo="http://www.w3.org/1999/XSL/Format">
+          <fo:layout-master-set>
+              <fo:simple-page-master master-name="sample" page-height="11in" page-width="8.5in">
+                  <fo:region-body margin="1in"/>
+              </fo:simple-page-master>
+          </fo:layout-master-set>
+          <fo:page-sequence master-reference="sample">
+              <fo:flow flow-name="xsl-region-body">
+                  <fo:block font-family="serif" font-size="12pt">
+                      <fo:block>Lorem ipsum dolor sit amet, consectetur adipiscing elit. <fo:float float="left">
+                          <fo:block><fo:block-container background-color="yellow" border-bottom-color="red" border-bottom-style="solid" border-bottom-width="1pt" border-left-color="red" border-left-style="solid" border-left-width="1pt"
+                                                        border-right-color="red" border-right-style="solid" border-right-width="1pt" border-top-color="red" border-top-style="solid" border-top-width="1pt" margin-left="0" margin-right="0" width="40pt">
+                              <fo:block end-indent="0" start-indent="0">float left</fo:block>
+                          </fo:block-container></fo:block>
+                      </fo:float> Nulla dignissim felis sed sapien condimentum, laoreet consectetur dui eleifend.</fo:block>
+                  </fo:block>
+              </fo:flow>
+          </fo:page-sequence>
+      </fo:root>
+  </fo>
+  <checks>
+    <eval expected="Lorem ipsum dolor sit amet, consectetur adipiscing elit. " xpath="//block[3]/block/lineArea/text" />
+  </checks>
+</testcase>
