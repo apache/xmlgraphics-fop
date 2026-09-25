@@ -117,6 +117,26 @@ public class PDFEncodingTestCase extends BasePDFTest {
         runTest("test-custom-non-bmp-font.fo", testPatterns);
     }
 
+    /**
+     * Test a non-BMP character under per-character font selection. The selected font changes at the
+     * surrogate pair, which must not end the word between the high surrogate and its low surrogate.
+     * Before that was fixed, layout raised IllegalArgumentException and no PDF was produced.
+     *
+     * @throws Exception
+     *              checkstyle wants a comment here, even a silly one
+     */
+    @Test
+    public void testPDFEncodingWithNonBMPFontCharacterByCharacter() throws Exception {
+
+        final String[] testPatterns = {
+            TEST_MARKER + "1", "\uD800\uDF00",
+            TEST_MARKER + "2", "\uD800\uDF00",
+            TEST_MARKER + "3", "\uD800\uDF00",
+        };
+
+        runTest("test-non-bmp-character-by-character.fo", testPatterns);
+    }
+
     /** Test encoding using specified input file and test patterns array */
     private void runTest(String inputFile, String[] testPatterns)
             throws Exception {
