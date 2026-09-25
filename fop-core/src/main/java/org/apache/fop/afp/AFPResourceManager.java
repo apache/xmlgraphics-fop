@@ -39,19 +39,16 @@ import org.apache.fop.afp.fonts.AFPFont;
 import org.apache.fop.afp.fonts.CharacterSet;
 import org.apache.fop.afp.modca.AbstractNamedAFPObject;
 import org.apache.fop.afp.modca.AbstractPageObject;
-import org.apache.fop.afp.modca.ActiveEnvironmentGroup;
 import org.apache.fop.afp.modca.IncludeObject;
 import org.apache.fop.afp.modca.IncludedResourceObject;
-import org.apache.fop.afp.modca.ObjectContainer;
 import org.apache.fop.afp.modca.PageSegment;
 import org.apache.fop.afp.modca.Registry;
 import org.apache.fop.afp.modca.ResourceGroup;
 import org.apache.fop.afp.modca.ResourceObject;
-import org.apache.fop.afp.modca.triplets.EncodingTriplet;
-import org.apache.fop.afp.modca.triplets.FullyQualifiedNameTriplet;
 import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.afp.util.AFPResourceUtil;
 import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.FontType;
 import org.apache.fop.render.afp.AFPFontConfig;
 
@@ -83,6 +80,8 @@ public class AFPResourceManager {
     private AFPResourceLevelDefaults resourceLevelDefaults = new AFPResourceLevelDefaults();
 
     protected boolean includeCached = true;
+
+    private Map<AFPResourceInfo, AFPTrailerFont> trailerFonts = new HashMap<>();
 
     /**
      * Main constructor
@@ -125,6 +124,9 @@ public class AFPResourceManager {
      * @throws IOException thrown if an I/O exception of some sort has occurred.
      */
     public void writeToStream() throws IOException {
+        for (AFPTrailerFont font : trailerFonts.values()) {
+            font.build();
+        }
         streamer.close();
     }
 
@@ -348,11 +350,12 @@ public class AFPResourceManager {
             if (charSet.getResourceAccessor() != null) {
                 AFPResourceAccessor accessor = charSet.getResourceAccessor();
                 if (afpFont.getFontType() == FontType.TRUETYPE) {
-
+                    AFPFontConfig.AFPTrueTypeFont ttf = (AFPFontConfig.AFPTrueTypeFont) afpFont;
+                    CMapSegment[] cmap = ttf.hasPrivateUseSubstitutions() ? ttf.getCMap() : null;
                     createIncludedResource(afpFont.getFontName(),
-                            ((AFPFontConfig.AFPTrueTypeFont) afpFont).getUri(), accessor,
+                            ttf.getUri(), accessor,
                             ResourceObject.TYPE_OBJECT_CONTAINER, true,
-                            ((AFPFontConfig.AFPTrueTypeFont) afpFont).getTTC());
+                            ttf.getTTC(), cmap);
                 } else {
                     createIncludedResource(
                             charSet.getName(), accessor,
@@ -391,7 +394,7 @@ public class AFPResourceManager {
                     + " (" + e.getMessage() + ")");
         }
 
-        createIncludedResource(resourceName, uri, accessor, resourceObjectType, false, null);
+        createIncludedResource(resourceName, uri, accessor, resourceObjectType, false, null, null);
     }
 
     /**
@@ -403,7 +406,8 @@ public class AFPResourceManager {
      * @throws IOException if an I/O error occurs while loading the resource
      */
     public void createIncludedResource(String resourceName, URI uri, AFPResourceAccessor accessor,
-                                       byte resourceObjectType, boolean truetype, String ttc) throws IOException {
+                                       byte resourceObjectType, boolean truetype, String ttc,
+                                       CMapSegment[] cmap) throws IOException {
         AFPResourceLevel resourceLevel = new AFPResourceLevel(ResourceType.PRINT_FILE);
 
         AFPResourceInfo resourceInfo = new AFPResourceInfo();
@@ -420,29 +424,8 @@ public class AFPResourceManager {
             ResourceGroup resourceGroup = streamer.getResourceGroup(resourceLevel);
 
             if (truetype) {
-                ResourceObject res = factory.createResource();
-                res.setType(ResourceObject.TYPE_OBJECT_CONTAINER);
-
-                ActiveEnvironmentGroup.setupTruetypeMDR(res, false);
-
-                ObjectContainer oc = factory.createObjectContainer();
-                InputStream is = accessor.createInputStream(uri);
-
-                if (ttc != null) {
-                    oc.setData(extractTTC(ttc, is));
-                } else {
-                    oc.setData(IOUtils.toByteArray(is));
-                }
-
-                ActiveEnvironmentGroup.setupTruetypeMDR(oc, true);
-
-                res.addTriplet(new EncodingTriplet(1200));
-
-                res.setFullyQualifiedName(FullyQualifiedNameTriplet.TYPE_REPLACE_FIRST_GID_NAME,
-                        FullyQualifiedNameTriplet.FORMAT_CHARSTR, resourceName, true);
-
-                res.setDataObject(oc);
-                resourceGroup.addObject(res);
+                trailerFonts.put(resourceInfo,
+                        new AFPTrailerFont(accessor, uri, ttc, cmap, resourceName, resourceGroup, factory));
             } else {
                 ResourceObject resourceObject = factory.createResource(resourceName);
                 IncludedResourceObject resourceContent = new IncludedResourceObject(
@@ -457,26 +440,9 @@ public class AFPResourceManager {
 
             // record mapping of resource info to data object resource name
             addToCache(resourceInfo, newcachedObject);
-        } else {
-            //skip, already created
+        } else if (truetype) {
+            trailerFonts.get(resourceInfo).cmap = cmap;
         }
-    }
-
-    private byte[] extractTTC(String ttc, InputStream is) throws IOException {
-//        TrueTypeCollection trueTypeCollection = new TrueTypeCollection(is);
-//        for (TrueTypeFont ttf : trueTypeCollection.getFonts()) {
-//            String name = ttf.getNaming().getFontFamily();
-//            if (name.equals(ttc)) {
-//                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//                TTFSubsetter s = new TTFSubsetter(ttf, null);
-//                for (int i = 0; i < 256 * 256; i++) {
-//                    s.addCharCode(i);
-//                }
-//                s.writeToStream(bos);
-//                return bos.toByteArray();
-//            }
-//        }
-        throw new IOException(ttc + " not supported");
     }
 
     /**

@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -37,6 +39,10 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,10 +63,13 @@ import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopConfParser;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
+import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
+import org.apache.fop.complexscripts.fonts.ttx.TTXFile;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
+import org.apache.fop.fonts.LazyFont;
 import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.render.intermediate.IFException;
 
@@ -264,6 +273,48 @@ public class AFPTrueTypeTestCase {
         Assert.assertEquals(bis.readShort(), 5);
     }
 
+    @Test
+    public void testArabicComplexScriptToAFP() {
+        TTXFile ttx = TTXFile.getFromCache("test/resources/complexscripts/arab/ttx/arab-002.ttx");
+        final MyMultiByteFont multiByteFont = new MyMultiByteFont(null, EmbeddingMode.AUTO);
+        multiByteFont.setGSUB(ttx.getGSUB());
+        for (int cp = 0x20; cp <= 0x06FF; cp++) {
+            int gi = ttx.mapCharToGlyph(cp);
+            if (gi > 0) {
+                multiByteFont.callAddPrivateUseMapping(cp, gi);
+            }
+        }
+        multiByteFont.setWidthArray(ttx.getWidths());
+        LazyFont lazyFont = mock(LazyFont.class);
+        when(lazyFont.performsSubstitution()).thenReturn(multiByteFont.performsSubstitution());
+        when(lazyFont.performSubstitution(any(CharSequence.class), any(String.class), any(String.class),
+                any(List.class), anyBoolean())).thenAnswer(
+                new Answer<CharSequence>() {
+                    public CharSequence answer(InvocationOnMock inv) {
+                        Object[] a = inv.getArguments();
+                        return multiByteFont.performSubstitution((CharSequence) a[0], (String) a[1],
+                                (String) a[2], (List) a[3], (Boolean) a[4]);
+                    }
+                });
+        FopCharacterSet characterSet = new FopCharacterSet("", "UTF-16BE", "", multiByteFont, null, null);
+        AFPFontConfig.AFPTrueTypeFont afpFont = new AFPFontConfig.AFPTrueTypeFont("", true,
+                characterSet, null, null, null, false, lazyFont);
+        String arabic = "\u0645\u0643\u062A\u0628";
+        CharSequence shaped = afpFont.performSubstitution(arabic, "arab", "dflt", new ArrayList(), false);
+        Assert.assertTrue(multiByteFont.hasPrivateUseSubstitutions());
+        Assert.assertEquals("\uE000\uE001\uE002\uE003", shaped.toString());
+    }
+
+    static class MyMultiByteFont extends MultiByteFont {
+        MyMultiByteFont(InternalResourceResolver resourceResolver, EmbeddingMode embeddingMode) {
+            super(resourceResolver, embeddingMode);
+        }
+
+        void callAddPrivateUseMapping(int pu, int gi) {
+            addPrivateUseMapping(pu, gi);
+        }
+    }
+
     private String getAFP(String fo) throws Exception {
         ByteArrayOutputStream bos = getAFPBytes(fo);
         StringBuilder sb = new StringBuilder();
@@ -410,7 +461,7 @@ public class AFPTrueTypeTestCase {
             }
             font.setWidthArray(widths);
             f.addMetrics("any", new AFPFontConfig.AFPTrueTypeFont("", true,
-                    new FopCharacterSet("", "UTF-16BE", "", font, null, null), null, null, null, positionByChar));
+                    new FopCharacterSet("", "UTF-16BE", "", font, null, null), null, null, null, positionByChar, null));
             return f;
         }
     }

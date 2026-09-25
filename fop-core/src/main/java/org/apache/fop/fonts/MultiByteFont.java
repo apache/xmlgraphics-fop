@@ -303,6 +303,10 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         }
     }
 
+    public boolean hasPrivateUseSubstitutions() {
+        return numMapped > 0;
+    }
+
     /**
      * Returns the Unicode scalar value that corresponds to the glyph index. If more than
      * one correspondence exists, then the first one is returned (ordered by bfentries[]).

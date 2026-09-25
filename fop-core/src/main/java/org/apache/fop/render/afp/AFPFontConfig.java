@@ -42,9 +42,12 @@ import org.apache.fop.afp.util.AFPResourceAccessor;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.complexscripts.fonts.Substitutable;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.events.EventProducer;
+import org.apache.fop.fonts.CMapSegment;
+import org.apache.fop.fonts.CustomFont;
 import org.apache.fop.fonts.EmbedFontInfo;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.EncodingMode;
@@ -57,6 +60,7 @@ import org.apache.fop.fonts.FontType;
 import org.apache.fop.fonts.FontUris;
 import org.apache.fop.fonts.FontUtil;
 import org.apache.fop.fonts.LazyFont;
+import org.apache.fop.fonts.MultiByteFont;
 import org.apache.fop.fonts.Typeface;
 
 /**
@@ -388,12 +392,14 @@ public final class AFPFontConfig implements FontConfig {
                 FontUris fontUris = new FontUris(new URI(fontUri), null);
                 EmbedFontInfo embedFontInfo = new EmbedFontInfo(fontUris, false, true, null, subfont, EncodingMode.AUTO,
                         EmbeddingMode.FULL, false, false, true, false);
-                Typeface tf = new LazyFont(embedFontInfo, resourceResolver, false).getRealFont();
+                LazyFont lazyFont = new LazyFont(embedFontInfo, resourceResolver,
+                        userAgent.isComplexScriptFeaturesEnabled());
+                Typeface typeface = lazyFont.getRealFont();
                 AFPResourceAccessor accessor = getAccessor(resourceResolver);
                 CharacterSet characterSet = userAgent.getDoubleByteCharacterSetBuilder().build(characterset,
-                        super.codePage, super.encoding, tf, accessor, eventProducer);
+                        super.codePage, super.encoding, typeface, accessor, eventProducer);
                 OutlineFont font = new AFPTrueTypeFont(super.name, super.embeddable, characterSet,
-                            eventProducer, subfont, new URI(fontUri), positionByChar);
+                            eventProducer, subfont, new URI(fontUri), positionByChar, lazyFont);
                 return getFontInfo(font, this);
             } catch (URISyntaxException e) {
                 throw new IOException(e);
@@ -401,16 +407,18 @@ public final class AFPFontConfig implements FontConfig {
         }
     }
 
-    public static class AFPTrueTypeFont extends OutlineFont {
+    public static class AFPTrueTypeFont extends OutlineFont implements Substitutable {
         private String ttc;
         private URI uri;
         private boolean positionByChar;
+        private LazyFont lazyFont;
         public AFPTrueTypeFont(String name, boolean embeddable, CharacterSet charSet, AFPEventProducer eventProducer,
-                               String ttc, URI uri, boolean positionByChar) {
+                               String ttc, URI uri, boolean positionByChar, LazyFont lazyFont) {
             super(name, embeddable, charSet, eventProducer);
             this.ttc = ttc;
             this.uri = uri;
             this.positionByChar = positionByChar;
+            this.lazyFont = lazyFont;
         }
 
         public FontType getFontType() {
@@ -427,6 +435,29 @@ public final class AFPFontConfig implements FontConfig {
 
         public boolean isPositionByChar() {
             return positionByChar;
+        }
+
+        public CMapSegment[] getCMap() {
+            return ((CustomFont) lazyFont.getRealFont()).getCMap();
+        }
+
+        public boolean hasPrivateUseSubstitutions() {
+            Typeface realFont = lazyFont.getRealFont();
+            return realFont instanceof MultiByteFont && ((MultiByteFont) realFont).hasPrivateUseSubstitutions();
+        }
+
+        public boolean performsSubstitution() {
+            return lazyFont.performsSubstitution();
+        }
+
+        public CharSequence performSubstitution(CharSequence cs, String script, String language, List associations,
+                                                boolean retainControls) {
+            return lazyFont.performSubstitution(cs, script, language, associations, retainControls);
+        }
+
+        public CharSequence reorderCombiningMarks(CharSequence cs, int[][] gpa, String script, String language,
+                                                  List associations) {
+            return lazyFont.reorderCombiningMarks(cs, gpa, script, language, associations);
         }
     }
 
