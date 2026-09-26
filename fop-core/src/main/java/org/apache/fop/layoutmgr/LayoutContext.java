@@ -52,6 +52,23 @@ public final class LayoutContext {
 
     private static final int TREAT_AS_ARTIFACT = 0x20;
 
+    /**
+     * Flags related to "auto" table layout
+     */
+    private static final int IN_AUTO_LAYOUT_DETERMINATION_MODE = 0x40;
+
+    private static final int IS_CHILD_OF_AUTO_LAYOUT_ELEMENT = 0x80;
+
+    /**
+     * Flag related to "fox:disable-column-balancing"
+     */
+    private static final int DISABLE_COLUMN_BALANCING = 0x100;
+
+    private static final int PROPAGATED_FLAGS =
+            TREAT_AS_ARTIFACT
+                    | IN_AUTO_LAYOUT_DETERMINATION_MODE
+                    | IS_CHILD_OF_AUTO_LAYOUT_ELEMENT;
+
     private int flags; // Contains some set of flags defined above
 
     /**
@@ -141,7 +158,7 @@ public final class LayoutContext {
      */
     public static LayoutContext offspringOf(LayoutContext parent) {
         LayoutContext offspring = new LayoutContext(0);
-        offspring.setTreatAsArtifact(parent.treatAsArtifact());
+        offspring.propagateFlagsFrom(parent);
         return offspring;
     }
 
@@ -169,9 +186,9 @@ public final class LayoutContext {
     private LayoutContext(int flags) {
         this.flags = flags;
         this.refIPD = 0;
-        stackLimitBP = MinOptMax.ZERO;
-        leadingSpace = null;
-        trailingSpace = null;
+        this.stackLimitBP = MinOptMax.ZERO;
+        this.leadingSpace = null;
+        this.trailingSpace = null;
     }
 
     /** @param source from which pending marks are copied */
@@ -206,6 +223,15 @@ public final class LayoutContext {
         setFlags(flags, false);
     }
 
+    /**
+     * Propagate flags from the given parent context
+     *
+     * @param parentLC  the parent context
+     */
+    public void propagateFlagsFrom(LayoutContext parentLC) {
+        this.flags = (parentLC.flags & PROPAGATED_FLAGS);
+    }
+
     /** @return true if new area is set */
     public boolean isStart() {
         return ((this.flags & NEW_AREA) != 0);
@@ -229,6 +255,74 @@ public final class LayoutContext {
     /** @return true if suppress break before is set */
     public boolean suppressBreakBefore() {
         return ((this.flags & SUPPRESS_BREAK_BEFORE) != 0);
+    }
+
+    /** @return true if "treat as artifact" is set */
+    public boolean treatAsArtifact() {
+        return (flags & TREAT_AS_ARTIFACT) != 0;
+    }
+
+    /**
+     * Sets the "treat as artifact" flag
+     * @param treatAsArtifact   the flag boolean value
+     */
+    public void setTreatAsArtifact(boolean treatAsArtifact) {
+        setFlags(TREAT_AS_ARTIFACT, treatAsArtifact);
+    }
+
+
+    /** @return whether the column balancer should be disabled before a spanning block. */
+    public boolean isColumnBalancingDisabled() {
+        return (flags & DISABLE_COLUMN_BALANCING) != 0;
+    }
+
+    /**
+     * Disables column balancing before a spanning block
+     *
+     * @see #isColumnBalancingDisabled()
+     */
+    public void disableColumnBalancing() {
+        setFlags(DISABLE_COLUMN_BALANCING, true);
+    }
+
+    /**
+     * Enables column balancing before a spanning block
+     *
+     * @see #isColumnBalancingDisabled()
+     */
+    public void enableColumnBalancing() {
+        unsetFlags(DISABLE_COLUMN_BALANCING);
+    }
+
+    /**
+     * @param b
+     */
+    public void setChildOfAutoLayoutElement(boolean b) {
+        setFlags(IS_CHILD_OF_AUTO_LAYOUT_ELEMENT, b);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isChildOfAutoLayoutElement() {
+        return (flags & IS_CHILD_OF_AUTO_LAYOUT_ELEMENT) != 0;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isInAutoLayoutDeterminationMode() {
+        return (flags & IN_AUTO_LAYOUT_DETERMINATION_MODE) != 0;
+    }
+
+    /**
+     *
+     * @param b
+     */
+    public void setInAutoLayoutDeterminationMode(boolean b) {
+        setFlags(IN_AUTO_LAYOUT_DETERMINATION_MODE, b);
     }
 
     /**
@@ -686,12 +780,5 @@ public final class LayoutContext {
         this.disableColumnBalancing = disableColumnBalancing;
     }
 
-    public boolean treatAsArtifact() {
-        return (flags & TREAT_AS_ARTIFACT) != 0;
-    }
-
-    public void setTreatAsArtifact(boolean treatAsArtifact) {
-        setFlags(TREAT_AS_ARTIFACT, treatAsArtifact);
-    }
 }
 

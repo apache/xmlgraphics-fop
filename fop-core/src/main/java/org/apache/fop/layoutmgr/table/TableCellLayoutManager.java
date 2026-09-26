@@ -22,6 +22,7 @@ package org.apache.fop.layoutmgr.table;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.ListIterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -166,6 +167,36 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
         return startIndent + endIndent;
     }
 
+    /** {@inheritDoc}<br>Also adds any indents required by the tablecell */
+    public int getMinimumIPD() {
+        int minimumIPD = -1;
+        ListIterator iterLM = getChildLMs().listIterator();
+        while (iterLM.hasNext()) {
+            LayoutManager childLM = (LayoutManager)iterLM.next();
+            int curMinIPD = childLM.getMinimumIPD();
+            minimumIPD = Math.max(minimumIPD, curMinIPD);
+        }
+        minimumIPD += getIPIndents();
+        return minimumIPD;
+    }
+
+    final int getRefIPD() {
+        return this.referenceIPD;
+    }
+
+    /** {@inheritDoc} */
+    final boolean isAutoLayout() {
+        final Table table = getTable();
+
+        if (table.isAutoLayout()) {
+            final int index = this.primaryGridUnit.getColIndex();
+            final TableColumn column = table.getColumn(index);
+            return column.isAutoLayout();
+        }
+
+        return false;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -183,13 +214,22 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
         LayoutManager curLM; // currently active LM
         LayoutManager prevLM = null; // previously active LM
         while ((curLM = getChildLM()) != null) {
-            LayoutContext childLC = LayoutContext.newInstance();
+            LayoutContext childLC = LayoutContext.offspringOf(context);
             // curLM is a ?
             childLC.setStackLimitBP(context.getStackLimitBP().minus(stackLimit));
             childLC.setRefIPD(cellIPD);
 
             // get elements from curLM
             returnedList = curLM.getNextKnuthElements(childLC, alignment);
+
+            final int ipd = childLC.getRefIPD() + getIPIndents();
+
+            if (this.referenceIPD < ipd && (isAutoLayout() || context.isChildOfAutoLayoutElement())) {
+                this.referenceIPD = ipd;
+                this.cellIPD = getRefIPD() - getIPIndents();
+                context.setRefIPD(ipd);
+            }
+
             if (childLC.isKeepWithNextPending()) {
                 log.debug("child LM signals pending keep with next");
             }

@@ -275,4 +275,7 @@ public class TableColumn extends TableFObj {
         return isHeader;
     }
 
+    public final boolean isAutoLayout() {
+        return getColumnWidth() instanceof TableColLength;
+    }
 }
