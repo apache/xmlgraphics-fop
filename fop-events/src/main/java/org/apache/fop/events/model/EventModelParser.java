@@ -19,23 +19,20 @@
 
 package org.apache.fop.events.model;
 
+import java.io.IOException;
 import java.util.Stack;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.SAXSource;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.apache.fop.utils.DefaultErrorListener;
 
 /**
  * This is a parser for the event model XML.
@@ -45,27 +42,23 @@ public final class EventModelParser {
     private EventModelParser() {
     }
 
-    /** Logger instance */
-    private static final Log LOG = LogFactory.getLog(EventModelParser.class);
-
-    private static SAXTransformerFactory tFactory
-        = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
-
     /**
      * Parses an event model file into an EventModel instance.
      * @param src the Source instance pointing to the XML file
      * @return the created event model structure
      * @throws TransformerException if an error occurs while parsing the XML file
      */
-    public static EventModel parse(Source src)
-            throws TransformerException {
-        Transformer transformer = tFactory.newTransformer();
-        transformer.setErrorListener(new DefaultErrorListener(LOG));
-
+    public static EventModel parse(Source src) throws TransformerException {
         EventModel model = new EventModel();
-        SAXResult res = new SAXResult(getContentHandler(model));
-
-        transformer.transform(src, res);
+        try {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            XMLReader reader = factory.newSAXParser().getXMLReader();
+            reader.setContentHandler(getContentHandler(model));
+            reader.parse(SAXSource.sourceToInputSource(src));
+        } catch (ParserConfigurationException | IOException | SAXException e) {
+            throw new TransformerException(e);
+        }
         return model;
     }
 

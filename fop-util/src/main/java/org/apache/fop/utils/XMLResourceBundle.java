@@ -32,14 +32,13 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Stack;
 
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.xmlgraphics.util.QName;
@@ -66,9 +65,6 @@ public class XMLResourceBundle extends ResourceBundle {
 
     private Locale locale;
 
-    private static SAXTransformerFactory tFactory
-        = (SAXTransformerFactory)SAXTransformerFactory.newInstance();
-
     /**
      * Creates a resource bundle from an InputStream.
      * @param in the stream to read from
@@ -76,11 +72,12 @@ public class XMLResourceBundle extends ResourceBundle {
      */
     public XMLResourceBundle(InputStream in) throws IOException {
         try {
-            Transformer transformer = tFactory.newTransformer();
-            StreamSource src = new StreamSource(in);
-            SAXResult res = new SAXResult(new CatalogueHandler());
-            transformer.transform(src, res);
-        } catch (TransformerException e) {
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            XMLReader reader = factory.newSAXParser().getXMLReader();
+            reader.setContentHandler(new CatalogueHandler());
+            reader.parse(new InputSource(in));
+        } catch (ParserConfigurationException | SAXException e) {
             throw new IOException("Error while parsing XML resource bundle: " + e.getMessage());
         }
     }
