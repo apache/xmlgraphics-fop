@@ -91,6 +91,16 @@ public interface CIDSet {
     char[] getChars();
 
     /**
+     * Returns the text each character selector stands for, one string per selector in
+     * selector order, for the ToUnicode CMap. Usually the one code point {@link #getUnicode}
+     * gives; for a glyph that substitution produced from other characters, those characters,
+     * so a ligature glyph reads as its letters; empty where a neighbouring glyph carries the
+     * text.
+     * @return one string per character selector
+     */
+    String[] getUnicodeSequences();
+
+    /**
      * Returns the number of glyphs in the subset.
      * @return the number of glyphs in the subset
      */

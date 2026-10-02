@@ -67,7 +67,8 @@ public class MultiByteFontTestCase {
             new CMapSegment(0x65B9, 0x65B9, GI_FANG),
             new CMapSegment(0x724B, 0x724B, GI_JIAN),
             new CMapSegment(0x751F, 0x751F, GI_SHENG),
-            new CMapSegment(0x2000B, 0x2000B, GI_SUPPLEMENTARY)
+            new CMapSegment(0x2000B, 0x2000B, GI_SUPPLEMENTARY),
+            new CMapSegment(Typeface.NOT_FOUND, Typeface.NOT_FOUND, GI_NOT_FOUND)
         });
         return font;
     }
@@ -128,6 +129,132 @@ public class MultiByteFontTestCase {
             }
         }));
         assertEquals("牋", substitute(font, "生方").toString());
+    }
+
+    /** the glyph of Typeface.NOT_FOUND, '#', drawn for a character the font lacks */
+    private static final int GI_NOT_FOUND = 3;
+
+    /** a glyph no character maps to, as a ligature glyph usually is */
+    private static final int GI_LIGATURE = 50000;
+    /** a second such glyph */
+    private static final int GI_FORM = 50001;
+    /** a third, a mark glyph a decomposition splits off */
+    private static final int GI_MARK = 50002;
+
+    /** A substitution that maps the whole input to the given glyphs, with the given associations. */
+    private static Answer<GlyphSequence> substitutionTo(final int[] glyphs, final CharAssociation... associations) {
+        return new Answer<GlyphSequence>() {
+            public GlyphSequence answer(InvocationOnMock invocation) {
+                GlyphSequence gs = (GlyphSequence) invocation.getArguments()[0];
+                List list = new ArrayList();
+                for (CharAssociation a : associations) {
+                    list.add(a);
+                }
+                return new GlyphSequence(gs.getCharacters(), IntBuffer.wrap(glyphs), list);
+            }
+        };
+    }
+
+    /**
+     * A ligature glyph, produced from two characters and mapped by none, still comes back
+     * as one private-use character for layout, but records the two characters as what it stands
+     * for, which is what the ToUnicode CMap publishes.
+     */
+    @Test
+    public void testLigatureGlyphRecordsItsCharacters() {
+        MultiByteFont font = createFont();
+        font.setGSUB(mockGSUB(substitutionTo(new int[] {GI_LIGATURE}, new CharAssociation(0, 2))));
+        CharSequence out = substitute(font, "生方");
+        assertEquals(1, out.length());
+        assertEquals(0xE000, out.charAt(0));
+        assertEquals("生方", font.getGlyphMeaning(GI_LIGATURE));
+    }
+
+    /** A contextual form, one character to one unmapped glyph, records that character. */
+    @Test
+    public void testContextualFormRecordsItsCharacter() {
+        MultiByteFont font = createFont();
+        font.setGSUB(mockGSUB(substitutionTo(new int[] {GI_FORM}, new CharAssociation(0, 1))));
+        substitute(font, "生");
+        assertEquals("生", font.getGlyphMeaning(GI_FORM));
+    }
+
+    /** A glyph substitution left alone records nothing; its character map entry is its meaning. */
+    @Test
+    public void testUnsubstitutedGlyphRecordsNothing() {
+        MultiByteFont font = createFont();
+        font.setGSUB(mockGSUB(new IdentityAnswer()));
+        substitute(font, "人");
+        assertEquals(null, font.getGlyphMeaning(GI_REN));
+    }
+
+    /**
+     * A decomposition puts one character's association on each glyph it produces. The first
+     * glyph records the character; the second records nothing, since a ToUnicode entry cannot
+     * say that two glyphs share one character, and keeps its private-use code point.
+     */
+    @Test
+    public void testSecondGlyphOfOneCharacterRecordsNothing() {
+        MultiByteFont font = createFont();
+        font.setGSUB(mockGSUB(substitutionTo(new int[] {GI_FORM, GI_MARK},
+                new CharAssociation(0, 1), new CharAssociation(0, 1))));
+        substitute(font, "生");
+        assertEquals("生", font.getGlyphMeaning(GI_FORM));
+        assertEquals(null, font.getGlyphMeaning(GI_MARK));
+    }
+
+    /** A glyph seen standing for two different characters has no one meaning, and records none. */
+    @Test
+    public void testGlyphWithTwoMeaningsRecordsNone() {
+        MultiByteFont font = createFont();
+        font.setGSUB(mockGSUB(substitutionTo(new int[] {GI_FORM}, new CharAssociation(0, 1))));
+        substitute(font, "生");
+        assertEquals("生", font.getGlyphMeaning(GI_FORM));
+        substitute(font, "方");
+        assertEquals(null, font.getGlyphMeaning(GI_FORM));
+    }
+
+    /**
+     * A ligature whose components had an ignored glyph between them carries a disjoint
+     * association; it records its components only, the glyph between keeping its own.
+     */
+    @Test
+    public void testDisjointAssociationRecordsItsComponentsOnly() {
+        MultiByteFont font = createFont();
+        font.setGSUB(mockGSUB(substitutionTo(new int[] {GI_LIGATURE, GI_JIAN},
+                new CharAssociation(new int[] {0, 1, 2, 3}), new CharAssociation(1, 1))));
+        substitute(font, "生牋方");
+        assertEquals("生方", font.getGlyphMeaning(GI_LIGATURE));
+        assertEquals(null, font.getGlyphMeaning(GI_JIAN));
+    }
+
+    /**
+     * A character the font lacks is drawn with the stand-in glyph of Typeface.NOT_FOUND. That
+     * glyph must not record the missing character as its meaning: it is not that character,
+     * and a real '#' in the same document uses the same glyph.
+     */
+    @Test
+    public void testStandInForMissingCharacterRecordsNothing() {
+        MultiByteFont font = createFont();
+        font.setGSUB(mockGSUB(new IdentityAnswer()));
+        assertEquals("#", substitute(font, "\uF0A7").toString());
+        assertEquals(null, font.getGlyphMeaning(GI_NOT_FOUND));
+    }
+
+    /** The subset publishes the recorded characters for the glyph's selector, and the code point otherwise. */
+    @Test
+    public void testSubsetPublishesTheRecordedCharacters() {
+        MultiByteFont font = createFont();
+        font.setGSUB(mockGSUB(substitutionTo(new int[] {GI_LIGATURE}, new CharAssociation(0, 2))));
+        CharSequence out = substitute(font, "生方");
+        CIDSubset subset = new CIDSubset(font);
+        subset.mapCodePoint(GI_JIAN, 0x724B);
+        subset.mapCodePoint(GI_LIGATURE, out.charAt(0));
+        String[] sequences = subset.getUnicodeSequences();
+        assertEquals(3, sequences.length);
+        assertEquals("\uFFFF", sequences[0]);
+        assertEquals("牋", sequences[1]);
+        assertEquals("生方", sequences[2]);
     }
 
     /** A supplementary plane character still comes back as its surrogate pair. */

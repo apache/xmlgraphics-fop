@@ -108,6 +108,18 @@ public class CIDFull implements CIDSet {
     }
 
     /** {@inheritDoc} */
+    public String[] getUnicodeSequences() {
+        String[] sequences = org.apache.fop.pdf.PDFToUnicodeCMap.toDestinations(font.getChars());
+        for (int gi = 0; gi < sequences.length; gi++) {
+            String meaning = font.getGlyphMeaning(gi);
+            if (meaning != null) {
+                sequences[gi] = meaning;
+            }
+        }
+        return sequences;
+    }
+
+    /** {@inheritDoc} */
     public int getNumberOfGlyphs() {
         initGlyphIndices();
         // note: the real number of glyphs is given by the cardinality() method (not the length()) but since
