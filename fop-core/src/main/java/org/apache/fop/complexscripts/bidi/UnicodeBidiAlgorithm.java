@@ -75,7 +75,17 @@ public final class UnicodeBidiAlgorithm implements BidiConstants {
      * @param levels array to receive levels, one for each character in chars array
      */
     public static int[] resolveLevels(int[] chars, int defaultLevel, int[] levels) {
-        return resolveLevels(chars, getClasses(chars), defaultLevel, levels, false);
+        resolveLevels(chars, getClasses(chars), defaultLevel, levels, false);
+        // The placeholder that stands for the low surrogate of a pair takes the level of the
+        // character it belongs to, as resolveLevels(CharSequence, Direction) documents. No rule
+        // resolves the placeholder's class, so it was left at the embedding level, and a
+        // supplementary-plane character of a right-to-left script came out with two levels.
+        for (int i = 1, n = chars.length; i < n; i++) {
+            if (chars [ i ] < 0) {
+                levels [ i ] = levels [ i - 1 ];
+            }
+        }
+        return levels;
     }
 
     /**
