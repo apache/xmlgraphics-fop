@@ -197,10 +197,12 @@ public final class OTFAdvancedTypographicTableReader {
                 }
                 lta[i] = lt;
                 loa[i] = lo;
-                if (dl == lo) {
-                    dl = 0;
-                    dt = lt;
-                }
+                // The default language system is read under "dflt" even when its table is the one a
+                // named language system record points at. A font builder shares the table whenever a
+                // language's features equal the default's (FontForge does, for DejaVu and others), and
+                // aliasing the default to that language left the script with no default language
+                // system at all, so a caller asking for (script, dflt) fell through to DFLT and lost
+                // the script's features.
                 ll.add(lt);
             }
             // read non-default language system tables
