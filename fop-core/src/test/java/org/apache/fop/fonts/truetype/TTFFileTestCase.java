@@ -19,6 +19,7 @@
 
 package org.apache.fop.fonts.truetype;
 
+import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -575,6 +576,24 @@ public class TTFFileTestCase {
     public void testBBox() {
         assertEquals(dejavuTTFFile.getBBox(1)[0], 49);
         assertEquals(dejavuTTFFile.getBBox(2330).length, 4);
+    }
+
+    /**
+     * Test getBoundingBoxesPacked() - it must carry the same values as
+     * getBoundingBoxes(), which it exists to avoid allocating.
+     */
+    @Test
+    public void testGetBoundingBoxesPacked() {
+        Rectangle[] boundingBoxes = dejavuTTFFile.getBoundingBoxes();
+        int[] packed = dejavuTTFFile.getBoundingBoxesPacked();
+        assertEquals(boundingBoxes.length * 4, packed.length);
+        for (int i = 0; i < boundingBoxes.length; i++) {
+            Rectangle boundingBox = boundingBoxes[i];
+            assertEquals(boundingBox.x, packed[i * 4]);
+            assertEquals(boundingBox.y, packed[i * 4 + 1]);
+            assertEquals(boundingBox.width, packed[i * 4 + 2]);
+            assertEquals(boundingBox.height, packed[i * 4 + 3]);
+        }
     }
 
     @Test
