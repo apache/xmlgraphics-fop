@@ -33,6 +33,13 @@ public class SurrogatePairLevelsTestCase {
 
     private static final String CYPRIOT = "𐠦";
 
+    /** U+1F300 CYCLONE, a neutral (ON) outside the BMP that FOP's bidi class table knows as one. */
+    private static final String CYCLONE = "\uD83C\uDF00";
+
+    private static final String SHALOM = "\u05E9\u05DC\u05D5\u05DD";
+
+    private static final String OLAM = "\u05E2\u05D5\u05DC\u05DD";
+
     @Test
     public void testPairAlone() {
         assertArrayEquals(new int[] {1, 1}, UnicodeBidiAlgorithm.resolveLevels(CYPRIOT, Direction.LR));
@@ -48,5 +55,30 @@ public class SurrogatePairLevelsTestCase {
     public void testTwoPairs() {
         assertArrayEquals(new int[] {1, 1, 1, 1},
                 UnicodeBidiAlgorithm.resolveLevels(CYPRIOT + CYPRIOT, Direction.LR));
+    }
+
+    /**
+     * A neutral outside the BMP inside right-to-left text resolves as a neutral in the BMP does
+     * (U+263A here): it takes the text's direction by rule N1, so the run is not cut in two. The
+     * placeholder for the low surrogate, as a class of its own, ended the run of neutrals, and the
+     * pair fell to the embedding direction; copying the level after resolution cannot mend that.
+     */
+    @Test
+    public void testNeutralPairInsideRightToLeftText() {
+        assertArrayEquals(new int[] {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                UnicodeBidiAlgorithm.resolveLevels(SHALOM + "\u263A " + OLAM, Direction.LR));
+        assertArrayEquals(new int[] {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                UnicodeBidiAlgorithm.resolveLevels(SHALOM + CYCLONE + " " + OLAM, Direction.LR));
+        assertArrayEquals(new int[] {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                UnicodeBidiAlgorithm.resolveLevels(SHALOM + " " + CYCLONE + " " + OLAM, Direction.LR));
+    }
+
+    /** Between left-to-right and right-to-left text the same neutral takes the embedding direction (N2). */
+    @Test
+    public void testNeutralPairBetweenDirections() {
+        assertArrayEquals(new int[] {0, 0, 0, 0, 0, 1, 1, 1, 1},
+                UnicodeBidiAlgorithm.resolveLevels("ab" + CYCLONE + " " + OLAM, Direction.LR));
+        assertArrayEquals(new int[] {2, 2, 1, 1, 1, 1, 1, 1, 1},
+                UnicodeBidiAlgorithm.resolveLevels("ab" + CYCLONE + " " + OLAM, Direction.RL));
     }
 }
