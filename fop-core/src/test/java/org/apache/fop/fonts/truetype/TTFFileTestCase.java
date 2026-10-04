@@ -25,6 +25,8 @@ import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -408,11 +410,12 @@ public class TTFFileTestCase {
         // Curiously the same value
         assertEquals(droidmonoTTFFile.convertTTFUnit2PDFUnit(1556),
                 droidmonoTTFFile.getLowerCaseAscent());
-        //TODO:  Nedd to be fixed?
-        // 0 because the font miss letter glyph that are used in this method to guess the ascender:
-        // OpenFont.guessVerticalMetricsFromGlyphBBox
-        assertEquals(androidEmojiTTFFile.convertTTFUnit2PDFUnit(0),
+        // The hhea and OS/2 values: the font has no 'd' and 'p' glyphs from which to guess others
+        // (FOP-1896; this was 0)
+        assertEquals(androidEmojiTTFFile.convertTTFUnit2PDFUnit(2200),
                 androidEmojiTTFFile.getLowerCaseAscent());
+        assertEquals(androidEmojiTTFFile.convertTTFUnit2PDFUnit(-650),
+                androidEmojiTTFFile.getLowerCaseDescent());
     }
 
     /**
@@ -652,5 +655,50 @@ public class TTFFileTestCase {
         Assert.assertEquals(symbolTTFFile.unicodeMappings.get(1).getUnicodeIndex(), 32);
         Assert.assertEquals(symbolTTFFile.unicodeMappings.get(1).getGlyphIndex(), 0xF020);
         Assert.assertEquals(symbolTTFFile.unicodeMappings.size(), 2);
+    }
+
+    /**
+     * A positive OS/2 sTypoDescender is a sign error in the font (Wingdings has +420 where its hhea
+     * descender is -432) and is not taken as the descender (FOP-1896). AndroidEmoji, with its
+     * sTypoDescender made +650, is Wingdings' case: its hhea box is larger than the em and it has no
+     * 'd' or 'p' glyph, so the hhea values stand. FOP took the OS/2 values, with the descender above
+     * the baseline; rejecting them alone gave an ascender and descender of 0.
+     */
+    @Test
+    public void testPositiveTypoDescenderNotTakenWithoutGlyphsToGuessFrom() throws IOException {
+        TTFFile ttfFile = readWithTypoDescender("test/resources/fonts/ttf/AndroidEmoji.ttf", 650);
+        assertEquals(ttfFile.convertTTFUnit2PDFUnit(2200), ttfFile.getLowerCaseAscent());
+        assertEquals(ttfFile.convertTTFUnit2PDFUnit(-650), ttfFile.getLowerCaseDescent());
+    }
+
+    /**
+     * The Lucida faces' case: DejaVuLGCSerif with its sTypoDescender made +492. Its hhea box is larger
+     * than the em, so the values come from the 'd' and 'p' glyphs, as they do for any such font.
+     */
+    @Test
+    public void testPositiveTypoDescenderNotTakenWithGlyphsToGuessFrom() throws IOException {
+        TTFFile ttfFile = readWithTypoDescender("test/resources/fonts/ttf/DejaVuLGCSerif.ttf", 492);
+        assertEquals(ttfFile.convertTTFUnit2PDFUnit(1556), ttfFile.getLowerCaseAscent());
+        assertEquals(ttfFile.convertTTFUnit2PDFUnit(-426), ttfFile.getLowerCaseDescent());
+    }
+
+    private static TTFFile readWithTypoDescender(String path, int typoDescender) throws IOException {
+        byte[] font = Files.readAllBytes(Paths.get(path));
+        int numTables = ((font[4] & 0xff) << 8) | (font[5] & 0xff);
+        int os2 = -1;
+        for (int i = 0; i < numTables; i++) {
+            int entry = 12 + 16 * i;
+            if (new String(font, entry, 4, "US-ASCII").equals("OS/2")) {
+                os2 = ((font[entry + 8] & 0xff) << 24) | ((font[entry + 9] & 0xff) << 16)
+                        | ((font[entry + 10] & 0xff) << 8) | (font[entry + 11] & 0xff);
+            }
+        }
+        assertTrue(os2 > 0);
+        font[os2 + 70] = (byte) (typoDescender >> 8); // sTypoDescender
+        font[os2 + 71] = (byte) typoDescender;
+        FontFileReader reader = new FontFileReader(new ByteArrayInputStream(font));
+        TTFFile ttfFile = new TTFFile();
+        ttfFile.readFont(reader, OFFontLoader.readHeader(reader));
+        return ttfFile;
     }
 }
