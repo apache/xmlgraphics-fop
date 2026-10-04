@@ -89,4 +89,20 @@ public class PDFPageLabelsTestCase {
         baos.close();
     }
 
+    /**
+     * A page labelled "0" is labelled as a prefix, since /St must be at least 1; counting the leading
+     * zeros of "0" ran past its end.
+     */
+    @Test
+    public void testPageNumberedZero() throws IOException {
+        PDFDocument pdfDoc = mock(PDFDocument.class);
+        PDFPageLabels pageLabels = new PDFPageLabels();
+        pageLabels.setDocument(pdfDoc);
+        pageLabels.addPageLabel(0, "0");
+        pageLabels.addPageLabel(1, "1");
+        pageLabels.addPageLabel(2, "2");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        pageLabels.getNums().output(baos);
+        assertEquals("[0 << /P (0) >> 1 << /S /D >>]", baos.toString());
+    }
 }
