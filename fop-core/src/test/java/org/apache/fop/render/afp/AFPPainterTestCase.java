@@ -418,6 +418,72 @@ public class AFPPainterTestCase {
     }
 
     @Test
+    public void testPageGroup2() throws IFException, IOException {
+        FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
+        AFPDocumentHandler documentHandler = new AFPDocumentHandler(new IFContext(ua));
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        documentHandler.setResult(new StreamResult(os));
+        documentHandler.startDocument();
+        drawPageSequence(documentHandler, false);
+        drawPageSequence(documentHandler, true);
+        drawPageSequence(documentHandler, false);
+        documentHandler.endDocument();
+        InputStream bis = new ByteArrayInputStream(os.toByteArray());
+        StringBuilder sb = new StringBuilder();
+        new AFPParser(false).read(bis, sb);
+        Assert.assertEquals("BEGIN DOCUMENT DOC00001 Triplets: 0x01,\n"
+                + "BEGIN PAGE PGN00001\n"
+                + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "MAP CODED_FONT Triplets: "
+                + "FULLY_QUALIFIED_NAME,FULLY_QUALIFIED_NAME,CHARACTER_ROTATION,RESOURCE_LOCAL_IDENTIFIER,\n"
+                + "DESCRIPTOR PAGE\n"
+                + "MIGRATION PRESENTATION_TEXT\n"
+                + "END ACTIVE_ENVIRONMENT_GROUP AEG00001\n"
+                + "BEGIN PRESENTATION_TEXT PT000001\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000001\n"
+                + "END PAGE PGN00001\n"
+                + "BEGIN PAGE_GROUP PGP00001\n"
+                + "BEGIN PAGE PGN00002\n"
+                + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00002\n"
+                + "MAP CODED_FONT Triplets: "
+                + "FULLY_QUALIFIED_NAME,FULLY_QUALIFIED_NAME,CHARACTER_ROTATION,RESOURCE_LOCAL_IDENTIFIER,\n"
+                + "DESCRIPTOR PAGE\n"
+                + "MIGRATION PRESENTATION_TEXT\n"
+                + "END ACTIVE_ENVIRONMENT_GROUP AEG00002\n"
+                + "BEGIN PRESENTATION_TEXT PT000002\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000002\n"
+                + "END PAGE PGN00002\n"
+                + "END PAGE_GROUP PGP00001\n"
+                + "BEGIN PAGE PGN00003\n"
+                + "BEGIN ACTIVE_ENVIRONMENT_GROUP AEG00003\n"
+                + "MAP CODED_FONT Triplets: "
+                + "FULLY_QUALIFIED_NAME,FULLY_QUALIFIED_NAME,CHARACTER_ROTATION,RESOURCE_LOCAL_IDENTIFIER,\n"
+                + "DESCRIPTOR PAGE\n"
+                + "MIGRATION PRESENTATION_TEXT\n"
+                + "END ACTIVE_ENVIRONMENT_GROUP AEG00003\n"
+                + "BEGIN PRESENTATION_TEXT PT000003\n"
+                + "DATA PRESENTATION_TEXT\n"
+                + "END PRESENTATION_TEXT PT000003\n"
+                + "END PAGE PGN00003\n"
+                + "END DOCUMENT DOC00001\n", sb.toString());
+    }
+
+    private void drawPageSequence(AFPDocumentHandler documentHandler, boolean pageGroup) throws IFException {
+        Map<QName, String> attributes = new HashMap<>();
+        attributes.put(AFPElementMapping.PAGE_GROUP, String.valueOf(pageGroup));
+        documentHandler.getContext().setForeignAttributes(attributes);
+        documentHandler.startPageSequence(null);
+        documentHandler.startPage(0, "", "", new Dimension());
+        AFPPainter afpPainter = new AFPPainter(documentHandler);
+        setFont(documentHandler, afpPainter);
+        afpPainter.drawText(0, 0, 0, 0, null, "a");
+        documentHandler.endPage();
+        documentHandler.endPageSequence();
+    }
+
+    @Test
     public void testEventOnImageParseException() throws Exception {
         FOUserAgent ua = FopFactory.newInstance(new File(".").toURI()).newFOUserAgent();
         AFPDocumentHandler dh = new AFPDocumentHandler(new IFContext(ua));

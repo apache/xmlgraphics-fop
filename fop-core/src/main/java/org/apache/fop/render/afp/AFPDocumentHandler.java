@@ -219,6 +219,8 @@ public class AFPDocumentHandler extends AbstractBinaryWritingIFDocumentHandler
                 boolean addToPreviousPageGroup =
                         "true".equals(getContext().getForeignAttribute(AFPElementMapping.ADD_TO_PREVIOUS_PAGE_GROUP));
                 dataStream.startPageGroup(!addToPreviousPageGroup);
+            } else {
+                dataStream.endPageGroup(true);
             }
         } catch (IOException ioe) {
             throw new IFException("I/O error in startPageSequence()", ioe);
