@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+    <info>
+        <p>
+            This test checks a block nested in an inline, in a paragraph that breaks onto a page with a
+            different IPD. Line breaking runs a second time over the paragraph's stored sequences, and
+            the nested block's positions were wrapped again; adding its areas re-entered the
+            paragraph's block and FOP threw a NullPointerException (see also FOP-1912).
+        </p>
+    </info>
+    <fo>
+        <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+            <fo:layout-master-set>
+                <fo:simple-page-master master-name="first" page-width="595pt" page-height="842pt" margin="72pt">
+                    <fo:region-body/>
+                </fo:simple-page-master>
+                <fo:simple-page-master master-name="rest" page-width="595pt" page-height="842pt" margin="72pt" margin-left="172pt">
+                    <fo:region-body/>
+                </fo:simple-page-master>
+                <fo:page-sequence-master master-name="pages">
+                    <fo:single-page-master-reference master-reference="first"/>
+                    <fo:repeatable-page-master-reference master-reference="rest"/>
+                </fo:page-sequence-master>
+            </fo:layout-master-set>
+            <fo:page-sequence master-reference="pages">
+                <fo:flow flow-name="xsl-region-body">
+                    <fo:block>0. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>1. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>2. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>3. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>4. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>5. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>6. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>7. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>8. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>9. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>10. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>11. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>12. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>13. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>14. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>15. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>16. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>17. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>18. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>19. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>20. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>21. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>22. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>23. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>24. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>25. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>26. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>27. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>28. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>29. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>30. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>31. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>32. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>33. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>34. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>35. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>36. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>37. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>38. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>39. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>40. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>41. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>42. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>43. The quick brown fox jumps over the lazy dog, and then it runs back across the field again before the evening comes.</fo:block>
+                    <fo:block>Before <fo:inline>the run<fo:block linefeed-treatment="preserve">&#x2028;</fo:block>after the break and on, and on, and on to the end of the paragraph.</fo:inline> Closing words.</fo:block>
+                    <fo:block>Last block.</fo:block>
+                </fo:flow>
+            </fo:page-sequence>
+        </fo:root>
+    </fo>
+    <checks>
+        <eval expected="2" xpath="count(//pageViewport)"/>
+        <eval expected="Last block." xpath="//pageViewport[2]//flow/block[last()]/lineArea[1]"/>
+        <true xpath="boolean(//pageViewport[2]//flow/block[last()-1]/lineArea[starts-with(normalize-space(.), 'after the break')])"/>
+    </checks>
+</testcase>
