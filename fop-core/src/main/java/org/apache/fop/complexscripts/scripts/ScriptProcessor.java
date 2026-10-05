@@ -169,7 +169,43 @@ public abstract class ScriptProcessor {
      */
     public final boolean position(GlyphPositioningTable gpos, GlyphSequence gs, String script, String language, int fontSize,
                                   Map<GlyphTable.LookupSpec, List<GlyphTable.LookupTable>> lookups, int[] widths, int[][] adjustments) {
-        return position(gs, script, language, fontSize, assembleLookups(gpos, getPositioningFeatures(), lookups), widths, adjustments, getPositioningContextTester());
+        return position(gpos, gs, script, language, fontSize, lookups, widths, adjustments, true);
+    }
+
+    /**
+     * Perform positioning processing using a specific set of lookup tables, with or without kerning.
+     * @param gpos the glyph positioning table that applies
+     * @param gs an input glyph sequence
+     * @param script a script identifier
+     * @param language a language identifier
+     * @param fontSize size in device units
+     * @param lookups a mapping from lookup specifications to glyph subtables to use for positioning processing
+     * @param widths array of default advancements for each glyph
+     * @param adjustments accumulated adjustments array (sequence) of 4-tuples of placement [PX,PY] and advance [AX,AY] adjustments, in that order,
+     * with one 4-tuple for each element of glyph sequence
+     * @param kerning false to leave the kern feature out, for a font configured with kerning disabled; marks are still positioned
+     * @return true if some adjustment is not zero; otherwise, false
+     */
+    public final boolean position(GlyphPositioningTable gpos, GlyphSequence gs, String script, String language, int fontSize,
+                                  Map<GlyphTable.LookupSpec, List<GlyphTable.LookupTable>> lookups, int[] widths, int[][] adjustments,
+                                  boolean kerning) {
+        String[] features = kerning ? getPositioningFeatures() : withoutKerning(getPositioningFeatures());
+        return position(gs, script, language, fontSize, assembleLookups(gpos, features, lookups), widths, adjustments, getPositioningContextTester());
+    }
+
+    /**
+     * A positioning feature list with the kern feature removed.
+     * @param features the features a processor would apply
+     * @return the same features in the same order, less kern; the argument itself when it has none
+     */
+    static String[] withoutKerning(String[] features) {
+        List<String> kept = new java.util.ArrayList<String>(features.length);
+        for (String feature : features) {
+            if (!"kern".equals(feature)) {
+                kept.add(feature);
+            }
+        }
+        return (kept.size() == features.length) ? features : kept.toArray(new String[0]);
     }
 
     /**
