@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.nio.Buffer;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -73,9 +74,11 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     /**
      * The text a substituted glyph stands for, by glyph index, recorded by mapGlyphsToChars for
      * the ToUnicode CMap: the characters of the glyph's association, so a ligature reads as its
-     * letters and an Arabic contextual form as its letter. A null value means the glyph has no
-     * one meaning, because it was seen with different associations or as the second or later
-     * glyph of one character, and publishes its identity code point as before.
+     * letters and an Arabic contextual form as its letter. Where one character is split into as
+     * many glyphs as its canonical decomposition has characters, each glyph records its own piece
+     * of the decomposition. A null value means the glyph has no one meaning, because it was seen
+     * with different associations or as the second or later glyph of one character, and publishes
+     * its identity code point as before.
      */
     private Map<Integer, String> glyphMeanings = new HashMap<Integer, String>();
 
@@ -755,10 +758,15 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
 
     /**
      * Record what a substituted glyph stands for, from the association substitution left on
-     * it. A glyph that is the second or later output of one character (a multiple substitution
-     * replicates the association onto each output) gets no meaning, since a ToUnicode entry
-     * cannot say that several glyphs share one character; a glyph seen with two different
-     * meanings gets none, since one entry cannot carry both. Either is final for the glyph.
+     * it. Where a multiple substitution splits one character into as many glyphs as the
+     * character's canonical decomposition has characters (a font's ccmp decomposing a precomposed
+     * letter into its base and a combining mark), each glyph records its own piece: the base its
+     * letter and the mark its combining character, so the base glyph, which plain letters use too,
+     * is not published as the precomposed letter. Otherwise a glyph that is the second or later
+     * output of one character (a multiple substitution replicates the association onto each
+     * output) gets no meaning, since a ToUnicode entry cannot say that several glyphs share one
+     * character; a glyph seen with two different meanings gets none, since one entry cannot carry
+     * both. Either is final for the glyph.
      * The stand-in glyph drawn for a character the font lacks (Typeface.NOT_FOUND) never
      * gets one: it is not the character, and the text layer must go on saying so.
      * @param gs a GlyphSequence containing glyph indices
@@ -776,19 +784,59 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         if ((a == null) || (a.getCount() <= 0)) {
             return;
         }
-        if ((i > 0) && sameAssociation(a, gs.getAssociation(i - 1))) {
-            glyphMeanings.put(gi, null);
-            return;
-        }
-        String meaning = associationText(a, ca, nc);
+        String meaning = decompositionPiece(gs, i, a, ca, nc);
         if (meaning == null) {
-            return;
+            if ((i > 0) && sameAssociation(a, gs.getAssociation(i - 1))) {
+                glyphMeanings.put(gi, null);
+                return;
+            }
+            meaning = associationText(a, ca, nc);
+            if (meaning == null) {
+                return;
+            }
         }
         if (!glyphMeanings.containsKey(gi)) {
             glyphMeanings.put(gi, meaning);
         } else if (!meaning.equals(glyphMeanings.get(gi))) {
             glyphMeanings.put(gi, null);
         }
+    }
+
+    /**
+     * The piece of one character's canonical decomposition that the glyph at index I stands for,
+     * where substitution split that character into exactly as many glyphs as the decomposition has
+     * characters, in order: Cambria's ccmp gives U+00E0 as a and U+0300, U+03AC as alpha and a tonos
+     * mark. The glyphs carry one association between them, which is how a multiple substitution
+     * leaves them.
+     * @return the decomposition's character for this glyph, or null where the glyphs are not such a
+     * split (a ligature, a single substitution, or a decomposition the font draws in more or fewer
+     * glyphs than Unicode's, such as an Arabic letter drawn as a dotless base and its dots)
+     */
+    private static String decompositionPiece(GlyphSequence gs, int i, CharAssociation a, int[] ca, int nc) {
+        if (a.getCount() != 1 || a.isDisjoint()) {
+            return null;
+        }
+        int first = i;
+        while ((first > 0) && sameAssociation(a, gs.getAssociation(first - 1))) {
+            first--;
+        }
+        int end = i + 1;
+        while ((end < gs.getGlyphCount()) && sameAssociation(a, gs.getAssociation(end))) {
+            end++;
+        }
+        if (end - first < 2) {
+            return null;
+        }
+        int s = a.getStart();
+        if ((s < 0) || (s >= nc) || (s >= ca.length) || (ca[s] <= 0) || (ca[s] > 0x10FFFF)) {
+            return null;
+        }
+        String nfd = Normalizer.normalize(new String(Character.toChars(ca[s])), Normalizer.Form.NFD);
+        if (nfd.codePointCount(0, nfd.length()) != end - first) {
+            return null;
+        }
+        int at = nfd.offsetByCodePoints(0, i - first);
+        return new String(Character.toChars(nfd.codePointAt(at)));
     }
 
     private static boolean sameAssociation(CharAssociation a, CharAssociation b) {

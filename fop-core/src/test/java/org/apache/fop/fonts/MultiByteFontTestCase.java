@@ -264,4 +264,78 @@ public class MultiByteFontTestCase {
         font.setGSUB(mockGSUB(new IdentityAnswer()));
         assertEquals("𠀋", substitute(font, "𠀋").toString());
     }
+
+    /** glyphs of a font whose ccmp decomposes precomposed letters, as Cambria Regular's does */
+    private static final int GI_BASE_A = 60;
+    /** U+0300, a combining grave accent */
+    private static final int GI_GRAVE = 61;
+    /** U+03B1, Greek small alpha */
+    private static final int GI_ALPHA = 62;
+    /** a tonos mark no character maps to, as Cambria's glyph00646 */
+    private static final int GI_TONOS = 63;
+
+    private MultiByteFont createDecomposingFont() {
+        MultiByteFont font = new MultiByteFont(null, null);
+        font.setCMap(new CMapSegment[] {
+            new CMapSegment('a', 'a', GI_BASE_A),
+            new CMapSegment(0x0300, 0x0300, GI_GRAVE),
+            new CMapSegment(0x03B1, 0x03B1, GI_ALPHA),
+            new CMapSegment(Typeface.NOT_FOUND, Typeface.NOT_FOUND, GI_NOT_FOUND)
+        });
+        return font;
+    }
+
+    /**
+     * A precomposed letter split into a base and a mark, as many glyphs as its canonical
+     * decomposition has characters, gives each glyph its piece. The base glyph, which a plain
+     * letter uses too, records the plain letter, not the precomposed one, and the mark its
+     * combining character.
+     */
+    @Test
+    public void testDecompositionGivesEachGlyphItsPiece() {
+        MultiByteFont font = createDecomposingFont();
+        font.setGSUB(mockGSUB(substitutionTo(new int[] {GI_BASE_A, GI_GRAVE},
+                new CharAssociation(0, 1), new CharAssociation(0, 1))));
+        substitute(font, "\u00E0");
+        assertEquals("a", font.getGlyphMeaning(GI_BASE_A));
+        assertEquals("\u0300", font.getGlyphMeaning(GI_GRAVE));
+    }
+
+    /**
+     * A mark glyph no character maps to takes its combining character from the
+     * decomposition, and the subset publishes the base glyph as the plain letter, so a plain alpha
+     * elsewhere in the document reads as alpha, not as the alpha with tonos the font split.
+     */
+    @Test
+    public void testDecomposedBaseIsPublishedAsThePlainLetter() {
+        MultiByteFont font = createDecomposingFont();
+        font.setGSUB(mockGSUB(substitutionTo(new int[] {GI_ALPHA, GI_TONOS},
+                new CharAssociation(0, 1), new CharAssociation(0, 1))));
+        CharSequence out = substitute(font, "\u03AC");
+        assertEquals("\u03B1", font.getGlyphMeaning(GI_ALPHA));
+        assertEquals("\u0301", font.getGlyphMeaning(GI_TONOS));
+        CIDSubset subset = new CIDSubset(font);
+        subset.mapCodePoint(GI_ALPHA, out.charAt(0));
+        subset.mapCodePoint(GI_TONOS, out.charAt(1));
+        String[] sequences = subset.getUnicodeSequences();
+        assertEquals(3, sequences.length);
+        assertEquals("\u03B1", sequences[1]);
+        assertEquals("\u0301", sequences[2]);
+    }
+
+    /**
+     * A split into more glyphs than the canonical decomposition has characters is not taken as
+     * the decomposition: the first recording the character and the
+     * others nothing.
+     */
+    @Test
+    public void testSplitUnlikeTheDecompositionKeepsTheFirstGlyphRule() {
+        MultiByteFont font = createDecomposingFont();
+        font.setGSUB(mockGSUB(substitutionTo(new int[] {GI_BASE_A, GI_GRAVE, GI_MARK},
+                new CharAssociation(0, 1), new CharAssociation(0, 1), new CharAssociation(0, 1))));
+        substitute(font, "\u00E0");
+        assertEquals("\u00E0", font.getGlyphMeaning(GI_BASE_A));
+        assertEquals(null, font.getGlyphMeaning(GI_GRAVE));
+        assertEquals(null, font.getGlyphMeaning(GI_MARK));
+    }
 }
