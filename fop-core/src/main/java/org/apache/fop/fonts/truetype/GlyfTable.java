@@ -35,6 +35,8 @@ public class GlyfTable {
 
     private final long tableOffset;
 
+    private final long tableLength;
+
     private final Set<Long> remappedComposites;
 
     protected final Map<Integer, Integer> subset;
@@ -51,6 +53,7 @@ public class GlyfTable {
                         Map<Integer, Integer> glyphs) throws IOException {
         mtxTab = metrics;
         tableOffset = dirTableEntry.getOffset();
+        tableLength = dirTableEntry.getLength();
         remappedComposites = new HashSet<Long>();
         this.subset = glyphs;
         this.in = in;
@@ -203,8 +206,20 @@ public class GlyfTable {
     }
 
     public boolean isComposite(int indexInOriginal) throws IOException {
+        if (isLastGlyphEmpty(indexInOriginal)) {
+            return false;
+        }
+
         int numberOfContours = in.readTTFShort(tableOffset + mtxTab[indexInOriginal].getOffset());
         return numberOfContours < 0;
+    }
+
+    private boolean isLastGlyphEmpty(int indexInOriginal) {
+        if (indexInOriginal != mtxTab.length - 1) {
+            return false;
+        }
+
+        return tableLength == mtxTab[indexInOriginal].getOffset();
     }
 
     /**
