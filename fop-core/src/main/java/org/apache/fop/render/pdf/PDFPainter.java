@@ -672,7 +672,14 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
                 double  yd              = (yo - yoLast) / 1000f;
                 tu.writeTd(xd, yd);
                 tu.writeTj(mp, tf.isMultiByte(), true);
-                xc += xa + pa[2];
+                // Each glyph is placed by its own Td, so the Tc character spacing set above never
+                // reaches the next glyph as it does inside the TJ array of drawTextWithDX. The
+                // letter spacing is added to the advance here, for every glyph including spaces and
+                // the last one, which is what Tc does on the other path and what the layout's word
+                // space adjustment assumes (TextLayoutManager.addMappingAreas). Without it a
+                // letter-spaced word in a font that positions (GPOS kerning) was painted at its
+                // bare advances while its area kept the letter spaces.
+                xc += xa + pa[2] + letterSpacing;
                 yc += ya + pa[3];
                 xoLast = xo;
                 yoLast = yo;

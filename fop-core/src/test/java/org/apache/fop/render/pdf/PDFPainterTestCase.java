@@ -448,6 +448,36 @@ public class PDFPainterTestCase {
                 + "<0001> Tj\n", output.toString());
     }
 
+    /**
+     * The position-adjustment path places every glyph with its own Td, so the Tc it sets has no
+     * effect on the next glyph's position; the letter spacing has to go into the advance, as it
+     * does through Tc on the TJ path. Two zero-width glyphs, a kern of -100 and a letter spacing
+     * of 500: the second glyph sits at 400, not at -100.
+     */
+    @Test
+    public void testDrawDpTextKeepsLetterSpacing() throws IFException {
+        StringBuilder output = new StringBuilder();
+        PDFDocumentHandler pdfDocumentHandler = makePDFDocumentHandler(output);
+        MultiByteFont font = new MultiByteFont(null, null);
+        font.setWidthArray(new int[10]);
+        font.setCMap(new CMapSegment[]{new CMapSegment(128169, 128169, 1)});
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("f1", new FontTriplet("a", "normal", 400));
+        fi.addMetrics("f1", font);
+        pdfDocumentHandler.setFontInfo(fi);
+        MyPDFPainter pdfPainter = new MyPDFPainter(pdfDocumentHandler, null);
+        pdfPainter.setFont("a", "normal", 400, null, 12, null);
+        int[][] dp = new int[][] {{0, 0, -100, 0}, {0, 0, 0, 0}};
+        pdfPainter.drawText(0, 0, 500, 0, dp, "Hi");
+        assertEquals("BT\n"
+                + "1 0 0 -1 0 0 Tm /f1 0.012 Tf\n"
+                + "0 0 Td\n"
+                + "<0000> Tj\n"
+                + "0.4 0 Td\n"
+                + "<0000> Tj\n", output.toString());
+        verify(pdfContentGenerator).updateCharacterSpacing(0.5f);
+    }
+
     private PDFDocumentHandler makePDFDocumentHandler(final StringBuilder sb) throws IFException {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         foUserAgent = fopFactory.newFOUserAgent();
