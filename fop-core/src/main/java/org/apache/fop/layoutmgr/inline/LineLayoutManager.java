@@ -400,7 +400,8 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                 InlineLevelEventProducer eventProducer
                     = InlineLevelEventProducer.Provider.get(
                         getFObj().getUserAgent().getEventBroadcaster());
-                if (curChildLM.getFObj() == null) {
+                // curChildLM is null on the float re-layout pass (PageBreaker.handleFloatLayout)
+                if (curChildLM == null || curChildLM.getFObj() == null) {
                     eventProducer.lineOverflows(this, getFObj().getName(), bestActiveNode.line,
                             -lack, getFObj().getLocator());
                 } else {
