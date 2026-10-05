@@ -409,7 +409,7 @@ public class CharUtilities {
         char ch = chars.charAt(index);
 
         if (Character.isHighSurrogate(ch)) {
-            if ((index + 1) > chars.length()) {
+            if ((index + 1) >= chars.length()) {
                 throw new IllegalArgumentException(
                         "ill-formed UTF-16 sequence, contains isolated high surrogate at end of sequence");
             }
