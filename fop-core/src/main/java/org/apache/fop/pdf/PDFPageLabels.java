@@ -71,7 +71,12 @@ public class PDFPageLabels extends PDFNumberTreeNode {
             currentPageLabelType = DECIMAL;
             currentPageNumber = Integer.parseInt(pageLabel);
             int zeroPadding = 0;
-            if (pageLabel.charAt(zeroPadding) == '0') {
+            if (currentPageNumber == 0) {
+                // a page numbered 0: /St must be at least 1, so a label of zeros is written as a
+                // prefix; counting its leading zeros below would run past its end
+                currentPageLabelType = PREFIX;
+                addNewPageLabel = true;
+            } else if (pageLabel.charAt(zeroPadding) == '0') {
                 do {
                     zeroPadding++;
                 } while (pageLabel.charAt(zeroPadding) == '0');
