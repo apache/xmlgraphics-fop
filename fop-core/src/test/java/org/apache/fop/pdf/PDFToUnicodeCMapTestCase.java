@@ -179,6 +179,10 @@ public class PDFToUnicodeCMapTestCase {
 
     /**
      * Checks that one surrogate pair is correctly handled, even when it crosses a section boundary.
+     * The pair is one character selector, so the selector after it is 0x64, not 0x65: the writer
+     * once numbered selectors by array position, which put every entry after a pair one selector
+     * too high (FOP-3346; measured on a rendered PDF, where the letter after a supplementary-plane
+     * character extracted as the letter after that).
      * @throws IOException
      */
     @Test
@@ -201,22 +205,23 @@ public class PDFToUnicodeCMapTestCase {
                 + "<63> <d83cdf65>\n"
                 + "endbfchar\n"
                 + "56 beginbfchar\n"
-                + "<65> <00fc>\n"
-                + "<66> <00fe>");
+                + "<64> <00fc>\n"
+                + "<65> <00fe>");
         configPairs.put(false, "<0060> <00f2>\n"
                 + "<0061> <00f4>\n"
                 + "<0062> <00f6>\n"
                 + "<0063> <d83cdf65>\n"
                 + "endbfchar\n"
                 + "56 beginbfchar\n"
-                + "<0065> <00fc>\n"
-                + "<0066> <00fe>");
+                + "<0064> <00fc>\n"
+                + "<0065> <00fe>");
 
         buildAndAssert(unicodeCharMap, configPairs);
     }
 
     /**
-     * Checks that a range of surrogate pairs is correctly handled.
+     * Checks that a range of surrogate pairs is correctly handled. Two pairs are two selectors,
+     * 9 and 10 (see surrogatePairTest).
      * @throws IOException
      */
     @Test
@@ -236,17 +241,18 @@ public class PDFToUnicodeCMapTestCase {
 
         Map<Boolean, String> configPairs = new HashMap<>();
         configPairs.put(true, "1 beginbfrange\n"
-                + "<09> <0b> <d83cdf65>\n"
+                + "<09> <0a> <d83cdf65>\n"
                 + "endbfrange");
         configPairs.put(false, "1 beginbfrange\n"
-                + "<0009> <000b> <d83cdf65>\n"
+                + "<0009> <000a> <d83cdf65>\n"
                 + "endbfrange");
 
         buildAndAssert(unicodeCharMap, configPairs);
     }
 
     /**
-     * Checks that CMap is correct, even when made up of just one range of surrogate pairs.
+     * Checks that CMap is correct, even when made up of just one range of surrogate pairs. Ten
+     * pairs are selectors 0 to 9 (see surrogatePairTest).
      * @throws IOException
      */
     @Test
@@ -264,10 +270,10 @@ public class PDFToUnicodeCMapTestCase {
 
         Map<Boolean, String> configPairs = new HashMap<>();
         configPairs.put(true, "1 beginbfrange\n"
-                + "<00> <12> <d83cdf65>\n"
+                + "<00> <09> <d83cdf65>\n"
                 + "endbfrange");
         configPairs.put(false, "1 beginbfrange\n"
-                + "<0000> <0012> <d83cdf65>\n"
+                + "<0000> <0009> <d83cdf65>\n"
                 + "endbfrange");
 
         buildAndAssert(unicodeCharMap, configPairs);
@@ -351,12 +357,14 @@ public class PDFToUnicodeCMapTestCase {
     }
 
     /**
-     * Checks that a range of surrogate pairs is limited in size.
+     * Checks that a range of surrogate pairs is limited in size: 256 selectors, the same as for
+     * any other range, since a pair is one selector (see surrogatePairTest). The low surrogates
+     * start at U+DC00 so that 300 of them stay valid.
      * @throws IOException
      */
     @Test
     public void rangeSizeSurrogateTest() throws IOException {
-        final int charMapSize = 300;
+        final int charMapSize = 600;
 
         char[] unicodeCharMap = new char[charMapSize];
 
@@ -364,14 +372,14 @@ public class PDFToUnicodeCMapTestCase {
             unicodeCharMap[i] = '\uD83C';
         }
         for (int i = 0; i < charMapSize / 2; ++i) {
-            unicodeCharMap[1 + i * 2] = (char)('\uDF65' + i);
+            unicodeCharMap[1 + i * 2] = (char)('\uDC00' + i);
         }
 
         Map<Boolean, String> configPairs = new HashMap<>();
-        // PDFToUnicodeCMap CTOR rejects unicodeCharMap with > 256 elements where singleByte is true.
+        // PDFToUnicodeCMap CTOR rejects a map of more than 256 selectors where singleByte is true.
         configPairs.put(false, "2 beginbfrange\n"
-                + "<0000> <00fe> <d83cdf65>\n"
-                + "<0100> <012a> <d83cdfe5>\n"
+                + "<0000> <00ff> <d83cdc00>\n"
+                + "<0100> <012b> <d83cdd00>\n"
                 + "endbfrange");
 
         buildAndAssert(unicodeCharMap, configPairs);
