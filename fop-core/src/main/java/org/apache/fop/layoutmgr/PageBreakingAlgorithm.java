@@ -107,6 +107,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     private boolean handlingStartOfFloat;
     private boolean handlingEndOfFloat;
     private int floatHeight;
+    /** The content height at a side float's edge, up to the first box below the float. */
+    private int floatEdgeWidth;
     private KnuthNode bestFloatEdgeNode;
     private FloatPosition floatPosition;
     private int previousFootnoteListIndex = -2;
@@ -514,8 +516,85 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 //nop
             }
         }
+        if (floatHeight != 0) {
+            // A side float ends at the first legal break after which the content lies wholly below the
+            // float's foot: the content height before the break plus the glue up to the next box, the space
+            // between two paragraphs included. handleBox tests only line boxes, so a space carrying the next
+            // line below the foot left that line laid out beside the float. The height at the edge is kept
+            // for deactivateNode, so the content after the float starts below that space.
+            int edgeWidth = widthUpToNextBox(elementIdx);
+            if (!handlingEndOfFloat && edgeWidth >= floatHeight) {
+                handlingEndOfFloat = true;
+            }
+            if (handlingEndOfFloat) {
+                floatEdgeWidth = edgeWidth;
+            }
+        }
+        // A side float's edge is a break after which the content is read again from its layout manager,
+        // which a table cannot do (it is not restartable): a break between two boxes of one such layout
+        // manager is not the edge, which waits for the first legal break after it. The rows below the
+        // float keep the table's width, which the table set once for all its rows, so nothing is drawn
+        // differently.
+        boolean edgeDeferred = handlingEndOfFloat && isInsideNonRestartableLM(elementIdx);
+        if (edgeDeferred) {
+            handlingEndOfFloat = false;
+        }
         super.considerLegalBreak(element, elementIdx);
+        if (edgeDeferred) {
+            handlingEndOfFloat = true;
+        }
         newFootnotes = false;
+    }
+
+    /** The content height as if the break were just before the next box, as forceNode measures a node. */
+    private int widthUpToNextBox(int elementIdx) {
+        int width = totalWidth;
+        for (int i = elementIdx; i < par.size(); i++) {
+            KnuthElement e = getElement(i);
+            if (e.isBox()) {
+                break;
+            } else if (e.isGlue()) {
+                width += e.getWidth();
+            } else if (e.isForcedBreak() && i != elementIdx) {
+                break;
+            }
+        }
+        return width;
+    }
+
+    /** Whether the boxes either side of a break both belong to one layout manager that cannot be restarted. */
+    private boolean isInsideNonRestartableLM(int elementIdx) {
+        LayoutManager next = null;
+        for (int i = elementIdx; i < par.size() && next == null; i++) {
+            KnuthElement e = getElement(i);
+            if (e.isBox()) {
+                next = nonRestartableLM(e.getPosition());
+                if (next == null) {
+                    return false;
+                }
+            }
+        }
+        if (next == null) {
+            return false;
+        }
+        for (int i = elementIdx - 1; i >= 0; i--) {
+            KnuthElement e = getElement(i);
+            if (e.isBox()) {
+                return next == nonRestartableLM(e.getPosition());
+            }
+        }
+        return false;
+    }
+
+    /** The outermost layout manager in a position's chain that cannot be restarted, or null. */
+    private static LayoutManager nonRestartableLM(Position position) {
+        for (Position p = position; p != null; p = p.getPosition()) {
+            LayoutManager lm = p.getLM();
+            if (lm != null && !lm.isRestartable()) {
+                return lm;
+            }
+        }
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -1342,7 +1421,8 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
     protected void deactivateNode(KnuthNode node, int line) {
         super.deactivateNode(node, line);
         if (handlingEndOfFloat) {
-            floatHeight = totalWidth;
+            // the height at the edge, the glue before the next box included
+            floatHeight = Math.max(totalWidth, floatEdgeWidth);
         }
     }
 

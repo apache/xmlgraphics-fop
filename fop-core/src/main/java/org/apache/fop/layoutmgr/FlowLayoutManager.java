@@ -63,6 +63,9 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         setParent(pslm);
     }
 
+    /** The block a list is read again from after a side float's edge, until its context is made. */
+    private LayoutManager floatRestartLM;
+
     /** {@inheritDoc} */
     @Override
     public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment) {
@@ -87,6 +90,10 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         boolean isRestart = (restartPosition != null);
         // always reset in case of restart (exception: see below)
         boolean doReset = isRestart;
+        // read again from a block after a side float's edge: that block keeps the space-before the list
+        // before resolved, the edge being no break in the flow
+        floatRestartLM = (isRestart && context.isFloatRestart() && restartLM != null
+                && restartLM.getParent() == this) ? restartLM : null;
         LayoutManager currentChildLM;
         Stack<LayoutManager> lmStack = new Stack<LayoutManager>();
         if (isRestart) {
@@ -144,6 +151,10 @@ public class FlowLayoutManager extends BlockStackingLayoutManager {
         }
 
         LayoutContext childLC = makeChildLayoutContext(context);
+        if (childLM == floatRestartLM) {
+            childLC.setFlags(LayoutContext.FLOAT_RESTART, true);
+            floatRestartLM = null;
+        }
         List<ListElement> childElements
                 = getNextChildElements(childLM, context, childLC, alignment, lmStack,
                     position, restartAtLM);
