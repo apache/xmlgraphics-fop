@@ -932,6 +932,29 @@ public class LineLayoutManager extends InlineStackingLayoutManager
     }
 
     /**
+     * The position inside this manager's own wrapping, where an earlier pass left one. The
+     * elements of a nested block-level sequence are kept in knuthParagraphs and are wrapped in
+     * place, here and by the ancestor managers. When line breaking runs again over the same
+     * paragraphs (the content after a float, or after a change of IPD), they would be wrapped a
+     * second time, and adding their areas would re-enter the enclosing block's manager, whose
+     * area is then flushed early and the lines after the nested block are lost.
+     *
+     * <p>Only the NonLeafPositions are walked, since the wrapping is made of them. Any other
+     * position ends the walk; a TableContentPosition returns itself from getPosition().</p>
+     *
+     * @param pos the element's position
+     * @return the position inside this manager's wrapping, or pos if there is none
+     */
+    private Position unwrapEarlierPass(Position pos) {
+        for (Position p = pos; p instanceof NonLeafPosition; p = p.getPosition()) {
+            if (p.getLM() == this) {
+                return p.getPosition();
+            }
+        }
+        return pos;
+    }
+
+    /**
      * Creates the element list in BP direction for the broken lines.
      * @param alignment the currently applicable vertical alignment
      * @param context the layout context
@@ -967,7 +990,7 @@ public class LineLayoutManager extends InlineStackingLayoutManager
                     }
                     if (lm != this) {
                         tempElement.setPosition(notifyPos(new NonLeafPosition(this,
-                                tempElement.getPosition())));
+                                unwrapEarlierPass(tempElement.getPosition()))));
                     }
                     targetList.add(tempElement);
                 }
