@@ -109,7 +109,10 @@ public class BlockLayoutManager extends SpacedBorderedPaddedBlockLayoutManager
     @Override
     public List<ListElement> getNextKnuthElements(LayoutContext context, int alignment, Stack lmStack,
             Position restartPosition, LayoutManager restartAtLM) {
+        // read again after a side float's edge: the space-before resolved in the list before is kept
+        MinOptMax keptSpaceBefore = context.isFloatRestart() ? effSpaceBefore : null;
         resetSpaces();
+        effSpaceBefore = keptSpaceBefore;
         return super.getNextKnuthElements(
                 context, alignment, lmStack, restartPosition, restartAtLM);
     }
