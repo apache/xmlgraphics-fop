@@ -44,6 +44,7 @@ import org.mockito.stubbing.Answer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.endsWith;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -290,12 +291,65 @@ public class PDFPainterTestCase {
         fi.addMetrics("f1", font);
         pdfDocumentHandler.setFontInfo(fi);
         MyPDFPainter pdfPainter = new MyPDFPainter(pdfDocumentHandler, null);
-        pdfPainter.setFont("a", "italic", 700, null, 12, null);
+        pdfPainter.setFont("a", "italic", 700, null, 11040, null);
         pdfPainter.drawText(0, 0, 0, 0, null, "test");
 
-        assertEquals(sb.toString(), "BT\n/f1 0.012 Tf\n1 0 0.3333 -1 0 0 Tm [<0000000000000000>] TJ\n");
+        assertEquals(sb.toString(), "BT\n/f1 11.04 Tf\n1 0 0.3333 -1 0 0 Tm [<0000000000000000>] TJ\n");
         verify(pdfContentGenerator).add("2 Tr 0.31543 w\n");
         verify(pdfContentGenerator).add("0 Tr\n");
+    }
+
+    /** The output of a bold italic triplet on a face, at a size, for the simulated-style tests. */
+    private String simulateStyle(MultiByteFont font, int size) throws IFException {
+        final StringBuilder sb = new StringBuilder();
+        pdfDocumentHandler = makePDFDocumentHandler(sb);
+        FontInfo fi = new FontInfo();
+        fi.addFontProperties("f1", new FontTriplet("a", "italic", 700));
+        font.setSimulateStyle(true);
+        fi.addMetrics("f1", font);
+        pdfDocumentHandler.setFontInfo(fi);
+        MyPDFPainter pdfPainter = new MyPDFPainter(pdfDocumentHandler, null);
+        pdfPainter.setFont("a", "italic", 700, null, size, null);
+        pdfPainter.drawText(0, 0, 0, 0, null, "test");
+        return sb.toString();
+    }
+
+    /**
+     * An italic face is not slanted again, but is stroked, as Word draws the italic face of a family that has no
+     * bold one.
+     * @throws IFException if the painting fails
+     */
+    @Test
+    public void testSimulateStyleItalicFaceIsNotSheared() throws IFException {
+        MultiByteFont font = new MultiByteFont(null, null);
+        font.setItalicAngle(-11);
+        assertEquals("BT\n/f1 11.04 Tf\n1 0 0 -1 0 0 Tm [<0000000000000000>] TJ\n", simulateStyle(font, 11040));
+        verify(pdfContentGenerator).add("2 Tr 0.31543 w\n");
+        verify(pdfContentGenerator).add("0 Tr\n");
+    }
+
+    /**
+     * A bold face is not stroked again, but is sheared, as Word draws the bold face of a family that has no bold
+     * italic one.
+     * @throws IFException if the painting fails
+     */
+    @Test
+    public void testSimulateStyleBoldFaceIsNotStroked() throws IFException {
+        MultiByteFont font = new MultiByteFont(null, null);
+        font.setWeight(700);
+        assertEquals("BT\n/f1 11.04 Tf\n1 0 0.3333 -1 0 0 Tm [<0000000000000000>] TJ\n", simulateStyle(font, 11040));
+        verify(pdfContentGenerator, never()).add(contains(" Tr "));
+        verify(pdfContentGenerator, never()).add("0 Tr\n");
+    }
+
+    /**
+     * The simulated bold's stroke is 1/35 em, Word's at every size: 0.63086 at 22.08pt.
+     * @throws IFException if the painting fails
+     */
+    @Test
+    public void testSimulateStyleStrokeScalesWithSize() throws IFException {
+        simulateStyle(new MultiByteFont(null, null), 22080);
+        verify(pdfContentGenerator).add("2 Tr 0.63086 w\n");
     }
 
     @Test
@@ -376,7 +430,7 @@ public class PDFPainterTestCase {
         fi.addMetrics("f1", font);
         pdfDocumentHandler.setFontInfo(fi);
         PDFPainter pdfPainter = new PDFPainter(pdfDocumentHandler, null);
-        pdfPainter.setFont("a", "italic", 700, null, 12, Color.red);
+        pdfPainter.setFont("a", "italic", 700, null, 11040, Color.red);
         pdfPainter.drawText(0, 0, 0, 0, null, "test");
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -389,7 +443,7 @@ public class PDFPainterTestCase {
                 + "1 0 0 -1 0 0 cm\n"
                 + "1 0 0 rg\n"
                 + "BT\n"
-                + "/f1 0.012 Tf\n"
+                + "/f1 11.04 Tf\n"
                 + "1 0 0 RG\n"
                 + "2 Tr 0.31543 w\n"
                 + "1 0 0.3333 -1 0 0 Tm [<0000000000000000>] TJ\n"
