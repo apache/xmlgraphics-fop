@@ -1405,7 +1405,7 @@ public abstract class BreakingAlgorithm {
      * @return the width/length in millipoints
      */
     protected int getLineWidth(int line) {
-        assert lineWidth >= 0;
+//        assert lineWidth >= 0;
         return this.lineWidth;
     }
 

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+   <info>
+     <p>
+     </p>
+   </info>
+   <fo>
+     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+       <fo:layout-master-set>
+         <fo:simple-page-master master-name="first"
+                               page-height="29.7cm"
+                               page-width="21cm"
+                               margin-top="1cm"
+                               margin-bottom="2cm"
+                               margin-left="2.5cm"
+                               margin-right="2.5cm">
+           <fo:region-body margin-top="3cm"/>
+           <fo:region-before extent="3cm"/>
+           <fo:region-after extent="1.5cm"/>
+         </fo:simple-page-master>
+       </fo:layout-master-set>
+       
+       <fo:page-sequence master-reference="first">
+         
+         <fo:flow flow-name="xsl-region-body">
+           <fo:block>
+             In this table, columns 2,3, and 4 have a static width of '1cm' and cannot be widened.
+             The col-spanning PGU in cell G requires more space, than these three columns provide (3 * '1cm' + table cell indentations &lt; minIPD of G).
+             With no columns to expand, the content of column G overflows into cell H.
+           </fo:block>
+           
+           <fo:table table-layout="auto" width="100%" border-collapse="separate">
+             <fo:table-column column-number="2" column-width="1cm"/>
+             <fo:table-column column-number="3" column-width="1cm"/>
+             <fo:table-column column-number="4" column-width="1cm"/>
+             <fo:table-column column-number="5" />
+             <fo:table-body>
+               
+               <fo:table-row>
+                 <fo:table-cell padding="2pt" border-right="0.5pt dotted black" border="0.5pt dotted black">
+                 <fo:block>A</fo:block>
+                 </fo:table-cell>
+                 <fo:table-cell padding="2pt" border-right="0.5pt dotted black" border="0.5pt dotted black">
+                   <fo:block>1cm</fo:block>
+                 </fo:table-cell>
+                 <fo:table-cell padding="2pt" border-right="0.5pt dotted black" border="0.5pt dotted black">
+                   <fo:block>1cm</fo:block>
+                 </fo:table-cell>
+                 <fo:table-cell padding="2pt" border-right="0.5pt dotted black" border="0.5pt dotted black">
+                   <fo:block>1cm</fo:block>
+                 </fo:table-cell>
+                 <fo:table-cell padding="2pt" border-right="0.5pt dotted black" border="0.5pt dotted black">
+                   <fo:block>EEEEEEEEEEE EEEEEEEEEEEEEEEEEEEE EEEEEEEEEEEEEEEEEEEEEEEE EEEEEEEEEEEEE</fo:block>
+                 </fo:table-cell>               
+               </fo:table-row>
+               
+               <fo:table-row>
+                 <fo:table-cell padding="2pt" border-right="0.5pt dotted black" border="0.5pt dotted black">
+                 <fo:block>F</fo:block>
+                 </fo:table-cell>
+                 <fo:table-cell padding="2pt" border-right="0.5pt dotted black" border="0.5pt dotted black" number-columns-spanned="3">
+                   <fo:block>overflowing_cell (minIPD>3cm)</fo:block>
+                 </fo:table-cell>
+                 <fo:table-cell padding="2pt" border-right="0.5pt dotted black" border="0.5pt dotted black">
+                   <fo:block>H</fo:block>
+                 </fo:table-cell>
+               </fo:table-row>
+             </fo:table-body>
+           </fo:table>
+           
+           <fo:block>Expected warning1: 'No columns to resize to fit a table-cell spanning these columns, expect overflows'</fo:block>
+           <fo:block>Expected warning2: 'The contents of fo:block line 1 exceed the available area in the inline-progression direction by 5318 millipoints. (See position 56:26)'</fo:block>
+                     
+         </fo:flow>
+       </fo:page-sequence>
+     </fo:root>
+   </fo>
+   <checks>
+     <!-- TODO -->
+   </checks>
+</testcase>
