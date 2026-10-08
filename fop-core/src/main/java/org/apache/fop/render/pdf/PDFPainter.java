@@ -607,15 +607,22 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
         endSimulateStyle(tf, triplet);
     }
 
+    /**
+     * Synthesises the style a triplet names from the face it is registered on, where the font entry asks for it
+     * (simulate-style), as Word synthesises a style a family lacks: a bold triplet is stroked at 1/35 em, and an
+     * italic one sheared by 0.3333, each only where the face is not bold, or not italic, already.
+     * @return the shear for the text matrix
+     */
     private double startSimulateStyle(Typeface tf, FontTriplet triplet) {
         double shear = 0;
         boolean simulateStyle = tf instanceof CustomFont && ((CustomFont) tf).getSimulateStyle();
         if (simulateStyle) {
-            if (triplet.getWeight() == 700) {
+            CustomFont face = (CustomFont) tf;
+            if (simulatesBold(face, triplet)) {
                 generator.updateColor(state.getTextColor(), false, null);
-                generator.add("2 Tr 0.31543 w\n");
+                generator.add("2 Tr " + PDFNumber.doubleOut(state.getFontSize() / 1000.0 / 35, 5) + " w\n");
             }
-            if (triplet.getStyle().equals("italic")) {
+            if (triplet.getStyle().equals("italic") && face.getItalicAngle() == 0) {
                 shear = 0.3333;
             }
         }
@@ -624,9 +631,14 @@ public class PDFPainter extends AbstractIFPainter<PDFDocumentHandler> {
 
     private void endSimulateStyle(Typeface tf, FontTriplet triplet) {
         boolean simulateStyle = tf instanceof CustomFont && ((CustomFont) tf).getSimulateStyle();
-        if (simulateStyle && triplet.getWeight() == 700) {
+        if (simulateStyle && simulatesBold((CustomFont) tf, triplet)) {
             generator.add("0 Tr\n");
         }
+    }
+
+    /** A bold triplet on a face that is not bold already (its weight class below 700, or unknown). */
+    private static boolean simulatesBold(CustomFont face, FontTriplet triplet) {
+        return triplet.getWeight() == 700 && face.getWeight() < 700;
     }
 
     private static int[] paZero = new int[4];
