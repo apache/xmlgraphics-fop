@@ -128,6 +128,9 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
         case CharScript.SCRIPT_GURMUKHI:
         case CharScript.SCRIPT_GURMUKHI_2:
             return new GurmukhiScriptProcessor(script);
+        case CharScript.SCRIPT_BENGALI:
+        case CharScript.SCRIPT_BENGALI_2:
+            return new BengaliScriptProcessor(script);
         case CharScript.SCRIPT_TAMIL:
         case CharScript.SCRIPT_TAMIL_2:
             return new TamilScriptProcessor(script);
