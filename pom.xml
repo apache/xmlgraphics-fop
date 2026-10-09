@@ -11,7 +11,7 @@
   <url>http://xmlgraphics.apache.org/fop/</url>
 
   <properties>
-    <ant.version>1.10.14</ant.version>
+    <ant.version>1.10.18</ant.version>
     <antrun.plugin.version>1.8</antrun.plugin.version>
     <batik.version>1.18.0-SNAPSHOT</batik.version>
     <build.helper.plugin.version>1.9.1</build.helper.plugin.version>
