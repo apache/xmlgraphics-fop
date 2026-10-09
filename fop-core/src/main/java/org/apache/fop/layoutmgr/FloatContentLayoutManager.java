@@ -84,7 +84,11 @@ public class FloatContentLayoutManager extends SpacedBorderedPaddedBlockLayoutMa
         int effectiveContentIPD = getContentAreaIPD(childLMs, childArea);
         int contentIPD = childArea.getIPD();
         int xOffset = childArea.getBorderAndPaddingWidthStart();
-        if (getEffectiveAllocIPD(childArea) >= contentIPD) {
+        // The float goes in the flow when its content is as wide as the space it could take: the width
+        // available to the float, not its own area's. A block-container child's area has the container's
+        // width, so comparing against that always held and every such float went in the flow (FOP-3353).
+        int availableIPD = getContentAreaIPD();
+        if (availableIPD > 0 && getEffectiveAllocIPD(childArea) >= availableIPD) {
             addAreaInFlow(contentIPD, xOffset);
             return;
         }
