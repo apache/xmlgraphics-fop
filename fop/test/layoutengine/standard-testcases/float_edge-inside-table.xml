@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+
+  <info>
+    <p>
+      A side float outlasts the paragraph it is anchored in and its space-after, so its end falls between two
+      rows of the table after it. A table cannot be read again from a row, so the float's edge waits for the
+      first break after the table: the rows keep the table's width, and the block after the table is laid out
+      at full width. Before, this threw NoSuchElementException in LMiter.next.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page" page-width="595pt" page-height="842pt" margin="72pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page">
+        <fo:flow flow-name="xsl-region-body" font-family="Times" font-size="12pt">
+          <fo:block line-height="14pt" space-after="10pt"><fo:float float="right"><fo:block line-height="40pt" padding-start="200pt">BOX</fo:block></fo:float>Heading</fo:block>
+          <fo:table table-layout="fixed" width="200pt" border-collapse="collapse">
+            <fo:table-column column-width="200pt"/>
+            <fo:table-body><fo:table-row><fo:table-cell border="0.5pt solid"><fo:block>cell 1</fo:block></fo:table-cell></fo:table-row><fo:table-row><fo:table-cell border="0.5pt solid"><fo:block>cell 2</fo:block></fo:table-cell></fo:table-row><fo:table-row><fo:table-cell border="0.5pt solid"><fo:block>cell 3</fo:block></fo:table-cell></fo:table-row><fo:table-row><fo:table-cell border="0.5pt solid"><fo:block>cell 4</fo:block></fo:table-cell></fo:table-row><fo:table-row><fo:table-cell border="0.5pt solid"><fo:block>cell 5</fo:block></fo:table-cell></fo:table-row></fo:table-body>
+          </fo:table>
+          <fo:block>after</fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="5" xpath="count(//word[. = 'cell'])"/>
+    <eval expected="451000" xpath="//lineArea[text/word = 'after']/../@ipd"/>
+    <eval expected="185012" xpath="//lineArea[text/word = 'Heading']/@end-indent"/>
+  </checks>
+</testcase>
