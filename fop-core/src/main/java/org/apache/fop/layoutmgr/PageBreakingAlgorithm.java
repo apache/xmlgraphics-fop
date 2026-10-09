@@ -514,8 +514,55 @@ class PageBreakingAlgorithm extends BreakingAlgorithm {
                 //nop
             }
         }
+        // A side float's edge is a break after which the content is read again from its layout manager,
+        // which a table cannot do (it is not restartable): a break between two boxes of one such layout
+        // manager is not the edge, which waits for the first legal break after it. The rows below the
+        // float keep the table's width, which the table set once for all its rows, so nothing is drawn
+        // differently.
+        boolean edgeDeferred = handlingEndOfFloat && isInsideNonRestartableLM(elementIdx);
+        if (edgeDeferred) {
+            handlingEndOfFloat = false;
+        }
         super.considerLegalBreak(element, elementIdx);
+        if (edgeDeferred) {
+            handlingEndOfFloat = true;
+        }
         newFootnotes = false;
+    }
+
+    /** Whether the boxes either side of a break both belong to one layout manager that cannot be restarted. */
+    private boolean isInsideNonRestartableLM(int elementIdx) {
+        LayoutManager next = null;
+        for (int i = elementIdx; i < par.size() && next == null; i++) {
+            KnuthElement e = getElement(i);
+            if (e.isBox()) {
+                next = nonRestartableLM(e.getPosition());
+                if (next == null) {
+                    return false;
+                }
+            }
+        }
+        if (next == null) {
+            return false;
+        }
+        for (int i = elementIdx - 1; i >= 0; i--) {
+            KnuthElement e = getElement(i);
+            if (e.isBox()) {
+                return next == nonRestartableLM(e.getPosition());
+            }
+        }
+        return false;
+    }
+
+    /** The outermost layout manager in a position's chain that cannot be restarted, or null. */
+    private static LayoutManager nonRestartableLM(Position position) {
+        for (Position p = position; p != null; p = p.getPosition()) {
+            LayoutManager lm = p.getLM();
+            if (lm != null && !lm.isRestartable()) {
+                return lm;
+            }
+        }
+        return null;
     }
 
     /** {@inheritDoc} */
