@@ -25,7 +25,7 @@
   <property name="dist.src.result.dir" value="${dist.src.dir}/${name}-${version}"/>
   
   <property name="build.dir" value="${basedir}/build"/>
-  <property name="build.javadocs.dir" value="${basedir}/../fop-core/target/site/apidocs"/>
+  <property name="build.javadocs.dir" value="${basedir}/../fop-core/target/reports/apidocs"/>
 
   <fileset dir="${basedir}/.." id="dist.bin">
     <include name="KEYS"/>
