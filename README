@@ -107,6 +107,22 @@ under the ./fop sub-directory.
   RELEASE NOTES
 ==============================================================================
 
+Version 2.12
+============
+
+Major Changes in Version 2.12
+-----------------------------
+
+* Support for Java 25
+* Add Bengali complex script support
+* Add AFP TrueType complex script support
+* Add support for table-and-caption
+* Add option to compress PostScript graphics
+* Support for caching of pdf image object streams
+* Add option to move AFP triplet to the resource
+
+This release also contains a number of bug fixes.
+
 Version 2.11
 ============
 
