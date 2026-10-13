@@ -46,7 +46,6 @@ public interface GraphicsPainter {
      * @param startOrBefore true if the line is the start or end edge of a border box
      * @param style the border style
      * @param color the border color
-     * @param spaceWidth spacing between leader elements
      * @throws IOException if an I/O error occurs
      */
     void drawBorderLine(int x1, int y1, int x2, int y2,
