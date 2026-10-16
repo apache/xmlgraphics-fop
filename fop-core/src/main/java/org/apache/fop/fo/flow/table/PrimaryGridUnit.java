@@ -240,11 +240,9 @@ public class PrimaryGridUnit extends GridUnit {
         return getAfterBorderWidth(getCell().getNumberRowsSpanned() - 1, which);
     }
 
-    /** @return the length of the cell content */
+    /** @return the length of the cell content, auto-layout disallows caching */
     public int getContentLength() {
-        if (contentLength < 0) {
-            contentLength = ElementListUtils.calcContentLength(elements);
-        }
+        contentLength = ElementListUtils.calcContentLength(elements);
         return contentLength;
     }
 

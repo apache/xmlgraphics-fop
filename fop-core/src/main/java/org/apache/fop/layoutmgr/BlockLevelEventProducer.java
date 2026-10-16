@@ -59,6 +59,18 @@ public interface BlockLevelEventProducer extends EventProducer {
     void rowTooTall(Object source, int row, int effCellBPD, int maxCellBPD, Locator loc);
 
     /**
+     * The minimal width required for the auto-layout of a table's columns is bigger than the available space.
+     * Alternatively: even using the minimal width required for the auto-layout table, its content overflows the
+     * available area by (effIPD - maxIPD) millipoints
+     * @param source the event source
+     * @param effIPD the effective extent in inline-progression direction of the table contents
+     * @param maxIPD the maximum extent in inline-progression direction available
+     * @param loc the location of the error or null
+     * @event.severity WARN
+     */
+    void columnsInAutoTableTooWide(Object source, int effIPD, int maxIPD, Locator loc);
+
+    /**
      * Auto-table layout is not supported, yet.
      * @param source the event source
      * @param loc the location of the error or null
