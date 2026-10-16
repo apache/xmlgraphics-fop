@@ -700,6 +700,40 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /**
+     * Obtain the character that produced the glyph at index I of glyph sequence GS, but only if
+     * substitution left that glyph alone, i.e., the glyph is associated with exactly one character
+     * and the font's character map maps that character to this same glyph. In a CJK font a glyph is
+     * commonly shared by an ideograph and by the Kangxi radical (or CJK radical supplement) form of
+     * that ideograph, in which case the reverse lookup made by findCharacterFromGlyphIndex() returns
+     * the radical, it being the lower code point; keeping the originating character instead prevents
+     * the radical from reaching the output character sequence.
+     * @param gs a GlyphSequence containing glyph indices
+     * @param i index of glyph in glyph sequence
+     * @param ca character array underlying glyph sequence
+     * @param nc number of characters in character array
+     * @param gi glyph index of the glyph at index I
+     * @return unicode scalar value of the originating character, or zero if not applicable
+     */
+    private int findUnsubstitutedCharacter(GlyphSequence gs, int i, int[] ca, int nc, int gi) {
+        if (gi == SingleByteEncoding.NOT_FOUND_CODE_POINT) {
+            return 0;
+        }
+        CharAssociation a = gs.getAssociation(i);
+        if ((a == null) || (a.getCount() != 1)) {
+            return 0;
+        }
+        int s = a.getStart();
+        if ((s < 0) || (s >= nc) || (s >= ca.length)) {
+            return 0;
+        }
+        int cc = ca [ s ];
+        if ((cc == 0) || (findGlyphIndex(cc) != gi)) {
+            return 0;
+        }
+        return cc;
+    }
+
+    /**
      * Map sequence GS, comprising a sequence of Glyph Indices, to output sequence CS,
      * comprising a sequence of UTF-16 encoded Unicode Code Points.
      * @param gs a GlyphSequence containing glyph indices
@@ -709,10 +743,15 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         int ng = gs.getGlyphCount();
         int ccMissing = Typeface.NOT_FOUND;
         List<Character> chars = new ArrayList<Character>(gs.getUTF16CharacterCount());
+        int[] ca = gs.getCharacterArray(false);
+        int nc = gs.getCharacterCount();
 
         for (int i = 0, n = ng; i < n; i++) {
             int gi = gs.getGlyph(i);
-            int cc = findCharacterFromGlyphIndex(gi);
+            int cc = findUnsubstitutedCharacter(gs, i, ca, nc, gi);
+            if (cc == 0) {
+                cc = findCharacterFromGlyphIndex(gi);
+            }
             if ((cc == 0) || (cc > 0x10FFFF)) {
                 cc = ccMissing;
                 log.warn("Unable to map glyph index " + gi
