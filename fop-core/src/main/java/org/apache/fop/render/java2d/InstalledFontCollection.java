@@ -91,7 +91,7 @@ public class InstalledFontCollection implements FontCollection {
                         + ", Style: " + f.getStyle());
             }
 
-            String searchName = FontUtil.stripWhiteSpace(f.getName()).toLowerCase();
+            String searchName = FontUtil.stripWhiteSpace(f.getFontName(Locale.ENGLISH)).toLowerCase();
             String guessedStyle = FontUtil.guessStyle(searchName);
             int guessedWeight = FontUtil.guessWeight(searchName);
 
