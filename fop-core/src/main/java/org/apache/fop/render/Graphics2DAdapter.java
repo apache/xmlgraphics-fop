@@ -62,6 +62,7 @@ public interface Graphics2DAdapter {
      * @throws IOException In case of an I/O error while writing the output format
      * @deprecated Use the variant with the Graphics2DImagePainter from XML Graphics Commons instead
      */
+    @Deprecated
     void paintImage(Graphics2DImagePainter painter,
             RendererContext context,
             int x, int y, int width, int height) throws IOException;

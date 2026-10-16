@@ -27,6 +27,7 @@ import java.io.Writer;
  * @deprecated use org.apache.xmlgraphics.util.WriterOutputStream instead
  * @see org.apache.xmlgraphics.util.WriterOutputStream
  */
+@Deprecated
 public class WriterOutputStream extends OutputStream {
 
     private final org.apache.xmlgraphics.util.WriterOutputStream writerOutputStream;

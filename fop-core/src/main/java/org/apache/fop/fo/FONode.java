@@ -302,6 +302,7 @@ public abstract class FONode implements Cloneable {
      * @deprecated Please override {@link #characters(char[], int, int, PropertyList, Locator)}
      *          instead!
      */
+    @Deprecated
     protected void addCharacters(char[] data, int start, int end,
                                  PropertyList pList,
                                  Locator locator) throws FOPException {

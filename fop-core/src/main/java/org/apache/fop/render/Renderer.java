@@ -151,6 +151,7 @@ public interface Renderer {
      * @param seqTitle  The title of the page sequence
      * @deprecated Use {@link #startPageSequence(PageSequence)} instead
      */
+    @Deprecated
     void startPageSequence(LineArea seqTitle);
 
     /**

@@ -25,6 +25,7 @@ package org.apache.fop.render;
  * @deprecated use {@link org.apache.xmlgraphics.java2d.Graphics2DImagePainter} directly!
  */
 // @SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
+@Deprecated
 public interface Graphics2DImagePainter
         extends org.apache.xmlgraphics.java2d.Graphics2DImagePainter {
 

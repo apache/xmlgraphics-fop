@@ -25,6 +25,7 @@ import java.awt.geom.AffineTransform;
  * Utility class for unit conversions.
  * @deprecated use org.apache.xmlgraphics.util.UnitConv instead.
  */
+@Deprecated
 public final class UnitConv {
 
     private UnitConv() {
@@ -34,18 +35,21 @@ public final class UnitConv {
      * conversion factory from millimeters to inches.
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.IN2MM instead.
      */
+    @Deprecated
     public static final float IN2MM = org.apache.xmlgraphics.util.UnitConv.IN2MM;
 
     /**
      * conversion factory from centimeters to inches.
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.IN2CM instead.
      */
+    @Deprecated
     public static final float IN2CM = org.apache.xmlgraphics.util.UnitConv.IN2CM;
 
     /**
      * conversion factory from inches to points.
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.IN2PT instead.
      */
+    @Deprecated
     public static final int IN2PT = org.apache.xmlgraphics.util.UnitConv.IN2PT;
 
     /**
@@ -54,6 +58,7 @@ public final class UnitConv {
      * @return the value in pt
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.mm2pt(mm) instead.
      */
+    @Deprecated
     public static double mm2pt(double mm) {
         return org.apache.xmlgraphics.util.UnitConv.mm2pt(mm);
     }
@@ -64,6 +69,7 @@ public final class UnitConv {
      * @return the value in mpt
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.mm2mpt(mm) instead.
      */
+    @Deprecated
     public static double mm2mpt(double mm) {
         return org.apache.xmlgraphics.util.UnitConv.mm2mpt(mm);
     }
@@ -74,6 +80,7 @@ public final class UnitConv {
      * @return the value in mm
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.pt2mm(pt) instead.
      */
+    @Deprecated
     public static double pt2mm(double pt) {
         return org.apache.xmlgraphics.util.UnitConv.pt2mm(pt);
     }
@@ -84,6 +91,7 @@ public final class UnitConv {
      * @return the value in inches
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.pt2mm(pt) instead.
      */
+    @Deprecated
     public static double mm2in(double mm) {
         return org.apache.xmlgraphics.util.UnitConv.mm2in(mm);
     }
@@ -94,6 +102,7 @@ public final class UnitConv {
      * @return the value in mm
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.in2mm(in) instead.
      */
+    @Deprecated
     public static double in2mm(double in) {
         return org.apache.xmlgraphics.util.UnitConv.in2mm(in);
     }
@@ -104,6 +113,7 @@ public final class UnitConv {
      * @return the value in mpt
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.in2mpt(in) instead.
      */
+    @Deprecated
     public static double in2mpt(double in) {
         return org.apache.xmlgraphics.util.UnitConv.in2mpt(in);
     }
@@ -114,6 +124,7 @@ public final class UnitConv {
      * @return the value in pt
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.in2pt(in) instead.
      */
+    @Deprecated
     public static double in2pt(double in) {
         return org.apache.xmlgraphics.util.UnitConv.in2pt(in);
     }
@@ -124,6 +135,7 @@ public final class UnitConv {
      * @return the value in inches
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.mpt2in(mpt) instead.
      */
+    @Deprecated
     public static double mpt2in(double mpt) {
         return org.apache.xmlgraphics.util.UnitConv.mpt2in(mpt);
     }
@@ -135,6 +147,7 @@ public final class UnitConv {
      * @return the value in pixels
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.mm2px(mm, resolution) instead.
      */
+    @Deprecated
     public static double mm2px(double mm, int resolution) {
         return org.apache.xmlgraphics.util.UnitConv.mm2px(mm, resolution);
     }
@@ -146,6 +159,7 @@ public final class UnitConv {
      * @return the value in pixels
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.mpt2px(mpt, resolution) instead.
      */
+    @Deprecated
     public static double mpt2px(double mpt, int resolution) {
         return org.apache.xmlgraphics.util.UnitConv.mpt2px(mpt, resolution);
     }
@@ -156,6 +170,7 @@ public final class UnitConv {
      * @return a point-based transformation matrix
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.mptToPt(at) instead.
      */
+    @Deprecated
     public static AffineTransform mptToPt(AffineTransform at) {
         return org.apache.xmlgraphics.util.UnitConv.mptToPt(at);
     }
@@ -166,6 +181,7 @@ public final class UnitConv {
      * @return a millipoint-based transformation matrix
      * @deprecated use org.apache.xmlgraphics.util.UnitConv.ptToMpt(at) instead.
      */
+    @Deprecated
     public static AffineTransform ptToMpt(AffineTransform at) {
         return org.apache.xmlgraphics.util.UnitConv.ptToMpt(at);
     }
