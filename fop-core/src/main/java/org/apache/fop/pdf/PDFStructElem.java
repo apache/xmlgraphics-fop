@@ -192,7 +192,14 @@ public class PDFStructElem extends StructureHierarchyMember implements Structure
             if (attributes.size() == 1) {
                 put("A", attributes.get(0));
             } else {
-                PDFArray array = new PDFArray(attributes);
+                // build the array via add() so that every attribute dictionary
+                // gets this element as parent; the PDFArray(List) constructor
+                // does not set parents, which breaks the serialization of any
+                // string values inside the dictionaries (e.g. Table /Headers)
+                PDFArray array = new PDFArray();
+                for (PDFDictionary attribute : attributes) {
+                    array.add(attribute);
+                }
                 put("A", array);
             }
         }
