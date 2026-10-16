@@ -1605,14 +1605,17 @@ public abstract class OpenFont {
     protected void determineAscDesc() {
         int hheaBoxHeight = hheaAscender - hheaDescender;
         int os2BoxHeight = os2Ascender - os2Descender;
-        if (os2Ascender > 0 && os2BoxHeight <= upem) {
+        // A typo descender above the baseline is a sign error in the font (Wingdings has
+        // sTypoDescender +420 where its hhea descender is -432), so the OS/2 values are not used
+        boolean os2Usable = os2Ascender > 0 && os2Descender <= 0;
+        if (os2Usable && os2BoxHeight <= upem) {
             ascender = os2Ascender;
             descender = os2Descender;
         } else if (hheaAscender > 0 && hheaBoxHeight <= upem) {
             ascender = hheaAscender;
             descender = hheaDescender;
         } else {
-            if (os2Ascender > 0) {
+            if (os2Usable) {
                 //Fall back to info from OS/2 if possible
                 ascender = os2Ascender;
                 descender = os2Descender;
@@ -1673,7 +1676,9 @@ public abstract class OpenFont {
             log.debug("Ascender from glyph 'd': " + formatUnitsForDebug(localAscender));
             log.debug("Descender from glyph 'p': " + formatUnitsForDebug(localDescender));
         }
-        if (ascender - descender > upem) {
+        // Only values that were found, either side of the baseline: a font without the 'd' and 'p'
+        // glyphs (a symbol font, or one for another script) would otherwise get an ascender and descender of 0
+        if (ascender - descender > upem && localAscender > 0 && localDescender < 0) {
             log.debug("Replacing specified ascender/descender with derived values to get values"
                     + " which fit in the em box.");
             ascender = localAscender;
