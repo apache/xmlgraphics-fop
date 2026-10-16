@@ -207,6 +207,9 @@ public class OFFontLoader extends FontLoader {
             returnFont.setSVG(otf.svgs);
         }
 
+        // Record the configuration's kerning flag on the font: it gates GPOS kerning as well as
+        // the legacy kern table copied below.
+        returnFont.setKerningEnabled(useKerning);
         if (otf.getKerning() != null && useKerning) {
             copyKerning(otf, isCid);
         }

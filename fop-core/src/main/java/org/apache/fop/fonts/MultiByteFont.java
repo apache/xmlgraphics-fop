@@ -614,7 +614,9 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         if (gpos != null) {
             GlyphSequence gs = mapCharsToGlyphs(cs, null);
             int[][] adjustments = new int [ gs.getGlyphCount() ] [ 4 ];
-            if (gpos.position(gs, script, language, fontSize, this.width, adjustments)) {
+            // The configuration's kerning flag reaches GPOS too: without it the kern feature is left
+            // out, as the legacy kern table already is, and the marks are still positioned.
+            if (gpos.position(gs, script, language, fontSize, this.width, adjustments, isKerningEnabled())) {
                 return scaleAdjustments(adjustments, fontSize);
             } else {
                 return null;
