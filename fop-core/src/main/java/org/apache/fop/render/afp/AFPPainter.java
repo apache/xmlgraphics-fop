@@ -203,13 +203,12 @@ public class AFPPainter extends AbstractIFPainter<AFPDocumentHandler> {
     /** {@inheritDoc} */
     @Override
     protected RenderingContext createRenderingContext() {
-        AFPRenderingContext renderingContext = new AFPRenderingContext(
+        return new AFPRenderingContext(
                 getUserAgent(),
                 getDocumentHandler().getResourceManager(),
                 getPaintingState(),
                 getFontInfo(),
                 getContext().getForeignAttributes());
-        return renderingContext;
     }
 
     /** {@inheritDoc} */

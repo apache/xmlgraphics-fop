@@ -427,8 +427,7 @@ public class AlignmentContext implements Constants {
      * @return the offset
      */
     private int getTotalTopOffset() {
-        int offset = getTotalAlignmentBaselineOffset() + getAltitude();
-        return offset;
+        return getTotalAlignmentBaselineOffset() + getAltitude();
     }
 
     /**

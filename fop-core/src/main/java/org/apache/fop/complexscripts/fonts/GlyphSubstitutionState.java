@@ -189,8 +189,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
     public boolean apply(GlyphSubstitutionSubtable st) {
         assert st != null;
         updateSubtableState(st);
-        boolean applied = st.substitute(this);
-        return applied;
+        return st.substitute(this);
     }
 
     /**

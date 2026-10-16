@@ -159,8 +159,7 @@ public class RtfListItem extends RtfContainer
      * @throws IOException for I/O problems
      */
     public RtfList newList(RtfAttributes attrs) throws IOException {
-        RtfList list = new RtfList(this, writer, attrs);
-        return list;
+        return new RtfList(this, writer, attrs);
     }
 
     /**

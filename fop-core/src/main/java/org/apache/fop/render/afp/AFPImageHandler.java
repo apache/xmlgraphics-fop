@@ -114,9 +114,8 @@ public abstract class AFPImageHandler implements ImageHandlerBase {
         int height = (int) Math.ceil(unitConv.mpt2units(targetRect.height));
 
         int resolution = paintingState.getResolution();
-        AFPObjectAreaInfo objectAreaInfo = new AFPObjectAreaInfo(coords[X], coords[Y], width,
+        return new AFPObjectAreaInfo(coords[X], coords[Y], width,
                 height, resolution, paintingState.getRotation());
-        return objectAreaInfo;
     }
 
     /**

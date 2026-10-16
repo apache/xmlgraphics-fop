@@ -308,8 +308,7 @@ public final class ColorUtil {
         }
         //Sun's classlib rounds differently with this constructor than when converting to sRGB
         //via CIE XYZ.
-        Color sRGB = new Color(red, green, blue, alpha);
-        return sRGB;
+        return new Color(red, green, blue, alpha);
     }
 
     /**

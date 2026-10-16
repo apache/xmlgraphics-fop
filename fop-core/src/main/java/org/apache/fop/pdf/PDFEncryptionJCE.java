@@ -123,7 +123,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         }
 
         private String createEncryptionDictionary(final int permissions, InitializationEngine engine) {
-            String encryptionDict = "<<\n"
+            return "<<\n"
                     + "/Filter /Standard\n"
                     + "/V " + version + "\n"
                     + "/R " + revision + "\n"
@@ -131,7 +131,6 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
                     + "/P " + permissions + "\n"
                     + engine.getEncryptionDictionaryPart()
                     + ">>";
-            return encryptionDict;
         }
 
     }
@@ -251,9 +250,8 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         }
 
         protected String getEncryptionDictionaryPart() {
-            String encryptionDictionaryPart = "/O " + PDFText.toHex(oValue) + "\n"
+            return "/O " + PDFText.toHex(oValue) + "\n"
                     + "/U " + PDFText.toHex(uValue) + "\n";
-            return encryptionDictionaryPart;
         }
 
         protected abstract void computeOValue();

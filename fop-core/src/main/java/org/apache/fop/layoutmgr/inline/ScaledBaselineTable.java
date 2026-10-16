@@ -199,9 +199,8 @@ final class ScaledBaselineTable {
      * @return a new baseline with the new baseline
      */
     ScaledBaselineTable deriveScaledBaselineTable(int baselineIdentifier) {
-        ScaledBaselineTable bac = new ScaledBaselineTable(altitude, depth, xHeight,
+        return new ScaledBaselineTable(altitude, depth, xHeight,
                 baselineIdentifier, this.writingMode);
-        return bac;
     }
 
 }

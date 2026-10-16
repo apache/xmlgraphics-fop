@@ -645,8 +645,7 @@ public abstract class CharacterSetBuilder {
         }
 
         public int getNominalFontSizeInMillipoints() {
-            int nominalFontSize = 100 * getUBIN(data, 39);
-            return nominalFontSize;
+            return 100 * getUBIN(data, 39);
         }
     }
 

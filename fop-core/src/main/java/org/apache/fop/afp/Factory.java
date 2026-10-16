@@ -157,8 +157,7 @@ public class Factory {
     public ImageObject createImageObject() {
         String name = IMAGE_NAME_PREFIX
         + StringUtils.lpad(String.valueOf(++imageCount), '0', 5);
-        ImageObject imageObject = new ImageObject(this, name);
-        return imageObject;
+        return new ImageObject(this, name);
     }
 
     /**
@@ -169,8 +168,7 @@ public class Factory {
     public IMImageObject createIMImageObject() {
         String name = IM_IMAGE_NAME_PREFIX
         + StringUtils.lpad(String.valueOf(++imImageCount), '0', 3);
-        IMImageObject imImageObject = new IMImageObject(name);
-        return imImageObject;
+        return new IMImageObject(name);
     }
 
     /**
@@ -181,8 +179,7 @@ public class Factory {
     public GraphicsObject createGraphicsObject() {
         String name = GRAPHIC_NAME_PREFIX
         + StringUtils.lpad(String.valueOf(++graphicCount), '0', 5);
-        GraphicsObject graphicsObj = new GraphicsObject(this, name);
-        return graphicsObj;
+        return new GraphicsObject(this, name);
     }
 
     /**
@@ -323,9 +320,8 @@ public class Factory {
             int widthRes, int heightRes, int overlayRotation) {
         String overlayName = OVERLAY_NAME_PREFIX
         + StringUtils.lpad(String.valueOf(++overlayCount), '0', 5);
-        Overlay overlay = new Overlay(this, overlayName, width, height,
+        return new Overlay(this, overlayName, width, height,
                 overlayRotation, widthRes, heightRes);
-        return overlay;
     }
 
     /**
@@ -336,8 +332,7 @@ public class Factory {
     public Document createDocument() {
         String documentName = DOCUMENT_NAME_PREFIX
         + StringUtils.lpad(String.valueOf(++documentCount), '0', 5);
-        Document document = new Document(this, documentName);
-        return document;
+        return new Document(this, documentName);
     }
 
     /**
@@ -346,8 +341,7 @@ public class Factory {
      * @return a new {@link MapCodedFont}
      */
     public MapCodedFont createMapCodedFont() {
-        MapCodedFont mapCodedFont = new MapCodedFont();
-        return mapCodedFont;
+        return new MapCodedFont();
     }
 
     /**
@@ -360,8 +354,7 @@ public class Factory {
      * @return a new {@link IncludePageSegment}
      */
     public IncludePageSegment createIncludePageSegment(String name, int x, int y) {
-        IncludePageSegment includePageSegment = new IncludePageSegment(name, x, y);
-        return includePageSegment;
+        return new IncludePageSegment(name, x, y);
     }
 
     /**
@@ -371,8 +364,7 @@ public class Factory {
      * @return a new {@link IncludeObject}
      */
     public IncludeObject createInclude(String name) {
-        IncludeObject includeObject = new IncludeObject(name);
-        return includeObject;
+        return new IncludeObject(name);
     }
 
     /**
@@ -382,8 +374,7 @@ public class Factory {
      * @return a new {@link TagLogicalElement}
      */
     public TagLogicalElement createTagLogicalElement(TagLogicalElement.State state) {
-        TagLogicalElement tle = new TagLogicalElement(state);
-        return tle;
+        return new TagLogicalElement(state);
     }
 
     /**
@@ -394,8 +385,7 @@ public class Factory {
      * @return a new {@link DataStream}
      */
     public DataStream createDataStream(AFPPaintingState paintingState, OutputStream outputStream) {
-        DataStream dataStream = new DataStream(this, paintingState, outputStream);
-        return dataStream;
+        return new DataStream(this, paintingState, outputStream);
     }
 
     /**
@@ -408,8 +398,7 @@ public class Factory {
      * @return a new {@link PageDescriptor}
      */
     public PageDescriptor createPageDescriptor(int width, int height, int widthRes, int heightRes) {
-        PageDescriptor pageDescriptor = new PageDescriptor(width, height, widthRes, heightRes);
-        return pageDescriptor;
+        return new PageDescriptor(width, height, widthRes, heightRes);
     }
 
     /**
@@ -420,8 +409,7 @@ public class Factory {
     public ObjectEnvironmentGroup createObjectEnvironmentGroup() {
         String oegName = OBJECT_ENVIRONMENT_GROUP_NAME_PREFIX
         + StringUtils.lpad(String.valueOf(++objectEnvironmentGroupCount), '0', 5);
-        ObjectEnvironmentGroup objectEnvironmentGroup = new ObjectEnvironmentGroup(oegName);
-        return objectEnvironmentGroup;
+        return new ObjectEnvironmentGroup(oegName);
     }
 
     /**
@@ -430,8 +418,7 @@ public class Factory {
      * @return a new {@link GraphicsData}
      */
     public GraphicsData createGraphicsData() {
-        GraphicsData graphicsData = new GraphicsData();
-        return graphicsData;
+        return new GraphicsData();
     }
 
     /**
@@ -445,9 +432,7 @@ public class Factory {
      */
     public ObjectAreaDescriptor createObjectAreaDescriptor(
             int width, int height, int widthRes, int heightRes) {
-        ObjectAreaDescriptor objectAreaDescriptor
-            = new ObjectAreaDescriptor(width, height, widthRes, heightRes);
-        return objectAreaDescriptor;
+        return new ObjectAreaDescriptor(width, height, widthRes, heightRes);
     }
 
     /**
@@ -460,9 +445,8 @@ public class Factory {
      */
     public ObjectAreaPosition createObjectAreaPosition(int x, int y,
             int rotation) {
-        ObjectAreaPosition objectAreaPosition = new ObjectAreaPosition(
+        return new ObjectAreaPosition(
                 x, y, rotation);
-        return objectAreaPosition;
     }
 
     /**
@@ -476,9 +460,8 @@ public class Factory {
      */
     public ImageDataDescriptor createImageDataDescriptor(
             int width, int height, int widthRes, int heightRes) {
-        ImageDataDescriptor imageDataDescriptor = new ImageDataDescriptor(
+        return new ImageDataDescriptor(
                 width, height, widthRes, heightRes);
-        return imageDataDescriptor;
     }
 
     /**
@@ -494,9 +477,8 @@ public class Factory {
      */
     public GraphicsDataDescriptor createGraphicsDataDescriptor(
             int xlwind, int xrwind, int ybwind, int ytwind, int widthRes, int heightRes) {
-        GraphicsDataDescriptor graphicsDataDescriptor = new GraphicsDataDescriptor(
+        return new GraphicsDataDescriptor(
                 xlwind, xrwind, ybwind, ytwind, widthRes, heightRes);
-        return graphicsDataDescriptor;
     }
 
     /**
@@ -510,9 +492,7 @@ public class Factory {
      */
     public ContainerDataDescriptor createContainerDataDescriptor(
             int dataWidth, int dataHeight, int widthRes, int heightRes) {
-        ContainerDataDescriptor containerDataDescriptor
-            = new ContainerDataDescriptor(dataWidth, dataHeight, widthRes, heightRes);
-        return containerDataDescriptor;
+        return new ContainerDataDescriptor(dataWidth, dataHeight, widthRes, heightRes);
     }
 
     /**
@@ -522,8 +502,7 @@ public class Factory {
      * @return a new {@link MapContainerData}
      */
     public MapContainerData createMapContainerData(byte optionValue) {
-        MapContainerData mapContainerData = new MapContainerData(optionValue);
-        return mapContainerData;
+        return new MapContainerData(optionValue);
     }
 
     /**
@@ -532,8 +511,7 @@ public class Factory {
      * @return a new {@link MapDataResource}
      */
     public MapDataResource createMapDataResource() {
-        MapDataResource mapDataResource = new MapDataResource();
-        return mapDataResource;
+        return new MapDataResource();
     }
 
     /**
@@ -546,10 +524,8 @@ public class Factory {
      */
     public PresentationTextDescriptor createPresentationTextDataDescriptor(
             int width, int height, int widthRes, int heightRes) {
-        PresentationTextDescriptor presentationTextDescriptor
-            = new PresentationTextDescriptor(width, height,
+        return new PresentationTextDescriptor(width, height,
                 widthRes, heightRes);
-        return presentationTextDescriptor;
     }
 
     /**
@@ -558,9 +534,7 @@ public class Factory {
      * @return a new {@link PresentationEnvironmentControl}
      */
     public PresentationEnvironmentControl createPresentationEnvironmentControl() {
-        PresentationEnvironmentControl presentationEnvironmentControl
-            = new PresentationEnvironmentControl();
-        return presentationEnvironmentControl;
+        return new PresentationEnvironmentControl();
     }
 
     /**
@@ -570,8 +544,7 @@ public class Factory {
      * @return a new {@link InvokeMediumMap}
      */
     public InvokeMediumMap createInvokeMediumMap(String name) {
-        InvokeMediumMap invokeMediumMap = new InvokeMediumMap(name);
-        return invokeMediumMap;
+        return new InvokeMediumMap(name);
     }
 
     /**
@@ -580,8 +553,7 @@ public class Factory {
      * @return a new {@link ResourceEnvironmentGroup}
      */
     public ResourceEnvironmentGroup createResourceEnvironmentGroup() {
-        ResourceEnvironmentGroup resourceEnvironmentGroup = new ResourceEnvironmentGroup();
-        return resourceEnvironmentGroup;
+        return new ResourceEnvironmentGroup();
     }
 
     /**
@@ -592,8 +564,7 @@ public class Factory {
     public ImageSegment createImageSegment() {
         String name = IMAGE_SEGMENT_NAME_PREFIX
         + StringUtils.lpad(String.valueOf(++imageSegmentCount), '0', 2);
-        ImageSegment imageSegment = new ImageSegment(this, name);
-        return imageSegment;
+        return new ImageSegment(this, name);
     }
 
     /**
@@ -602,8 +573,7 @@ public class Factory {
      * @return an {@link ImageContent}
      */
     public ImageContent createImageContent() {
-        ImageContent imageContent = new ImageContent();
-        return imageContent;
+        return new ImageContent();
     }
 
     /**
@@ -613,8 +583,7 @@ public class Factory {
      * @return a new {@link ImageRasterData}
      */
     public ImageRasterData createImageRasterData(byte[] rasterData) {
-        ImageRasterData imageRasterData = new ImageRasterData(rasterData);
-        return imageRasterData;
+        return new ImageRasterData(rasterData);
     }
 
     /**
@@ -628,9 +597,7 @@ public class Factory {
      */
     public ImageSizeParameter createImageSizeParameter(int hsize, int vsize,
             int hresol, int vresol) {
-        ImageSizeParameter imageSizeParameter
-            = new ImageSizeParameter(hsize, vsize, hresol, vresol);
-        return imageSizeParameter;
+        return new ImageSizeParameter(hsize, vsize, hresol, vresol);
     }
 
     public TileTOC createTileTOC() {

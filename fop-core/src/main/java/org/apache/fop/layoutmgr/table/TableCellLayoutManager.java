@@ -347,8 +347,7 @@ public class TableCellLayoutManager extends BlockStackingLayoutManager {
         while (!(parentLM instanceof TableLayoutManager)) {
             parentLM = parentLM.getParent();
         }
-        TableLayoutManager tlm = (TableLayoutManager) parentLM;
-        return tlm;
+        return (TableLayoutManager) parentLM;
     }
 
     /**

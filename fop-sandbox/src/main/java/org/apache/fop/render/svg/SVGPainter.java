@@ -240,9 +240,8 @@ public class SVGPainter extends AbstractIFPainter<AbstractSVGDocumentHandler>
 
     /** {@inheritDoc} */
     protected RenderingContext createRenderingContext() {
-        SVGRenderingContext svgContext = new SVGRenderingContext(
+        return new SVGRenderingContext(
                 getUserAgent(), handler);
-        return svgContext;
     }
 
     private static String toString(Paint paint) {

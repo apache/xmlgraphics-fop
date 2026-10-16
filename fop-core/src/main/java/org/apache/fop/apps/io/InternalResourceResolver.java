@@ -135,8 +135,7 @@ public class InternalResourceResolver {
         fixedUri = fixedUri.replace(" ", "%20");
         fixedUri = fixedUri.replace("{", "%7B");
         fixedUri = fixedUri.replace("}", "%7D");
-        URI baseURI = new URI(fixedUri);
-        return baseURI;
+        return new URI(fixedUri);
     }
 
     /**

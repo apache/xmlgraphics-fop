@@ -68,8 +68,7 @@ public class RetrieveTableMarkerLayoutManager extends LeafNodeLayoutManager {
         while (!(parentLM instanceof TableLayoutManager)) {
             parentLM = parentLM.getParent();
         }
-        TableLayoutManager tlm = (TableLayoutManager) parentLM;
-        return tlm;
+        return (TableLayoutManager) parentLM;
     }
 
 }

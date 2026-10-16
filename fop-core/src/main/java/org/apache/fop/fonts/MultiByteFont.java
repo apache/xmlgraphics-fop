@@ -586,8 +586,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
                 associations.clear();
                 associations.addAll(ogs.getAssociations());
             }
-            CharSequence ocs = mapGlyphsToChars(ogs);
-            return ocs;
+            return mapGlyphsToChars(ogs);
         } else {
             return cs;
         }

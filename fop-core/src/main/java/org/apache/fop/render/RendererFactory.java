@@ -226,9 +226,7 @@ public class RendererFactory {
      * @return the requested RendererMaker or null if none is available
      */
     public AbstractRendererMaker getRendererMaker(String mime) {
-        AbstractRendererMaker maker
-            = (AbstractRendererMaker)rendererMakerMapping.get(mime);
-        return maker;
+        return (AbstractRendererMaker)rendererMakerMapping.get(mime);
     }
 
     /**
@@ -237,9 +235,7 @@ public class RendererFactory {
      * @return the requested FOEventHandlerMaker or null if none is available
      */
     public AbstractFOEventHandlerMaker getFOEventHandlerMaker(String mime) {
-        AbstractFOEventHandlerMaker maker
-            = (AbstractFOEventHandlerMaker)eventHandlerMakerMapping.get(mime);
-        return maker;
+        return (AbstractFOEventHandlerMaker)eventHandlerMakerMapping.get(mime);
     }
 
     /**
@@ -248,9 +244,7 @@ public class RendererFactory {
      * @return the requested RendererMaker or null if none is available
      */
     private AbstractIFDocumentHandlerMaker getDocumentHandlerMaker(String mime) {
-        AbstractIFDocumentHandlerMaker maker
-            = (AbstractIFDocumentHandlerMaker)documentHandlerMakerMapping.get(mime);
-        return maker;
+        return (AbstractIFDocumentHandlerMaker)documentHandlerMakerMapping.get(mime);
     }
 
     /**
