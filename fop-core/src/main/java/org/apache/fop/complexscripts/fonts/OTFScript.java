@@ -146,7 +146,7 @@ public final class OTFScript {
     }
 
     public static boolean isWildCard(String script) {
-        return (script != null) && script.equals(DEFAULT);
+        return (script != null) && script.equals(WILDCARD);
     }
 
     private OTFScript() {
