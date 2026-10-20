@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      A side float whose own child is an fo:block-container (FOP-3353). Since FOP-3331 the float was put in the flow
+      whatever the container's width, because the in-flow test compared the container's width with itself: the
+      heading was set below the float at full width. First sequence: a 100pt container, the heading beside it at
+      351pt. Second: a 300pt container, the heading at 151pt. Third: the container wrapped in an fo:block, which was
+      never affected, the same 351pt. Fourth: a container as wide as the column, which FOP-3331 puts in the flow,
+      the heading below it at full width (unchanged).
+    </p>
+  </info>
+  <fo>
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<fo:layout-master-set><fo:simple-page-master master-name="A4" page-width="595pt" page-height="842pt" margin="72pt"><fo:region-body/></fo:simple-page-master></fo:layout-master-set>
+<fo:page-sequence master-reference="A4"><fo:flow flow-name="xsl-region-body" font-size="12pt" line-height="16pt">
+<fo:block space-after="10pt"><fo:float float="left"><fo:block-container width="100pt" height="20pt"><fo:block font-size="10pt">box</fo:block></fo:block-container></fo:float>Heading</fo:block>
+<fo:block>a0 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15 a16 a17 a18 a19 a20 a21 a22 a23 a24 a25 a26 a27 a28 a29</fo:block>
+</fo:flow></fo:page-sequence>
+<fo:page-sequence master-reference="A4"><fo:flow flow-name="xsl-region-body" font-size="12pt" line-height="16pt">
+<fo:block space-after="10pt"><fo:float float="left"><fo:block-container width="300pt" height="20pt"><fo:block font-size="0.1pt" line-height="0pt"/></fo:block-container></fo:float>Heading</fo:block>
+<fo:block>b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12 b13 b14 b15 b16 b17 b18 b19 b20 b21 b22 b23 b24 b25 b26 b27 b28 b29</fo:block>
+</fo:flow></fo:page-sequence>
+<fo:page-sequence master-reference="A4"><fo:flow flow-name="xsl-region-body" font-size="12pt" line-height="16pt">
+<fo:block space-after="10pt"><fo:float float="left"><fo:block><fo:block-container width="100pt" height="20pt"><fo:block font-size="10pt">box</fo:block></fo:block-container></fo:block></fo:float>Heading</fo:block>
+<fo:block>c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c17 c18 c19 c20 c21 c22 c23 c24 c25 c26 c27 c28 c29</fo:block>
+</fo:flow></fo:page-sequence>
+<fo:page-sequence master-reference="A4"><fo:flow flow-name="xsl-region-body" font-size="12pt" line-height="16pt">
+<fo:block space-after="10pt"><fo:float float="left"><fo:block-container width="451pt" height="20pt"><fo:block font-size="10pt">wide</fo:block></fo:block-container></fo:float>Heading</fo:block>
+<fo:block>d0 d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 d11 d12 d13 d14 d15 d16 d17 d18 d19 d20 d21 d22 d23 d24 d25 d26 d27 d28 d29</fo:block>
+</fo:flow></fo:page-sequence>
+</fo:root>
+  </fo>
+  <checks>
+    <eval expected="4" xpath="count(//pageViewport)"/>
+    <eval expected="351000" xpath="(//pageViewport)[1]//word[.='Heading']/ancestor::lineArea[1]/@ipd"/>
+    <eval expected="151000" xpath="(//pageViewport)[2]//word[.='Heading']/ancestor::lineArea[1]/@ipd"/>
+    <eval expected="351000" xpath="(//pageViewport)[3]//word[.='Heading']/ancestor::lineArea[1]/@ipd"/>
+    <eval expected="451000" xpath="(//pageViewport)[4]//word[.='Heading']/ancestor::lineArea[1]/@ipd"/>
+    <eval expected="451000" xpath="(//pageViewport)[4]//word[.='d0']/ancestor::lineArea[1]/@ipd"/>
+  </checks>
+</testcase>
