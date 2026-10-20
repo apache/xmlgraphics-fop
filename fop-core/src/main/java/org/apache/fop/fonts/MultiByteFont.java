@@ -779,11 +779,20 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * Removes the glyphs associated with elidable control characters.
      * All the characters in an association must be elidable in order
      * to remove the corresponding glyph.
+     * <p>
+     * A format character (U+2000 to U+206F: joiners, the deprecated controls U+206A to U+206F)
+     * whose glyph in this font is real and zero-width is kept instead: it costs no space,
+     * it draws nothing, and keeping it gives it a selector of its own in the subset and so an
+     * entry of its own in the ToUnicode CMap, where a producer's text layer expects it. The
+     * elision exists for the other case, a font with no glyph for the character, which would
+     * otherwise draw its missing-character glyph; that case, a glyph of nonzero width (a font
+     * defect), a bidi control (see {@link #isKeptFormatCharacter}) and the C0 and C1 controls are
+     * elided as before.
      *
      * @param gs GlyphSequence that may contains the elidable glyphs
      * @return GlyphSequence without the elidable glyphs
      */
-    private static GlyphSequence elideControls(GlyphSequence gs) {
+    private GlyphSequence elideControls(GlyphSequence gs) {
         if (hasElidableControl(gs)) {
             int[] ca = gs.getCharacterArray(false);
             IntBuffer ngb = IntBuffer.allocate(gs.getGlyphCount());
@@ -802,7 +811,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
                 }
                 // If there is at least one non-elidable character in the char
                 // sequence then the glyph/association is kept.
-                if (s != e) {
+                if (s != e || isKeptFormatCharacter(a, ca, gs.getGlyph(i))) {
                     ngb.put(gs.getGlyph(i));
                     nal.add(a);
                 }
@@ -813,6 +822,35 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         } else {
             return gs;
         }
+    }
+
+    /**
+     * Whether an association of one elidable format character, mapped to the glyph the
+     * character map gives it, may stay: the glyph is real and its advance is zero, and the
+     * character is not a bidi control. The text layer is written in visual order, after this
+     * layout's own bidi resolution, so a bidi control there has done its work already and a
+     * reader would apply it a second time.
+     */
+    private boolean isKeptFormatCharacter(CharAssociation a, int[] ca, int glyph) {
+        if ((a.getEnd() - a.getStart()) != 1) {
+            return false;
+        }
+        int ch = ca [ a.getStart() ];
+        if ((ch < 0x2000) || (ch > 0x206F) || isBidiControl(ch)) {
+            return false;
+        }
+        int gi = findGlyphIndex(ch);
+        if ((gi == SingleByteEncoding.NOT_FOUND_CODE_POINT) || (gi != glyph)) {
+            return false;
+        }
+        return (width != null) && (gi < width.length) && (width [ gi ] == 0);
+    }
+
+    /** The Unicode Bidi_Control characters in the format block: the marks, embeddings, overrides and isolates. */
+    private static boolean isBidiControl(int ch) {
+        return (ch == 0x200E) || (ch == 0x200F)
+            || ((ch >= 0x202A) && (ch <= 0x202E))
+            || ((ch >= 0x2066) && (ch <= 0x2069));
     }
 
     private static boolean hasElidableControl(GlyphSequence gs) {
