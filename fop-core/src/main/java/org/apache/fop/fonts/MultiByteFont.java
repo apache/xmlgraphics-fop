@@ -24,8 +24,11 @@ import java.io.InputStream;
 import java.nio.Buffer;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
+import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +70,17 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     private GlyphDefinitionTable gdef;
     private GlyphSubstitutionTable gsub;
     private GlyphPositioningTable gpos;
+
+    /**
+     * The text a substituted glyph stands for, by glyph index, recorded by mapGlyphsToChars for
+     * the ToUnicode CMap: the characters of the glyph's association, so a ligature reads as its
+     * letters and an Arabic contextual form as its letter. Where one character is split into as
+     * many glyphs as its canonical decomposition has characters, each glyph records its own piece
+     * of the decomposition. A null value means the glyph has no one meaning, because it was seen
+     * with different associations or as the second or later glyph of one character, and publishes
+     * its identity code point as before.
+     */
+    private Map<Integer, String> glyphMeanings = new HashMap<Integer, String>();
 
     /* dynamic private use (character) mappings */
     private int numMapped;
@@ -700,6 +714,172 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
     }
 
     /**
+     * Obtain the character that produced the glyph at index I of glyph sequence GS, but only if
+     * substitution left that glyph alone, i.e., the glyph is associated with exactly one character
+     * and the font's character map maps that character to this same glyph. In a CJK font a glyph is
+     * commonly shared by an ideograph and by the Kangxi radical (or CJK radical supplement) form of
+     * that ideograph, in which case the reverse lookup made by findCharacterFromGlyphIndex() returns
+     * the radical, it being the lower code point; keeping the originating character instead prevents
+     * the radical from reaching the output character sequence.
+     * @param gs a GlyphSequence containing glyph indices
+     * @param i index of glyph in glyph sequence
+     * @param ca character array underlying glyph sequence
+     * @param nc number of characters in character array
+     * @param gi glyph index of the glyph at index I
+     * @return unicode scalar value of the originating character, or zero if not applicable
+     */
+    private int findUnsubstitutedCharacter(GlyphSequence gs, int i, int[] ca, int nc, int gi) {
+        if (gi == SingleByteEncoding.NOT_FOUND_CODE_POINT) {
+            return 0;
+        }
+        CharAssociation a = gs.getAssociation(i);
+        if ((a == null) || (a.getCount() != 1)) {
+            return 0;
+        }
+        int s = a.getStart();
+        if ((s < 0) || (s >= nc) || (s >= ca.length)) {
+            return 0;
+        }
+        int cc = ca [ s ];
+        if ((cc == 0) || (findGlyphIndex(cc) != gi)) {
+            return 0;
+        }
+        return cc;
+    }
+
+    /**
+     * The text the glyph at a glyph index stands for, if substitution gave it one.
+     * @param glyphIndex the glyph index in the font
+     * @return the UTF-16 text, or null to publish the glyph's own code point
+     */
+    String getGlyphMeaning(int glyphIndex) {
+        return glyphMeanings.get(glyphIndex);
+    }
+
+    /**
+     * Record what a substituted glyph stands for, from the association substitution left on
+     * it. Where a multiple substitution splits one character into as many glyphs as the
+     * character's canonical decomposition has characters (a font's ccmp decomposing a precomposed
+     * letter into its base and a combining mark), each glyph records its own piece: the base its
+     * letter and the mark its combining character, so the base glyph, which plain letters use too,
+     * is not published as the precomposed letter. Otherwise a glyph that is the second or later
+     * output of one character (a multiple substitution replicates the association onto each
+     * output) gets no meaning, since a ToUnicode entry cannot say that several glyphs share one
+     * character; a glyph seen with two different meanings gets none, since one entry cannot carry
+     * both. Either is final for the glyph.
+     * The stand-in glyph drawn for a character the font lacks (Typeface.NOT_FOUND) never
+     * gets one: it is not the character, and the text layer must go on saying so.
+     * @param gs a GlyphSequence containing glyph indices
+     * @param i index of glyph in glyph sequence
+     * @param ca character array underlying glyph sequence
+     * @param nc number of characters in character array
+     * @param gi glyph index of the glyph at index I
+     */
+    private void recordGlyphMeaning(GlyphSequence gs, int i, int[] ca, int nc, int gi) {
+        if ((gi == SingleByteEncoding.NOT_FOUND_CODE_POINT) || (gi == findGlyphIndex(Typeface.NOT_FOUND))) {
+            // the stand-in drawn for a character the font lacks is not that character
+            return;
+        }
+        CharAssociation a = gs.getAssociation(i);
+        if ((a == null) || (a.getCount() <= 0)) {
+            return;
+        }
+        String meaning = decompositionPiece(gs, i, a, ca, nc);
+        if (meaning == null) {
+            if ((i > 0) && sameAssociation(a, gs.getAssociation(i - 1))) {
+                glyphMeanings.put(gi, null);
+                return;
+            }
+            meaning = associationText(a, ca, nc);
+            if (meaning == null) {
+                return;
+            }
+        }
+        if (!glyphMeanings.containsKey(gi)) {
+            glyphMeanings.put(gi, meaning);
+        } else if (!meaning.equals(glyphMeanings.get(gi))) {
+            glyphMeanings.put(gi, null);
+        }
+    }
+
+    /**
+     * The piece of one character's canonical decomposition that the glyph at index I stands for,
+     * where substitution split that character into exactly as many glyphs as the decomposition has
+     * characters, in order: Cambria's ccmp gives U+00E0 as a and U+0300, U+03AC as alpha and a tonos
+     * mark. The glyphs carry one association between them, which is how a multiple substitution
+     * leaves them.
+     * @return the decomposition's character for this glyph, or null where the glyphs are not such a
+     * split (a ligature, a single substitution, or a decomposition the font draws in more or fewer
+     * glyphs than Unicode's, such as an Arabic letter drawn as a dotless base and its dots)
+     */
+    private static String decompositionPiece(GlyphSequence gs, int i, CharAssociation a, int[] ca, int nc) {
+        if (a.getCount() != 1 || a.isDisjoint()) {
+            return null;
+        }
+        int first = i;
+        while ((first > 0) && sameAssociation(a, gs.getAssociation(first - 1))) {
+            first--;
+        }
+        int end = i + 1;
+        while ((end < gs.getGlyphCount()) && sameAssociation(a, gs.getAssociation(end))) {
+            end++;
+        }
+        if (end - first < 2) {
+            return null;
+        }
+        int s = a.getStart();
+        if ((s < 0) || (s >= nc) || (s >= ca.length) || (ca[s] <= 0) || (ca[s] > 0x10FFFF)) {
+            return null;
+        }
+        String nfd = Normalizer.normalize(new String(Character.toChars(ca[s])), Normalizer.Form.NFD);
+        if (nfd.codePointCount(0, nfd.length()) != end - first) {
+            return null;
+        }
+        int at = nfd.offsetByCodePoints(0, i - first);
+        return new String(Character.toChars(nfd.codePointAt(at)));
+    }
+
+    private static boolean sameAssociation(CharAssociation a, CharAssociation b) {
+        return (b != null) && (a.getOffset() == b.getOffset()) && (a.getCount() == b.getCount())
+            && Arrays.equals(a.getSubIntervals(), b.getSubIntervals());
+    }
+
+    /**
+     * The characters an association covers, as UTF-16 text; a disjoint association (a ligature
+     * whose components had ignored marks between them) contributes its sub-intervals only, the
+     * marks staying with their own glyphs.
+     * @return the text, or null if the association does not lie within the character array
+     */
+    private static String associationText(CharAssociation a, int[] ca, int nc) {
+        StringBuilder sb = new StringBuilder();
+        if (a.isDisjoint()) {
+            int[] si = a.getSubIntervals();
+            for (int k = 0; k + 1 < si.length; k += 2) {
+                if (!appendCharacters(sb, ca, nc, si[k], si[k + 1])) {
+                    return null;
+                }
+            }
+        } else if (!appendCharacters(sb, ca, nc, a.getStart(), a.getEnd())) {
+            return null;
+        }
+        return (sb.length() > 0) ? sb.toString() : null;
+    }
+
+    private static boolean appendCharacters(StringBuilder sb, int[] ca, int nc, int start, int end) {
+        if ((start < 0) || (start >= end) || (end > nc) || (end > ca.length)) {
+            return false;
+        }
+        for (int k = start; k < end; k++) {
+            int cc = ca[k];
+            if ((cc <= 0) || (cc > 0x10FFFF)) {
+                return false;
+            }
+            sb.appendCodePoint(cc);
+        }
+        return true;
+    }
+
+    /**
      * Map sequence GS, comprising a sequence of Glyph Indices, to output sequence CS,
      * comprising a sequence of UTF-16 encoded Unicode Code Points.
      * @param gs a GlyphSequence containing glyph indices
@@ -709,10 +889,16 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         int ng = gs.getGlyphCount();
         int ccMissing = Typeface.NOT_FOUND;
         List<Character> chars = new ArrayList<Character>(gs.getUTF16CharacterCount());
+        int[] ca = gs.getCharacterArray(false);
+        int nc = gs.getCharacterCount();
 
         for (int i = 0, n = ng; i < n; i++) {
             int gi = gs.getGlyph(i);
-            int cc = findCharacterFromGlyphIndex(gi);
+            int cc = findUnsubstitutedCharacter(gs, i, ca, nc, gi);
+            if (cc == 0) {
+                recordGlyphMeaning(gs, i, ca, nc, gi);
+                cc = findCharacterFromGlyphIndex(gi);
+            }
             if ((cc == 0) || (cc > 0x10FFFF)) {
                 cc = ccMissing;
                 log.warn("Unable to map glyph index " + gi
