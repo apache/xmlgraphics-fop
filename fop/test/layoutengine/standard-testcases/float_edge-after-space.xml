@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+
+  <info>
+    <p>
+      A side float 20pt tall anchored in a heading. First sequence: the heading's 16pt line and its space-after
+      carry the next paragraph's first line below the float's foot, so that line is laid out at full width, and
+      the space is kept. Second: the same with the space as the next paragraph's space-before. Third: a 20pt
+      heading line reaches the float's foot itself, and the space after it is still kept, not discarded as at a
+      page break. Fourth: no space, so the first line after the heading lies beside the float and is narrowed.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="page" page-width="595pt" page-height="842pt" margin="72pt">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="page"><fo:flow flow-name="xsl-region-body" font-family="Times" font-size="12pt"><fo:block line-height="16pt" space-after="10pt"><fo:float float="left"><fo:block line-height="20pt" padding-end="270pt">BOX</fo:block></fo:float>Heading</fo:block><fo:block line-height="16pt">a0 a1 a2 a3 a4 a5 a6 a7 a8 a9 a10 a11 a12 a13 a14 a15 a16 a17 a18 a19 a20 a21 a22 a23 a24 a25 a26 a27 a28 a29</fo:block></fo:flow></fo:page-sequence>
+      <fo:page-sequence master-reference="page"><fo:flow flow-name="xsl-region-body" font-family="Times" font-size="12pt"><fo:block line-height="16pt"><fo:float float="left"><fo:block line-height="20pt" padding-end="270pt">BOX</fo:block></fo:float>Heading</fo:block><fo:block line-height="16pt" space-before="10pt">b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 b10 b11 b12 b13 b14 b15 b16 b17 b18 b19 b20 b21 b22 b23 b24 b25 b26 b27 b28 b29</fo:block></fo:flow></fo:page-sequence>
+      <fo:page-sequence master-reference="page"><fo:flow flow-name="xsl-region-body" font-family="Times" font-size="12pt"><fo:block line-height="20pt" space-after="10pt"><fo:float float="left"><fo:block line-height="20pt" padding-end="270pt">BOX</fo:block></fo:float>Heading</fo:block><fo:block line-height="16pt">c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c17 c18 c19 c20 c21 c22 c23 c24 c25 c26 c27 c28 c29</fo:block></fo:flow></fo:page-sequence>
+      <fo:page-sequence master-reference="page"><fo:flow flow-name="xsl-region-body" font-family="Times" font-size="12pt"><fo:block line-height="16pt"><fo:float float="left"><fo:block line-height="20pt" padding-end="270pt">BOX</fo:block></fo:float>Heading</fo:block><fo:block line-height="16pt">e0 e1 e2 e3 e4 e5 e6 e7 e8 e9 e10 e11 e12 e13 e14 e15 e16 e17 e18 e19 e20 e21 e22 e23 e24 e25 e26 e27 e28 e29</fo:block></fo:flow></fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="451000" xpath="//word[. = 'a0']/ancestor::lineArea[1]/@ipd"/>
+    <eval expected="10000" xpath="((//pageViewport)[1]//word[. = 'Heading'])[1]/ancestor::block[1]/@space-after"/>
+    <eval expected="451000" xpath="//word[. = 'b0']/ancestor::lineArea[1]/@ipd"/>
+    <eval expected="10000" xpath="//word[. = 'b0']/ancestor::block[1]/@space-before"/>
+    <eval expected="451000" xpath="//word[. = 'c0']/ancestor::lineArea[1]/@ipd"/>
+    <eval expected="10000" xpath="((//pageViewport)[3]//word[. = 'Heading'])[1]/ancestor::block[1]/@space-after"/>
+    <eval expected="155668" xpath="//word[. = 'e0']/ancestor::lineArea[1]/@ipd"/>
+  </checks>
+</testcase>
