@@ -78,6 +78,7 @@ public class GlyphSubstitutionState extends GlyphProcessingState {
         super(ss);
         this.ogb = IntBuffer.allocate(indexLast);
         this.oal = new ArrayList(indexLast);
+        this.predications = ss.predications;
     }
 
     /**

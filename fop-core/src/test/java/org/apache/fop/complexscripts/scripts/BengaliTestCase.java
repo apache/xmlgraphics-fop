@@ -104,6 +104,24 @@ public class BengaliTestCase {
         Assert.assertArrayEquals(glyphs, shape(font, OTFScript.BENGALI_V2, text));
     }
 
+    @Test
+    public void testHelloWorldNoto() throws Exception {
+        // "হ্যালো ওয়ার্ল্ড": reph must follow the base DDA, not the contextual half form of LA
+        final String text =
+                "\u09B9\u09CD\u09AF\u09BE\u09B2\u09CB \u0993\u09AF\u09BC\u09BE\u09B0\u09CD\u09B2\u09CD\u09A1";
+        // glyph ids in NotoSansBengali-Regular.ttf, as shaped by HarfBuzz
+        final int[] glyphs = {
+                56, 409, 59,        // uni09B9, uni09AF.pstf.short, uni09BE
+                66, 52, 59,         // uni09C7, uni09B2, uni09BE
+                7,                  // space
+                23,                 // uni0993
+                50, 57, 59,         // uni09AF, uni09BC, uni09BE
+                243, 262, 132       // uni09B209CD.half3, uni09A1.side, uni09B009CD: reph reordered after base
+        };
+        final String font = "test/resources/fonts/ttf/NotoSansBengali-Regular.ttf";
+        Assert.assertArrayEquals(glyphs, shape(font, OTFScript.BENGALI_V2, text));
+    }
+
     private static int[] shape(String fontFile, String script, String text) throws Exception {
         InternalResourceResolver resourceResolver =
                 ResourceResolverFactory.createDefaultInternalResourceResolver(new File(".").toURI());
