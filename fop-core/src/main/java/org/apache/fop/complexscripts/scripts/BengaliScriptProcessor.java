@@ -19,8 +19,10 @@
 
 package org.apache.fop.complexscripts.scripts;
 
+import org.apache.fop.complexscripts.fonts.GlyphTable;
 import org.apache.fop.complexscripts.util.CharAssociation;
 import org.apache.fop.complexscripts.util.GlyphSequence;
+import org.apache.fop.complexscripts.util.ScriptContextTester;
 
 // CSOFF: LineLengthCheck
 
@@ -37,6 +39,79 @@ public class BengaliScriptProcessor extends IndicScriptProcessor {
     @Override
     protected Class<? extends BengaliSyllabizer> getSyllabizerClass() {
         return BengaliSyllabizer.class;
+    }
+
+    private static final String[] REPH_FEATURES = { "rphf" };
+    private static final String[] POST_BASE_FEATURES = { "pref", "blwf", "pstf" };
+
+    @Override
+    protected GlyphSequence applyBasicShaping(GlyphSequence glyphs, String script, String language,
+                                              GlyphTable.UseSpec[] useSpecs, ScriptContextTester contextTester) {
+        int rephEnd = (isReph(glyphs) && wouldSubstitute(glyphs, 0, 2, REPH_FEATURES, script, language, useSpecs, contextTester)) ? 2 : 0;
+        // scan backwards for consonants that take a post-base form with their preceding halant, stopping at the base consonant;
+        // where a post-base form is only defined for CONSONANT + HALANT (old spec fonts), move the halant after the consonant
+        boolean postBase = false;
+        for (int index = glyphs.getGlyphCount() - 1; index > rephEnd + 1; index--) {
+            if (containsConsonant(glyphs, index)) {
+                if (!isGlyphChar(glyphs, index - 1, 0x09CD)) {
+                    break;
+                }
+                if (!wouldSubstitute(glyphs, index - 1, 2, POST_BASE_FEATURES, script, language, useSpecs, contextTester)) {
+                    GlyphSequence reordered = GlyphSequence.reorder(glyphs, index - 1, 1, index + 1);
+                    if (!wouldSubstitute(reordered, index - 1, 2, POST_BASE_FEATURES, script, language, useSpecs, contextTester)) {
+                        break;
+                    }
+                    glyphs = reordered;
+                }
+                postBase = true;
+                index--;
+            }
+        }
+        // apply post-base forms first, so that their halants are not taken by half forms of preceding consonants
+        if (postBase) {
+            for (String feature : POST_BASE_FEATURES) {
+                for (GlyphTable.UseSpec useSpec : useSpecs) {
+                    if (useSpec.getFeature().equals(feature)) {
+                        glyphs.setPredications(true);
+                        glyphs = useSpec.substitute(glyphs, script, language, contextTester);
+                    }
+                }
+            }
+        }
+        return super.applyBasicShaping(glyphs, script, language, useSpecs, contextTester);
+    }
+
+    private static GlyphSequence subsequence(GlyphSequence glyphs, int offset, int count) {
+        return new GlyphSequence(glyphs, null, glyphs.getGlyphs(offset, count), null, null, glyphs.getAssociations(offset, count), null);
+    }
+
+    private static boolean wouldSubstitute(GlyphSequence glyphs, int offset, int count, String[] features, String script,
+                                           String language, GlyphTable.UseSpec[] useSpecs, ScriptContextTester contextTester) {
+        for (String feature : features) {
+            GlyphSequence candidate = subsequence(glyphs, offset, count);
+            candidate.setPredications(false);
+            int[] original = candidate.getGlyphs(0, -1);
+            for (GlyphTable.UseSpec useSpec : useSpecs) {
+                if (useSpec.getFeature().equals(feature)) {
+                    candidate = useSpec.substitute(candidate, script, language, contextTester);
+                    candidate.setPredications(false);
+                }
+            }
+            if (!GlyphSequence.sameGlyphs(original, candidate.getGlyphs(0, -1))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isReph(GlyphSequence glyphs) {
+        return (glyphs.getGlyphCount() > 2) && isGlyphChar(glyphs, 0, 0x09B0) && isGlyphChar(glyphs, 1, 0x09CD);
+    }
+
+    private static boolean isGlyphChar(GlyphSequence glyphs, int glyphIndex, int codePoint) {
+        CharAssociation association = glyphs.getAssociation(glyphIndex);
+        int[] chars = glyphs.getCharacterArray(false);
+        return (association.getEnd() - association.getStart() == 1) && (chars[association.getStart()] == codePoint);
     }
 
     @Override

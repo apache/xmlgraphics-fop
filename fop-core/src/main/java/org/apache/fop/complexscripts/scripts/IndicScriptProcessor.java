@@ -191,12 +191,7 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
         for (int i = 0, n = sa.length; i < n; i++) {
             GlyphSequence s = sa [ i ];
             // apply basic shaping subs
-            for (GlyphTable.UseSpec us : usa) {
-                if (isBasicShapingUse(us)) {
-                    s.setPredications(true);
-                    s = us.substitute(s, script, language, sct);
-                }
-            }
+            s = applyBasicShaping(s, script, language, usa, sct);
             // reorder pre-base matra
             s = reorderPreBaseMatra(s);
             // reorder reph
@@ -213,6 +208,17 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
         }
         // 3. return reassembled substituted syllables
         return unsyllabize(gs, sa);
+    }
+
+    protected GlyphSequence applyBasicShaping(GlyphSequence syllable, String script, String language,
+                                              GlyphTable.UseSpec[] useSpecs, ScriptContextTester contextTester) {
+        for (GlyphTable.UseSpec useSpec : useSpecs) {
+            if (isBasicShapingUse(useSpec)) {
+                syllable.setPredications(true);
+                syllable = useSpec.substitute(syllable, script, language, contextTester);
+            }
+        }
+        return syllable;
     }
 
     /**

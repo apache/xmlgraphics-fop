@@ -18,6 +18,7 @@
 /* $Id$ */
 package org.apache.fop.complexscripts.scripts;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,12 +27,16 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.complexscripts.fonts.GlyphClassTable;
 import org.apache.fop.complexscripts.fonts.GlyphDefinitionTable;
 import org.apache.fop.complexscripts.fonts.GlyphSubtable;
+import org.apache.fop.complexscripts.fonts.OTFLanguage;
 import org.apache.fop.complexscripts.fonts.OTFScript;
+import org.apache.fop.complexscripts.util.GlyphSequence;
 import org.apache.fop.fonts.EmbeddingMode;
 import org.apache.fop.fonts.MultiByteFont;
+import org.apache.fop.fonts.truetype.OFFontLoader;
 
 public class BengaliTestCase {
 
@@ -61,6 +66,50 @@ public class BengaliTestCase {
         int[][] gpa = new int[][] {{0, 0, 0, 0}, {5, 0, 0, 0}};
         String actual = font.reorderCombiningMarks(input, gpa, OTFScript.BENGALI_V2, null, null).toString();
         Assert.assertTrue(actual.endsWith("\u0995"));
+    }
+
+    @Test
+    public void testHelloWorld() throws Exception {
+        final String font = "test/resources/fonts/ttf/Lohit-Bengali.ttf";
+        // "\u09b9\u09cd\u09af\u09be\u09b2\u09cb \u0993\u09af\u09bc\u09be\u09b0\u09cd\u09b2\u09cd\u09a1" (hello world)
+        final String text =
+                "\u09b9\u09cd\u09af\u09be\u09b2\u09cb \u0993\u09af\u09bc\u09be\u09b0\u09cd\u09b2\u09cd\u09a1";
+        // glyph ids in Lohit-Bengali.ttf
+        final int[] glyphs = {
+                98, 156, 101,   // habeng, yabeng_viramabeng.pstf, aavowelbeng
+                108, 94, 101,   // evowelbeng, labeng, aavowelbeng: O sign split, pre-base E reordered before LA
+                3,              // space
+                65,             // obeng
+                117, 101,       // yyabeng, aavowelbeng
+                360, 440        // labeng_viramabeng_ddabeng, rabeng_viramabeng: reph reordered after base
+        };
+        Assert.assertArrayEquals(glyphs, shape(font, OTFScript.BENGALI_V2, text));
+        Assert.assertArrayEquals(glyphs, shape(font, OTFScript.BENGALI, text));
+    }
+
+    @Test
+    public void testConjuncts() throws Exception {
+        // "হ্যালো ক্ত ল্ড": ya-phala and conjuncts formed by contextual half forms
+        final String text = "\u09B9\u09CD\u09AF\u09BE\u09B2\u09CB \u0995\u09CD\u09A4 \u09B2\u09CD\u09A1";
+        // glyph ids in NotoSansBengali-Regular.ttf, as shaped by HarfBuzz
+        final int[] glyphs = {
+                56, 409, 59,    // uni09B9, uni09AF.pstf.short, uni09BE
+                66, 52, 59,     // uni09C7, uni09B2, uni09BE
+                7,              // space
+                151, 320, 346,  // uni09A409CD09A4, uni0995.arm2, headlinebeng.200: KA + VIRAMA + TA conjunct
+                7,              // space
+                243, 262        // uni09B209CD.half3, uni09A1.side: half LA + DDA
+        };
+        final String font = "test/resources/fonts/ttf/NotoSansBengali-Regular.ttf";
+        Assert.assertArrayEquals(glyphs, shape(font, OTFScript.BENGALI_V2, text));
+    }
+
+    private static int[] shape(String fontFile, String script, String text) throws Exception {
+        InternalResourceResolver resourceResolver =
+                ResourceResolverFactory.createDefaultInternalResourceResolver(new File(".").toURI());
+        MultiByteFont font = (MultiByteFont) new OFFontLoader(new File(fontFile).toURI(), resourceResolver).getFont();
+        GlyphSequence sequence = font.charSequenceToGlyphSequence(text, null);
+        return font.getGSUB().substitute(sequence, script, OTFLanguage.DEFAULT).getGlyphs(0, -1);
     }
 
     static class MyMultiByteFont extends MultiByteFont {

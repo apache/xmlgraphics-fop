@@ -48,6 +48,14 @@ License version 2.0:
 - DejaVu LGC Serif font (TrueType)
   File: test/resources/fonts/DejaVuLGCSerif.ttf
   Info: test/resources/fonts/DejaVuLGCSerif.LICENSE
+- Lohit Bengali font (TrueType), licensed under the SIL Open Font License 1.1
+  Homepage: https://pagure.io/lohit
+  File: fop/test/resources/fonts/ttf/Lohit-Bengali.ttf
+  Info: fop/test/resources/fonts/ttf/Lohit-Bengali.LICENSE
+- Noto Sans Bengali font (TrueType), licensed under the SIL Open Font License 1.1
+  Homepage: https://github.com/notofonts/bengali
+  File: fop/test/resources/fonts/ttf/NotoSansBengali-Regular.ttf
+  Info: fop/test/resources/fonts/ttf/NotoSansBengali-Regular.LICENSE
 
     
 Where to get help?
