@@ -50,6 +50,7 @@ import org.apache.fop.pdf.PDFReference;
 import org.apache.fop.pdf.PDFResources;
 import org.apache.fop.pdf.PDFSignature;
 import org.apache.fop.pdf.PDFStream;
+import org.apache.fop.pdf.PDFStructTreeRoot;
 import org.apache.fop.render.extensions.prepress.PageBoundaries;
 import org.apache.fop.render.extensions.prepress.PageScale;
 import org.apache.fop.render.intermediate.AbstractBinaryWritingIFDocumentHandler;
