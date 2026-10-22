@@ -327,6 +327,8 @@ public class FO2StructureTreeConverterTestCase {
 
             assertEquals("P", markedContents.get(3).getTag());
             assertEquals("B", markedContents.get(3).getContents().get(0).toString());
+
+            assertEquals(2, pdfDocument.getDocumentCatalog().getStructureTreeRoot().getParentTreeNextKey());
         }
     }
 
