@@ -206,6 +206,16 @@ public class PDFDocumentHandler extends AbstractBinaryWritingIFDocumentHandler {
     public void endDocument() throws IFException {
         documentNavigationHandler.registerIncompleteActions();
         pdfDoc.getResources().addFonts(pdfDoc, fontInfo);
+
+        if (logicalStructureHandler != null) {
+            int nextParentTreeKey = logicalStructureHandler.getNextParentTreeKey();
+            if (nextParentTreeKey != -1) {
+                PDFStructTreeRoot structTreeRoot = pdfDoc.getRoot().getStructTreeRoot();
+                if (structTreeRoot != null) {
+                    structTreeRoot.put("ParentTreeNextKey", nextParentTreeKey);
+                }
+            }
+        }
         try {
             if (pdfDoc.isLinearizationEnabled()) {
                 generator.flushPDFDoc();
