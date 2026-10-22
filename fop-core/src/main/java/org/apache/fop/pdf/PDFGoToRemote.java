@@ -111,7 +111,7 @@ public class PDFGoToRemote extends PDFAction {
         sb.append("\n");
 
         if (destination != null) {
-            sb.append("/D (").append(this.destination).append(")");
+            sb.append("/D ").append(encodeScript(this.destination));
         } else {
             sb.append("/D [ ").append(this.pageReference).append(" /XYZ null null null ]");
         }
