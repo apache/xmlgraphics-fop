@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+  <info>
+    <p>
+      This test checks that zero minimum dimensions do not collapse the
+      viewport of an external graphic.
+    </p>
+  </info>
+  <fo>
+    <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+      <fo:layout-master-set>
+        <fo:simple-page-master master-name="normal" page-width="5in" page-height="5in">
+          <fo:region-body/>
+        </fo:simple-page-master>
+      </fo:layout-master-set>
+      <fo:page-sequence master-reference="normal">
+        <fo:flow flow-name="xsl-region-body">
+          <fo:block>
+            <fo:external-graphic src="../resources/images/box1.png"
+                min-width="0" id="min-width-zero"/>
+            <fo:external-graphic src="../resources/images/box1.png"
+                inline-progression-dimension.minimum="0pt" id="ipd-minimum-zero"/>
+          </fo:block>
+          <fo:block>
+            <fo:external-graphic src="../resources/images/box1.png"
+                min-height="0" id="min-height-zero"/>
+            <fo:external-graphic src="../resources/images/box1.png"
+                block-progression-dimension.minimum="0pt" id="bpd-minimum-zero"/>
+          </fo:block>
+        </fo:flow>
+      </fo:page-sequence>
+    </fo:root>
+  </fo>
+  <checks>
+    <eval expected="40009" xpath="//viewport[@prod-id='min-width-zero']/@ipd"/>
+    <eval expected="40009" xpath="//viewport[@prod-id='ipd-minimum-zero']/@ipd"/>
+    <eval expected="40009" xpath="//viewport[@prod-id='min-height-zero']/@bpd"/>
+    <eval expected="40009" xpath="//viewport[@prod-id='bpd-minimum-zero']/@bpd"/>
+  </checks>
+</testcase>
