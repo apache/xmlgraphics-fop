@@ -122,6 +122,24 @@ public class BengaliTestCase {
         Assert.assertArrayEquals(glyphs, shape(font, OTFScript.BENGALI_V2, text));
     }
 
+    @Test
+    public void testPreBaseMatraBeforePostBaseForm() throws Exception {
+        // "বিনামূল্যে ভাষা": pre-base E must be reordered before LA, not between LA and ya-phala
+        final String text =
+                "\u09AC\u09BF\u09A8\u09BE\u09AE\u09C2\u09B2\u09CD\u09AF\u09C7 \u09AD\u09BE\u09B7\u09BE";
+        // glyph ids in NotoSansBengali-Regular.ttf, as shaped by HarfBuzz
+        final int[] glyphs = {
+                60, 47,             // uni09BF, uni09AC
+                44, 59,             // uni09A8, uni09BE
+                49, 63,             // uni09AE, uni09C2
+                66, 52, 133,        // uni09C7, uni09B2, uni09AF.pstf: pre-base E reordered before LA
+                7,                  // space
+                48, 59, 54, 59      // uni09AD, uni09BE, uni09B7, uni09BE
+        };
+        final String font = "test/resources/fonts/ttf/NotoSansBengali-Regular.ttf";
+        Assert.assertArrayEquals(glyphs, shape(font, OTFScript.BENGALI_V2, text));
+    }
+
     private static int[] shape(String fontFile, String script, String text) throws Exception {
         InternalResourceResolver resourceResolver =
                 ResourceResolverFactory.createDefaultInternalResourceResolver(new File(".").toURI());

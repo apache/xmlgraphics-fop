@@ -136,7 +136,7 @@ public class BengaliScriptProcessor extends IndicScriptProcessor {
         int   targetIndex = -1;
         for (int i = (source < glyphCount) ? source : glyphCount; i > 0; i--) {
             int glyphIndex = i - 1;
-            if (containsConsonant(glyphs, glyphIndex)) {
+            if (containsConsonant(glyphs, glyphIndex) && !isPostBaseConsonant(glyphs, glyphIndex)) {
                 if (containsHalfConsonant(glyphs, glyphIndex)) {
                     targetIndex = glyphIndex;
                 } else if (targetIndex == -1) {
@@ -169,6 +169,23 @@ public class BengaliScriptProcessor extends IndicScriptProcessor {
             }
         }
         return false;
+    }
+
+    // a post-base form (e.g., ya-phala) of a single consonant, as opposed to a ligature that also contains the base
+    private static boolean isPostBaseConsonant(GlyphSequence glyphs, int glyphIndex) {
+        CharAssociation association = glyphs.getAssociation(glyphIndex);
+        Boolean pstf = (Boolean) association.getPredication("pstf");
+        if (pstf == null || !pstf) {
+            return false;
+        }
+        int[] chars = glyphs.getCharacterArray(false);
+        int consonants = 0;
+        for (int i = association.getStart(), end = association.getEnd(); i < end; i++) {
+            if (isC(chars[i])) {
+                consonants++;
+            }
+        }
+        return consonants == 1;
     }
 
     private static boolean containsHalfConsonant(GlyphSequence glyphs, int glyphIndex) {
