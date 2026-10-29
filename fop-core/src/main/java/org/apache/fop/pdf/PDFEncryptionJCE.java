@@ -87,7 +87,14 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         }
 
         private InitializationEngine createEngine(EncryptionSettings encryptionSettings) {
-            if (revision == 5) {
+            if (revision == 6) {
+                return new Rev5Engine(encryptionSettings) {
+                    @Override
+                    protected byte[] computeHash(byte[] password, byte[] salt, byte[] userKey) {
+                        return Rev6Engine.computeHash(password, salt, userKey);
+                    }
+                };
+            } else if (revision == 5) {
                 return new Rev5Engine(encryptionSettings);
             } else if (revision == 2) {
                 return new Rev2Engine(encryptionSettings);
@@ -97,10 +104,15 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         }
 
         private void determineEncryptionAlgorithm() {
-            if (isVersion5Revision5Algorithm()) {
+            if (isAES256Algorithm()) {
                 version = 5;
-                revision = 5;
-                pdfVersion = Version.V1_7;
+                if (getDocument().getPDFVersion().compareTo(Version.V2_0) >= 0) {
+                    revision = 6;
+                    pdfVersion = Version.V2_0;
+                } else {
+                    revision = 5;
+                    pdfVersion = Version.V1_7;
+                }
             } else if (isVersion1Revision2Algorithm()) {
                 version = 1;
                 revision = 2;
@@ -118,7 +130,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
                     && encryptionParams.isAllowPrintHq();
         }
 
-        private boolean isVersion5Revision5Algorithm() {
+        private boolean isAES256Algorithm() {
             return encryptionLength == 256;
         }
 
@@ -494,13 +506,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             random.nextBytes(userBytes);
             System.arraycopy(userBytes, 0, userValidationSalt, 0, 8);
             System.arraycopy(userBytes, 8, userKeySalt, 0, 8);
-            digest.reset();
-            byte[] prepared = preparedUserPassword;
-            byte[] concatenated = new byte[prepared.length + 8];
-            System.arraycopy(prepared, 0, concatenated, 0, prepared.length);
-            System.arraycopy(userValidationSalt, 0, concatenated, prepared.length, 8);
-            digest.update(concatenated);
-            byte[] sha256 = digest.digest();
+            byte[] sha256 = computeHash(preparedUserPassword, userValidationSalt, new byte[0]);
             uValue = new byte[48];
             System.arraycopy(sha256, 0, uValue, 0, 32);
             System.arraycopy(userValidationSalt, 0, uValue, 32, 8);
@@ -516,14 +522,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
             random.nextBytes(ownerBytes);
             System.arraycopy(ownerBytes, 0, ownerValidationSalt, 0, 8);
             System.arraycopy(ownerBytes, 8, ownerKeySalt, 0, 8);
-            digest.reset();
-            byte[] prepared = preparedOwnerPassword;
-            byte[] concatenated = new byte[prepared.length + 56];
-            System.arraycopy(prepared, 0, concatenated, 0, prepared.length);
-            System.arraycopy(ownerValidationSalt, 0, concatenated, prepared.length, 8);
-            System.arraycopy(uValue, 0, concatenated, prepared.length + 8, 48);
-            digest.update(concatenated);
-            byte[] sha256 = digest.digest();
+            byte[] sha256 = computeHash(preparedOwnerPassword, ownerValidationSalt, uValue);
             oValue = new byte[48];
             System.arraycopy(sha256, 0, oValue, 0, 32);
             System.arraycopy(ownerValidationSalt, 0, oValue, 32, 8);
@@ -560,13 +559,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
          * Algorithm 3.8-2 (page 20, Adobe Supplement to the ISO 32000, BaseVersion: 1.7, ExtensionLevel: 3)
          */
         private void computeUEValue() {
-            digest.reset();
-            byte[] prepared = preparedUserPassword;
-            byte[] concatenated = new byte[prepared.length + 8];
-            System.arraycopy(prepared, 0, concatenated, 0, prepared.length);
-            System.arraycopy(userKeySalt, 0, concatenated, prepared.length, 8);
-            digest.update(concatenated);
-            byte[] ueEncryptionKey = digest.digest();
+            byte[] ueEncryptionKey = computeHash(preparedUserPassword, userKeySalt, new byte[0]);
             ueValue = encryptWithKey(ueEncryptionKey, encryptionKey, true, ivZero);
         }
 
@@ -574,15 +567,20 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
          * Algorithm 3.9-2 (page 20, Adobe Supplement to the ISO 32000, BaseVersion: 1.7, ExtensionLevel: 3)
          */
         private void computeOEValue() {
-            digest.reset();
-            byte[] prepared = preparedOwnerPassword;
-            byte[] concatenated = new byte[prepared.length + 56];
-            System.arraycopy(prepared, 0, concatenated, 0, prepared.length);
-            System.arraycopy(ownerKeySalt, 0, concatenated, prepared.length, 8);
-            System.arraycopy(uValue, 0, concatenated, prepared.length + 8, 48);
-            digest.update(concatenated);
-            byte[] oeEncryptionKey = digest.digest();
+            byte[] oeEncryptionKey = computeHash(preparedOwnerPassword, ownerKeySalt, uValue);
             oeValue = encryptWithKey(oeEncryptionKey, encryptionKey, true, ivZero);
+        }
+
+        /**
+         * Computes the SHA-256 hash of the password, an 8 byte salt and the 48 byte U value (owner)
+         * or an empty array (user).
+         */
+        protected byte[] computeHash(byte[] password, byte[] salt, byte[] userKey) {
+            digest.reset();
+            digest.update(password);
+            digest.update(salt);
+            digest.update(userKey);
+            return digest.digest();
         }
 
         /**
@@ -672,7 +670,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         setDocument(pdf);
         EncryptionInitializer encryptionInitializer = new EncryptionInitializer(params);
         encryptionInitializer.init();
-        useAlgorithm31a = encryptionInitializer.isVersion5Revision5Algorithm();
+        useAlgorithm31a = encryptionInitializer.isAES256Algorithm();
     }
 
     /**
@@ -746,7 +744,7 @@ public final class PDFEncryptionJCE extends PDFObject implements PDFEncryption {
         }
     }
 
-    private static byte[] encryptWithKey(byte[] key, byte[] data, boolean noPadding, byte[] iv) {
+    static byte[] encryptWithKey(byte[] key, byte[] data, boolean noPadding, byte[] iv) {
         try {
             final Cipher c = initCipher(key, noPadding, iv);
             return c.doFinal(data);

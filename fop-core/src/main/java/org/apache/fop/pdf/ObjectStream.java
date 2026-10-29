@@ -63,6 +63,7 @@ public class ObjectStream extends PDFStream {
         StringBuilder offsetsPart = new StringBuilder();
         ByteArrayOutputStream streamContent = new ByteArrayOutputStream();
         for (CompressedObject object : objects) {
+            ((PDFObject) object).bypassStringEncryption();
             offsetsPart.append(object.getObjectNumber())
                     .append(' ')
                     .append(currentOffset)

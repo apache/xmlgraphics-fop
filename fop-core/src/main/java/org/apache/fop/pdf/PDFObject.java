@@ -58,6 +58,8 @@ public abstract class PDFObject implements PDFWritable, CompressedObject {
     /** the parent PDFObject (may be null and may not always be set, needed for encryption) */
     private PDFObject parent;
 
+    private boolean bypassStringEncryption;
+
     /**
      * Returns the object's number.
      * @return the PDF Object number
@@ -270,7 +272,7 @@ public abstract class PDFObject implements PDFWritable, CompressedObject {
      * @return byte[] the encoded text
      */
     protected byte[] encodeText(String text) {
-        if (getDocumentSafely().isEncryptionActive()) {
+        if (getDocumentSafely().isEncryptionActive() && !isStringEncryptionBypassed()) {
             final byte[] buf = PDFText.toUTF16(text);
             return PDFText.escapeByteArray(
                 getDocument().getEncryption().encrypt(buf, this));
@@ -357,6 +359,14 @@ public abstract class PDFObject implements PDFWritable, CompressedObject {
     }
 
     public void getChildren(Set<PDFObject> children) {
+    }
+
+    public void bypassStringEncryption() {
+        this.bypassStringEncryption = true;
+    }
+
+    protected boolean isStringEncryptionBypassed() {
+        return bypassStringEncryption;
     }
 
     public boolean supportsObjectStream() {

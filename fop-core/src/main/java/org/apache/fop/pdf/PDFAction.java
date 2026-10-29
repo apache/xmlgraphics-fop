@@ -36,7 +36,8 @@ public abstract class PDFAction extends PDFObject {
     public abstract String getAction();
 
     protected String encodeScript(String text) {
-        if (getDocument() != null && getDocumentSafely().isEncryptionActive()) {
+        if (getDocument() != null && getDocumentSafely().isEncryptionActive()
+                && !isStringEncryptionBypassed()) {
             final byte[] buf = PDFText.encode(text);
             byte[] enc = getDocument().getEncryption().encrypt(buf, this);
             return PDFText.toHex(enc, true);

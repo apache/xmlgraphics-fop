@@ -22,6 +22,7 @@ package org.apache.fop.pdf;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -458,17 +459,31 @@ public class PDFEncryptionJCETestCase {
     public void testAES256() throws UnsupportedEncodingException, NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException,
             IllegalBlockSizeException, BadPaddingException {
-        MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+        runAES256Test(Version.V1_7, 5);
+    }
+
+    @Test
+    public void testAES256PDF20() throws UnsupportedEncodingException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidKeyException, InvalidAlgorithmParameterException,
+            IllegalBlockSizeException, BadPaddingException {
+        runAES256Test(Version.V2_0, 6);
+    }
+
+    private void runAES256Test(Version pdfVersion, int revision) throws UnsupportedEncodingException,
+            NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         String dataText = "Test data to encrypt.";
         byte[] data = dataText.getBytes(StandardCharsets.UTF_8);
         PDFEncryptionParams params = new PDFEncryptionParams();
         params.setEncryptionLengthInBits(256);
         params.setUserPassword("userpassword");
         params.setOwnerPassword("ownerpassword");
-        PDFEncryptionJCE encryption = createEncryptionObject(params);
+        PDFEncryptionJCE encryption = createEncryptionObject(params, pdfVersion);
         PDFText text = new PDFText();
         text.setObjectNumber(1); // obj number not used with AES 256, can be anything
         String dictionary = new String(encryption.toPDF());
+        assertTrue(dictionary.contains("/V 5\n"));
+        assertTrue(dictionary.contains("/R " + revision + "\n"));
         byte[] encrypted = encryption.encrypt(data, text);
         byte[] u = parseHexStringEntries(dictionary, "U");
         byte[] o = parseHexStringEntries(dictionary, "O");
@@ -487,12 +502,7 @@ public class PDFEncryptionJCETestCase {
         System.arraycopy(u, 32, userValSalt, 0, 8);
         System.arraycopy(u, 40, userKeySalt, 0, 8);
         byte[] uPassBytes = params.getUserPassword().getBytes(StandardCharsets.UTF_8);
-        byte[] testUPass = new byte[uPassBytes.length + 8];
-        System.arraycopy(uPassBytes, 0, testUPass, 0, uPassBytes.length);
-        System.arraycopy(userValSalt, 0, testUPass, uPassBytes.length, 8);
-        sha256.reset();
-        sha256.update(testUPass);
-        byte[] actualUPass = sha256.digest();
+        byte[] actualUPass = computeHash(revision, uPassBytes, userValSalt, new byte[0]);
         byte[] expectedUPass = new byte[32];
         System.arraycopy(u, 0, expectedUPass, 0, 32);
         assertArrayEquals(expectedUPass, actualUPass);
@@ -502,13 +512,7 @@ public class PDFEncryptionJCETestCase {
         System.arraycopy(o, 32, ownerValSalt, 0, 8);
         System.arraycopy(o, 40, ownerKeySalt, 0, 8);
         byte[] oPassBytes = params.getOwnerPassword().getBytes(StandardCharsets.UTF_8);
-        byte[] testOPass = new byte[oPassBytes.length + 8 + 48];
-        System.arraycopy(oPassBytes, 0, testOPass, 0, oPassBytes.length);
-        System.arraycopy(ownerValSalt, 0, testOPass, oPassBytes.length, 8);
-        System.arraycopy(u, 0, testOPass, oPassBytes.length + 8, 48);
-        sha256.reset();
-        sha256.update(testOPass);
-        byte[] actualOPass = sha256.digest();
+        byte[] actualOPass = computeHash(revision, oPassBytes, ownerValSalt, u);
         byte[] expectedOPass = new byte[32];
         System.arraycopy(o, 0, expectedOPass, 0, 32);
         assertArrayEquals(expectedOPass, actualOPass);
@@ -516,23 +520,12 @@ public class PDFEncryptionJCETestCase {
         byte[] ivZero = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         IvParameterSpec ivspecZero = new IvParameterSpec(ivZero);
         Cipher cipherNoPadding = Cipher.getInstance("AES/CBC/NoPadding");
-        byte[] tmpUKey = new byte[uPassBytes.length + 8];
-        System.arraycopy(uPassBytes, 0, tmpUKey, 0, uPassBytes.length);
-        System.arraycopy(userKeySalt, 0, tmpUKey, uPassBytes.length, 8);
-        sha256.reset();
-        sha256.update(tmpUKey);
-        byte[] intUKey = sha256.digest();
+        byte[] intUKey = computeHash(revision, uPassBytes, userKeySalt, new byte[0]);
         SecretKeySpec uSKeySpec = new SecretKeySpec(intUKey, "AES");
         cipherNoPadding.init(Cipher.DECRYPT_MODE, uSKeySpec, ivspecZero);
         byte[] uFileEncryptionKey = cipherNoPadding.doFinal(ue);
         // compute encryption key from oe
-        byte[] tmpOKey = new byte[oPassBytes.length + 8 + 48];
-        System.arraycopy(oPassBytes, 0, tmpOKey, 0, oPassBytes.length);
-        System.arraycopy(ownerKeySalt, 0, tmpOKey, oPassBytes.length, 8);
-        System.arraycopy(u, 0, tmpOKey, oPassBytes.length + 8, 48);
-        sha256.reset();
-        sha256.update(tmpOKey);
-        byte[] intOKey = sha256.digest();
+        byte[] intOKey = computeHash(revision, oPassBytes, ownerKeySalt, u);
         SecretKeySpec oSKeySpec = new SecretKeySpec(intOKey, "AES");
         cipherNoPadding.init(Cipher.DECRYPT_MODE, oSKeySpec, ivspecZero);
         byte[] oFileEncryptionKey = cipherNoPadding.doFinal(oe);
@@ -564,6 +557,41 @@ public class PDFEncryptionJCETestCase {
         assertArrayEquals(data, decryptedData);
     }
 
+    /**
+     * Computes the R5 hash (SHA-256) or Algorithm 2.B (ISO 32000-2, 7.6.4.3.4) for R6.
+     */
+    private static byte[] computeHash(int revision, byte[] password, byte[] salt, byte[] userKey)
+            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
+            InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
+        MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+        sha256.update(password);
+        sha256.update(salt);
+        sha256.update(userKey);
+        byte[] hash = sha256.digest();
+        if (revision == 5) {
+            return hash;
+        }
+        Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+        for (int round = 0;; round++) {
+            ByteArrayOutputStream input = new ByteArrayOutputStream();
+            for (int i = 0; i < 64; i++) {
+                input.write(password, 0, password.length);
+                input.write(hash, 0, hash.length);
+                input.write(userKey, 0, userKey.length);
+            }
+            cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(Arrays.copyOf(hash, 16), "AES"),
+                    new IvParameterSpec(Arrays.copyOfRange(hash, 16, 32)));
+            byte[] encrypted = cipher.doFinal(input.toByteArray());
+            int mod = new BigInteger(1, Arrays.copyOf(encrypted, 16)).mod(BigInteger.valueOf(3))
+                    .intValue();
+            String[] hashes = {"SHA-256", "SHA-384", "SHA-512"};
+            hash = MessageDigest.getInstance(hashes[mod]).digest(encrypted);
+            if (round >= 63 && (encrypted[encrypted.length - 1] & 0xff) <= round + 1 - 32) {
+                return Arrays.copyOf(hash, 32);
+            }
+        }
+    }
+
     private byte[] parseHexStringEntries(String dictionary, String entry) throws UnsupportedEncodingException {
         String token = "/" + entry + " <";
         int start = dictionary.indexOf(token) + token.length();
@@ -585,7 +613,19 @@ public class PDFEncryptionJCETestCase {
      * @return PDFEncryptionJCE the encryption object
      */
     private PDFEncryptionJCE createEncryptionObject(PDFEncryptionParams params) {
-        PDFDocument doc = new PDFDocument("Apache FOP") {
+        return createEncryptionObject(params, Version.V1_4);
+    }
+
+    /**
+     * Creates an encryption object for a document with a fixed PDF version.
+     *
+     * @param params the encryption parameters
+     * @param pdfVersion the PDF version of the document
+     * @return PDFEncryptionJCE the encryption object
+     */
+    private PDFEncryptionJCE createEncryptionObject(PDFEncryptionParams params, Version pdfVersion) {
+        VersionController versionController = VersionController.getFixedVersionController(pdfVersion);
+        PDFDocument doc = new PDFDocument("Apache FOP", versionController) {
 
             @Override
             FileIDGenerator getFileIDGenerator() {
