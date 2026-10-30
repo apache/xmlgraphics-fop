@@ -27,7 +27,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -42,6 +44,9 @@ import org.apache.xmlgraphics.io.TempResourceResolver;
 public class ResourceResolverFactoryTestCase {
 
     private static final byte[] DATA = new byte[]{(byte) 0, (byte) 1, (byte) 2};
+
+    @Rule
+    public TemporaryFolder tmp = new TemporaryFolder();
 
     private void writeDataTo(File f) throws IOException {
         writeDataTo(new FileOutputStream(f));
@@ -64,7 +69,7 @@ public class ResourceResolverFactoryTestCase {
     @Test
     public void testDefaultResourceResolverGetResource() throws Exception {
         ResourceResolver sut = ResourceResolverFactory.createDefaultResourceResolver();
-        File inputFile = File.createTempFile("prefix", "suffix");
+        File inputFile = tmp.newFile();
         InputStream is = null;
         try {
             writeDataTo(inputFile);
@@ -74,15 +79,13 @@ public class ResourceResolverFactoryTestCase {
             if (is != null) {
                 is.close();
             }
-            inputFile.delete();
         }
     }
 
     @Test
     public void testDefaultResourceResolverGetOutput() throws Exception {
         ResourceResolver sut = ResourceResolverFactory.createDefaultResourceResolver();
-        File outputFile = File.createTempFile("prefix", "suffix");
-        outputFile.deleteOnExit();
+        File outputFile = tmp.newFile();
         writeDataTo(sut.getOutputStream(outputFile.toURI()));
         InputStream is = new FileInputStream(outputFile);
         try {

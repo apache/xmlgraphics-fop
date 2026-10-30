@@ -24,7 +24,7 @@ import java.awt.geom.Point2D;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 /**
  * Tests for the fox:scale extension property.
@@ -50,12 +50,8 @@ public class PageScaleTestCase {
     /** Scale must not contain units. */
     @Test
     public void testScaleFail() {
-        try {
-            PageScale.getScale("0.5mm 0.5cm");
-            fail("Expected IllegalArgumentException. Scale shouldn't contain units");
-        } catch (IllegalArgumentException iae) {
-            // Good!
-        }
+        assertThrows("Scale shouldn't contain units", IllegalArgumentException.class,
+                () -> PageScale.getScale("0.5mm 0.5cm"));
     }
 
     /** @{code null} is returned when scale is unspecified. */

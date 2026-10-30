@@ -26,7 +26,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.events.EventChecker;
@@ -45,7 +45,6 @@ public class PDFAConformanceTestCase extends BasePDFTest {
 
     private File foBaseDir = new File("test/xml/pdf-a");
     private boolean dumpPDF = Boolean.getBoolean("PDFAConformanceTestCase.dumpPDF");
-
 
     /** create an FOUserAgent for our tests
      *  @return an initialized FOUserAgent
@@ -85,12 +84,9 @@ public class PDFAConformanceTestCase extends BasePDFTest {
     @Test
     public void testFontNotEmbedded() throws Exception {
         File foFile = new File(foBaseDir, "base14-font.fo");
-        try {
-            convertFO(foFile, getUserAgent(), dumpPDF);
-            fail("Expected PDFConformanceException. PDF/A-1 wants all fonts embedded.");
-        } catch (PDFConformanceException e) {
-            //Good!
-        }
+        FOUserAgent ua = getUserAgent();
+        assertThrows("PDF/A-1 wants all fonts embedded.", PDFConformanceException.class,
+                () -> convertFO(foFile, ua, dumpPDF));
     }
 
     /**
@@ -102,14 +98,10 @@ public class PDFAConformanceTestCase extends BasePDFTest {
         File foFile = new File(foBaseDir, "with-rgb-images.fo");
         convertFO(foFile, getUserAgent(), dumpPDF);
 
-        foFile = new File(foBaseDir, "with-cmyk-images.fo");
-        try {
-            convertFO(foFile, getUserAgent(), dumpPDF);
-            fail("Expected PDFConformanceException."
-                    + " PDF/A-1 does not allow mixing DeviceRGB and DeviceCMYK.");
-        } catch (PDFConformanceException e) {
-            //Good!
-        }
+        final File cmykFoFile = new File(foBaseDir, "with-cmyk-images.fo");
+        FOUserAgent ua = getUserAgent();
+        assertThrows("PDF/A-1 does not allow mixing DeviceRGB and DeviceCMYK.", PDFConformanceException.class,
+                () -> convertFO(cmykFoFile, ua, dumpPDF));
     }
 
     @Test
@@ -133,12 +125,9 @@ public class PDFAConformanceTestCase extends BasePDFTest {
     @Test
     public void testAttachment() throws Exception {
         File foFile = new File(foBaseDir, "with-attachment.fo");
-        try {
-            convertFO(foFile, getUserAgent(), dumpPDF);
-            fail("Expected PDFConformanceException. PDF/A-1 does not allow attachments.");
-        } catch (PDFConformanceException e) {
-            //Good!
-        }
+        FOUserAgent pdfa1Ua = getUserAgent();
+        assertThrows("PDF/A-1 does not allow attachments.", PDFConformanceException.class,
+                () -> convertFO(foFile, pdfa1Ua, dumpPDF));
         FOUserAgent ua = getUserAgent();
         ua.getRendererOptions().put("pdf-a-mode", "PDF/A-3a");
         convertFO(foFile, ua, dumpPDF);

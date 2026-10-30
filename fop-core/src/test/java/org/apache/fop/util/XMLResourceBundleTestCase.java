@@ -25,7 +25,7 @@ import java.util.ResourceBundle;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import org.apache.fop.utils.XMLResourceBundle;
 
@@ -53,14 +53,10 @@ public class XMLResourceBundleTestCase {
     }
 
     @Test
-    public void testWithInvalidFile() throws Exception {
-        try {
-            ResourceBundle bundle = XMLResourceBundle.getXMLBundle(
-                    "org.apache.fop.util.invalid-translation-file", getClass().getClassLoader());
-            fail("Expected exception");
-        } catch (MissingResourceException e) {
-            //expected
-        }
+    public void testWithInvalidFile() {
+        ClassLoader classLoader = getClass().getClassLoader();
+        assertThrows(MissingResourceException.class, () -> XMLResourceBundle.getXMLBundle(
+                "org.apache.fop.util.invalid-translation-file", classLoader));
     }
 
 }

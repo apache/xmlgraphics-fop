@@ -26,8 +26,8 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Tests the PDFObject class.
@@ -123,12 +123,8 @@ public class PDFObjectTestCase {
      */
     @Test
     public void testReferencePDF() {
-        try {
-            pdfObjectUnderTest.referencePDF();
-            fail("The object number is not set, an exception should be thrown");
-        } catch (IllegalArgumentException e) {
-            // PASS
-        }
+        assertThrows("The object number is not set, an exception should be thrown",
+                IllegalArgumentException.class, () -> pdfObjectUnderTest.referencePDF());
         pdfObjectUnderTest.setObjectNumber(10);
         // Referencing this object is in the format "<obj#> <gen#> R"
         assertEquals("10 0 R", pdfObjectUnderTest.referencePDF());

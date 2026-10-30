@@ -27,8 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Test case for {@link PDFArray}.
@@ -156,12 +156,7 @@ public class PDFArrayTestCase extends PDFObjectTestCase {
         // This goes through the set(int, double) code path rather than set(int, Object)
         objArray.set(2, 5);
         assertEquals(5.0, objArray.get(2));
-        try {
-            objArray.set(4, 2);
-            fail("out of bounds");
-        } catch (IndexOutOfBoundsException e) {
-            // Pass
-        }
+        assertThrows(IndexOutOfBoundsException.class, () -> objArray.set(4, 2));
     }
 
     /**

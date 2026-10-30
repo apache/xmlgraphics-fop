@@ -40,7 +40,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -70,12 +70,8 @@ public class IFStructureTreeBuilderTestCase {
     public void startAndEndPageSequence() throws SAXException {
         final ContentHandler handler = mock(ContentHandler.class);
 
-        try {
-            sut.replayEventsForPageSequence(handler, 0);
-            fail("No page sequences created");
-        } catch (IndexOutOfBoundsException e) {
-            // Expected
-        }
+        assertThrows("No page sequences created", IndexOutOfBoundsException.class,
+                () -> sut.replayEventsForPageSequence(handler, 0));
 
         sut.startPageSequence(null, null);
         sut.endPageSequence();

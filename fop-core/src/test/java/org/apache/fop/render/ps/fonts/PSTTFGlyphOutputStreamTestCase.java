@@ -24,7 +24,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -87,12 +87,9 @@ public class PSTTFGlyphOutputStreamTestCase {
         inOrder.verify(mockGen).startString();
         inOrder.verify(mockGen, times(runs)).streamBytes(byteArray, 0, byteArraySize);
 
-        try {
-            glyphOut.streamGlyph(byteArray, 0, PSTTFGenerator.MAX_BUFFER_SIZE + 1);
-            fail("Shouldn't allow a length > PSTTFGenerator.MAX_BUFFER_SIZE");
-        } catch (UnsupportedOperationException e) {
-            // PASS
-        }
+        assertThrows("Shouldn't allow a length > PSTTFGenerator.MAX_BUFFER_SIZE",
+                UnsupportedOperationException.class,
+                () -> glyphOut.streamGlyph(byteArray, 0, PSTTFGenerator.MAX_BUFFER_SIZE + 1));
     }
 
     /**

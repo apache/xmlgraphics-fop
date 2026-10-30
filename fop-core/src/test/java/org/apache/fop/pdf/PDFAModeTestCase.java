@@ -22,6 +22,7 @@ package org.apache.fop.pdf;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class PDFAModeTestCase {
@@ -51,7 +52,7 @@ public class PDFAModeTestCase {
         }
 
         PDFAModeChecker isNotPart1() {
-            assertFalse(mode.getPart() == 1);
+            assertNotEquals(1, mode.getPart());
             assertFalse(mode.isPart1());
             return this;
         }
@@ -63,7 +64,7 @@ public class PDFAModeTestCase {
         }
 
         PDFAModeChecker isNotPart2() {
-            assertFalse(mode.getPart() == 2);
+            assertNotEquals(2, mode.getPart());
             assertFalse(mode.isPart2());
             return this;
         }
@@ -80,7 +81,7 @@ public class PDFAModeTestCase {
         }
 
         PDFAModeChecker isNotLevelA() {
-            assertFalse(mode.getConformanceLevel() == 'A');
+            assertNotEquals('A', mode.getConformanceLevel());
             assertFalse(mode.isLevelA());
             return this;
         }

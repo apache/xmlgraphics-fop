@@ -78,6 +78,6 @@ public class FontsSubstitutionTestCase extends BaseConstructiveUserConfigTest {
         if (!"F15".equals(internalFontKey)) {
             throw new Exception("font substitution failed :" + triplet);
         }
-        return null;
+        return new byte[0];
     }
 }

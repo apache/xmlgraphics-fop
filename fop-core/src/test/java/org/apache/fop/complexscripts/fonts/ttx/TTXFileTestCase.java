@@ -22,8 +22,7 @@ package org.apache.fop.complexscripts.fonts.ttx;
 import java.io.File;
 
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
 
 public class TTXFileTestCase {
 
@@ -39,12 +38,8 @@ public class TTXFileTestCase {
     @Test
     public void testTTXFiles() throws Exception {
         for (String tfn : ttxFiles) {
-            try {
-                TTXFile tf = TTXFile.getFromCache(ttxFilesRoot + File.separator + tfn);
-                assertTrue(tf != null);
-            } catch (Exception e) {
-                fail(e.getMessage());
-            }
+            TTXFile tf = TTXFile.getFromCache(ttxFilesRoot + File.separator + tfn);
+            assertNotNull(tf);
         }
     }
 

@@ -22,7 +22,7 @@ package org.apache.fop.afp.modca;
 import java.util.Arrays;
 
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
 
 /**
  * Tests the {@linkplain AbstractAFPObject} class.
@@ -45,7 +45,7 @@ public abstract class AbstractNamedAFPObjectTest<S extends  AbstractNamedAFPObje
 
         getSut().copySF(actual, (byte)0, (byte)0);
 
-        assertTrue(Arrays.equals(actual, expected));
+        assertArrayEquals(expected, actual);
 
         byte[] expected2 =  new byte[17];
         System.arraycopy(expected, 0, expected2, 0, expected.length);
@@ -58,6 +58,6 @@ public abstract class AbstractNamedAFPObjectTest<S extends  AbstractNamedAFPObje
 
         getSut().copySF(actual, type, catagory);
 
-        assertTrue(Arrays.equals(actual, expected2));
+        assertArrayEquals(expected2, actual);
     }
 }

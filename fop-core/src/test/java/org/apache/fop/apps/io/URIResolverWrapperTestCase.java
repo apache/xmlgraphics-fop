@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -146,12 +146,7 @@ public class URIResolverWrapperTestCase {
     }
 
     private void assertBadSyntax(String badUri) {
-        try {
-            new URI(badUri);
-            fail(badUri + " is correctly formed.");
-        } catch (URISyntaxException e) {
-            // PASS
-        }
+        assertThrows(badUri + " is correctly formed.", URISyntaxException.class, () -> new URI(badUri));
     }
 
     @Test

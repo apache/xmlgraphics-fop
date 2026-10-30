@@ -22,6 +22,7 @@ package org.apache.fop.fonts.truetype;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -116,9 +117,9 @@ public class TTFTableNameTestCase {
     public void testHashCode() throws IllegalAccessException {
         OFTableName a = OFTableName.getValue("testObject");
         OFTableName b = OFTableName.getValue("testObject");
-        assertTrue(a.hashCode() == b.hashCode());
+        assertEquals(a.hashCode(), b.hashCode());
         OFTableName c = OFTableName.getValue("fail");
-        assertFalse(a.hashCode() == c.hashCode());
+        assertNotEquals(a.hashCode(), c.hashCode());
     }
 
     /**

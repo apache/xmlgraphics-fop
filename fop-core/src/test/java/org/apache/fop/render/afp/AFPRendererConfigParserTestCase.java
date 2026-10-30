@@ -23,7 +23,9 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -40,6 +42,9 @@ import static org.apache.fop.render.afp.AFPRendererConfig.ImagesModeOptions.MODE
 
 public class AFPRendererConfigParserTestCase
         extends AbstractRendererConfigParserTester<AFPRendererConfBuilder, AFPRendererConfig> {
+
+    @Rule
+    public TemporaryFolder tmp = new TemporaryFolder();
 
     public AFPRendererConfigParserTestCase() {
         super(new AFPRendererConfigParser(), AFPRendererConfBuilder.class);
@@ -75,14 +80,9 @@ public class AFPRendererConfigParserTestCase
         parseConfig(createRenderer());
         assertEquals(null, conf.getDefaultResourceGroupUri());
         // TODO yuck!
-        File file = File.createTempFile("AFPRendererConfigParserTestCase", "");
-        try {
-            file.delete();
-            parseConfig(createRenderer().setResourceGroupUri(file.toURI().toASCIIString()));
-            assertEquals(file.toURI(), conf.getDefaultResourceGroupUri());
-        } finally {
-            file.delete();
-        }
+        File file = new File(tmp.getRoot(), "AFPRendererConfigParserTestCase");
+        parseConfig(createRenderer().setResourceGroupUri(file.toURI().toASCIIString()));
+        assertEquals(file.toURI(), conf.getDefaultResourceGroupUri());
     }
 
     @Test

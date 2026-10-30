@@ -21,11 +21,10 @@ package org.apache.fop.afp.goca;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class GraphicsSetLineWidthTestCase {
 
@@ -44,7 +43,7 @@ public class GraphicsSetLineWidthTestCase {
         baos.close();
         // expected: 0x19 (order code), 0x05 (integral multiplier)
         byte[] expected = new byte[] {0x19, 0x05};
-        assertTrue(Arrays.equals(expected, baos.toByteArray()));
+        assertArrayEquals(expected, baos.toByteArray());
     }
 
     @Test

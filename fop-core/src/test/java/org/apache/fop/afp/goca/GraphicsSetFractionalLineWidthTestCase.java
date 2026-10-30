@@ -21,11 +21,10 @@ package org.apache.fop.afp.goca;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class GraphicsSetFractionalLineWidthTestCase {
 
@@ -46,7 +45,7 @@ public class GraphicsSetFractionalLineWidthTestCase {
         // expected: 0x11 (order code), 0x02 (2 bytes next), 0x05 (integral multiplier), 0x40 (fractional
         // multiplier)
         byte[] expected = new byte[] {0x11, 0x02, 0x05, 0x40};
-        assertTrue(Arrays.equals(expected, baos.toByteArray()));
+        assertArrayEquals(expected, baos.toByteArray());
     }
 
     @Test

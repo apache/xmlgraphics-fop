@@ -24,7 +24,8 @@ import java.util.BitSet;
 import java.util.HashMap;
 
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.apache.fop.complexscripts.scripts.ScriptProcessor;
 import org.apache.fop.complexscripts.util.CharScript;
@@ -75,9 +76,9 @@ public class ArabicJoinersTestCase {
     public void testArabicJoiners() {
         String script = CharScript.scriptTagFromCode(CharScript.SCRIPT_ARABIC);
         ScriptProcessor sp = ScriptProcessor.getInstance(script, new HashMap<String, ScriptProcessor>());
-        assertTrue(sp != null);
+        assertNotNull(sp);
         ScriptContextTester sct = sp.getSubstitutionContextTester();
-        assertTrue(sct != null);
+        assertNotNull(sct);
         String language = "dflt";
         int flags = 0;
         testZWJ(sct, script, language, "isol", flags, ZWJ_TESTS_ISOL);
@@ -89,7 +90,7 @@ public class ArabicJoinersTestCase {
 
     private void testZWJ(ScriptContextTester sct, String script, String language, String feature, int flags, String[][] tests) {
         GlyphContextTester gct = sct.getTester(feature);
-        assertTrue(gct != null);
+        assertNotNull(gct);
         for (String[] t : tests) {
             testZWJ(gct, script, language, feature, flags, t);
         }
@@ -106,7 +107,7 @@ public class ArabicJoinersTestCase {
             }
         }
         BitSet exp = parseBitSet(test[1]);
-        assertTrue(act.equals(exp));
+        assertEquals(exp, act);
     }
 
     private GlyphSequence makeGlyphSequence(String s) {

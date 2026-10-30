@@ -32,7 +32,7 @@ import javax.xml.transform.TransformerException;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.xmlgraphics.io.Resource;
 
@@ -100,7 +100,7 @@ public class FontURIResolver extends BaseURIResolutionTest {
         expectedEvent.put(URI.create("fonts:/gladiator?type=ttf"), Event.TTF);
 
         Map<URI, Object> propertyMap = RESOLVER.getMap();
-        assertTrue(propertyMap.equals(expectedEvent));
+        assertEquals(expectedEvent, propertyMap);
     }
 
 }

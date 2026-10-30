@@ -27,9 +27,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 
 import org.apache.fop.afp.Streamable;
 
@@ -70,7 +71,7 @@ public abstract class AbstractAFPObjectTest<S extends AbstractAFPObject> {
 
         S.copySF(actual, (byte)0, (byte)0, (byte)0);
 
-        assertTrue(Arrays.equals(actual, header));
+        assertArrayEquals(header, actual);
 
         byte[] expected2 =  new byte[9];
         System.arraycopy(header, 0, expected2, 0, header.length);
@@ -84,7 +85,7 @@ public abstract class AbstractAFPObjectTest<S extends AbstractAFPObject> {
 
         AbstractAFPObject.copySF(actual, clazz, type, catagory);
 
-        assertTrue(Arrays.equals(actual, expected2));
+        assertArrayEquals(expected2, actual);
     }
 
     @Test
@@ -97,7 +98,7 @@ public abstract class AbstractAFPObjectTest<S extends AbstractAFPObject> {
 
         getSut().copySF(actual, (byte)0, (byte)0);
 
-        assertTrue(Arrays.equals(actual, expected));
+        assertArrayEquals(expected, actual);
 
         byte[] expected2 =  new byte[9];
         System.arraycopy(expected, 0, expected2, 0, expected.length);
@@ -109,14 +110,14 @@ public abstract class AbstractAFPObjectTest<S extends AbstractAFPObject> {
 
         getSut().copySF(actual, type, catagory);
 
-        assertTrue(Arrays.equals(actual, expected2));
+        assertArrayEquals(expected2, actual);
     }
 
     /**
      *
      */
     @Test
-    public void testwriteObjects() {
+    public void testwriteObjects() throws IOException {
        final byte[][] expected = {{(byte)0, (byte)1}, {(byte)2, (byte)3}, {(byte)4, (byte)5}};
 
         List<Streamable> objects = new ArrayList<Streamable>() {
@@ -128,18 +129,14 @@ public abstract class AbstractAFPObjectTest<S extends AbstractAFPObject> {
 
        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-       try {
-           getSut().writeObjects(objects, baos);
-       } catch (IOException e) {
-           fail();
-       }
+       getSut().writeObjects(objects, baos);
 
        byte[] actual = baos.toByteArray();
 
        int index = 0;
         for (byte[] anExpected : expected) {
             for (byte anAnExpected : anExpected) {
-                assertTrue("" + index, actual[index] == anAnExpected);
+                assertEquals("" + index, anAnExpected, actual[index]);
                 index++;
             }
         }
@@ -151,16 +148,11 @@ public abstract class AbstractAFPObjectTest<S extends AbstractAFPObject> {
     @Test
     public void testTruncate() {
         String expected = "abc";
-        assertTrue(AbstractAFPObject.truncate(expected, 4)  == expected);
-        assertTrue(AbstractAFPObject.truncate(expected, 3) == expected);
-        assertEquals(AbstractAFPObject.truncate(expected + "d", 3), expected);
-        assertEquals(AbstractAFPObject.truncate(expected, 0), "");
-        try {
-            assertTrue(AbstractAFPObject.truncate(null, 4) == null);
-            fail();
-        } catch (NullPointerException e) {
-            // PASS
-        }
+        assertSame(expected, AbstractAFPObject.truncate(expected, 4));
+        assertSame(expected, AbstractAFPObject.truncate(expected, 3));
+        assertEquals(expected, AbstractAFPObject.truncate(expected + "d", 3));
+        assertEquals("", AbstractAFPObject.truncate(expected, 0));
+        assertThrows(NullPointerException.class, () -> AbstractAFPObject.truncate(null, 4));
     }
 
     /**

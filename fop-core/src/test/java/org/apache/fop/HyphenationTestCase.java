@@ -28,7 +28,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -43,6 +45,9 @@ import org.apache.fop.hyphenation.HyphenationTree;
 import org.apache.fop.hyphenation.Hyphenator;
 
 public class HyphenationTestCase {
+    @Rule
+    public TemporaryFolder tmp = new TemporaryFolder();
+
     private FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
 
     @Test
@@ -57,9 +62,7 @@ public class HyphenationTestCase {
 
     @Test
     public void testHyphenatorBinary() throws HyphenationException, IOException {
-        File f = File.createTempFile("hyp", "fop");
-        f.delete();
-        f.mkdir();
+        File f = tmp.newFolder();
         InternalResourceResolver resourceResolver = ResourceResolverFactory.createDefaultInternalResourceResolver(
                 f.toURI());
 
@@ -73,16 +76,11 @@ public class HyphenationTestCase {
         Hyphenation hyph = Hyphenator.hyphenate("fr.hyp" + Hyphenator.HYPTYPE, null, resourceResolver, null,
                 "oello", 0, 0, fopFactory.newFOUserAgent());
         assertEquals(hyph.toString(), "oel-lo");
-
-        hyp.delete();
-        f.delete();
     }
 
     @Test
     public void testHyphenatorCache() throws IOException {
-        File f = File.createTempFile("hyp", "fop");
-        f.delete();
-        f.mkdir();
+        File f = tmp.newFolder();
         File frxml = new File(f, "fr.xml");
         IOUtils.copy(new FileInputStream("test/resources/fop/fr.xml"), new FileOutputStream(frxml));
         InternalResourceResolver resourceResolver = ResourceResolverFactory.createDefaultInternalResourceResolver(
@@ -98,9 +96,6 @@ public class HyphenationTestCase {
         hyph = Hyphenator.hyphenate("fr.xml" + Hyphenator.XMLTYPE, null, resourceResolver, null,
                 "hello", 0, 0, fopFactory.newFOUserAgent());
         assertNull(hyph);
-
-        frxml.delete();
-        f.delete();
     }
 
     @Test

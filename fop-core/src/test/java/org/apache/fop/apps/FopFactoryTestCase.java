@@ -35,7 +35,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -61,17 +60,11 @@ public class FopFactoryTestCase extends BaseConstructiveUserConfigTest {
     public void testUserConfig() throws Exception {
         RendererConfigParser mock = mock(RendererConfigParser.class);
         when(mock.getMimeType()).thenReturn(MimeConstants.MIME_PDF);
-        try {
-            convertFO();
-            PDFRendererConfig config = (PDFRendererConfig) fopFactory.getRendererConfig(null, null,
-                    mock);
-            convertFO();
-            assertEquals(config, fopFactory.getRendererConfig(null, null, mock));
-        } catch (Exception e) {
-            // this should *not* happen!
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
+        convertFO();
+        PDFRendererConfig config = (PDFRendererConfig) fopFactory.getRendererConfig(null, null,
+                mock);
+        convertFO();
+        assertEquals(config, fopFactory.getRendererConfig(null, null, mock));
     }
 
     @Test

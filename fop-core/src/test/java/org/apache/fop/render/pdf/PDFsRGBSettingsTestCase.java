@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import org.apache.fop.apps.FOUserAgent;
 
@@ -55,12 +55,9 @@ public class PDFsRGBSettingsTestCase extends BasePDFTest {
     @Test
     public void testPDFAWithDisabledSRGB() throws Exception {
         File foFile = new File(foBaseDir, "minimal-pdf-a.fo");
-        try {
-            convertFO(foFile, getUserAgent(true), false);
-            fail("PDFRenderer must fail if PDF/A is active!");
-        } catch (IllegalStateException e) {
-            //exception expected!
-        }
+        FOUserAgent ua = getUserAgent(true);
+        assertThrows("PDFRenderer must fail if PDF/A is active!", IllegalStateException.class,
+                () -> convertFO(foFile, ua, false));
     }
 
 }

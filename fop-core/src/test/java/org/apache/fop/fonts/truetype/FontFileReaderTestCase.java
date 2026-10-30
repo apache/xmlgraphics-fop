@@ -23,13 +23,12 @@ import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 /**
  * A test class for org.apache.fop.truetype.FontFileReader
@@ -53,14 +52,11 @@ public class FontFileReaderTestCase {
 
     /**
      * sets up the test subject object for testing.
+     * @throws IOException exception
      */
     @Before
-    public void setUp() {
-        try {
-            fontReader = new FontFileReader(in);
-        } catch (Exception e) {
-            fail("Error: " + e.getMessage());
-        }
+    public void setUp() throws IOException {
+        fontReader = new FontFileReader(in);
     }
 
     /**
@@ -90,12 +86,7 @@ public class FontFileReaderTestCase {
     public void testSeekSet() throws IOException {
         fontReader.seekSet(10);
         assertEquals(10, fontReader.readTTFByte());
-        try {
-            fontReader.seekSet(257);
-            fail("FileFontReaderTest Failed testSeekSet");
-        } catch (IOException e) {
-            // Passed
-        }
+        assertThrows(IOException.class, () -> fontReader.seekSet(257));
     }
 
     /**
@@ -106,13 +97,8 @@ public class FontFileReaderTestCase {
     public void testSkip() throws IOException {
         fontReader.skip(100);
         assertEquals(100, fontReader.readTTFByte());
-        try {
-            // 100 (seekAdd) + 1 (read() = 1 byte) + 156 = 257
-            fontReader.skip(156);
-            fail("FileFontReaderTest Failed testSkip");
-        } catch (IOException e) {
-            // Passed
-        }
+        // 100 (seekAdd) + 1 (read() = 1 byte) + 156 = 257
+        assertThrows(IOException.class, () -> fontReader.skip(156));
     }
 
     /**
@@ -255,15 +241,10 @@ public class FontFileReaderTestCase {
         byte[] strByte = {(byte)'t', (byte)'e', (byte)'s', (byte)'t', 0x00};
         fontReader = new FontFileReader(new ByteArrayInputStream(strByte));
         assertEquals("test", fontReader.readTTFString());
-        try {
-            // not NUL terminated
-            byte[] strByteNoNull = {(byte)'t', (byte)'e', (byte)'s', (byte)'t'};
-            fontReader = new FontFileReader(new ByteArrayInputStream(strByteNoNull));
-            assertEquals("test", fontReader.readTTFString());
-            fail("FontFileReaderTest testReadTTFString Fails.");
-        } catch (EOFException e) {
-            // Pass
-        }
+        // not NUL terminated
+        byte[] strByteNoNull = {(byte)'t', (byte)'e', (byte)'s', (byte)'t'};
+        fontReader = new FontFileReader(new ByteArrayInputStream(strByteNoNull));
+        assertThrows(EOFException.class, () -> fontReader.readTTFString());
     }
 
     /**
@@ -275,13 +256,8 @@ public class FontFileReaderTestCase {
         byte[] strByte = {(byte)'t', (byte)'e', (byte)'s', (byte)'t'};
         fontReader = new FontFileReader(new ByteArrayInputStream(strByte));
         assertEquals("test", fontReader.readTTFString(4));
-        try {
-            fontReader = new FontFileReader(new ByteArrayInputStream(strByte));
-            assertEquals("test", fontReader.readTTFString(5));
-            fail("FontFileReaderTest testReadTTFStringIntArg Fails.");
-        } catch (EOFException e) {
-            // Pass
-        }
+        fontReader = new FontFileReader(new ByteArrayInputStream(strByte));
+        assertThrows(EOFException.class, () -> fontReader.readTTFString(5));
     }
 
     /**
@@ -298,6 +274,6 @@ public class FontFileReaderTestCase {
     @Test
     public void testGetBytes() throws IOException {
         byte[] retrievedBytes = fontReader.getBytes(0, 256);
-        assertTrue(Arrays.equals(byteArray, retrievedBytes));
+        assertArrayEquals(byteArray, retrievedBytes);
     }
 }

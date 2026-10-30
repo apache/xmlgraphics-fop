@@ -60,7 +60,7 @@ public class PDFDocumentHandlerTestCase {
         }
         Assert.assertEquals(contents.size(), 3);
         Assert.assertEquals(contents.get(0), contents.get(2));
-        Assert.assertFalse(contents.get(0).equals(contents.get(1)));
+        Assert.assertNotEquals(contents.get(0), contents.get(1));
     }
 
     private void addPage(PDFDocumentHandler d, String command, int i) throws IFException {

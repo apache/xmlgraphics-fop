@@ -27,6 +27,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class PDFStreamTestCase {
@@ -125,7 +126,7 @@ public class PDFStreamTestCase {
 
     @Test
     public void testHash() throws IOException {
-        assertFalse(getStreamHash(65025).equals(getStreamHash(127076)));
+        assertNotEquals(getStreamHash(65025), getStreamHash(127076));
     }
 
     private String getStreamHash(int i) throws IOException {

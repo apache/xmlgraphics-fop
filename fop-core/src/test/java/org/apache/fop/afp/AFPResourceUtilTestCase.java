@@ -23,10 +23,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
 
 import org.apache.commons.io.IOUtils;
 
@@ -78,7 +77,7 @@ public class AFPResourceUtilTestCase {
             throws IOException {
         ByteArrayOutputStream baos = copyResource(resourceA, copyResource);
         byte[] expectedBytes = resourceAsByteArray(resourceB);
-        assertTrue(Arrays.equals(expectedBytes, baos.toByteArray()));
+        assertArrayEquals(expectedBytes, baos.toByteArray());
     }
 
     private ByteArrayOutputStream copyResource(String resource, ResourceCopier resourceCopier)

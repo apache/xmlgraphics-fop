@@ -23,12 +23,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -203,20 +202,20 @@ public class MODCAParserTestCase {
         byte[] introducerData = new byte[]{(byte)(length >> 8), (byte)(length & 0xFF),
                 classCode,  typeCode, categoryCode, flags, reserved[0], reserved[1]};
 
-        assertTrue(Arrays.equals(introducerData, actual.getIntroducerData()));
+        assertArrayEquals(introducerData, actual.getIntroducerData());
 
         //check data
-        assertTrue(Arrays.equals(data, actual.getData()));
+        assertArrayEquals(data, actual.getData());
 
         //check extension data
         if (extData != null) {
-            assertTrue(Arrays.equals(extData, actual.getExtData()));
+            assertArrayEquals(extData, actual.getExtData());
         }
         assertEquals(
                 (extData == null) ? 0 : extData.length + 1, // 1 byte for length byte
                         actual.getExtLength());
 
-        assertTrue(Arrays.equals(data, actual.getData()));
+        assertArrayEquals(data, actual.getData());
 
         int expectedSfTypeID = ((classCode & 0xFF) << 16)
                 | ((typeCode & 0xFF) << 8)
@@ -224,11 +223,11 @@ public class MODCAParserTestCase {
 
         assertEquals(expectedSfTypeID, actual.getSfTypeID());
 
-        assertTrue(Arrays.equals(sfBytes, actual.getCompleteFieldAsBytes()));
+        assertArrayEquals(sfBytes, actual.getCompleteFieldAsBytes());
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         actual.writeTo(baos);
-        assertTrue(Arrays.equals(sfBytes, baos.toByteArray()));
+        assertArrayEquals(sfBytes, baos.toByteArray());
 
     }
 

@@ -250,10 +250,6 @@ public class ColorUtilTestCase {
         //java.awt.Color does not consistenly calculate the int RGB values:
         //Color(ColorSpace cspace, float components[], float alpha): 0.5 --> 127
         //Color(float r, float g, float b): 0.5 --> 128
-        if (!colCMYK.equals(colActual)) {
-            System.out.println("Info: java.awt.Color does not consistently calculate"
-                    + " int RGB values from float RGB values.");
-        }
     }
 
     /**

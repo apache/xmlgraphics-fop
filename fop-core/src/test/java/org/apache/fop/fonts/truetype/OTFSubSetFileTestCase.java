@@ -125,7 +125,7 @@ public class OTFSubSetFileTestCase extends OTFFileTestCase {
             List<BytesNumber> origOperands = getFullCharString(new Context(), origCharData, origCFF);
             List<BytesNumber> subsetOperands = getFullCharString(new Context(), charData, subsetCFF);
             for (int j = 0; j < origOperands.size(); j++) {
-                assertTrue(origOperands.get(j).equals(subsetOperands.get(j)));
+                assertEquals(origOperands.get(j), subsetOperands.get(j));
             }
         }
     }

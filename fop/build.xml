@@ -485,7 +485,6 @@ list of possible build targets.
     <delete failonerror="false">
       <fileset dir="${basedir}/lib">
         <include name="*.jar"/>
-        <exclude name="checkstyle*.jar"/>
         <exclude name="jacocoant*.jar"/>
         <exclude name="twelvemonkeys*.jar"/>
         <exclude name="zxing*.jar"/>
@@ -1000,43 +999,18 @@ NOTE:
 <!-- =================================================================== -->
 <!-- Checkstyle                                                          -->
 <!-- =================================================================== -->
-  <property name="checkstyle.location" value="${lib-tools}/checkstyle-9.3-all.jar" />
-  <property name="checkstyle.config" value="${core.checkstyle.dir}/checkstyle.xml" />
-  <property name="checkstyle.suppressions.file" value="${core.checkstyle.dir}/suppressions.xml" />
-  <path id="checkstyle-classpath">
-    <pathelement location="${checkstyle.location}"/>
-  </path>
-  <condition property="checkstyle.avail">
-    <and>
-      <available classname="com.puppycrawl.tools.checkstyle.ant.CheckstyleAntTask">
-        <classpath refid="checkstyle-classpath"/>
-      </available>
-      <available file="${checkstyle.config}"/>
-    </and>
-  </condition>
-  <target name="checkstyle-avail" unless="checkstyle.avail">
-    <echo message="Checkstyle support NOT present. Please download it from http://checkstyle.sf.net/ and"/>
-    <echo message="... please provide ${checkstyle.location}"/>
-    <echo message="... please provide ${checkstyle.config}"/>
+  <target name="checkstyle" depends="checkstyle-unix,checkstyle-windows" description="Runs Checkstyle for a code quality report"/>
+  <target name="checkstyle-unix" if="isUnix">
+    <exec executable="mvn" dir="${basedir}/.." failonerror="true">
+      <arg value="checkstyle:check"/>
+    </exec>
   </target>
-  <target name="checkstyle" depends="package, checkstyle-avail" if="checkstyle.avail" description="Runs Checkstyle for a code quality report">
-    <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.ant.CheckstyleAntTask" classpathref="checkstyle-classpath"/>
-    <mkdir dir="${build.dir}"/>
-    <checkstyle config="${checkstyle.config}" failonviolation="true" maxWarnings="0">
-      <classpath>
-        <path refid="checkstyle-classpath"/>
-        <pathelement location="${build.classes.dir}"/>
-        <pathelement location="${build.sandbox-classes.dir}"/>
-        <pathelement location="${build.codegen-classes.dir}"/>
-      </classpath>
-      <fileset dir="${core.src.dir}" includes="**/*.java"/>
-      <fileset dir="${events.src.dir}" includes="**/*.java"/>
-      <fileset dir="${sandbox.src.dir}" includes="**/*.java"/>
-      <fileset dir="${util.src.dir}" includes="**/*.java"/>
-      <fileset dir="${test.dir}" includes="**/*.java"/>
-      <formatter type="xml" toFile="${build.dir}/report_checkstyle.xml"/>
-      <formatter type="plain"/>
-    </checkstyle>
+  <target name="checkstyle-windows" if="isWindows">
+    <exec executable="cmd" dir="${basedir}/.." failonerror="true">
+      <arg value="/c"/>
+      <arg value="mvn"/>
+      <arg value="checkstyle:check"/>
+    </exec>
   </target>
 <!-- =================================================================== -->
 <!-- PMD                                                                 -->

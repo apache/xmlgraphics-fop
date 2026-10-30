@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -100,17 +99,17 @@ public class CIDFullTestCase {
         for (Map.Entry<Integer, Integer> integerIntegerEntry : fontGlyphs.entrySet()) {
             assertEquals(integerIntegerEntry.getValue(), glyphs.get(integerIntegerEntry.getKey()));
         }
-        assertTrue(fontGlyphs.size() == glyphs.size());
+        assertEquals(glyphs.size(), fontGlyphs.size());
     }
 
     @Test
     public void testGetChars() {
-        assertArrayEquals(cidFull.getChars(), chars);
+        assertArrayEquals(chars, cidFull.getChars());
     }
 
     @Test
     public void testGetNumberOfGlyphs() {
-        assertTrue(cidFull.getNumberOfGlyphs() == 20);
+        assertEquals(20, cidFull.getNumberOfGlyphs());
     }
 
     @Test

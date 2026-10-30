@@ -25,7 +25,7 @@ import java.awt.Rectangle;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 /**
  * Tests for the fox:bleed, fox:crop-offset, fox:crop-box extension properties.
@@ -162,11 +162,7 @@ public class PageBoundariesTestCase {
     /** Units must be specified. */
     @Test
     public void testBoundariesFail() {
-        try {
-            new PageBoundaries(TEST_AREA_SIZE, "0", null, null);
-            fail("Expected IllegalArgumentException. Box should have units");
-        } catch (IllegalArgumentException iae) {
-            // Good!
-        }
+        assertThrows("Box should have units", IllegalArgumentException.class,
+                () -> new PageBoundaries(TEST_AREA_SIZE, "0", null, null));
     }
 }

@@ -21,11 +21,10 @@ package org.apache.fop.afp.modca;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertArrayEquals;
 
 import org.apache.fop.afp.util.BinaryUtils;
 
@@ -81,7 +80,7 @@ public class IncludeObjectTestCase extends AbstractNamedAFPObjectTest<IncludeObj
 
         byte[] actual = baos.toByteArray();
 
-        assertTrue(Arrays.equals(actual, expected));
+        assertArrayEquals(expected, actual);
     }
 
     private byte[] defaultIncludeObjectBytes(int tripletDataLength, byte[] nameData) {

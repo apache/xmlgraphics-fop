@@ -25,7 +25,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.apache.fop.complexscripts.fonts.GlyphTable.LookupTable;
 import org.apache.fop.complexscripts.fonts.ttx.TTXFile;
@@ -378,11 +377,11 @@ public class GPOSTestCase implements ScriptContextTester, GlyphContextTester {
             String language = (String) td[3];
             String feature = (String) td[4];
             TTXFile tf = findTTX(fid);
-            assertTrue(tf != null);
+            assertNotNull(tf);
             GlyphPositioningTable gpos = tf.getGPOS();
-            assertTrue(gpos != null);
+            assertNotNull(gpos);
             GlyphPositioningSubtable[] sta = findGPOSSubtables(gpos, script, language, feature, lid);
-            assertTrue(sta != null);
+            assertNotNull(sta);
             assertTrue(sta.length > 0);
             ScriptContextTester sct = findScriptContextTester(script, language, feature);
             Object[][] tia = (Object[][]) td[5];                // test instance array
@@ -416,14 +415,8 @@ public class GPOSTestCase implements ScriptContextTester, GlyphContextTester {
 
     private TTXFile findTTX(String fid) {
         String pn = findTTXPath(fid);
-        assertTrue(pn != null);
-        try {
-            TTXFile tf = TTXFile.getFromCache(pn);
-            return tf;
-        } catch (Exception e) {
-            fail(e.getMessage());
-            return null;
-        }
+        assertNotNull(pn);
+        return TTXFile.getFromCache(pn);
     }
 
     private GlyphPositioningSubtable[] findGPOSSubtables(GlyphPositioningTable gpos, String script, String language, String feature, String lid) {

@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test case for {@link AFMParser}.
@@ -70,7 +69,7 @@ public class AFMParserTestCase {
         for (int i = 0; i < charMetrics.size(); i++) {
             Rectangle expectedBbox = new Rectangle(i + 1, i + 1, 0, 0);
             AFMCharMetrics thisMetric = charMetrics.get(i);
-            assertTrue(thisMetric.getBBox().equals(expectedBbox));
+            assertEquals(expectedBbox, thisMetric.getBBox());
             assertEquals(thisMetric.getCharName(), standardEncoding[i].getAdobeName());
         }
     }

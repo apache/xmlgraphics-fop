@@ -663,7 +663,7 @@ public class PDFEncryptionJCETestCase {
         text.setObjectNumber(test.getObjectNumber());
         byte[] byteResult = encryptionObject.encrypt(test.getData(), text);
 
-        assertTrue(Arrays.equals(test.getEncryptedData(), byteResult));
+        assertArrayEquals(test.getEncryptedData(), byteResult);
     }
 
     private void runFilterTest() throws IOException {
@@ -677,7 +677,7 @@ public class PDFEncryptionJCETestCase {
         ByteArrayOutputStream testOutputStream = new ByteArrayOutputStream();
         streamCache.outputContents(testOutputStream);
 
-        assertTrue(Arrays.equals(test.getEncryptedData(), testOutputStream.toByteArray()));
+        assertArrayEquals(test.getEncryptedData(), testOutputStream.toByteArray());
     }
 
     private void runEncryptionDictionaryTest() {

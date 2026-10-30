@@ -30,7 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.afp.AFPBorderPainter;
 import org.apache.fop.afp.AFPLineDataInfo;
@@ -68,7 +67,8 @@ public class AFPBorderPainterTestCase {
                 BorderStyle.DASHED, Color.BLACK);
         borderPainter.paint(paintInfo);
         ds.endDocument();
-        assertTrue(line.getX1() == 4999 && line.getX2() == 8332);
+        assertEquals(4999, line.getX1());
+        assertEquals(8332, line.getX2());
     }
 
     @Test

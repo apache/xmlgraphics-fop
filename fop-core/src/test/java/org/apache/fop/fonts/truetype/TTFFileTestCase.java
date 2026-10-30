@@ -26,16 +26,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.apache.fop.fonts.CMapSegment;
 import org.apache.fop.fonts.truetype.OpenFont.PostScriptVersion;
 
 /**
@@ -179,10 +178,10 @@ public class TTFFileTestCase {
      */
     @Test
     public void testGetCharSetName() {
-        assertTrue("WinAnsiEncoding".equals(dejavuTTFFile.getCharSetName()));
-        assertTrue("WinAnsiEncoding".equals(droidmonoTTFFile.getCharSetName()));
+        assertEquals("WinAnsiEncoding", dejavuTTFFile.getCharSetName());
+        assertEquals("WinAnsiEncoding", droidmonoTTFFile.getCharSetName());
         //Even though this pass I'm not sure whether is what we want
-        assertTrue("WinAnsiEncoding".equals(androidEmojiTTFFile.getCharSetName()));
+        assertEquals("WinAnsiEncoding", androidEmojiTTFFile.getCharSetName());
     }
 
     /**
@@ -217,11 +216,7 @@ public class TTFFileTestCase {
      */
     @Test
     public void testGetCMaps() {
-        List<CMapSegment> cmaps = androidEmojiTTFFile.getCMaps();
-
-        for (CMapSegment seg : cmaps) {
-            System.out.println(seg.getUnicodeStart() + "-" + seg.getUnicodeEnd() + " -> " + seg.getGlyphStartIndex());
-        }
+        androidEmojiTTFFile.getCMaps();
     }
 
     /**
@@ -503,7 +498,7 @@ public class TTFFileTestCase {
             nonBMPcount += unicodeMapping.getUnicodeIndex() > 0xFFFF ? 1 : 0;
         }
 
-        assertTrue("The font AndroidEmoji is supposed to have non-BMP codepoints", 0 != nonBMPcount);
+        assertNotEquals("The font AndroidEmoji is supposed to have non-BMP codepoints", 0, nonBMPcount);
     }
 
     /**

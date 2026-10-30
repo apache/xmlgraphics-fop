@@ -30,8 +30,7 @@ import java.util.List;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
 
 import org.apache.commons.io.IOUtils;
 
@@ -50,11 +49,7 @@ public class ArabicWordFormsTestCase implements ArabicWordFormsConstants {
     @Test
     public void testArabicWordForms() {
         for (String sfn : SRC_FILES) {
-            try {
-                processWordForms(new File(DAT_FILES_DIR));
-            } catch (Exception e) {
-                fail(e.getMessage());
-            }
+            processWordForms(new File(DAT_FILES_DIR));
         }
     }
 
@@ -123,13 +118,13 @@ public class ArabicWordFormsTestCase implements ArabicWordFormsConstants {
                 language = (String) d[1];
                 tfn = (String) d[3];
                 tf = TTXFile.getFromCache(TTX_FONTS_DIR + File.separator + tfn);
-                assertTrue(tf != null);
+                assertNotNull(tf);
                 gsub = tf.getGSUB();
-                assertTrue(gsub != null);
+                assertNotNull(gsub);
                 gpos = tf.getGPOS();
-                assertTrue(gpos != null);
+                assertNotNull(gpos);
                 widths = tf.getWidths();
-                assertTrue(widths != null);
+                assertNotNull(widths);
             } else {
                 assert tf != null;
                 assert gsub != null;
@@ -148,7 +143,7 @@ public class ArabicWordFormsTestCase implements ArabicWordFormsConstants {
                 if (gpos.position(togs, script, language, 1000, widths, tpaa)) {
                     assertSameAdjustments(paa, tpaa, wf, tfn);
                 } else if (paa != null) {
-                    assertEquals("unequal adjustment count, word form(" + wf + "), font (" + tfn + ")", paa.length, 0);
+                    assertEquals("unequal adjustment count, word form(" + wf + "), font (" + tfn + ")", 0, paa.length);
                 }
             }
         }

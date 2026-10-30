@@ -21,7 +21,6 @@ package org.apache.fop.pdf;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * This is a test case for ({@link Version}.
@@ -59,9 +58,9 @@ public class VersionTestCase {
         int index = 0;
         for (Version version : Version.values()) {
             if (index > 7) {
-                assertTrue(version.toString().equals("2.0"));
+                assertEquals("2.0", version.toString());
             } else {
-                assertTrue(version.toString().equals("1." + index++));
+                assertEquals("1." + index++, version.toString());
             }
         }
     }

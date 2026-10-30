@@ -22,7 +22,7 @@ package org.apache.fop.afp.fonts;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 public class IntegerKeyStoreTestCase {
 
@@ -36,12 +36,7 @@ public class IntegerKeyStoreTestCase {
         assertEquals(Integer.valueOf(1), sut.get(0));
         sut.put(0, null);
         assertNull(sut.get(0));
-        try {
-            sut.put(-1, 0);
-            fail("Negative index");
-        } catch (IndexOutOfBoundsException e) {
-            // As expected
-        }
+        assertThrows("Negative index", IndexOutOfBoundsException.class, () -> sut.put(-1, 0));
     }
 
 }

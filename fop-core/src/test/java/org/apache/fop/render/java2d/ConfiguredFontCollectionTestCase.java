@@ -30,7 +30,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import org.apache.commons.io.IOUtils;
 
@@ -45,28 +47,27 @@ import org.apache.fop.fonts.EncodingMode;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.fonts.FontTriplet;
 import org.apache.fop.fonts.FontUris;
+import org.apache.fop.fonts.Typeface;
 
 public class ConfiguredFontCollectionTestCase {
+    @Rule
+    public TemporaryFolder tmp = new TemporaryFolder();
+
     @Test
     public void testConfiguredFontCollection() throws IOException {
         File pfb = getFontFileNoExension("test/resources/fonts/type1/c0419bt_.pfb");
         File afm = getFontFileNoExension("test/resources/fonts/type1/c0419bt_.afm");
         Assert.assertFalse(pfb.getName().endsWith(".pfb"));
-        try {
-            FontUris fontUris = new FontUris(pfb.toURI(), null, afm.toURI(), null);
-            EmbedFontInfo e = new EmbedFontInfo(fontUris, true, true, new ArrayList<FontTriplet>(), null);
-            List<EmbedFontInfo> x = Collections.singletonList(e);
-            InternalResourceResolver rr =
-                    ResourceResolverFactory.createDefaultInternalResourceResolver(new File(".").toURI());
-            ConfiguredFontCollection c = new ConfiguredFontCollection(rr, x, true);
-            FontInfo fi = new FontInfo();
-            int num = c.setup(0, fi);
-            Assert.assertEquals(num, 1);
-            Assert.assertEquals(fi.getFonts().values().iterator().next().getFontName(), "Courier10PitchBT-Roman");
-        } finally {
-            pfb.delete();
-            afm.delete();
-        }
+        FontUris fontUris = new FontUris(pfb.toURI(), null, afm.toURI(), null);
+        EmbedFontInfo e = new EmbedFontInfo(fontUris, true, true, new ArrayList<FontTriplet>(), null);
+        List<EmbedFontInfo> x = Collections.singletonList(e);
+        InternalResourceResolver rr =
+                ResourceResolverFactory.createDefaultInternalResourceResolver(new File(".").toURI());
+        ConfiguredFontCollection c = new ConfiguredFontCollection(rr, x, true);
+        FontInfo fi = new FontInfo();
+        int num = c.setup(0, fi);
+        Assert.assertEquals(num, 1);
+        Assert.assertEquals(fi.getFonts().values().iterator().next().getFontName(), "Courier10PitchBT-Roman");
     }
 
     @Test
@@ -84,13 +85,9 @@ public class ConfiguredFontCollectionTestCase {
         Assert.assertEquals(fileReads.size(), 3);
         Assert.assertTrue(fileReads.get(0).contains("c0419bt_.afm"));
         Assert.assertTrue(fileReads.get(2).contains("c0419bt_.pfb"));
-        String ex = "";
-        try {
-            fontInfo.getFonts().get("F1").getFontName();
-        } catch (RuntimeException e) {
-            ex = e.getMessage();
-        }
-        Assert.assertTrue(ex.startsWith("Failed to read font file"));
+        Typeface f1 = fontInfo.getFonts().get("F1");
+        RuntimeException ex = Assert.assertThrows(RuntimeException.class, f1::getFontName);
+        Assert.assertTrue(ex.getMessage().startsWith("Failed to read font file"));
         Assert.assertEquals(fileReads.size(), 4);
     }
 
@@ -134,11 +131,11 @@ public class ConfiguredFontCollectionTestCase {
 
     private File getFontFileNoExension(String s) throws IOException {
         FileInputStream pfb = new FileInputStream(s);
-        File tmp = File.createTempFile("fop", "font");
-        FileOutputStream os = new FileOutputStream(tmp);
+        File file = File.createTempFile("fop", "font", tmp.getRoot());
+        FileOutputStream os = new FileOutputStream(file);
         IOUtils.copy(pfb, os);
         os.close();
         pfb.close();
-        return tmp;
+        return file;
     }
 }

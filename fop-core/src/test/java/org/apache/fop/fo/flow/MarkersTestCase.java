@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -113,11 +113,6 @@ public class MarkersTestCase {
         assertEquals(marker_1B, markers.resolve(rtm));
         // test also an invalid position
         when(rm.getPosition()).thenReturn(Constants.EN_ABSOLUTE);
-        try {
-            Marker m = markers.resolve(rm);
-            fail("Expected an exception... instead got:" + m.toString());
-        } catch (RuntimeException re) {
-            // do nothing
-        }
+        assertThrows(RuntimeException.class, () -> markers.resolve(rm));
     }
 }

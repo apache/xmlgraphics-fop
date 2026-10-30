@@ -22,8 +22,8 @@ package org.apache.fop.traits;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Tests the {@link MinOptMax} class.
@@ -71,22 +71,16 @@ public class MinOptMaxTestCase {
 
     @Test
     public void testNewMinOptMaxMinGreaterOpt() {
-        try {
-            MinOptMax.getInstance(1, 0, 2);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("min (1) > opt (0)", e.getMessage());
-        }
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> MinOptMax.getInstance(1, 0, 2));
+        assertEquals("min (1) > opt (0)", e.getMessage());
     }
 
     @Test
     public void testNewMinOptMaxMaxSmallerOpt() {
-        try {
-            MinOptMax.getInstance(0, 1, 0);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("max (0) < opt (1)", e.getMessage());
-        }
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> MinOptMax.getInstance(0, 1, 0));
+        assertEquals("max (0) < opt (1)", e.getMessage());
     }
 
     @Test
@@ -127,42 +121,28 @@ public class MinOptMaxTestCase {
 
     @Test
     public void testMinusFail1() {
-        try {
-            MinOptMax.ZERO.minus(MinOptMax.getInstance(1, 2, 3));
-            fail();
-        } catch (ArithmeticException e) {
-            // Ok
-        }
+        MinOptMax subtrahend = MinOptMax.getInstance(1, 2, 3);
+        assertThrows(ArithmeticException.class, () -> MinOptMax.ZERO.minus(subtrahend));
     }
 
     @Test
     public void testMinusFail2() {
-        try {
-            MinOptMax.getInstance(1, 2, 3).minus(MinOptMax.getInstance(1, 3, 3));
-            fail();
-        } catch (ArithmeticException e) {
-            // Ok
-        }
+        MinOptMax minuend = MinOptMax.getInstance(1, 2, 3);
+        MinOptMax subtrahend = MinOptMax.getInstance(1, 3, 3);
+        assertThrows(ArithmeticException.class, () -> minuend.minus(subtrahend));
     }
 
     @Test
     public void testMinusFail3() {
-        try {
-            MinOptMax.ZERO.minus(MinOptMax.getInstance(1, 1, 2));
-            fail();
-        } catch (ArithmeticException e) {
-            // Ok
-        }
+        MinOptMax subtrahend = MinOptMax.getInstance(1, 1, 2);
+        assertThrows(ArithmeticException.class, () -> MinOptMax.ZERO.minus(subtrahend));
     }
 
     @Test
     public void testMinusFail4() {
-        try {
-            MinOptMax.getInstance(1, 2, 3).minus(MinOptMax.getInstance(1, 1, 3));
-            fail();
-        } catch (ArithmeticException e) {
-            // Ok
-        }
+        MinOptMax minuend = MinOptMax.getInstance(1, 2, 3);
+        MinOptMax subtrahend = MinOptMax.getInstance(1, 1, 3);
+        assertThrows(ArithmeticException.class, () -> minuend.minus(subtrahend));
     }
 
     @Test
@@ -174,12 +154,9 @@ public class MinOptMaxTestCase {
 
     @Test
     public void testMultFail() {
-        try {
-            MinOptMax.getInstance(1, 2, 3).mult(-1);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("factor < 0; was: -1", e.getMessage());
-        }
+        MinOptMax minOptMax = MinOptMax.getInstance(1, 2, 3);
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> minOptMax.mult(-1));
+        assertEquals("factor < 0; was: -1", e.getMessage());
     }
 
     @Test

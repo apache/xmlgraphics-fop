@@ -23,14 +23,13 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests {@link GlyfTable}.
@@ -217,9 +216,5 @@ public class GlyfTableTestCase {
 
         subsetReader.skip(-8); // We've found the table, go back to get the data we skipped over
         return new DirData(subsetReader.readTTFLong(), subsetReader.readTTFLong());
-    }
-
-    private void assertArrayEquals(int[] expected, int[] actual) {
-        assertTrue(Arrays.equals(expected, actual));
     }
 }

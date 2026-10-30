@@ -22,12 +22,12 @@ package org.apache.fop.afp.modca;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -105,13 +105,13 @@ public class AbstractTripletStructuredObjectTest<S extends AbstractTripletStruct
         byte[] expected = baos.toByteArray();
         baos.reset();
         getSut().writeTriplets(baos);
-        assertTrue(Arrays.equals(expected, baos.toByteArray()));
+        assertArrayEquals(expected, baos.toByteArray());
 
         baos.reset();
         // Ensure it doesn't die if no data has been added
         emptyStructuredObject.writeTriplets(baos);
         byte[] emptyArray = baos.toByteArray();
-        assertTrue(Arrays.equals(emptyArray, new byte[0]));
+        assertArrayEquals(new byte[0], emptyArray);
     }
 
     /**

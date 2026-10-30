@@ -20,7 +20,6 @@
 package org.apache.fop.pdf;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Before;
@@ -28,9 +27,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests the {@link FileIDGenerator} class.
@@ -84,7 +83,7 @@ public class FileIDGeneratorTestCase {
     public void testOriginalMultipleCalls() {
         byte[] fileID1 = fileIDGenerator.getUpdatedFileID();
         byte[] fileID2 = fileIDGenerator.getUpdatedFileID();
-        assertTrue(Arrays.equals(fileID1, fileID2));
+        assertArrayEquals(fileID1, fileID2);
     }
 
     /** Tests that getUpdatedFileID returns the same value as getOriginalFileID. */
@@ -92,7 +91,7 @@ public class FileIDGeneratorTestCase {
     public void testUpdateEqualsOriginal() {
         byte[] originalFileID = fileIDGenerator.getOriginalFileID();
         byte[] updatedFileID = fileIDGenerator.getUpdatedFileID();
-        assertTrue(Arrays.equals(originalFileID, updatedFileID));
+        assertArrayEquals(originalFileID, updatedFileID);
     }
 
     private interface TestGetter {

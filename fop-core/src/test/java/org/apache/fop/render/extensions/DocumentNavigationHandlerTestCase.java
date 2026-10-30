@@ -208,7 +208,7 @@ public class DocumentNavigationHandlerTestCase {
             }
         }
         Assert.assertEquals(pageLink.size(), 2);
-        Assert.assertFalse(pageLink.get(0).equals(pageLink.get(1)));
+        Assert.assertNotEquals(pageLink.get(0), pageLink.get(1));
     }
 
     @Test

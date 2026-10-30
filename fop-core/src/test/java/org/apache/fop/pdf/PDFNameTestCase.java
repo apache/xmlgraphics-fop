@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import org.apache.commons.io.output.CountingOutputStream;
 
@@ -53,13 +53,8 @@ public class PDFNameTestCase extends PDFObjectTestCase {
      */
     @Test
     public void testEscapeName() {
-        try {
-            // Test for null, this is a programming error thus the NPE
-            PDFName.escapeName(null);
-            fail("NPE not thrown when null object given to escapeName()");
-        } catch (NullPointerException e) {
-            // PASS
-        }
+        // Test for null, this is a programming error thus the NPE
+        assertThrows(NullPointerException.class, () -> PDFName.escapeName(null));
         // All names are prefixed by "/", check the PDF spec for further details.
         assertEquals("/Test", PDFName.escapeName("Test"));
         // Check that if the name is already prefixed with "/" it doens't do it twice
@@ -134,12 +129,7 @@ public class PDFNameTestCase extends PDFObjectTestCase {
         assertEquals("/test1", test1.toString());
         PDFName test2 = new PDFName("another test");
         assertEquals("/another#20test", test2.toString());
-        try {
-            new PDFName(null);
-            fail("NPE not thrown when null passed to constructor");
-        } catch (NullPointerException e) {
-            // PASS
-        }
+        assertThrows(NullPointerException.class, () -> new PDFName(null));
     }
 
     /**
@@ -155,26 +145,23 @@ public class PDFNameTestCase extends PDFObjectTestCase {
     /**
      * Test outputInline() - this writes the object reference if it is a direct object (has an
      * object number), or writes the String representation if there is no object number.
+     * @throws IOException error caused by I/O
      */
     @Test
-    public void testOutputInline() {
+    public void testOutputInline() throws IOException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         CountingOutputStream cout = new CountingOutputStream(outStream);
         StringBuilder textBuffer = new StringBuilder();
-        try {
-            // test with no object number set.
-            pdfName.outputInline(outStream, textBuffer);
-            PDFDocument.flushTextBuffer(textBuffer, cout);
-            assertEquals("/TestName", outStream.toString());
+        // test with no object number set.
+        pdfName.outputInline(outStream, textBuffer);
+        PDFDocument.flushTextBuffer(textBuffer, cout);
+        assertEquals("/TestName", outStream.toString());
 
-            outStream.reset();
-            // test with object number set
-            pdfName.setObjectNumber(1);
-            pdfName.outputInline(outStream, textBuffer);
-            PDFDocument.flushTextBuffer(textBuffer, cout);
-            assertEquals("1 0 R", outStream.toString());
-        } catch (IOException e) {
-            fail("IOException: " + e.getMessage());
-        }
+        outStream.reset();
+        // test with object number set
+        pdfName.setObjectNumber(1);
+        pdfName.outputInline(outStream, textBuffer);
+        PDFDocument.flushTextBuffer(textBuffer, cout);
+        assertEquals("1 0 R", outStream.toString());
     }
 }

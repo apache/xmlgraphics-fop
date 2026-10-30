@@ -25,8 +25,8 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.apache.xmlgraphics.ps.PSGenerator;
 
@@ -79,12 +79,9 @@ public class PSTTFGeneratorTestCase {
         ttfGen.streamBytes(byteArray, 0, 32744);
         // Using a regex to ensure that the format is correct
         assertTrue(out.toString().matches("([0-9A-F]{80}\n){819}"));
-        try {
-            ttfGen.streamBytes(byteArray, 0, PSTTFGenerator.MAX_BUFFER_SIZE + 1);
-            fail("Shouldn't be able to write more than MAX_BUFFER_SIZE to a PS document");
-        } catch (UnsupportedOperationException e) {
-            // PASS
-        }
+        assertThrows("Shouldn't be able to write more than MAX_BUFFER_SIZE to a PS document",
+                UnsupportedOperationException.class,
+                () -> ttfGen.streamBytes(byteArray, 0, PSTTFGenerator.MAX_BUFFER_SIZE + 1));
     }
 
     /**

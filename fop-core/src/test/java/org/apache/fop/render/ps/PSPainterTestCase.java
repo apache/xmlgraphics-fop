@@ -33,7 +33,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.verification.VerificationMode;
-import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyFloat;
@@ -110,7 +109,7 @@ public class PSPainterTestCase {
     }
 
     @Test
-    public void testDrawBorderRect() {
+    public void testDrawBorderRect() throws IFException, IOException {
         // the goal of this test is to check that the drawing of rounded corners in PS calls
         // PSGraphicsPaiter.cubicBezierTo(); the check is done by verifying that a curveto command is written
         // to the PSGenerator
@@ -126,19 +125,14 @@ public class PSPainterTestCase {
         // build border properties: width 4pt, radius 30pt
         BorderProps border = new BorderProps(Constants.EN_SOLID, 4000, 30000, 30000, Color.BLACK,
                 BorderProps.Mode.SEPARATE);
-        try {
-            psPainter.drawBorderRect(rectangle, border, border, border, border, Color.WHITE);
-//            verify(psGenerator, times(16)).writeln("20.0 20.0 20.0 20.0 20.0 20.0 curveto ");
-            verify(psGenerator, times(4)).saveGraphicsState();
-            verify(psGenerator, times(155)).formatDouble(anyDouble());
-            verify(psGenerator, times(51)).writeln(anyString());
-        } catch (Exception e) {
-            fail("something broke...");
-        }
+        psPainter.drawBorderRect(rectangle, border, border, border, border, Color.WHITE);
+        verify(psGenerator, times(4)).saveGraphicsState();
+        verify(psGenerator, times(155)).formatDouble(anyDouble());
+        verify(psGenerator, times(51)).writeln(anyString());
     }
 
     @Test
-    public void testDrawText() throws IOException {
+    public void testDrawText() throws IFException, IOException {
         int fontSize = 12000;
         String fontName = "MockFont";
         PSGenerator psGenerator = mock(PSGenerator.class);
@@ -180,14 +174,10 @@ public class PSPainterTestCase {
             when(font.mapCodePoint(cp)).thenReturn(cp);
         }
 
-        try {
-            psPainter.drawText(x, y, letterSpacing, wordSpacing, dp, text);
-            verify(psGenerator).writeln("1 0 0 -1 100.100 99.900 Tm");
-            verify(psGenerator).writeln("[<0048> [-100 100] <0065006C> [200 -200] <006C> [-300 300] "
-                            + "<006F0020004D006F0063006B002101F4A9>] TJ");
-        } catch (Exception e) {
-            fail("something broke...");
-        }
+        psPainter.drawText(x, y, letterSpacing, wordSpacing, dp, text);
+        verify(psGenerator).writeln("1 0 0 -1 100.100 99.900 Tm");
+        verify(psGenerator).writeln("[<0048> [-100 100] <0065006C> [200 -200] <006C> [-300 300] "
+                        + "<006F0020004D006F0063006B002101F4A9>] TJ");
     }
 
     @Test

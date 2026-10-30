@@ -23,8 +23,8 @@ import java.io.File;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.apache.fop.complexscripts.fonts.ttx.TTXFile;
 
@@ -3089,9 +3089,9 @@ public class GDEFTestCase {
             String fid = (String) td[0];
             String lid = (String) td[1];
             TTXFile tf = findTTX(fid);
-            assertTrue(tf != null);
+            assertNotNull(tf);
             GlyphDefinitionTable gdef = tf.getGDEF();
-            assertTrue(gdef != null);
+            assertNotNull(gdef);
             String[][] tia = (String[][]) td[2];
             switch ((int) ((Integer) tp[0])) {
             case GlyphDefinitionTable.GDEF_LOOKUP_TYPE_GLYPH_CLASS:
@@ -3156,14 +3156,8 @@ public class GDEFTestCase {
 
     private TTXFile findTTX(String fid) {
         String pn = findTTXPath(fid);
-        assertTrue(pn != null);
-        try {
-            TTXFile tf = TTXFile.getFromCache(pn);
-            return tf;
-        } catch (Exception e) {
-            fail(e.getMessage());
-            return null;
-        }
+        assertNotNull(pn);
+        return TTXFile.getFromCache(pn);
     }
 
 }

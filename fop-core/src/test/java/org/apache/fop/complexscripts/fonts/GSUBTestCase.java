@@ -27,7 +27,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.apps.io.ResourceResolverFactory;
@@ -106,11 +105,11 @@ public class GSUBTestCase implements ScriptContextTester, GlyphContextTester {
             String language = (String) td[3];
             String feature = (String) td[4];
             TTXFile tf = findTTX(fid);
-            assertTrue(tf != null);
+            assertNotNull(tf);
             GlyphSubstitutionTable gsub = tf.getGSUB();
-            assertTrue(gsub != null);
+            assertNotNull(gsub);
             GlyphSubstitutionSubtable[] sta = findGSUBSubtables(gsub, script, language, feature, lid);
-            assertTrue(sta != null);
+            assertNotNull(sta);
             assertTrue(sta.length > 0);
             ScriptContextTester sct = findScriptContextTester(script, language, feature);
             String[][][] tia = (String[][][]) td[5];            // test instance array
@@ -143,14 +142,8 @@ public class GSUBTestCase implements ScriptContextTester, GlyphContextTester {
 
     private TTXFile findTTX(String fid) {
         String pn = findTTXPath(fid);
-        assertTrue(pn != null);
-        try {
-            TTXFile tf = TTXFile.getFromCache(pn);
-            return tf;
-        } catch (Exception e) {
-            fail(e.getMessage());
-            return null;
-        }
+        assertNotNull(pn);
+        return TTXFile.getFromCache(pn);
     }
 
     private GlyphSubstitutionSubtable[] findGSUBSubtables(

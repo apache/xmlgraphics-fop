@@ -21,7 +21,7 @@ package org.apache.fop.fo.pagination;
 
 import org.junit.Test;
 import org.xml.sax.Locator;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -124,13 +124,10 @@ public class PageSequenceMasterTestCase {
           pageSequenceMaster.startOfNode();
           pageSequenceMaster.addSubsequenceSpecifier(mockSinglePageMasterReference);
 
-          try {
-              pageSequenceMaster.getNextSimplePageMaster(false, false, false, false,
-                      mainFlowRegionName, false);
-              fail("The next simple page master does not refer to the main flow");
-         } catch (PageProductionException ppe) {
-             //Passed test
-         }
+          assertThrows("The next simple page master does not refer to the main flow",
+                  PageProductionException.class,
+                  () -> pageSequenceMaster.getNextSimplePageMaster(false, false, false, false,
+                          mainFlowRegionName, false));
       }
 
 

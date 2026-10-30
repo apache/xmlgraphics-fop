@@ -24,7 +24,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 /**
  * This test tests PDFNumber's doubleOut() methods.
@@ -104,30 +104,11 @@ public class PDFNumberTestCase extends PDFObjectTestCase {
      * @throws Exception if the test fails
      */
     public void testDoubleOutWrongParameters() throws Exception {
-        try {
-            PDFNumber.doubleOut(0.1f, -1);
-            fail("IllegalArgument expected!");
-        } catch (IllegalArgumentException iae) {
-            //we want that
-        }
-        try {
-            PDFNumber.doubleOut(0.1f, 17); //We support max 16 decimal digits
-            fail("IllegalArgument expected!");
-        } catch (IllegalArgumentException iae) {
-            //we want that
-        }
-        try {
-            PDFNumber.doubleOut(0.1f, 98274659);
-            fail("IllegalArgument expected!");
-        } catch (IllegalArgumentException iae) {
-            //we want that
-        }
-        try {
-            PDFNumber.doubleOut(null);
-            fail("NullPointer expected!");
-        } catch (NullPointerException e) {
-            // PASS
-        }
+        assertThrows(IllegalArgumentException.class, () -> PDFNumber.doubleOut(0.1f, -1));
+        //We support max 16 decimal digits
+        assertThrows(IllegalArgumentException.class, () -> PDFNumber.doubleOut(0.1f, 17));
+        assertThrows(IllegalArgumentException.class, () -> PDFNumber.doubleOut(0.1f, 98274659));
+        assertThrows(NullPointerException.class, () -> PDFNumber.doubleOut(null));
     }
 
     /**

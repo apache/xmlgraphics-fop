@@ -30,7 +30,7 @@ public class URIActionTestCase {
         URIAction action2 = new URIAction("uri", true, null);
         URIAction action3 = new URIAction("uri2", true, null);
         Assert.assertEquals(action.getID(), action2.getID());
-        Assert.assertFalse(action.getID().equals(action3.getID()));
+        Assert.assertNotEquals(action.getID(), action3.getID());
     }
 
     @Test

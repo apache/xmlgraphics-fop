@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
 /**
@@ -99,12 +100,8 @@ public class VersionControllerTestCase {
             // the /Version parameter shouldn't be present in the document catalog
             assertNull(doc.getRoot().get("Version"));
         } else {
-            try {
-                VersionController.getFixedVersionController(originalVersion);
-                fail("Versions < 1.4 aren't allowed.");
-            } catch (IllegalArgumentException e) {
-                // PASS
-            }
+            assertThrows("Versions < 1.4 aren't allowed.", IllegalArgumentException.class,
+                    () -> VersionController.getFixedVersionController(originalVersion));
         }
     }
 

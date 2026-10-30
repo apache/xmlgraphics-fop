@@ -31,8 +31,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.area.AreaTreeHandler;
@@ -284,12 +284,7 @@ public class FopFactoryBuilderTestCase {
 
     private void runSetterTest(Runnable setterTest) {
         setterTest.run();
-        try {
-            setterTest.run();
-            fail(POST_SET_ERROR_MSG);
-        } catch (IllegalStateException e) {
-            // Expected
-        }
+        assertThrows(POST_SET_ERROR_MSG, IllegalStateException.class, setterTest::run);
     }
 
     @Test

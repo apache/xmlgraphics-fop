@@ -56,13 +56,13 @@ public abstract class BaseUserConfigTest extends BasePDFTest {
         // do nothing
     }
 
-    protected void convertFO() throws Exception {
+    protected byte[] convertFO() throws Exception {
         final File baseDir = getBaseDir();
         final String fontFOFilePath = getFontFOFilePath();
         File foFile = new File(baseDir, fontFOFilePath);
         final boolean dumpOutput = false;
         FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-        convertFO(foFile, foUserAgent, dumpOutput);
+        return convertFO(foFile, foUserAgent, dumpOutput);
     }
 
     /**

@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import org.apache.commons.io.output.CountingOutputStream;
 
@@ -107,20 +106,17 @@ public class PDFDictionaryTestCase extends PDFObjectTestCase {
 
     /**
      * Tests writeDictionary() - tests that the dictionary is properly written to the output-stream.
+     * @throws IOException error caused by I/O
      */
     @Test
-    public void testWriteDictionary() {
+    public void testWriteDictionary() throws IOException {
         // Ensure that the objects stored in the dictionary are streamed in the correct format.
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         CountingOutputStream cout = new CountingOutputStream(outStream);
         StringBuilder textBuffer = new StringBuilder();
-        try {
-            pdfDictUnderTest.writeDictionary(cout, textBuffer);
-            PDFDocument.flushTextBuffer(textBuffer, cout);
-            assertEquals(expectedOutput, outStream.toString());
-        } catch (IOException e) {
-            fail("IOException: " + e.getMessage());
-        }
+        pdfDictUnderTest.writeDictionary(cout, textBuffer);
+        PDFDocument.flushTextBuffer(textBuffer, cout);
+        assertEquals(expectedOutput, outStream.toString());
     }
 
     /**

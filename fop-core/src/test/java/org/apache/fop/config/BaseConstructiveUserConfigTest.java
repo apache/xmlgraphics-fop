@@ -24,7 +24,8 @@ import java.io.InputStream;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
+
 
 /**
  * Super class of several user config cases.
@@ -41,12 +42,6 @@ public abstract class BaseConstructiveUserConfigTest extends BaseUserConfigTest 
      */
     @Test
     public void testUserConfig() throws Exception {
-        try {
-            convertFO();
-        } catch (Exception e) {
-            // this should *not* happen!
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
+        assertNotNull(convertFO());
     }
 }

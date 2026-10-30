@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -48,7 +49,7 @@ public class RetrieveTableMarkerLayoutManagerMakerTestCase {
         // test the case rtm has no child nodes
         when(rtm.getChildNodes()).thenReturn(null);
         rtmlmm.make(rtm, l, null);
-        assertTrue(l.size() == 1);
+        assertEquals(1, l.size());
         assertTrue(l.get(0) instanceof RetrieveTableMarkerLayoutManager);
     }
 
