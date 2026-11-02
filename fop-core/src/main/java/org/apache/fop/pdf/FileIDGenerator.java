@@ -86,7 +86,8 @@ abstract class FileIDGenerator {
 
         private void generateFileID() {
             DateFormat df = new SimpleDateFormat("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS");
-            digest.update(PDFDocument.encode(df.format(new Date())));
+            Date creationDate = document.getInfo().getCreationDate();
+            digest.update(PDFDocument.encode(df.format(creationDate != null ? creationDate : new Date())));
             // Ignoring the filename here for simplicity even though it's recommended
             // by the PDF spec
             digest.update(PDFDocument.encode(String.valueOf(document.getCurrentFileSize())));
