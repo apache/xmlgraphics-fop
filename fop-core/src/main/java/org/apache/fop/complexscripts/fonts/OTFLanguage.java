@@ -19,6 +19,11 @@
 
 package org.apache.fop.complexscripts.fonts;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * <p>Language system tags defined by OTF specification. Note that this set and their
  * values do not correspond with ISO639* or any other language registry.</p>
@@ -420,6 +425,160 @@ public final class OTFLanguage {
     public static final String CHINESE_TRADITIONAL              = "ZHT";
     public static final String ZANDE                            = "ZND";
     public static final String ZULU                             = "ZUL";
+
+    /** ISO 639 language codes mapped to the OpenType language system tag each names. */
+    private static final Map<String, String> BY_ISO_CODE;
+
+    static {
+        Map<String, String> m = new HashMap<String, String>();
+        m.put("af", AFRIKAANS);
+        m.put("am", AMHARIC);
+        m.put("ar", ARABIC);
+        m.put("as", ASSAMESE);
+        m.put("be", BELARUSSIAN);
+        m.put("bg", BULGARIAN);
+        m.put("bn", BENGALI);
+        m.put("bo", TIBETAN);
+        m.put("br", BRETON);
+        m.put("bs", BOSNIAN);
+        m.put("ca", CATALAN);
+        m.put("crh", CRIMEAN_TATAR);
+        m.put("cs", CZECH);
+        m.put("cy", WELSH);
+        m.put("da", DANISH);
+        m.put("de", GERMAN);
+        m.put("dz", DZONGKHA);
+        m.put("el", GREEK);
+        m.put("en", ENGLISH);
+        m.put("eo", ESPERANTO);
+        m.put("es", SPANISH);
+        m.put("et", ESTONIAN);
+        m.put("eu", BASQUE);
+        m.put("fa", FARSI);
+        m.put("fi", FINNISH);
+        m.put("fil", FILIPINO);
+        m.put("fo", FAROESE);
+        m.put("fr", FRENCH);
+        m.put("fy", FRISIAN);
+        m.put("ga", IRISH);
+        m.put("gag", GAGAUZ);
+        m.put("gd", GAELIC);
+        m.put("gl", GALICIAN);
+        m.put("gu", GUJARATI);
+        m.put("gv", MANX_GAELIC);
+        m.put("ha", HAUSA);
+        m.put("he", HEBREW);
+        m.put("hi", HINDI);
+        m.put("hr", CROATIAN);
+        m.put("ht", HAITIAN);
+        m.put("hu", HUNGARIAN);
+        m.put("hy", ARMENIAN);
+        m.put("id", INDONESIAN);
+        m.put("ig", IGBO);
+        m.put("is", ICELANDIC);
+        m.put("it", ITALIAN);
+        m.put("ja", JAPANESE);
+        m.put("ka", GEORGIAN);
+        m.put("kaa", KARAKALPAK);
+        m.put("kk", KAZAKH);
+        m.put("km", KHMER);
+        m.put("kn", KANNADA);
+        m.put("ko", KOREAN);
+        m.put("ku", KURDISH);
+        m.put("ky", KIRGHIZ);
+        m.put("la", LATIN);
+        m.put("lb", LUXEMBOURGISH);
+        m.put("lo", LAO);
+        m.put("lt", LITHUANIAN);
+        m.put("lv", LATVIAN);
+        m.put("mg", MALAGASY);
+        m.put("mi", MAORI);
+        m.put("mk", MACEDONIAN);
+        m.put("ml", MALAYALAM_TRADITIONAL);
+        m.put("mn", MONGOLIAN);
+        m.put("mo", MOLDAVIAN);
+        m.put("mr", MARATHI);
+        m.put("ms", MALAY);
+        m.put("mt", MALTESE);
+        m.put("my", BURMESE);
+        m.put("nb", NORWEGIAN);
+        m.put("ne", NEPALI);
+        m.put("nl", DUTCH);
+        m.put("nn", NYNORSK);
+        m.put("no", NORWEGIAN);
+        m.put("or", ORIYA);
+        m.put("pa", PUNJABI);
+        m.put("pl", POLISH);
+        m.put("ps", PASHTO);
+        m.put("pt", PORTUGUESE);
+        m.put("ro", ROMANIAN);
+        m.put("ru", RUSSIAN);
+        m.put("sa", SANSKRIT);
+        m.put("sd", SINDHI);
+        m.put("se", NORTHERN_SAMI);
+        m.put("si", SINHALESE);
+        m.put("sk", SLOVAK);
+        m.put("sl", SLOVENIAN);
+        m.put("sma", SOUTHERN_SAMI);
+        m.put("smj", LULE_SAMI);
+        m.put("smn", INARI_SAMI);
+        m.put("sms", SKOLT_SAMI);
+        m.put("so", SOMALI);
+        m.put("sq", ALBANIAN);
+        m.put("sr", SERBIAN);
+        m.put("sv", SWEDISH);
+        m.put("sw", SWAHILI);
+        m.put("ta", TAMIL);
+        m.put("te", TELUGU);
+        m.put("tg", TAJIKI);
+        m.put("th", THAI);
+        m.put("tk", TURKMEN);
+        m.put("tl", FILIPINO);
+        m.put("tr", TURKISH);
+        m.put("tt", TATAR);
+        m.put("ug", UYGHUR);
+        m.put("uk", UKRAINIAN);
+        m.put("ur", URDU);
+        m.put("uz", UZBEK);
+        m.put("vi", VIETNAMESE);
+        m.put("xh", XHOSA);
+        m.put("yi", YIDDISH);
+        m.put("yo", YORUBA);
+        m.put("zu", ZULU);
+        m.put("az", AZERI);
+        m.put("haw", HAWAIIN);
+        m.put("zh", CHINESE_SIMPLIFIED);
+        BY_ISO_CODE = Collections.unmodifiableMap(m);
+    }
+
+    /**
+     * The OpenType language system tag for an ISO 639 language code as the FO {@code language}
+     * property carries it: {@code tr} gives {@code TRK}, {@code en-US} gives {@code ENG},
+     * {@code zh-TW} and {@code zh-Hant} give {@code ZHT}, {@code zh-HK} gives {@code ZHH}. Case
+     * and a region or script subtag after a hyphen or underscore are ignored except for Chinese.
+     * @param code the language code, possibly with subtags
+     * @return the tag, or null when the code is unknown here
+     */
+    public static String fromLanguageCode(String code) {
+        if (code == null) {
+            return null;
+        }
+        String lower = code.trim().toLowerCase(Locale.ROOT).replace('_', '-');
+        if (lower.isEmpty()) {
+            return null;
+        }
+        int dash = lower.indexOf('-');
+        String primary = (dash < 0) ? lower : lower.substring(0, dash);
+        if ("zh".equals(primary) && dash >= 0) {
+            String rest = lower.substring(dash + 1);
+            if (rest.startsWith("hk")) {
+                return CHINESE_HONG_KONG_SAR;
+            } else if (rest.startsWith("tw") || rest.startsWith("hant") || rest.startsWith("mo")) {
+                return CHINESE_TRADITIONAL;
+            }
+        }
+        return BY_ISO_CODE.get(primary);
+    }
 
     public static boolean isDefault(String language) {
         return (language != null) && language.equals(DEFAULT);
