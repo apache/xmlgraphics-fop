@@ -52,6 +52,13 @@ public final class LayoutContext {
 
     private static final int TREAT_AS_ARTIFACT = 0x20;
 
+    /**
+     * The element list is being read again from a block after a side float's edge. The float's edge is no
+     * break in the flow, so the block's space-before, resolved in the list before, is kept and not emitted
+     * again. Set by the page breaker for the restarted block only.
+     */
+    public static final int FLOAT_RESTART = 0x40;
+
     private int flags; // Contains some set of flags defined above
 
     /**
@@ -314,6 +321,11 @@ public final class LayoutContext {
     /** @return true if resolve leading space is set */
     public boolean resolveLeadingSpace() {
         return ((this.flags & RESOLVE_LEADING_SPACE) != 0);
+    }
+
+    /** @return whether the element list is being read again from a block after a side float's edge */
+    public boolean isFloatRestart() {
+        return ((this.flags & FLOAT_RESTART) != 0);
     }
 
     /** @param space trailing space */

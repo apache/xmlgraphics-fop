@@ -405,7 +405,13 @@ public abstract class BlockStackingLayoutManager extends AbstractLayoutManager
     protected void addFirstVisibleMarks(List<ListElement> elements,
             LayoutContext context, int alignment) {
         if (!firstVisibleMarkServed) {
-            addKnuthElementsForSpaceBefore(elements, alignment);
+            if (context.isFloatRestart()) {
+                // read again after a side float's edge: the space-before was resolved in the list before,
+                // and the edge is no break, so it is kept as resolved and not emitted again
+                context.setFlags(LayoutContext.FLOAT_RESTART, false);
+            } else {
+                addKnuthElementsForSpaceBefore(elements, alignment);
+            }
             context.updateKeepWithPreviousPending(getKeepWithPrevious());
         }
         addKnuthElementsForBorderPaddingBefore(elements, !firstVisibleMarkServed);
