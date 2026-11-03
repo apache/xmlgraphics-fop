@@ -19,8 +19,10 @@
 
 package org.apache.fop.pdf;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -42,7 +44,8 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
 /**
- * Checks that the creation date set on the user agent is used for the XMP metadata dates.
+ * Checks that the creation date set on the user agent is used for the XMP metadata dates
+ * and, with the file-id-from-creation-date option, for the file ID.
  */
 public class PDFCreationDateTestCase {
 
@@ -50,14 +53,34 @@ public class PDFCreationDateTestCase {
 
     @Test
     public void testMetadataDateUsesCreationDate() throws Exception {
-        String pdf = new String(render(), "ISO-8859-1");
+        String pdf = new String(render(false), "ISO-8859-1");
         String date = DateFormatUtil.formatISO8601(CREATION_DATE, TimeZone.getDefault());
         Assert.assertTrue(pdf, pdf.contains("<xmp:MetadataDate>" + date + "</xmp:MetadataDate>"));
         Assert.assertTrue(pdf, pdf.contains("<xmp:CreateDate>" + date + "</xmp:CreateDate>"));
     }
 
-    private byte[] render() throws Exception {
-        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
+    @Test
+    public void testFileIDFromCreationDateGivesSameFile() throws Exception {
+        byte[] first = render(true);
+        Thread.sleep(50);
+        byte[] second = render(true);
+        Assert.assertArrayEquals(first, second);
+    }
+
+    @Test
+    public void testFileIDUsesCurrentTimeByDefault() throws Exception {
+        byte[] first = render(false);
+        Thread.sleep(50);
+        byte[] second = render(false);
+        Assert.assertFalse(Arrays.equals(first, second));
+    }
+
+    private byte[] render(boolean fileIDFromCreationDate) throws Exception {
+        String fopxconf = "<fop version=\"1.0\"><renderers><renderer mime=\"application/pdf\">"
+                + "<file-id-from-creation-date>" + fileIDFromCreationDate + "</file-id-from-creation-date>"
+                + "</renderer></renderers></fop>";
+        FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI(),
+                new ByteArrayInputStream(fopxconf.getBytes("UTF-8")));
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
         userAgent.setCreationDate(CREATION_DATE);
         ByteArrayOutputStream out = new ByteArrayOutputStream();

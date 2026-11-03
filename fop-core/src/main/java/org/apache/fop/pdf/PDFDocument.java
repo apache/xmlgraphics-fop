@@ -193,6 +193,8 @@ public class PDFDocument {
 
     private boolean forceUriBasicLink;
 
+    private boolean fileIDFromCreationDate;
+
     /**
      * Creates an empty PDF document.
      *
@@ -1344,5 +1346,18 @@ public class PDFDocument {
 
     public void setForceUriBasicLink(boolean forceUriBasicLink) {
         this.forceUriBasicLink = forceUriBasicLink;
+    }
+
+    public boolean isFileIDFromCreationDate() {
+        return fileIDFromCreationDate;
+    }
+
+    /**
+     * Computes the file ID from the creation date in the document information instead of
+     * the current time, so that the same input and creation date give the same file.
+     * @param fileIDFromCreationDate true to use the creation date
+     */
+    public void setFileIDFromCreationDate(boolean fileIDFromCreationDate) {
+        this.fileIDFromCreationDate = fileIDFromCreationDate;
     }
 }

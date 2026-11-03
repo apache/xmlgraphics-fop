@@ -640,6 +640,7 @@ class PDFRenderingUtil {
         pdfDoc.setFormXObjectEnabled(rendererConfig.getFormXObjectEnabled());
         pdfDoc.setObjectStreamsEnabled(rendererConfig.getObjectStreamsEnabled());
         pdfDoc.setForceUriBasicLink(rendererConfig.getForceUriBasicLinkEnabled());
+        pdfDoc.setFileIDFromCreationDate(rendererConfig.getFileIDFromCreationDate());
 
         return this.pdfDoc;
     }
