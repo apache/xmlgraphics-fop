@@ -298,4 +298,14 @@ public abstract class AbstractBaseLayoutManager
     public void setFromFootnote(boolean fromFootnote) {
         this.fromFootnote = fromFootnote;
     }
+
+    /** {@inheritDoc} */
+    public int getMinimumIPD() {
+        int minimumIPD = -1;
+        for (LayoutManager childLM : getChildLMs()) {
+            int curMinIPD = childLM.getMinimumIPD();
+            minimumIPD = Math.max(minimumIPD, curMinIPD);
+        }
+        return minimumIPD;
+    }
 }

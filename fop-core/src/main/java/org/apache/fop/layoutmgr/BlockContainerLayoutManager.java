@@ -338,7 +338,7 @@ public class BlockContainerLayoutManager extends SpacedBorderedPaddedBlockLayout
 
         referenceIPD = context.getRefIPD();
         if (width.getEnum() == EN_AUTO) {
-            updateContentAreaIPDwithOverconstrainedAdjust();
+            updateContentAreaIPDwithOverconstrainedAdjust(context);
         } else {
             int contentWidth = width.getValue(this);
             updateContentAreaIPDwithOverconstrainedAdjust(contentWidth);
