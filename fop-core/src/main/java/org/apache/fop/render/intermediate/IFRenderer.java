@@ -545,7 +545,8 @@ public class IFRenderer extends AbstractPathOrientedRenderer {
         } else {
             xmpBasic.setCreatorTool(Version.getVersion());
         }
-        xmpBasic.setMetadataDate(new java.util.Date());
+        java.util.Date creationDate = getUserAgent().getCreationDate();
+        xmpBasic.setMetadataDate(creationDate != null ? creationDate : new java.util.Date());
         if (getUserAgent().getCreationDate() != null) {
             xmpBasic.setCreateDate(getUserAgent().getCreationDate());
         } else {

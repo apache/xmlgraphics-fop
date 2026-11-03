@@ -262,7 +262,8 @@ class PDFRenderingUtil {
             fopXMP.mergeInto(docXMP, exclude);
             XMPBasicAdapter xmpBasic = XMPBasicSchema.getAdapter(docXMP);
             //Metadata was changed so update metadata date
-            xmpBasic.setMetadataDate(new java.util.Date());
+            Date creationDate = userAgent.getCreationDate();
+            xmpBasic.setMetadataDate(creationDate != null ? creationDate : new Date());
             PDFMetadata.updateInfoFromMetadata(docXMP, pdfDoc.getInfo());
 
             PDFMetadata pdfMetadata = pdfDoc.getFactory().makeMetadata(
@@ -482,7 +483,9 @@ class PDFRenderingUtil {
                 augmentDictionary((PDFDictionary)currentPage.get("DPart"), extension);
             }
         } else if (type == PDFDictionaryType.PagePiece) {
-            String date = DateFormatUtil.formatPDFDate(new Date(), TimeZone.getDefault());
+            Date lastModified = userAgent.getCreationDate();
+            String date = DateFormatUtil.formatPDFDate(lastModified != null ? lastModified : new Date(),
+                    TimeZone.getDefault());
             if (currentPage.get("PieceInfo") == null) {
                 currentPage.put("PieceInfo", new PDFDictionary());
                 currentPage.put("LastModified", date);
@@ -639,6 +642,7 @@ class PDFRenderingUtil {
         pdfDoc.setFormXObjectEnabled(rendererConfig.getFormXObjectEnabled());
         pdfDoc.setObjectStreamsEnabled(rendererConfig.getObjectStreamsEnabled());
         pdfDoc.setForceUriBasicLink(rendererConfig.getForceUriBasicLinkEnabled());
+        pdfDoc.setFileIDFromCreationDate(rendererConfig.getFileIDFromCreationDate());
 
         return this.pdfDoc;
     }
@@ -679,7 +683,7 @@ class PDFRenderingUtil {
         }
 
         //Create embedded file
-        PDFEmbeddedFile file = new PDFEmbeddedFile();
+        PDFEmbeddedFile file = new PDFEmbeddedFile(userAgent.getCreationDate());
         this.pdfDoc.registerObject(file);
         URI srcURI;
         try {
