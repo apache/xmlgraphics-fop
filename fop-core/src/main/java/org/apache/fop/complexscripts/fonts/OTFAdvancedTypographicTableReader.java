@@ -1704,7 +1704,9 @@ public final class OTFAdvancedTypographicTableReader {
         }
         // read deltas
         int n = (es - ss) + 1;
-        if (n < 0) {
+        // n == 0 (ie es == ss - 1) must be rejected here too, otherwise it reaches
+        // DeviceTable's "startSize <= endSize" assertion.
+        if (n <= 0) {
             log.debug("invalid device table delta count: " + n + ", ignoring device table");
             return null;
         }
@@ -2047,16 +2049,18 @@ public final class OTFAdvancedTypographicTableReader {
             // read y device table offset
             int ydo = in.readTTFUShort();
             // read x device table (if present)
+            // N.B. an Anchor Table format 3 measures its device table offsets from the start of
+            // the anchor table, not from the reader's position on entry to this method (cp).
             GlyphPositioningTable.DeviceTable xd;
             if (xdo != 0) {
-                xd = readPosDeviceTable(cp, xdo);
+                xd = readPosDeviceTable(anchorTableOffset, xdo);
             } else {
                 xd = null;
             }
             // read y device table (if present)
             GlyphPositioningTable.DeviceTable yd;
             if (ydo != 0) {
-                yd = readPosDeviceTable(cp, ydo);
+                yd = readPosDeviceTable(anchorTableOffset, ydo);
             } else {
                 yd = null;
             }
