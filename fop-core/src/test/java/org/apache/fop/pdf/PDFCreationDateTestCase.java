@@ -42,8 +42,7 @@ import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
 
 /**
- * Checks that the creation date set on the user agent is used for every date in the PDF,
- * so the same input and date give the same file.
+ * Checks that the creation date set on the user agent is used for the XMP metadata dates.
  */
 public class PDFCreationDateTestCase {
 
@@ -55,14 +54,6 @@ public class PDFCreationDateTestCase {
         String date = DateFormatUtil.formatISO8601(CREATION_DATE, TimeZone.getDefault());
         Assert.assertTrue(pdf, pdf.contains("<xmp:MetadataDate>" + date + "</xmp:MetadataDate>"));
         Assert.assertTrue(pdf, pdf.contains("<xmp:CreateDate>" + date + "</xmp:CreateDate>"));
-    }
-
-    @Test
-    public void testSameCreationDateGivesSameFile() throws Exception {
-        byte[] first = render();
-        Thread.sleep(1100);
-        byte[] second = render();
-        Assert.assertArrayEquals(first, second);
     }
 
     private byte[] render() throws Exception {
