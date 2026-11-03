@@ -193,7 +193,7 @@ public class OFFontLoader extends FontLoader {
                 multiFont.setCIDType(CIDFontType.CIDTYPE2);
             }
             multiFont.setWidthArray(otf.getWidths());
-            multiFont.setBBoxArray(otf.getBoundingBoxes());
+            multiFont.setBBoxArray(otf.getBoundingBoxesPacked());
         } else {
             singleFont.setFontType(FontType.TRUETYPE);
             singleFont.setEncoding(otf.getCharSetName());
