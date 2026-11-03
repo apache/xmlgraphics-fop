@@ -31,12 +31,21 @@ public class PDFEmbeddedFile extends PDFStream {
      * Creates a new embedded file stream.
      */
     public PDFEmbeddedFile() {
+        this(null);
+    }
+
+    /**
+     * Creates a new embedded file stream.
+     * @param date the date for its creation and modification dates, or null for the current time
+     */
+    public PDFEmbeddedFile(Date date) {
         super();
         put("Type", new PDFName("EmbeddedFile"));
         put("Subtype", new PDFName("application/octet-stream"));
         PDFDictionary params = new PDFDictionary();
-        params.put("CreationDate", PDFInfo.formatDateTime(new Date()));
-        params.put("ModDate", PDFInfo.formatDateTime(new Date()));
+        String formattedDate = PDFInfo.formatDateTime(date != null ? date : new Date());
+        params.put("CreationDate", formattedDate);
+        params.put("ModDate", formattedDate);
         put("Params", params);
     }
 

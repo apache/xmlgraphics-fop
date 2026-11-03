@@ -133,6 +133,16 @@ public enum PDFRendererOption implements RendererConfigOption {
         Boolean deserialize(String value) {
             return Boolean.valueOf(value);
         }
+    },
+    /**
+     * Rendering Options key for computing the file ID from the creation date set on the user
+     * agent instead of the current time, default: false
+     */
+    FILE_ID_FROM_CREATION_DATE("file-id-from-creation-date", false) {
+        @Override
+        Boolean deserialize(String value) {
+            return Boolean.valueOf(value);
+        }
     };
 
     private final String name;

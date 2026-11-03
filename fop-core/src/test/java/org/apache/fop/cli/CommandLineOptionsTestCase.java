@@ -20,6 +20,7 @@
 package org.apache.fop.cli;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.apps.FOPException;
+import org.apache.fop.render.pdf.PDFRendererOption;
 
 public class CommandLineOptionsTestCase {
 
@@ -68,5 +70,20 @@ public class CommandLineOptionsTestCase {
         String[] cmd3 = cl3.split(" ");
         CommandLineOptions clo3 = new CommandLineOptions();
         assertTrue(clo3.parse(cmd3));
+    }
+
+    @Test
+    public void testCreationDate() throws Exception {
+        CommandLineOptions options = new CommandLineOptions();
+        assertTrue(options.parse(
+                "-creationdate 2026-11-01T00:07:38Z -fo examples/fo/basic/simple.fo -print".split(" ")));
+        assertEquals(new Date(1000L * 1793491658L), options.getFOUserAgent().getCreationDate());
+        assertEquals(Boolean.TRUE, options.getFOUserAgent().getRendererOption(
+                PDFRendererOption.FILE_ID_FROM_CREATION_DATE));
+    }
+
+    @Test(expected = FOPException.class)
+    public void testInvalidCreationDate() throws Exception {
+        new CommandLineOptions().parse("-creationdate 2026-11-01 -fo examples/fo/basic/simple.fo -print".split(" "));
     }
 }
