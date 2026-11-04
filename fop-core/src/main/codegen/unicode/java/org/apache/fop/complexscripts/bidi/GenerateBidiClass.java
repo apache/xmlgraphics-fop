@@ -537,7 +537,7 @@ public final class GenerateBidiClass {
                 System.out.println("Generated " + outFileName + " from");
                 System.out.println("  <bidiFile>:     " + bidiFileName);
             } catch (Exception e) {
-                System.out.println("An unexpected error occured");
+                System.out.println("An unexpected error occurred");
                 e.printStackTrace();
             }
         }
