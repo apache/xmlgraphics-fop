@@ -63,6 +63,7 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
                     InternalElementMapping.STANDARD_PREFIX, InternalElementMapping.URI);
             contentHandler.startPrefixMapping(
                     ExtensionElementMapping.STANDARD_PREFIX, ExtensionElementMapping.URI);
+            contentHandler.startPrefixMapping(FOElementMapping.STANDARD_PREFIX, FOElementMapping.URI);
             contentHandler.startElement(IFConstants.NAMESPACE,
                     IFConstants.EL_STRUCTURE_TREE, IFConstants.EL_STRUCTURE_TREE,
                     attributes);
@@ -76,6 +77,7 @@ public final class StructureTree2SAXEventAdapter implements StructureTreeEventHa
         try {
             contentHandler.endElement(IFConstants.NAMESPACE, IFConstants.EL_STRUCTURE_TREE,
                     IFConstants.EL_STRUCTURE_TREE);
+            contentHandler.endPrefixMapping(FOElementMapping.STANDARD_PREFIX);
             contentHandler.endPrefixMapping(
                     ExtensionElementMapping.STANDARD_PREFIX);
             contentHandler.endPrefixMapping(
