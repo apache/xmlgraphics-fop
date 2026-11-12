@@ -18,6 +18,8 @@
 /* $Id$ */
 package org.apache.fop.fonts;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -40,5 +42,17 @@ public class LazyFontTestCase {
             ex = e.getMessage();
         }
         Assert.assertEquals(ex, "Failed to read font file test URI is not absolute");
+    }
+
+    @Test
+    public void testMissingFontFileGetRealFont() throws URISyntaxException {
+        URI missing = new File("does-not-exist.ttf").getAbsoluteFile().toURI();
+        FontUris fontUris = new FontUris(missing, null);
+        InternalResourceResolver rr = ResourceResolverFactory.createDefaultInternalResourceResolver(new URI("."));
+        LazyFont lazyFont = new LazyFont(new EmbedFontInfo(fontUris, true, true, null, null), rr, true);
+        RuntimeException e = Assert.assertThrows(RuntimeException.class, lazyFont::getRealFont);
+        Assert.assertEquals(RuntimeException.class, e.getClass());
+        Assert.assertTrue(e.getMessage(), e.getMessage().startsWith("Failed to read font file " + missing + " "));
+        Assert.assertTrue(e.getCause() instanceof FileNotFoundException);
     }
 }

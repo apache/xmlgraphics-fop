@@ -130,7 +130,7 @@ public class LazyFont extends Typeface implements FontDescriptor, Substitutable,
             } catch (Exception e) {
                 String error = "Failed to read font file " + fontUris.getEmbed() + " " + e.getMessage();
                 log.error(error, e);
-                if (fail) {
+                if (fail || realFont == null) {
                     throw new RuntimeException(error, e);
                 }
             }
