@@ -1008,7 +1008,7 @@ public class PDFFactory {
                         throw new RuntimeException(e);
                     }
                 } else {
-                    cmap = new PDFToUnicodeCMap(cidMetrics.getCIDSet().getChars(), "fop-ucs-H",
+                    cmap = new PDFToUnicodeCMap(cidMetrics.getCIDSet().getUnicodeSequences(), "fop-ucs-H",
                         new PDFCIDSystemInfo("Adobe", "Identity", 0), false, eventBroadcaster);
                 }
                 getDocument().registerObject(cmap);
