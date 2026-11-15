@@ -579,7 +579,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
             }
             // may not contains all the characters that were in charSequence.
             // see: #createPrivateUseMapping(int gi)
-            return mapGlyphsToChars(glyphSequenceSubstituted);
+            return mapGlyphsToChars(glyphSequenceSubstituted, true);
         } else {
             return charSequence;
         }
@@ -590,18 +590,39 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         return mapCharsToGlyphs(normalizedCharSequence, associations);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * <p>CS is what substitution produced, one character per glyph, while the caller's associations, where it keeps
+     * them (SVG text does, to place each glyph at its first character), index the original text. So the pass's own
+     * sequence takes no associations: each glyph is paired with its own character in CS, and the caller's
+     * associations are permuted as the glyphs are. Paired with the caller's, the pass read a later glyph's character
+     * after any ligature, and the glyph was given that character as its ToUnicode text. The pass records no meaning:
+     * its sequence is substitution's output, not the text, so it has nothing to say about what a glyph stands for,
+     * and in step it never needs to.</p>
+     */
     public CharSequence reorderCombiningMarks(
         CharSequence cs, int[][] gpa, String script, String language, List associations) {
         if (gdef != null) {
-            GlyphSequence igs = mapCharsToGlyphs(cs, associations);
+            GlyphSequence igs = mapCharsToGlyphs(cs, null);
             GlyphSequence ogs = gdef.reorderCombiningMarks(igs, getUnscaledWidths(igs), gpa, script, language);
             if (associations != null) {
+                List reordered;
+                int ng = ogs.getGlyphCount();
+                if ((associations.size() == cs.length()) && (associations.size() == ng)) {
+                    // the caller's associations, which the pass carried before, each moved as its glyph moved:
+                    // output glyph k is input glyph ogs.getAssociation(k).getStart()
+                    reordered = new ArrayList(ng);
+                    for (int k = 0; k < ng; k++) {
+                        reordered.add(associations.get(ogs.getAssociation(k).getStart()));
+                    }
+                } else {
+                    // as before: where the counts differ the pass never kept the caller's associations
+                    reordered = ogs.getAssociations();
+                }
                 associations.clear();
-                associations.addAll(ogs.getAssociations());
+                associations.addAll(reordered);
             }
-            CharSequence ocs = mapGlyphsToChars(ogs);
-            return ocs;
+            return mapGlyphsToChars(ogs, false);
         } else {
             return cs;
         }
@@ -883,9 +904,11 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * Map sequence GS, comprising a sequence of Glyph Indices, to output sequence CS,
      * comprising a sequence of UTF-16 encoded Unicode Code Points.
      * @param gs a GlyphSequence containing glyph indices
+     * @param recordMeanings whether a substituted glyph records the text its association names: true for
+     * substitution's output, whose associations index the characters of GS; false for the reorder pass
      * @returns a CharSequence containing UTF-16 encoded Unicode characters
      */
-    private CharSequence mapGlyphsToChars(GlyphSequence gs) {
+    private CharSequence mapGlyphsToChars(GlyphSequence gs, boolean recordMeanings) {
         int ng = gs.getGlyphCount();
         int ccMissing = Typeface.NOT_FOUND;
         List<Character> chars = new ArrayList<Character>(gs.getUTF16CharacterCount());
@@ -896,7 +919,9 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
             int gi = gs.getGlyph(i);
             int cc = findUnsubstitutedCharacter(gs, i, ca, nc, gi);
             if (cc == 0) {
-                recordGlyphMeaning(gs, i, ca, nc, gi);
+                if (recordMeanings) {
+                    recordGlyphMeaning(gs, i, ca, nc, gi);
+                }
                 cc = findCharacterFromGlyphIndex(gi);
             }
             if ((cc == 0) || (cc > 0x10FFFF)) {
