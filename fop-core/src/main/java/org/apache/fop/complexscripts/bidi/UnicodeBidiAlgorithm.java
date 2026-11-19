@@ -75,7 +75,17 @@ public final class UnicodeBidiAlgorithm implements BidiConstants {
      * @param levels array to receive levels, one for each character in chars array
      */
     public static int[] resolveLevels(int[] chars, int defaultLevel, int[] levels) {
-        return resolveLevels(chars, getClasses(chars), defaultLevel, levels, false);
+        resolveLevels(chars, getClasses(chars), defaultLevel, levels, false);
+        // The placeholder that stands for the low surrogate of a pair takes the level of the
+        // character it belongs to, as resolveLevels(CharSequence, Direction) documents. With the
+        // placeholder classed as its character (getClasses) the rules already agree; this holds
+        // the promise whatever a rule does with a repeated class.
+        for (int i = 1, n = chars.length; i < n; i++) {
+            if (chars [ i ] < 0) {
+                levels [ i ] = levels [ i - 1 ];
+            }
+        }
+        return levels;
     }
 
     /**
@@ -618,6 +628,13 @@ public final class UnicodeBidiAlgorithm implements BidiConstants {
             int ch = chars [ i ];
             if (ch >= 0) {
                 bc = BidiClass.getBidiClass(chars [ i ]);
+            } else if (i > 0) {
+                // The placeholder for a low surrogate takes the class of the character it belongs
+                // to, so that the rules see the pair as the one character it is. As a class of its
+                // own it ended a run of neutrals in rule N1, so a neutral outside the BMP inside
+                // right-to-left text fell to the embedding direction where one in the BMP takes the
+                // text's.
+                bc = classes [ i - 1 ];
             } else {
                 bc = SURROGATE;
             }

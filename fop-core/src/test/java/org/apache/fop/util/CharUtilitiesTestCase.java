@@ -69,4 +69,14 @@ public class CharUtilitiesTestCase {
 
         CharUtilities.containsSurrogatePairAt(malformedUTF8Sequence, 3);
     }
+
+    /** A high surrogate as the last character is ill-formed UTF-16, so the documented
+     * IllegalArgumentException is what callers must see - not the IndexOutOfBoundsException
+     * that reading one past the end would raise. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testContainsSurrogatePairAtWithIsolatedHighSurrogateAtEndOfSequence() {
+        String isolatedHighSurrogateAtEnd = "012\uD83D";
+
+        CharUtilities.containsSurrogatePairAt(isolatedHighSurrogateAtEnd, 3);
+    }
 }
