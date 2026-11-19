@@ -40,14 +40,25 @@ public final class SVGUtil {
         return Float.toString(mpt / 1000f);
     }
 
-    /**
-     * Formats an array of lengths in millipoints as point values.
-     * @param lengths the lengths in millipoints
-     * @return the formatted array in points
-     */
-    public static String formatMptArrayToPt(int[] lengths) {
-        return IFUtil.toString(lengths);
-    }
+	/**
+	 * Formats an array of lengths in millipoints as point values.
+	 * @param lengths the lengths in millipoints
+	 * @return the formatted array in points
+	 */
+	public static String formatMptArrayToPt(int[] lengths) {
+		if (lengths == null || lengths.length == 0) {
+			return "";
+		}
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < lengths.length; i++) {
+			if (i > 0) {
+				sb.append(" ");
+			}
+			sb.append(formatMptToPt(lengths[i]));
+		}
+
+		return sb.toString();
+	}
 
     /**
      * Formats a transformation matrix in millipoints with values as points.
