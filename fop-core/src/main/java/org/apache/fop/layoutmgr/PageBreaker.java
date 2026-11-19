@@ -176,8 +176,20 @@ public class PageBreaker extends AbstractBreaker {
             pageProvider.setStartOfNextElementList(pslm.getCurrentPageNum(), pslm.getCurrentPV()
                     .getCurrentSpan().getCurrentFlowIndex(), this.spanAllActive);
         }
-        return super.getNextBlockList(childLC, nextSequenceStartsOn, positionAtIPDChange,
-                restartLM, firstElements);
+        // a list read again from a block after a side float's edge: that block keeps the space-before the
+        // list before resolved, since the edge is no break in the flow
+        boolean floatRestart = handlingFloat() && positionAtIPDChange != null;
+        if (floatRestart) {
+            childLC.setFlags(LayoutContext.FLOAT_RESTART, true);
+        }
+        try {
+            return super.getNextBlockList(childLC, nextSequenceStartsOn, positionAtIPDChange,
+                    restartLM, firstElements);
+        } finally {
+            if (floatRestart) {
+                childLC.setFlags(LayoutContext.FLOAT_RESTART, false);
+            }
+        }
     }
 
     private boolean containsFootnotes(List<ListElement> contentList, LayoutContext context) {
@@ -871,6 +883,18 @@ public class PageBreaker extends AbstractBreaker {
         // The following is needed by SpaceResolver.performConditionalsNotification()
         // further down as there may be important Position elements in the element list trailer
         int notificationEndElementIndex = endElementIndex;
+        // A float's edge is no break in the flow: the content goes on below the float on the same page, so
+        // the space between the paragraph beside the float and the one below it is kept, not discarded as
+        // at a page break. The notification runs to the last glue before the next box, which tells the edge's
+        // break position it is no break and resolves that space.
+        for (int i = endElementIndex + 1; i < effectiveList.size(); i++) {
+            KnuthElement le = (KnuthElement) effectiveList.get(i);
+            if (le.isBox() || le.isForcedBreak()) {
+                break;
+            } else if (le.isGlue()) {
+                notificationEndElementIndex = i;
+            }
+        }
 
         // ignore the last elements added by the
         // PageSequenceLayoutManager
