@@ -27,6 +27,7 @@ import java.io.Writer;
  * @deprecated use org.apache.xmlgraphics.util.uri.DataURLUtil directly
  * @see org.apache.xmlgraphics.util.uri.DataURLUtil
  */
+@Deprecated
 public final class DataURLUtil {
 
     private DataURLUtil() {
@@ -38,9 +39,9 @@ public final class DataURLUtil {
      * @return a data url as a string
      * @throws IOException if not caught
      * @deprecated
-     * @see org.apache.xmlgraphics.util.uri.DataURLUtil#createDataURL(InputStream,
-     *      String)
+     * @see org.apache.xmlgraphics.util.uri.DataURLUtil#createDataURL(InputStream, String)
      */
+    @Deprecated
     public static String createDataURL(InputStream in, String mediatype)
         throws IOException {
         return org.apache.xmlgraphics.util.uri.DataURLUtil.createDataURL(in,
@@ -53,9 +54,9 @@ public final class DataURLUtil {
      * @param writer a writer
      * @throws IOException if not caught
      * @deprecated
-     * @see org.apache.xmlgraphics.util.uri.DataURLUtil#writeDataURL(InputStream,
-     *      String, Writer)
+     * @see org.apache.xmlgraphics.util.uri.DataURLUtil#writeDataURL(InputStream, String, Writer)
      */
+    @Deprecated
     public static void writeDataURL(InputStream in, String mediatype,
             Writer writer) throws IOException {
         org.apache.xmlgraphics.util.uri.DataURLUtil.writeDataURL(in, mediatype,

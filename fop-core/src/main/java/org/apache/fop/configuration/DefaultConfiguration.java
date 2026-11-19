@@ -54,6 +54,7 @@ public class DefaultConfiguration implements Configuration {
     /**
      * @deprecated For debug only.
      */
+    @Deprecated
     public static String toString(Document document) {
         try {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();

@@ -297,6 +297,7 @@ public abstract class AbstractRenderer
      * {@inheritDoc}
      * @deprecated
      */
+    @Deprecated
     public void startPageSequence(LineArea seqTitle) {
         //do nothing
     }

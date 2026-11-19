@@ -27,6 +27,7 @@ package org.apache.fop.util;
  * @deprecated Use the XML Graphics Commons variant instead!
  */
 // @SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_SUPERCLASS")
+@Deprecated
 public class QName extends org.apache.xmlgraphics.util.QName {
 
     private static final long serialVersionUID = -5225376740044770690L;
