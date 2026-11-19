@@ -21,6 +21,7 @@ package org.apache.fop.layoutmgr.inline;
 
 import org.apache.fop.area.Area;
 import org.apache.fop.area.inline.Image;
+import org.apache.fop.area.inline.InlineViewport;
 import org.apache.fop.fo.flow.ExternalGraphic;
 
 
@@ -45,6 +46,17 @@ public class ExternalGraphicLayoutManager extends AbstractGraphicsLayoutManager 
         Image im = new Image(((ExternalGraphic) fobj).getSrc());
         im.setChangeBarList(getChangeBarList());
         return im;
+    }
+
+    /** {@inheritDoc}<br>TODO: currently only defined for one specific type of image. */
+    public int getMinimumIPD() {
+        if (curArea instanceof InlineViewport) {
+            InlineViewport iVP = (InlineViewport) curArea;
+            return (int) iVP.getContentPosition().getWidth();
+        } else {
+            log.warn("this type does not provide its dimensions, yet.");
+            return 0;
+        }
     }
 
 }

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<!-- $Id$ -->
+<testcase>
+   <info>
+     <p>
+     </p>
+   </info>
+   <fo>
+     <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format">
+       <fo:layout-master-set>
+         <fo:simple-page-master master-name="first"
+                               page-height="29.7cm"
+                               page-width="21cm"
+                               margin-top="1cm"
+                               margin-bottom="2cm"
+                               margin-left="2.5cm"
+                               margin-right="2.5cm">
+           <fo:region-body margin-top="3cm"/>
+           <fo:region-before extent="3cm"/>
+           <fo:region-after extent="1.5cm"/>
+         </fo:simple-page-master>
+       </fo:layout-master-set>
+       
+       <fo:page-sequence master-reference="first">
+         
+         <fo:flow flow-name="xsl-region-body">
+           <fo:table border="0.5pt solid black"
+                     border-spacing="3pt"
+                     width="100%"
+                     inline-progression-dimension="100%"
+                     id="outer-one">
+             <fo:table-body>
+               <fo:table-row background-color="#ffffff">
+                 <fo:table-cell padding="2pt" border-right="0.5pt dotted black">
+                   <fo:block>A: layout="auto" and a lot of additional text to enforce a linebreak</fo:block>
+                 </fo:table-cell>
+                 <fo:table-cell padding="2pt" border-right="0.5pt dotted black">
+                   <fo:block>B with fixed table</fo:block>
+                   <fo:block>
+                     <fo:table border="0.5pt solid black" border-spacing="3pt" width="100%"
+                                inline-progression-dimension="100%" table-layout="fixed"
+                                id="inner-one">
+                       <fo:table-body>
+                         <fo:table-row background-color="#ffffff">
+                           <fo:table-cell padding="2pt" border-right="0.5pt dotted black">
+                             <fo:block>B1: layout="fixed" AndNoCutoff 1234567890123456789</fo:block>
+                           </fo:table-cell>
+                           <fo:table-cell padding="2pt">
+                             <fo:block>B2</fo:block>
+                           </fo:table-cell>
+                         </fo:table-row>
+                         <fo:table-row background-color="#f0f0f0">
+                           <fo:table-cell padding="2pt" border-right="0.5pt dotted black">
+                             <fo:block>B3</fo:block>
+                           </fo:table-cell>
+                           <fo:table-cell padding="2pt">
+                             <fo:block>
+                               B4 with auto table
+                               <fo:table border="0.5pt solid black" border-spacing="3pt" width="100%"
+                                         inline-progression-dimension="100%"
+                                         id="inner-two">
+                                 <fo:table-body>
+                                   <fo:table-row background-color="#ffffff">
+                                     <fo:table-cell padding="2pt" border-right="0.5pt dotted black">
+                                       <fo:block>B4A: layout="auto"</fo:block>
+                                     </fo:table-cell>
+                                     <fo:table-cell padding="2pt">
+                                       <fo:block>B4B</fo:block>
+                                     </fo:table-cell>
+                                   </fo:table-row>
+                                   <fo:table-row background-color="#f0f0f0">
+                                     <fo:table-cell padding="2pt" border-right="0.5pt dotted black">
+                                       <fo:block>B4C with more text</fo:block>
+                                     </fo:table-cell>
+                                     <fo:table-cell padding="2pt">
+                                       <fo:block>B4D only</fo:block>
+                                     </fo:table-cell>
+                                   </fo:table-row>
+                                 </fo:table-body>
+                               </fo:table>
+                             </fo:block>
+                           </fo:table-cell>
+                         </fo:table-row>
+                       </fo:table-body>
+                     </fo:table>
+                   </fo:block>
+                 </fo:table-cell>
+               </fo:table-row>
+               <fo:table-row background-color="#f0f0f0">
+                 <fo:table-cell padding="2pt" border-right="0.5pt dotted black">
+                   <fo:block>C</fo:block>
+                 </fo:table-cell>
+                 <fo:table-cell padding="2pt" border-right="0.5pt dotted black">
+                   <fo:block>D</fo:block>
+                 </fo:table-cell>
+               </fo:table-row>
+             </fo:table-body>
+           </fo:table>          
+         </fo:flow>
+       </fo:page-sequence>
+     </fo:root>
+   </fo>
+   <checks>
+     <!-- TODO -->
+   </checks>
+</testcase>

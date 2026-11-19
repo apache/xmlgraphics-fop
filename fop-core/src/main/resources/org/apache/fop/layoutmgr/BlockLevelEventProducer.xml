@@ -33,4 +33,5 @@
   <message key="nonRestartableContentFlowingToNarrowerPage">Content that cannot handle IPD changes is flowing to a narrower page. Part of it may be clipped by the page border.</message>
   <message key="layoutHasReachedParts">A layout has reached {partCount} part(s).</message>
   <message key="lastPageMasterReferenceMissing">page-position="last" master reference missing.{{locator}}</message>
+  <message key="columnsInAutoTableTooWide">The minimal width required for the auto-layout of a table's columns is bigger than the available space ({effIPD}mpt &gt; {maxIPD}mpt). Part of it may overflow the page border. {{locator}}</message>
 </catalogue>

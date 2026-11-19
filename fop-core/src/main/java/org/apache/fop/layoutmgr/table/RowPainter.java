@@ -121,7 +121,9 @@ class RowPainter {
      * in the outer mode
      */
     void endTablePart(boolean lastInBody, boolean lastOnPage) {
-        addAreasAndFlushRow(lastInBody, lastOnPage);
+        if (currentRow != null) {
+            addAreasAndFlushRow(lastInBody, lastOnPage);
+        }
 
         if (tablePartBackground != null) {
             TableLayoutManager tableLM = tclm.getTableLM();
@@ -155,8 +157,10 @@ class RowPainter {
         } else {
             EffRow row = tcpos.getRow();
             if (row.getIndex() > currentRow.getIndex()) {
-                addAreasAndFlushRow(false, false);
-                currentRow = row;
+                if (currentRow != null) {
+                    addAreasAndFlushRow(false, false);
+                    currentRow = row;
+                }
             }
         }
         if (firstRowIndex < 0) {
