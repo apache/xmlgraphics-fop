@@ -23,6 +23,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -34,15 +36,19 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Test;
 import org.xml.sax.SAXException;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.io.InternalResourceResolver;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFSerializer;
+import org.apache.fop.traits.MinOptMax;
 
 public class GlyphMappingTestCase {
 
@@ -71,6 +77,72 @@ public class GlyphMappingTestCase {
         String output = foToIF(fo);
         assertTrue(output + "No exception should be thrown when using a custom ttf font with special characters",
                 output.contains("£££"));
+    }
+
+    /**
+     * A word's letter spaces are part of its width on both paths. On the path for fonts with
+     * substitution or positioning tables they were counted but left out of the width, so the
+     * line breaker measured letter-spaced text short and it ran past the end of the line, while
+     * the painter spaced every glyph.
+     */
+    @Test
+    public void testLetterSpacesInTheWidthOfAWordInAFontWithLayoutTables() throws Exception {
+        InternalResourceResolver resolver =
+                ResourceResolverFactory.createDefaultInternalResourceResolver(new File(".").toURI());
+        File file = new File("test/resources/fonts/ttf/DejaVuLGCSerif.ttf");
+        CustomFont typeface = FontLoader.loadFont(new FontUris(file.toURI(), null), "", true,
+                EmbeddingMode.AUTO, EncodingMode.AUTO, false, true, resolver, false, false, true);
+        Font font = new Font("F1", null, typeface, 12000);
+        assertTrue(font.performsSubstitution() || font.performsPositioning());
+
+        TextFragment word = new StringFragment("word");
+        GlyphMapping unspaced = GlyphMapping.doGlyphMapping(word, 0, 4, font, MinOptMax.ZERO, null,
+                '\0', ' ', false, 0, false, false, false);
+        GlyphMapping spaced = GlyphMapping.doGlyphMapping(word, 0, 4, font, MinOptMax.getInstance(3000), null,
+                '\0', ' ', false, 0, false, false, false);
+        assertEquals(3, spaced.letterSpaceCount);
+        assertEquals(3 * 3000, spaced.areaIPD.getOpt() - unspaced.areaIPD.getOpt());
+    }
+
+    private static final class StringFragment implements TextFragment {
+
+        private final String text;
+
+        private StringFragment(String text) {
+            this.text = text;
+        }
+
+        public CharacterIterator getIterator() {
+            return new StringCharacterIterator(text);
+        }
+
+        public int getBeginIndex() {
+            return 0;
+        }
+
+        public int getEndIndex() {
+            return text.length();
+        }
+
+        public String getScript() {
+            return "latn";
+        }
+
+        public String getLanguage() {
+            return "dflt";
+        }
+
+        public int getBidiLevel() {
+            return 0;
+        }
+
+        public char charAt(int index) {
+            return text.charAt(index);
+        }
+
+        public CharSequence subSequence(int startIndex, int endIndex) {
+            return text.subSequence(startIndex, endIndex);
+        }
     }
 
     private String foToIF(String fo) throws SAXException, TransformerException, IOException {
