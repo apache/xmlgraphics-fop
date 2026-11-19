@@ -234,10 +234,27 @@ public class GlyphPositioningTable extends GlyphTable {
      * @return true if some adjustment is not zero; otherwise, false
      */
     public boolean position(GlyphSequence gs, String script, String language, int fontSize, int[] widths, int[][] adjustments) {
+        return position(gs, script, language, fontSize, widths, adjustments, true);
+    }
+
+    /**
+     * Perform positioning processing using all matching lookups, with or without kerning.
+     * @param gs an input glyph sequence
+     * @param script a script identifier
+     * @param language a language identifier
+     * @param fontSize size in device units
+     * @param widths array of default advancements for each glyph
+     * @param adjustments accumulated adjustments array (sequence) of 4-tuples of placement [PX,PY] and advance [AX,AY] adjustments, in that order,
+     * with one 4-tuple for each element of glyph sequence
+     * @param kerning false to leave the kern feature out, for a font configured with kerning disabled; marks are still positioned
+     * @return true if some adjustment is not zero; otherwise, false
+     */
+    public boolean position(GlyphSequence gs, String script, String language, int fontSize, int[] widths, int[][] adjustments,
+                            boolean kerning) {
         Map<LookupSpec, List<LookupTable>> lookups = matchLookups(script, language, "*");
         if ((lookups != null) && (lookups.size() > 0)) {
             ScriptProcessor sp = ScriptProcessor.getInstance(script, processors);
-            return sp.position(this, gs, script, language, fontSize, lookups, widths, adjustments);
+            return sp.position(this, gs, script, language, fontSize, lookups, widths, adjustments, kerning);
         } else {
             return false;
         }
