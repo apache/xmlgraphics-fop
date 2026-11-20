@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URI;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
@@ -35,6 +36,8 @@ import org.xml.sax.SAXException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.apache.xmlgraphics.util.DateFormatUtil;
 
 import org.apache.fop.Version;
 import org.apache.fop.accessibility.Accessibility;
@@ -55,6 +58,7 @@ import org.apache.fop.render.intermediate.IFContext;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.intermediate.IFSerializer;
 import org.apache.fop.render.pdf.PDFEncryptionOption;
+import org.apache.fop.render.pdf.PDFRendererOption;
 import org.apache.fop.render.print.PagesMode;
 import org.apache.fop.render.print.PrintRenderer;
 import org.apache.fop.render.xml.XMLRenderer;
@@ -128,6 +132,8 @@ public class CommandLineOptions {
     private boolean useComplexScriptFeatures = true;
     /* set to true if -dpi used in command line */
     private boolean overrideTargetResolution;
+    /* creation date set with -creationdate, or null */
+    private Date creationDate;
 
     private FopFactory factory;
     private FOUserAgent foUserAgent;
@@ -182,6 +188,9 @@ public class CommandLineOptions {
                 addXSLTParameter("fop-output-format", getOutputFormat());
                 addXSLTParameter("fop-version", Version.getVersion());
                 foUserAgent.setConserveMemoryPolicy(conserveMemoryPolicy);
+                if (creationDate != null) {
+                    foUserAgent.setCreationDate(creationDate);
+                }
                 // TODO: Handle this!!
                 //if (!useComplexScriptFeatures) {
                 //    foUserAgent.setComplexScriptFeaturesEnabled(false);
@@ -376,6 +385,8 @@ public class CommandLineOptions {
                 i = i + parsePDFUserPassword(args, i);
             } else if (args[i].equals("-pdfprofile")) {
                 i = i + parsePDFProfile(args, i);
+            } else if (args[i].equals("-creationdate")) {
+                i = i + parseCreationDate(args, i);
             } else if (args[i].equals("-noprint")) {
                 getPDFEncryptionParams().setAllowPrint(false);
             } else if (args[i].equals("-nocopy")) {
@@ -441,6 +452,21 @@ public class CommandLineOptions {
             Locale.setDefault(new Locale(args[i + 1], ""));
             return 1;
         }
+    }
+
+    private int parseCreationDate(String[] args, int i) throws FOPException {
+        if ((i + 1 == args.length)
+                || (isOption(args[i + 1]))) {
+            throw new FOPException("if you use '-creationdate', you must specify a date"
+                    + " in ISO 8601 format, for example 2026-11-01T00:00:00Z");
+        }
+        try {
+            creationDate = DateFormatUtil.parseISO8601Date(args[i + 1]);
+        } catch (IllegalArgumentException e) {
+            throw new FOPException(e.getMessage());
+        }
+        renderingOptions.put(PDFRendererOption.FILE_ID_FROM_CREATION_DATE.getName(), Boolean.TRUE);
+        return 1;
     }
 
     private int parseResolution(String[] args, int i) throws FOPException {
@@ -1216,7 +1242,11 @@ public class CommandLineOptions {
             + " print high quality permission\n"
             + "  -a                enables accessibility features (Tagged PDF etc., default off)\n"
             + "  -pdfprofile prof  PDF file will be generated with the specified profile\n"
-            + "                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)\n\n"
+            + "                    (Examples for prof: PDF/A-1b or PDF/X-3:2003)\n"
+            + "  -creationdate date  use date (ISO 8601, for example 2026-11-01T00:00:00Z)"
+            + " for the document\n"
+            + "                    dates and the PDF file ID, so the same input gives"
+            + " the same file\n\n"
             + "  -conserve         enable memory-conservation policy (trades memory-consumption"
             + " for disk I/O)\n"
             + "                    (Note: currently only influences whether the area tree is"

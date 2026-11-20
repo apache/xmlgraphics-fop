@@ -22,6 +22,8 @@ import java.awt.Dimension;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.TimeZone;
 
 import javax.xml.transform.stream.StreamResult;
 
@@ -29,6 +31,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.apache.xmlgraphics.util.DateFormatUtil;
 
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.FopFactory;
@@ -43,8 +47,22 @@ import org.apache.fop.render.pdf.extensions.PDFDictionaryType;
 public class PDFPagePieceTestCase {
     @Test
     public void testPDF() throws IFException {
+        String pdf = renderPagePiece(null);
+        Assert.assertTrue(pdf, pdf.contains("/PieceInfo << /a << >> /LastModified (D:"));
+    }
+
+    @Test
+    public void testLastModifiedUsesCreationDate() throws IFException {
+        Date creationDate = new Date(1000L * 1793491658L);
+        String pdf = renderPagePiece(creationDate);
+        String date = DateFormatUtil.formatPDFDate(creationDate, TimeZone.getDefault());
+        Assert.assertTrue(pdf, pdf.contains("/PieceInfo << /a << >> /LastModified (" + date + ")"));
+    }
+
+    private String renderPagePiece(Date creationDate) throws IFException {
         FopFactory fopFactory = FopFactory.newInstance(new File(".").toURI());
         FOUserAgent userAgent = fopFactory.newFOUserAgent();
+        userAgent.setCreationDate(creationDate);
         PDFDocumentHandler documentHandler = new PDFDocumentHandler(new IFContext(userAgent));
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         documentHandler.setResult(new StreamResult(bos));
@@ -60,6 +78,6 @@ public class PDFPagePieceTestCase {
         documentHandler.handleExtensionObject(new PDFDictionaryAttachment(dictionaryExtension));
 
         documentHandler.endPage();
-        Assert.assertTrue(bos.toString(), bos.toString().contains("/PieceInfo << /a << >> /LastModified (D:"));
+        return bos.toString();
     }
 }

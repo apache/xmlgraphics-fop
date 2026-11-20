@@ -33,6 +33,7 @@ import org.apache.fop.pdf.PDFVTMode;
 import org.apache.fop.pdf.PDFXMode;
 import org.apache.fop.pdf.Version;
 import static org.apache.fop.render.pdf.PDFRendererOption.DISABLE_SRGB_COLORSPACE;
+import static org.apache.fop.render.pdf.PDFRendererOption.FILE_ID_FROM_CREATION_DATE;
 import static org.apache.fop.render.pdf.PDFRendererOption.FILTER_LIST;
 import static org.apache.fop.render.pdf.PDFRendererOption.FORCE_URI_BASIC_LINK;
 import static org.apache.fop.render.pdf.PDFRendererOption.FORM_XOBJECT;
@@ -166,6 +167,10 @@ public final class PDFRendererOptionsConfig {
 
     public Boolean getForceUriBasicLinkEnabled() {
         return (Boolean)properties.get(FORCE_URI_BASIC_LINK);
+    }
+
+    public Boolean getFileIDFromCreationDate() {
+        return (Boolean)properties.get(FILE_ID_FROM_CREATION_DATE);
     }
 
 }
