@@ -25,6 +25,7 @@ import java.io.IOException;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import org.apache.fop.pdf.StandardStructureAttributes.Table.Scope;
 
@@ -58,6 +59,27 @@ public class PDFStructElemTestCase {
         defaultSetTableAttributeRowColumnSpan(Scope.COLUMN, StandardStructureTypes.Table.TR);
         defaultSetTableAttributeRowColumnSpan(Scope.COLUMN, StandardStructureTypes.Table.TD);
         defaultSetTableAttributeRowColumnSpan(Scope.COLUMN, StandardStructureTypes.Table.TFOOT);
+    }
+
+    @Test
+    public void testAttributeDictionariesCanReachTheDocument() throws IOException {
+        PDFDocument doc = new PDFDocument("test");
+        PDFStructElem structElem = new PDFStructElem(null, StandardStructureTypes.Table.TH);
+        structElem.setDocument(doc);
+        // two attribute dictionaries force the /A array code path; the Scope
+        // entries are string values, whose serialization requires the
+        // dictionaries to be able to reach the document via their parent chain
+        structElem.setTableAttributeColSpan(2);
+        structElem.setTableAttributeRowSpan(2);
+
+        structElem.writeDictionary(new ByteArrayOutputStream(), new StringBuilder());
+
+        PDFArray array = (PDFArray) structElem.get("A");
+        assertEquals("Both attribute dictionaries must be in the array", 2, array.length());
+        for (int i = 0; i < array.length(); i++) {
+            assertSame("Attribute dictionary must reach the document via its parent chain",
+                    doc, ((PDFDictionary) array.get(i)).getDocument());
+        }
     }
 
     private void defaultSetTableAttributeRowColumnSpan(Scope scope, StructureType type) throws IOException {
