@@ -22,10 +22,14 @@ package org.apache.fop.image.loader.batik;
 import java.io.File;
 import java.io.IOException;
 
+import javax.xml.transform.dom.DOMSource;
+
 import org.junit.Ignore;
 import org.junit.Test;
+import org.w3c.dom.Node;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.apache.xmlgraphics.image.loader.ImageInfo;
@@ -159,6 +163,22 @@ public class ImagePreloaderTestCase {
         assertEquals(2540, info.getSize().getDpiHorizontal(), 0.1);
         assertEquals(792000, info.getSize().getWidthMpt());
         assertEquals(612000, info.getSize().getHeightMpt());
+    }
+
+    /**
+     * An XML document (for example an SVG in fo:instream-foreign-object) can never be a WMF file.
+     * The preloader must decline it without reading the document: to look for the WMF signature,
+     * a DOMSource would first have to be serialized into bytes.
+     */
+    @Test
+    public void testWMFDeclinesXMLDocumentWithoutReadingIt() throws Exception {
+        DOMSource neverRead = new DOMSource() {
+            public Node getNode() {
+                throw new AssertionError("the document must not be read");
+            }
+        };
+        assertNull(new PreloaderWMF().preloadImage(null, neverRead,
+                fopFactory.getImageManager().getImageContext()));
     }
 
 }
