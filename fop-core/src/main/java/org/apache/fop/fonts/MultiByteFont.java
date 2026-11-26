@@ -269,7 +269,12 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
      * @param gi glyph index
      * @returns unicode scalar value
      */
-    private int createPrivateUseMapping(int gi) {
+    private synchronized int createPrivateUseMapping(int gi) {
+        // another thread sharing this font may have mapped the glyph in the meantime
+        int existing = findCharacterFromGlyphIndex(gi, false);
+        if (existing != 0) {
+            return existing;
+        }
         while ((nextPrivateUse < 0xF900)
                 && (findGlyphIndex(nextPrivateUse) != SingleByteEncoding.NOT_FOUND_CODE_POINT)) {
             nextPrivateUse++;
@@ -303,7 +308,7 @@ public class MultiByteFont extends CIDFont implements Substitutable, Positionabl
         }
     }
 
-    public boolean hasPrivateUseSubstitutions() {
+    public synchronized boolean hasPrivateUseSubstitutions() {
         return numMapped > 0;
     }
 

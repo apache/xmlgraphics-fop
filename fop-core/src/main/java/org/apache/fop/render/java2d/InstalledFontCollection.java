@@ -40,6 +40,9 @@ public class InstalledFontCollection implements FontCollection {
 
     private static final Set<String> HARDCODED_FONT_NAMES;
 
+    /** serializes the calls to getAllFonts, see setup */
+    private static final Object ALL_FONTS_LOCK = new Object();
+
     static {
         HARDCODED_FONT_NAMES = new java.util.HashSet<String>();
         HARDCODED_FONT_NAMES.add("any");
@@ -76,7 +79,12 @@ public class InstalledFontCollection implements FontCollection {
         int num = start;
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
-        java.awt.Font[] fonts = env.getAllFonts();
+        java.awt.Font[] fonts;
+        // one at a time: if other renderings load fonts during Java's first call, it can list fonts
+        // twice, which shifts the start number of the configured fonts (cache-fonts)
+        synchronized (ALL_FONTS_LOCK) {
+            fonts = env.getAllFonts();
+        }
         for (java.awt.Font f : fonts) {
             if (HARDCODED_FONT_NAMES.contains(f.getName())) {
                 continue; //skip

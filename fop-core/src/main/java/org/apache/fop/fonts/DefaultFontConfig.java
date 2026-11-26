@@ -48,8 +48,19 @@ public final class DefaultFontConfig implements FontConfig {
 
     private final boolean autoDetectFonts;
 
+    private boolean cacheLoadedFonts;
+
     private DefaultFontConfig(boolean autoDetectFonts) {
         this.autoDetectFonts = autoDetectFonts;
+    }
+
+    /**
+     * Indicates whether the loaded fonts are shared between all renderers of a FopFactory instead of
+     * being loaded again for every rendering (cache-fonts attribute of the fonts element).
+     * @return true if the loaded fonts are cached
+     */
+    public boolean isCacheLoadedFonts() {
+        return cacheLoadedFonts;
     }
 
     /**
@@ -105,6 +116,7 @@ public final class DefaultFontConfig implements FontConfig {
                 this.config = cfg;
                 this.fontInfoCfg = cfg.getChild("fonts", false);
                 instance = new DefaultFontConfig(fontInfoCfg.getChild("auto-detect", false) != null);
+                instance.cacheLoadedFonts = fontInfoCfg.getAttributeAsBoolean("cache-fonts", false);
                 parse();
             }
         }

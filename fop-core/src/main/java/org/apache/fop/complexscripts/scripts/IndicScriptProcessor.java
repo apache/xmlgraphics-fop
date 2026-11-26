@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -412,7 +413,8 @@ public class IndicScriptProcessor extends DefaultScriptProcessor {
             }
             return d;
         }
-        private static Map<String, Syllabizer> syllabizers = new HashMap<String, Syllabizer>();
+        // static, so shared between all threads, with or without cache-fonts
+        private static Map<String, Syllabizer> syllabizers = new ConcurrentHashMap<String, Syllabizer>();
         static Syllabizer getSyllabizer(String script, String language, Class<? extends Syllabizer> syllabizerClass) {
             String sid = makeSyllabizerId(script, language);
             Syllabizer s = syllabizers.get(sid);

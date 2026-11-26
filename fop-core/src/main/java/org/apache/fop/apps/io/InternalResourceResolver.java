@@ -65,6 +65,16 @@ public class InternalResourceResolver {
     }
 
     /**
+     * Tells whether resources are read by FOP's default resolver, which opens a file: URI as the
+     * local file of that path. An application's own resolver may serve other content for it.
+     *
+     * @return true if the default resolver is used
+     */
+    public boolean usesDefaultResourceResolver() {
+        return resourceResolver == ResourceResolverFactory.createDefaultResourceResolver();
+    }
+
+    /**
      * Retrieve a resource given a URI in String form. This also does some syntactical sanitaion on
      * the URI.
      *

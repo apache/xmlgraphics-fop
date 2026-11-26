@@ -91,4 +91,37 @@ public class EmbedFontInfoTestCase {
         assertFalse(sut.isEmbedded());
     }
 
+    @Test
+    public void testWithEmbeddingMode() {
+        sut.setPostScriptName("Test Name");
+        sut.setEmbedded(false);
+
+        EmbedFontInfo copy = sut.withEmbeddingMode(EmbeddingMode.FULL);
+
+        assertEquals(EmbeddingMode.FULL, copy.getEmbeddingMode());
+        assertEquals(embedMode, sut.getEmbeddingMode());
+        assertEquals(sut.getFontUris(), copy.getFontUris());
+        assertEquals(kerning, copy.getKerning());
+        assertEquals(useAdvanced, copy.getAdvanced());
+        assertEquals(sut.getFontTriplets(), copy.getFontTriplets());
+        assertEquals(subFontName, copy.getSubFontName());
+        assertEquals(encMode, copy.getEncodingMode());
+        assertEquals("Test Name", copy.getPostScriptName());
+        assertFalse(copy.isEmbedded());
+    }
+
+    @Test
+    public void testWithEmbeddingModeKeepsFlags() {
+        // the opposite of the defaults, so that a copy that drops a flag fails
+        EmbedFontInfo info = new EmbedFontInfo(sut.getFontUris(), kerning, useAdvanced, sut.getFontTriplets(),
+                subFontName, encMode, embedMode, true, true, false, true);
+
+        EmbedFontInfo copy = info.withEmbeddingMode(EmbeddingMode.FULL);
+
+        assertTrue(copy.getSimulateStyle());
+        assertTrue(copy.getEmbedAsType1());
+        assertFalse(copy.getUseSVG());
+        assertTrue(copy.isLazyLoad());
+    }
+
 }

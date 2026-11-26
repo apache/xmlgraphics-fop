@@ -21,7 +21,6 @@ package org.apache.fop.complexscripts.fonts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +28,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -94,7 +94,8 @@ public class GlyphTable {
             this.gdef = gdef;
             this.lookups = lookups;
             this.lookupTables = new LinkedHashMap<String, LookupTable>();
-            this.matchedLookups = new HashMap<LookupSpec, Map<LookupSpec, List<LookupTable>>>();
+            // concurrent: the table may belong to a font shared between threads (cache-fonts)
+            this.matchedLookups = new ConcurrentHashMap<LookupSpec, Map<LookupSpec, List<LookupTable>>>();
         }
     }
 

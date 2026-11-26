@@ -162,7 +162,7 @@ public abstract class PrintRendererConfigurator extends AbstractRendererConfigur
                 userAgent.isComplexScriptFeaturesEnabled());
     }
 
-    private List<EmbedFontInfo> buildFontList(String mimeType) throws FOPException {
+    protected List<EmbedFontInfo> buildFontList(String mimeType) throws FOPException {
         return fontInfoConfigurator.configure(getRendererConfig(mimeType).getFontInfoConfig());
     }
 
