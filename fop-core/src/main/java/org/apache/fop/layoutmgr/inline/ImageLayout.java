@@ -76,6 +76,8 @@ public class ImageLayout implements Constants {
 
         int bpd = -1;
         int ipd = -1;
+        boolean bpdFromMinimum = false;
+        boolean ipdFromMinimum = false;
 
         len = props.getBlockProgressionDimension().getOptimum(percentBaseContext).getLength();
         if (len.getEnum() != EN_AUTO) {
@@ -84,6 +86,7 @@ public class ImageLayout implements Constants {
         len = props.getBlockProgressionDimension().getMinimum(percentBaseContext).getLength();
         if (bpd == -1 && len.getEnum() != EN_AUTO) {
             bpd = evaluateLength(len, intrinsicSize.height);
+            bpdFromMinimum = true;
         }
 
         len = props.getInlineProgressionDimension().getOptimum(percentBaseContext).getLength();
@@ -94,10 +97,15 @@ public class ImageLayout implements Constants {
         if (ipd == -1 && len.getEnum() != EN_AUTO) {
             //Establish minimum viewport size
             ipd = len.getValue(percentBaseContext);
+            ipdFromMinimum = true;
         }
 
         if (useParentIPDImageScaling && percentBaseContext instanceof LayoutManager) {
-            ipd = getParentIPD((LayoutManager) percentBaseContext, ipd);
+            Integer parentIPD = getParentIPD((LayoutManager) percentBaseContext);
+            if (parentIPD != null) {
+                ipd = parentIPD;
+                ipdFromMinimum = false;
+            }
         }
 
         // if auto then use the intrinsic size of the content scaled
@@ -169,11 +177,11 @@ public class ImageLayout implements Constants {
         cheight = adjustedDim.height;
 
         //Adjust viewport if not explicit
-        if (ipd == -1) {
+        if (ipd == -1 || ipdFromMinimum) {
             ipd = constrainExtent(cwidth,
                     props.getInlineProgressionDimension(), props.getContentWidth());
         }
-        if (bpd == -1) {
+        if (bpd == -1 || bpdFromMinimum) {
             bpd = constrainExtent(cheight,
                     props.getBlockProgressionDimension(), props.getContentHeight());
         }
@@ -289,16 +297,17 @@ public class ImageLayout implements Constants {
         return dim;
     }
 
-    private int getParentIPD(LayoutManager layoutManager, int ipd) {
+    private Integer getParentIPD(LayoutManager layoutManager) {
         if (layoutManager == null || layoutManager.getParent() == null) {
-            return ipd;
+            return null;
         }
 
+        LayoutManager parent = layoutManager.getParent();
         try {
-            return layoutManager.getParent().getContentAreaIPD();
+            return parent.getContentAreaIPD();
         } catch (UnsupportedOperationException e) {
             // some layout managers do not support getContentAreaIPD, so we continue searching up the hierarchy
-            return getParentIPD(layoutManager.getParent(), ipd);
+            return getParentIPD(parent);
         }
     }
 
