@@ -106,4 +106,26 @@ public class PDFAttachmentTestCase {
         Assert.assertTrue(out.toString().contains("<<\n/S /JavaScript\n"
                 + "/JS (this.exportDataObject\\({cName:\"t\\(st\", nLaunch:2}\\);)\n>>"));
     }
+
+    @Test
+    public void testAddEmbeddedFileScriptInjection() throws IFException {
+        PDFDocumentHandler docHandler = new PDFDocumentHandler(new IFContext(ua));
+        docHandler.setFontInfo(new FontInfo());
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        docHandler.setResult(new StreamResult(out));
+        docHandler.startDocument();
+        docHandler.startPage(0, "", "", new Dimension());
+
+        String filename = "a\"});app.alert(\"PROBE-DQ\");({x:\".png";
+        PDFEmbeddedFileAttachment fileAtt = new PDFEmbeddedFileAttachment(filename, "src", "desc");
+        docHandler.handleExtensionObject(fileAtt);
+        docHandler.getDocumentNavigationHandler().renderLink(new Link(
+                new URIAction("embedded-file:" + filename, false, null),
+                new Rectangle()));
+        docHandler.endDocument();
+        String output = out.toString();
+        Assert.assertTrue(output.contains("/S /JavaScript"));
+        Assert.assertFalse(output.contains("cName:\"a\"}"));
+        Assert.assertTrue(output.contains("cName:\"a\\\\u0022}\\);app.alert"));
+    }
 }

@@ -742,11 +742,29 @@ public class PDFFactory {
         //This finally seems to work:
         StringBuffer scriptBuffer = new StringBuffer();
         scriptBuffer.append("this.exportDataObject({cName:\"");
-        scriptBuffer.append(fileSpec.getFilename());
+        scriptBuffer.append(escapeJavaScriptString(fileSpec.getFilename()));
         scriptBuffer.append("\", nLaunch:2});");
 
         PDFJavaScriptLaunchAction action = new PDFJavaScriptLaunchAction(scriptBuffer.toString());
         return action;
+    }
+
+    /**
+     * Escapes text for use inside a JavaScript string literal. Only printable ASCII characters
+     * other than backslash, quotes, '&lt;', '&gt;' and '&amp;' are kept; everything else is
+     * written as a \\uXXXX escape so the text can never terminate the literal.
+     */
+    private static String escapeJavaScriptString(String text) {
+        StringBuilder escaped = new StringBuilder(text.length());
+        for (int i = 0; i < text.length(); i++) {
+            char character = text.charAt(i);
+            if (character < 0x20 || character > 0x7E || "\\\"'<>&".indexOf(character) >= 0) {
+                escaped.append(String.format("\\u%04x", (int) character));
+            } else {
+                escaped.append(character);
+            }
+        }
+        return escaped.toString();
     }
 
     /**
