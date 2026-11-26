@@ -138,7 +138,7 @@ public class CustomFontMetricsMapper extends Typeface implements FontMetricsMapp
     /** {@inheritDoc} */
     public final Font getFont(final int size) {
         getRealFont();
-        if (this.size == size) {
+        if (this.size == size / 1000f) {
             return font;
         }
 
