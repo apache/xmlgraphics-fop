@@ -30,6 +30,7 @@ import org.apache.fop.fonts.DefaultFontConfig;
 import org.apache.fop.fonts.DefaultFontConfig.DefaultFontConfigParser;
 import org.apache.fop.fonts.FontEventAdapter;
 import org.apache.fop.render.RendererConfig;
+import org.apache.fop.render.java2d.CachedConfiguredFontCollection;
 import org.apache.fop.render.java2d.Java2DRendererConfig;
 import org.apache.fop.render.java2d.Java2DRendererConfig.Java2DRendererConfigParser;
 import org.apache.fop.util.ColorUtil;
@@ -51,12 +52,23 @@ public class BitmapRendererConfig implements RendererConfig {
 
     private final DefaultFontConfig fontConfig;
 
+    /**
+     * the fonts loaded with this configuration if cache-fonts is set. FOP creates the configuration
+     * once per FopFactory and output format, so the cache lives as long as the FopFactory.
+     */
+    private final CachedConfiguredFontCollection.Cache fontCache = new CachedConfiguredFontCollection.Cache();
+
     BitmapRendererConfig(DefaultFontConfig fontConfig) {
         this.fontConfig = fontConfig;
     }
 
     public DefaultFontConfig getFontInfoConfig() {
         return fontConfig;
+    }
+
+    /** @return the cache of the fonts loaded with this configuration (used if cache-fonts is set) */
+    public CachedConfiguredFontCollection.Cache getFontCache() {
+        return fontCache;
     }
 
     public Color getBackgroundColor() {

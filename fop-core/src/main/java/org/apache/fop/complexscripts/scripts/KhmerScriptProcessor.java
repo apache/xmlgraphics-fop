@@ -34,9 +34,20 @@ import org.apache.fop.fonts.MultiByteFont;
  * performing glyph substitution and positioning operations on content associated with the Khmer script.</p>
  */
 public class KhmerScriptProcessor extends IndicScriptProcessor {
-    private GlyphSequence unprocessedGS;
-    private List associations;
-    private int[] chars;
+
+    /** State carried from substitution to positioning of the same text. */
+    private static final class State {
+        private GlyphSequence unprocessedGS;
+        private List associations;
+        private int[] chars;
+    }
+
+    // per thread: the processor belongs to a font that may be shared between threads (cache-fonts)
+    private final ThreadLocal<State> state = new ThreadLocal<State>() {
+        protected State initialValue() {
+            return new State();
+        }
+    };
 
     KhmerScriptProcessor(String script) {
         super(script);
@@ -60,23 +71,29 @@ public class KhmerScriptProcessor extends IndicScriptProcessor {
     }
 
     public CharSequence preProcess(CharSequence charSequence, MultiByteFont font, List associations) {
-        unprocessedGS = font.charSequenceToGlyphSequence(charSequence, associations);
+        state.get().unprocessedGS = font.charSequenceToGlyphSequence(charSequence, associations);
         return new KhmerRenderer().render(charSequence.toString());
     }
 
     public boolean position(GlyphSequence glyphSequence, String script, String language, int fontSize,
                             GlyphTable.UseSpec[] useSpecs, int[] widths, int[][] adjustments,
                             ScriptContextTester scriptContextTester) {
-        glyphSequence.setUnprocessedGS(unprocessedGS);
-        return super.position(glyphSequence, script, language, fontSize, useSpecs, widths, adjustments,
-                scriptContextTester);
+        glyphSequence.setUnprocessedGS(state.get().unprocessedGS);
+        try {
+            return super.position(glyphSequence, script, language, fontSize, useSpecs, widths, adjustments,
+                    scriptContextTester);
+        } finally {
+            // positioning is the last step for this text: don't keep the state in pooled threads
+            state.remove();
+        }
     }
 
     public GlyphSequence substitute(GlyphSequence glyphSequence, String script, String language,
                                     GlyphTable.UseSpec[] useSpecs, ScriptContextTester scriptContextTester) {
         glyphSequence = super.substitute(glyphSequence, script, language, useSpecs, scriptContextTester);
-        associations = glyphSequence.getAssociations();
-        chars = glyphSequence.getCharacters().array();
+        State s = state.get();
+        s.associations = glyphSequence.getAssociations();
+        s.chars = glyphSequence.getCharacters().array();
         return glyphSequence;
     }
 
@@ -84,10 +101,11 @@ public class KhmerScriptProcessor extends IndicScriptProcessor {
         private GlyphContextTester tester = new GlyphContextTester() {
             public boolean test(String script, String language, String feature, GlyphSequence glyphSequence, int index,
                                 int flags) {
-                CharAssociation charAssociation = (CharAssociation) associations.get(index);
+                State s = state.get();
+                CharAssociation charAssociation = (CharAssociation) s.associations.get(index);
                 char vowelSignU = '\u17BB';
                 for (int i = charAssociation.getStart(); i < charAssociation.getEnd(); i++) {
-                    if (chars[i] == vowelSignU) {
+                    if (s.chars[i] == vowelSignU) {
                         return false;
                     }
                 }

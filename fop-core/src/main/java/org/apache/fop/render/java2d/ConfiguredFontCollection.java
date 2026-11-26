@@ -19,6 +19,7 @@
 
 package org.apache.fop.render.java2d;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
@@ -73,15 +74,21 @@ public class ConfiguredFontCollection implements FontCollection {
                 URI fontURI = configFontInfo.getEmbedURI();
                 CustomFontMetricsMapper font;
                 URI metricsURI = configFontInfo.getMetricsURI();
+                // a local font file is given to Java directly, see CustomFontMetricsMapper.isFileBacked()
+                File fontFile = toLocalFile(fontURI);
                 // If the user specified an XML-based metrics file, we'll use it
                 // Otherwise, calculate metrics directly from the font file.
                 if (metricsURI != null) {
                     LazyFont fontMetrics = new LazyFont(configFontInfo, resourceResolver, useComplexScripts);
-                    InputStream fontSource = resourceResolver.getResource(fontURI);
-                    font = new CustomFontMetricsMapper(fontMetrics, fontSource);
+                    if (fontFile != null) {
+                        font = new CustomFontMetricsMapper(fontMetrics, fontFile);
+                    } else {
+                        InputStream fontSource = resourceResolver.getResource(fontURI);
+                        font = new CustomFontMetricsMapper(fontMetrics, fontSource);
+                    }
                 } else {
                     FontUris fontUris = configFontInfo.getFontUris();
-                    font = new CustomFontMetricsMapper(fontUris, configFontInfo, resourceResolver);
+                    font = new CustomFontMetricsMapper(fontUris, configFontInfo, resourceResolver, fontFile);
                     if (!configFontInfo.isLazyLoad()) {
                         font.getRealFont();
                     }
@@ -101,5 +108,29 @@ public class ConfiguredFontCollection implements FontCollection {
             }
         }
         return num;
+    }
+
+    /**
+     * Returns the local file of a font, resolved against the font base like any other font URI.
+     * @param fontURI the configured font URI
+     * @return the readable local file, or null if the font is not a local file (jar, http, data
+     * URI, missing file) or is read by a resolver of the application, which may serve other
+     * content for the URI than the file of that path
+     */
+    private File toLocalFile(URI fontURI) {
+        if (!resourceResolver.usesDefaultResourceResolver()) {
+            return null;
+        }
+        URI resolved = resourceResolver.resolveFromBase(fontURI);
+        if (!"file".equalsIgnoreCase(resolved.getScheme())) {
+            return null;
+        }
+        try {
+            File file = new File(resolved);
+            return file.isFile() && file.canRead() ? file : null;
+        } catch (IllegalArgumentException e) {
+            // not a plain file URI, e.g. with an authority (UNC path) or a query
+            return null;
+        }
     }
 }

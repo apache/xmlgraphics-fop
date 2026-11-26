@@ -112,14 +112,19 @@ public class SingleByteFont extends CustomFont {
             if (idx >= 0 && idx < width.length) {
                 return size * width[idx];
             }
-        } else if (this.additionalEncodings != null) {
-            int encodingIndex = (i / 256) - 1;
-            SimpleSingleByteEncoding encoding = getAdditionalEncoding(encodingIndex);
-            int codePoint = i % 256;
-            NamedCharacter nc = encoding.getCharacterForIndex(codePoint);
-            UnencodedCharacter uc
-                = this.unencodedCharacters.get(nc.getSingleUnicodeValue());
-            return size * uc.getWidth();
+        } else {
+            // the additional encodings grow while text is mapped, possibly by other threads
+            synchronized (this) {
+                if (this.additionalEncodings != null) {
+                    int encodingIndex = (i / 256) - 1;
+                    SimpleSingleByteEncoding encoding = getAdditionalEncoding(encodingIndex);
+                    int codePoint = i % 256;
+                    NamedCharacter nc = encoding.getCharacterForIndex(codePoint);
+                    UnencodedCharacter uc
+                        = this.unencodedCharacters.get(nc.getSingleUnicodeValue());
+                    return size * uc.getWidth();
+                }
+            }
         }
         return 0;
     }
@@ -138,13 +143,17 @@ public class SingleByteFont extends CustomFont {
             if (idx >= 0 && idx < boundingBoxes.length) {
                 bbox =  boundingBoxes[idx];
             }
-        } else if (this.additionalEncodings != null) {
-            int encodingIndex = (glyphIndex / 256) - 1;
-            SimpleSingleByteEncoding encoding = getAdditionalEncoding(encodingIndex);
-            int codePoint = glyphIndex % 256;
-            NamedCharacter nc = encoding.getCharacterForIndex(codePoint);
-            UnencodedCharacter uc = this.unencodedCharacters.get(nc.getSingleUnicodeValue());
-            bbox = uc.getBBox();
+        } else {
+            synchronized (this) {
+                if (this.additionalEncodings != null) {
+                    int encodingIndex = (glyphIndex / 256) - 1;
+                    SimpleSingleByteEncoding encoding = getAdditionalEncoding(encodingIndex);
+                    int codePoint = glyphIndex % 256;
+                    NamedCharacter nc = encoding.getCharacterForIndex(codePoint);
+                    UnencodedCharacter uc = this.unencodedCharacters.get(nc.getSingleUnicodeValue());
+                    bbox = uc.getBBox();
+                }
+            }
         }
         return bbox == null ? null : new Rectangle(bbox.x * size, bbox.y * size, bbox.width * size, bbox.height * size);
     }
@@ -155,7 +164,7 @@ public class SingleByteFont extends CustomFont {
      * @param c the character
      * @return the suggested alternative character present in the font
      */
-    private char findAlternative(char c) {
+    private synchronized char findAlternative(char c) {
         char d;
         if (alternativeCodes == null) {
             alternativeCodes = new java.util.HashMap<Character, Character>();
@@ -374,7 +383,7 @@ public class SingleByteFont extends CustomFont {
      * @param index the index of the additional encoding
      * @return the width array
      */
-    public int[] getAdditionalWidths(int index) {
+    public synchronized int[] getAdditionalWidths(int index) {
         SimpleSingleByteEncoding enc = getAdditionalEncoding(index);
         int[] arr = new int[enc.getLastChar() - enc.getFirstChar() + 1];
         for (int i = 0, c = arr.length; i < c; i++) {

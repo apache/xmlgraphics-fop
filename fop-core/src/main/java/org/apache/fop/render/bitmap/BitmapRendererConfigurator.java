@@ -32,6 +32,7 @@ import org.apache.fop.render.RendererConfig.RendererConfigParser;
 import org.apache.fop.render.bitmap.BitmapRendererConfig.BitmapRendererConfigParser;
 import org.apache.fop.render.intermediate.IFDocumentHandler;
 import org.apache.fop.render.java2d.Base14FontCollection;
+import org.apache.fop.render.java2d.CachedConfiguredFontCollection;
 import org.apache.fop.render.java2d.ConfiguredFontCollection;
 import org.apache.fop.render.java2d.InstalledFontCollection;
 import org.apache.fop.render.java2d.Java2DFontMetrics;
@@ -83,6 +84,24 @@ public class BitmapRendererConfigurator extends Java2DRendererConfigurator {
         if (config.getColorMode() != null) {
             settings.setBufferedImageType(config.getColorMode());
         }
+    }
+
+    @Override
+    protected FontCollection getCustomFontCollection(InternalResourceResolver resolver, final String mimeType)
+            throws FOPException {
+        BitmapRendererConfig config = (BitmapRendererConfig) getRendererConfig(mimeType);
+        if (config.getFontInfoConfig() == null || !config.getFontInfoConfig().isCacheLoadedFonts()) {
+            return super.getCustomFontCollection(resolver, mimeType);
+        }
+        // read the font list now on first use, so a bad configuration fails here with a FOPException,
+        // as without the cache
+        final List<EmbedFontInfo> fontList = config.getFontCache().isLoaded() ? null : buildFontList(mimeType);
+        return new CachedConfiguredFontCollection(config.getFontCache(), resolver,
+                new CachedConfiguredFontCollection.FontListProvider() {
+                    public List<EmbedFontInfo> getFontList() throws FOPException {
+                        return fontList != null ? fontList : buildFontList(mimeType);
+                    }
+                }, userAgent.isComplexScriptFeaturesEnabled());
     }
 
     @Override

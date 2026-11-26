@@ -20,9 +20,9 @@
 package org.apache.fop.complexscripts.scripts;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.fop.complexscripts.fonts.GlyphDefinitionTable;
 import org.apache.fop.complexscripts.fonts.GlyphPositioningTable;
@@ -57,7 +57,8 @@ public abstract class ScriptProcessor {
             throw new IllegalArgumentException("script must be non-empty string");
         } else {
             this.script = script;
-            this.assembledLookups = new HashMap<AssembledLookupsKey, GlyphTable.UseSpec[]>();
+            // concurrent: the processor belongs to a font that may be shared between threads (cache-fonts)
+            this.assembledLookups = new ConcurrentHashMap<AssembledLookupsKey, GlyphTable.UseSpec[]>();
         }
     }
 

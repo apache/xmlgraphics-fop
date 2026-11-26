@@ -130,24 +130,27 @@ public abstract class Typeface implements FontMetrics {
     protected void warnMissingGlyph(char c) {
         // Give up, character is not available
         Character ch = c;
-        if (warnedChars == null) {
-            warnedChars = new HashSet<Character>();
-        }
-        if (warnedChars.size() < 8 && !warnedChars.contains(ch)) {
-            warnedChars.add(ch);
-            if (this.eventListener != null) {
-                this.eventListener.glyphNotAvailable(this, c, getFontName());
-            } else {
-                if (warnedChars.size() == 8) {
-                    log.warn("Many requested glyphs are not available in font "
-                            + getFontName());
-                } else {
-                    log.warn("Glyph " + (int) c + " (0x"
-                            + Integer.toHexString(c) + ", "
-                            + Glyphs.charToGlyphName(c)
-                            + ") not available in font " + getFontName());
-                }
+        int warnedCount;
+        // the font may be shared between threads (cache-fonts)
+        synchronized (this) {
+            if (warnedChars == null) {
+                warnedChars = new HashSet<Character>();
             }
+            if (warnedChars.size() >= 8 || !warnedChars.add(ch)) {
+                return;
+            }
+            warnedCount = warnedChars.size();
+        }
+        if (this.eventListener != null) {
+            this.eventListener.glyphNotAvailable(this, c, getFontName());
+        } else if (warnedCount == 8) {
+            log.warn("Many requested glyphs are not available in font "
+                    + getFontName());
+        } else {
+            log.warn("Glyph " + (int) c + " (0x"
+                    + Integer.toHexString(c) + ", "
+                    + Glyphs.charToGlyphName(c)
+                    + ") not available in font " + getFontName());
         }
     }
 

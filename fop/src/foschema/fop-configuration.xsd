@@ -230,6 +230,20 @@
               <xsd:element name="font" type="fontType" maxOccurs="unbounded" minOccurs="0"/>
               <xsd:element name="referenced-fonts" type="referenceFontType" maxOccurs="unbounded" minOccurs="0"/>
             </xsd:sequence>
+            <xsd:attribute name="cache-fonts" type="xsd:boolean" use="optional" default="false">
+              <xsd:annotation>
+                <xsd:documentation>PNG and TIFF renderers: load the configured fonts once per FopFactory
+                  and share them between renderings instead of loading them for every rendering.
+                  Font files must not change on disk while the FopFactory lives. Use file: URLs for the
+                  fonts: fonts from other sources, and all fonts if the application uses its own resource
+                  resolver, are backed by a temporary copy in java.io.tmpdir (a warning is logged for
+                  such fonts). If Java cannot read a font file or its copy when it needs it, it draws the
+                  text in another font: this is detected at the next rendering, logged as an error, and
+                  the fonts are loaded again. All configured fonts are loaded when the cache is filled
+                  (lazy-load is ignored) and kept in memory: about 0.5 MB for a typical Latin font, more
+                  for large fonts.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:attribute>
           </xsd:complexType>
         </xsd:element>
         <xsd:element name="xmlHandler" minOccurs="1" maxOccurs="1">

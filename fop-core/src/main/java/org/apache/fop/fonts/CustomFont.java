@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.fop.apps.io.InternalResourceResolver;
 import org.apache.fop.fonts.truetype.SVGGlyphData;
@@ -539,6 +540,14 @@ public abstract class CustomFont extends Typeface
     }
 
     /**
+     * Prepares the font for use by several threads: private use mappings may then be appended while
+     * other threads look up characters. Must be called before the font is shared.
+     */
+    public void makeShareable() {
+        cmap = new CopyOnWriteArrayList<CMapSegment>(cmap);
+    }
+
+    /**
      * Returns the character map for this font. It maps all available Unicode characters
      * to their glyph indices inside the font.
      * @return the character map
@@ -600,7 +609,7 @@ public abstract class CustomFont extends Typeface
      * Indicates whether the encoding has additional encodings besides the primary encoding.
      * @return true if there are additional encodings.
      */
-    public boolean hasAdditionalEncodings() {
+    public synchronized boolean hasAdditionalEncodings() {
         return (this.additionalEncodings != null) && (this.additionalEncodings.size() > 0);
     }
 
@@ -608,7 +617,7 @@ public abstract class CustomFont extends Typeface
      * Returns the number of additional encodings this single-byte font maintains.
      * @return the number of additional encodings
      */
-    public int getAdditionalEncodingCount() {
+    public synchronized int getAdditionalEncodingCount() {
         if (hasAdditionalEncodings()) {
             return this.additionalEncodings.size();
         } else {
@@ -622,7 +631,7 @@ public abstract class CustomFont extends Typeface
      * @return the additional encoding
      * @throws IndexOutOfBoundsException if the index is out of bounds
      */
-    public SimpleSingleByteEncoding getAdditionalEncoding(int index)
+    public synchronized SimpleSingleByteEncoding getAdditionalEncoding(int index)
             throws IndexOutOfBoundsException {
         if (hasAdditionalEncodings()) {
             return this.additionalEncodings.get(index);
@@ -652,7 +661,7 @@ public abstract class CustomFont extends Typeface
      * Adds a character to additional encodings
      * @param ch character to map
      */
-    protected char mapUnencodedChar(char ch) {
+    protected synchronized char mapUnencodedChar(char ch) {
         if (this.unencodedCharacters != null) {
             SingleByteFont.UnencodedCharacter unencoded = this.unencodedCharacters.get(ch);
             if (unencoded != null) {

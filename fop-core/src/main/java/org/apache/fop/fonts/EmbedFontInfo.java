@@ -221,6 +221,19 @@ public class EmbedFontInfo implements Serializable {
         return lazyLoad;
     }
 
+    /**
+     * Returns a copy of this font information that requests the given embedding mode.
+     * @param mode the embedding mode of the copy
+     * @return the copy
+     */
+    public EmbedFontInfo withEmbeddingMode(EmbeddingMode mode) {
+        EmbedFontInfo copy = new EmbedFontInfo(fontUris, kerning, advanced, fontTriplets, subFontName,
+                encodingMode, mode, simulateStyle, embedAsType1, useSVG, lazyLoad);
+        copy.postScriptName = postScriptName;
+        copy.embedded = embedded;
+        return copy;
+    }
+
     private void readObject(java.io.ObjectInputStream in)
                 throws IOException, ClassNotFoundException {
         in.defaultReadObject();
