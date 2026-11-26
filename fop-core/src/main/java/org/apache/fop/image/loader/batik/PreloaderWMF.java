@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 
 import org.apache.commons.io.EndianUtils;
 import org.apache.commons.io.IOUtils;
@@ -55,7 +56,9 @@ public class PreloaderWMF extends AbstractImagePreloader {
     /** {@inheritDoc} */
     public ImageInfo preloadImage(String uri, Source src, ImageContext context)
             throws IOException {
-        if (!ImageUtil.hasInputStream(src)) {
+        // WMF is a binary format, so an XML document (DOMSource) is never one. Asking such a source for an
+        // input stream would serialize the whole document just to look for the WMF signature.
+        if (src instanceof DOMSource || !ImageUtil.hasInputStream(src)) {
             return null;
         }
         ImageInfo info = null;
