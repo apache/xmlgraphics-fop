@@ -145,6 +145,16 @@ public class CIDSubset implements CIDSet {
     }
 
     /** {@inheritDoc} */
+    public String[] getUnicodeSequences() {
+        String[] sequences = new String[usedGlyphsCount];
+        for (int i = 0; i < usedGlyphsCount; i++) {
+            String meaning = (font == null) ? null : font.getGlyphMeaning(getOriginalGlyphIndex(i));
+            sequences[i] = (meaning != null) ? meaning : new String(Character.toChars(getUnicode(i)));
+        }
+        return sequences;
+    }
+
+    /** {@inheritDoc} */
     public int getNumberOfGlyphs() {
         return this.usedGlyphsCount;
     }

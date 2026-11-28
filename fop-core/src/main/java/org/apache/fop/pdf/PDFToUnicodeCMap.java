@@ -42,10 +42,13 @@ import org.apache.fop.render.pdf.PDFEventProducer;
 public class PDFToUnicodeCMap extends PDFCMap {
 
     /**
-     * The array of Unicode characters ordered by character code
-     * (maps from character code to Unicode code point).
+     * One destination per character selector, in selector order: the UTF-16 text the glyph
+     * stands for. Usually one code point; several for a ligature or other glyph produced from
+     * more than one character; empty for a glyph whose text is carried by a neighbouring glyph;
+     * a lone high surrogate for an unpaired one, which is reported and written with a zero
+     * low surrogate.
      */
-    protected char[] unicodeCharMap;
+    protected String[] destinations;
 
     private boolean singleByte;
 
@@ -53,6 +56,29 @@ public class PDFToUnicodeCMap extends PDFCMap {
 
     /**
      * Constructor.
+     *
+     * @param destinations One destination string per character selector, in selector order
+     * @param name One of the registered names found in Table 5.14 in PDF
+     * Reference, Second Edition.
+     * @param sysInfo The attributes of the character collection of the CIDFont.
+     * @param singleByte true for single-byte, false for double-byte
+     * @param eventBroadcaster Event broadcaster. May be null.
+     */
+    public PDFToUnicodeCMap(String[] destinations, String name, PDFCIDSystemInfo sysInfo,
+                            boolean singleByte, EventBroadcaster eventBroadcaster) {
+        super(name, sysInfo);
+        if (singleByte && destinations.length > 256) {
+            throw new IllegalArgumentException("unicodeCharMap may not contain more than"
+                    + " 256 characters for single-byte encodings");
+        }
+        this.destinations = destinations;
+        this.singleByte = singleByte;
+        this.eventBroadcaster = eventBroadcaster;
+    }
+
+    /**
+     * Constructor from a positional array of UTF-16 code units, where a surrogate pair
+     * occupies two slots and stands for one character selector.
      *
      * @param unicodeCharMap An array of Unicode characters ordered by character code
      *                          (maps from character code to Unicode code point)
@@ -64,14 +90,35 @@ public class PDFToUnicodeCMap extends PDFCMap {
      */
     public PDFToUnicodeCMap(char[] unicodeCharMap, String name, PDFCIDSystemInfo sysInfo,
                             boolean singleByte, EventBroadcaster eventBroadcaster) {
-        super(name, sysInfo);
-        if (singleByte && unicodeCharMap.length > 256) {
-            throw new IllegalArgumentException("unicodeCharMap may not contain more than"
-                    + " 256 characters for single-byte encodings");
+        this(toDestinations(unicodeCharMap), name, sysInfo, singleByte, eventBroadcaster);
+    }
+
+    /**
+     * Turns a positional array of UTF-16 code units into one destination per character
+     * selector: a high surrogate takes the unit after it as its low surrogate, and a high
+     * surrogate at the end of the array stands alone.
+     * @param unicodeCharMap the positional array
+     * @return one destination per selector
+     */
+    public static String[] toDestinations(char[] unicodeCharMap) {
+        int count = 0;
+        for (int i = 0; i < unicodeCharMap.length; i++) {
+            if (isHighSurrogate(unicodeCharMap[i]) && i + 1 < unicodeCharMap.length) {
+                i++;
+            }
+            count++;
         }
-        this.unicodeCharMap = unicodeCharMap;
-        this.singleByte = singleByte;
-        this.eventBroadcaster = eventBroadcaster;
+        String[] destinations = new String[count];
+        int d = 0;
+        for (int i = 0; i < unicodeCharMap.length; i++) {
+            if (isHighSurrogate(unicodeCharMap[i]) && i + 1 < unicodeCharMap.length) {
+                destinations[d++] = new String(unicodeCharMap, i, 2);
+                i++;
+            } else {
+                destinations[d++] = String.valueOf(unicodeCharMap[i]);
+            }
+        }
+        return destinations;
     }
 
     /** {@inheritDoc} */
@@ -103,104 +150,64 @@ public class PDFToUnicodeCMap extends PDFCMap {
          * Writes the character mappings for this font.
          */
         protected void writeBFEntries() throws IOException {
-            if (unicodeCharMap != null) {
-                writeBFCharEntries(unicodeCharMap);
-                writeBFRangeEntries(unicodeCharMap);
+            if (destinations != null) {
+                writeBFCharEntries();
+                writeBFRangeEntries();
             }
         }
 
         /**
-         * Writes the entries for single characters of a base font (only characters which cannot be
-         * expressed as part of a character range).
-         * @param charArray all the characters to map
-         * @throws IOException
+         * Writes the entries for single selectors (those which cannot be expressed as part of
+         * a range), in sections of at most 100.
+         * @throws IOException if an I/O error occurs
          */
-        protected void writeBFCharEntries(char[] charArray) throws IOException {
+        protected void writeBFCharEntries() throws IOException {
             int totalEntries = 0;
-            int charIndex = 0;
-            if (charArray.length > 0) {
-                do {
-                    if (!partOfRange(charArray, charIndex)) {
-                        totalEntries++;
-                    }
-                    if (isHighSurrogate(charArray[charIndex])) {
-                        charIndex++;
-                    }
-                } while (++charIndex < charArray.length);
+            for (int i = 0; i < destinations.length; i++) {
+                if (!partOfRange(i)) {
+                    totalEntries++;
+                }
             }
             if (totalEntries < 1) {
                 return;
             }
             int remainingEntries = totalEntries;
-            charIndex = 0;
+            int index = 0;
             do {
                 /* Limited to 100 entries in each section */
                 int entriesThisSection = Math.min(remainingEntries, 100);
                 writer.write(entriesThisSection + " beginbfchar\n");
                 int sectionEntryCount = 0;
                 do {
-                    /* Go to the next char not in a range */
-                    while (partOfRange(charArray, charIndex)) {
-                        if (isHighSurrogate(charArray[charIndex])) {
-                            charIndex++;
-                        }
-                        charIndex++;
+                    /* Go to the next selector not in a range */
+                    while (partOfRange(index)) {
+                        index++;
                     }
-
-                    writer.write("<" + padCharIndex(charIndex) + "> ");
-
-                    if (isHighSurrogate(charArray[charIndex])) {
-                        char secondChar = 0;  // Invalid low surrogate (valid: 0xDC00 - 0xDFFF)
-                        if (charIndex  + 1 < charArray.length) {
-                            secondChar = charArray[charIndex + 1];
-                        } else {
-                            if (eventBroadcaster != null) {
-                                PDFEventProducer pdfEventProducer = PDFEventProducer.Provider.get(eventBroadcaster);
-                                pdfEventProducer.unpairedSurrogate(this);
-                            }
-                        }
-                        writer.write("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4)
-                                + padHexString(Integer.toHexString(secondChar), 4) + ">\n");
-                        charIndex++;
-                    } else {
-                        writer.write("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4)
-                                + ">\n");
-                    }
-                    charIndex++;
+                    writer.write("<" + padSelector(index) + "> ");
+                    writer.write("<" + destinationHex(index) + ">\n");
+                    index++;
                 } while (++sectionEntryCount < entriesThisSection);
-
                 remainingEntries -= entriesThisSection;
                 writer.write("endbfchar\n");
             } while (remainingEntries > 0);
         }
 
-        private String padCharIndex(int charIndex) {
-            return padHexString(Integer.toHexString(charIndex), (singleByte ? 2 : 4));
-        }
-
         /**
-         * Writes the entries for character ranges for a base font.
-         * @param charArray all the characters to map
-         * @throws IOException
+         * Writes the entries for selector ranges, in sections of at most 100.
+         * @throws IOException if an I/O error occurs
          */
-        protected void writeBFRangeEntries(char[] charArray) throws IOException {
+        protected void writeBFRangeEntries() throws IOException {
             int totalEntries = 0;
-            int charIndex = 0;
-            if (charArray.length > 0) {
-                do {
-                    if (startOfRange(charArray, charIndex)) {
-                        totalEntries++;
-                    }
-                    if (isHighSurrogate(charArray[charIndex])) {
-                        charIndex++;
-                    }
-                } while (++charIndex < charArray.length);
+            for (int i = 0; i < destinations.length; i++) {
+                if (startOfRange(i)) {
+                    totalEntries++;
+                }
             }
             if (totalEntries < 1) {
                 return;
             }
             int remainingEntries = totalEntries;
-            charIndex = 0;
+            int index = 0;
             do {
                 /* Limited to 100 entries in each section */
                 int entriesThisSection = Math.min(remainingEntries, 100);
@@ -208,182 +215,106 @@ public class PDFToUnicodeCMap extends PDFCMap {
                 int sectionEntryCount = 0;
                 do {
                     /* Go to the next start of a range */
-                    while (!startOfRange(charArray, charIndex)) {
-                        if (isHighSurrogate(charArray[charIndex])) {
-                            charIndex++;
-                        }
-                        charIndex++;
+                    while (!startOfRange(index)) {
+                        index++;
                     }
-                    writer.write("<" + padCharIndex(charIndex) + "> ");
-                    writer.write("<"
-                            + padCharIndex(endOfRange(charArray, charIndex))
-                            + "> ");
-                    if (isHighSurrogate(charArray[charIndex])) {
-                        char secondChar = 0;
-                        if (charIndex + 1 < charArray.length) {
-                            secondChar = charArray[charIndex + 1];
-                        } else {
-                            if (eventBroadcaster != null) {
-                                PDFEventProducer pdfEventProducer = PDFEventProducer.Provider.get(eventBroadcaster);
-                                pdfEventProducer.unpairedSurrogate(this);
-                            }
-                        }
-                        writer.write("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4)
-                                + padHexString(Integer.toHexString(secondChar), 4)
-                                + ">\n");
-                    } else {
-                        writer.write("<" + padHexString(Integer.toHexString(charArray[charIndex]), 4)
-                                + ">\n");
-                    }
-                    charIndex++;
+                    writer.write("<" + padSelector(index) + "> ");
+                    writer.write("<" + padSelector(endOfRange(index)) + "> ");
+                    writer.write("<" + destinationHex(index) + ">\n");
+                    index++;
                 } while (++sectionEntryCount < entriesThisSection);
                 remainingEntries -= entriesThisSection;
                 writer.write("endbfrange\n");
             } while (remainingEntries > 0);
         }
 
+        private String padSelector(int index) {
+            return padHexString(Integer.toHexString(index), (singleByte ? 2 : 4));
+        }
+
         /**
-         * Find the end of the current range.
-         * @param charArray The array which is being tested.
-         * @param startOfRange The index to the array element that is the start of
-         * the range.
-         * @return The index to the element that is the end of the range.
+         * The destination of a selector as UTF-16BE hex, four lower-case digits per code unit.
+         * A lone high surrogate is reported and written with a zero low surrogate, as before.
          */
-        private int endOfRange(char[] charArray, int startOfRange) {
-            int i = startOfRange;
-            if (isHighSurrogate(charArray[i])) {
-                while (i < charArray.length - 3 && sameRangeEntryAsNext(charArray, i)) {
-                    i += 2;
+        private String destinationHex(int index) {
+            String d = destinations[index];
+            StringBuilder hex = new StringBuilder(4 * Math.max(1, d.length()));
+            for (int i = 0; i < d.length(); i++) {
+                hex.append(padHexString(Integer.toHexString(d.charAt(i)), 4));
+            }
+            if (d.length() == 1 && isHighSurrogate(d.charAt(0))) {
+                if (eventBroadcaster != null) {
+                    PDFEventProducer pdfEventProducer = PDFEventProducer.Provider.get(eventBroadcaster);
+                    pdfEventProducer.unpairedSurrogate(this);
                 }
+                hex.append("0000");
+            }
+            return hex.toString();
+        }
+
+        /**
+         * The value a destination contributes to a range, or -1 if it can be in no range. Only
+         * a destination of exactly one code point can: a single non-surrogate code unit, or a
+         * high surrogate followed by one more unit. Two destinations are consecutive when their
+         * keys differ by one, which for a pair means the same high surrogate and the next low.
+         */
+        private long rangeKey(int index) {
+            String d = destinations[index];
+            if (d.length() == 1 && !Character.isSurrogate(d.charAt(0))) {
+                return d.charAt(0);
+            } else if (d.length() == 2 && isHighSurrogate(d.charAt(0))) {
+                return ((long) d.charAt(0) << 16) | d.charAt(1);
             } else {
-                while (i < charArray.length - 1 && sameRangeEntryAsNext(charArray, i)) {
-                    i++;
-                }
+                return -1;
+            }
+        }
+
+        /**
+         * Determine whether two consecutive selectors can be in the same bfrange entry: both
+         * destinations are one code point, the second is the next code point, and the two
+         * selectors are in the same block of 256, since only the low byte may vary in a range.
+         * @param index the first of the two selectors
+         * @return true if both are in the same range
+         */
+        private boolean sameRangeEntryAsNext(int index) {
+            if (index < 0 || index >= destinations.length - 1) {
+                return false;
+            }
+            long key = rangeKey(index);
+            return key >= 0 && rangeKey(index + 1) == key + 1
+                    && index / 256 == (index + 1) / 256;
+        }
+
+        /**
+         * Determine whether this selector should be part of a bfrange entry rather than a
+         * bfchar entry.
+         * @param index the selector
+         * @return true if it is in a range
+         */
+        private boolean partOfRange(int index) {
+            return sameRangeEntryAsNext(index - 1) || sameRangeEntryAsNext(index);
+        }
+
+        /**
+         * Determine whether this selector starts a bfrange entry.
+         * @param index the selector
+         * @return true if it is the first of a range
+         */
+        private boolean startOfRange(int index) {
+            return sameRangeEntryAsNext(index) && !sameRangeEntryAsNext(index - 1);
+        }
+
+        /**
+         * Find the end of the range that starts at a selector.
+         * @param startOfRange the selector that starts the range
+         * @return the last selector of the range
+         */
+        private int endOfRange(int startOfRange) {
+            int i = startOfRange;
+            while (sameRangeEntryAsNext(i)) {
+                i++;
             }
             return i;
-        }
-
-        /**
-         * Determine whether this array element should be part of a bfchar entry or
-         * a bfrange entry.
-         * @param charArray The array to be tested.
-         * @param arrayIndex The index to the array element to be tested.
-         * @return True if this array element should be included in a range.
-         */
-        private boolean partOfRange(char[] charArray, int arrayIndex) {
-            int minBytesInRange = 2;
-            if (isHighSurrogate(charArray[arrayIndex])) {
-                minBytesInRange = 4;
-            }
-            if (charArray.length < minBytesInRange) {
-                return false;
-            }
-            if (arrayIndex == 0) {
-                return sameRangeEntryAsNext(charArray, 0);
-            }
-            if (isHighSurrogate(charArray[arrayIndex])) {
-                if (arrayIndex == charArray.length - 2) {
-                    return sameRangeEntryAsNext(charArray, arrayIndex - 2);
-                }
-            }
-            if (arrayIndex == charArray.length - 1) {
-                return sameRangeEntryAsNext(charArray, arrayIndex - 1);
-            }
-            if (isHighSurrogate(charArray[arrayIndex])) {
-                if (sameRangeEntryAsNext(charArray, arrayIndex - 2)) {
-                    return true;
-                }
-            }
-            if (sameRangeEntryAsNext(charArray, arrayIndex - 1)) {
-                return true;
-            }
-            if (sameRangeEntryAsNext(charArray, arrayIndex)) {
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * Determine whether two code points can be included in the same bfrange entry.
-         * Range sizes are limited to a maximum of 256 (128 for surrogate pairs).
-         * @param charArray The array holding the code points to be tested.
-         * @param firstItem The first char of the first code point in the array to be tested.
-         * The first byte of the second code point is firstItem + n, where n is the number
-         * of chars in the firstItem code point.
-         * @return True if both:
-         * 1) the next code point in the array is sequential with this one, and
-         * 2) this code point and the next are both NOT surrogate pairs
-         *    or
-         *    this code point and the next are both surrogate pairs and
-         *    the high-surrogates are the same, and
-         * 3) the resulting range cannot be greater than 256 in size.
-         */
-        private boolean sameRangeEntryAsNext(char[] charArray, int firstItem) {
-            boolean retval = false;
-            do {
-                if (firstItem < 0 || firstItem >= charArray.length - 1) {
-                    break;
-                }
-                if (isHighSurrogate(charArray[firstItem])) {
-                    if (firstItem < charArray.length - 3) {
-                        if (charArray[firstItem + 2] == charArray[firstItem]) {
-                            if (charArray[firstItem + 3] == charArray[firstItem + 1] + 1) {
-                                if (firstItem / 256 == (firstItem + 2) / 256) {
-                                    retval = true;
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    if (charArray[firstItem] + 1 == charArray[firstItem + 1]) {
-                        if (firstItem / 256 == (firstItem + 1) / 256) {
-                            retval = true;
-                        }
-                    }
-                }
-            } while (false);
-            return retval;
-        }
-
-        /**
-         * Determine whether this array element should be the start of a bfrange
-         * entry.
-         * @param charArray The array to be tested.
-         * @param arrayIndex The index to the array element to be tested.
-         * @return True if this array element is the beginning of a range.
-         */
-        private boolean startOfRange(char[] charArray, int arrayIndex) {
-            // Can't be the start of a range if not part of a range.
-            if (!partOfRange(charArray, arrayIndex)) {
-                return false;
-            }
-            // If part of a range and first element in the array, must be start of a range
-            if (arrayIndex == 0) {
-                return true;
-            }
-            // If last element in the array, cannot be start of a range
-            if (isHighSurrogate(charArray[arrayIndex])) {
-                if (arrayIndex == charArray.length - 2) {
-                    return false;
-                }
-            }
-            if (arrayIndex == charArray.length - 1) {
-                return false;
-            }
-            /*
-             * If part of same range as the previous element is, cannot be start
-             * of range.
-             */
-            if (isHighSurrogate(charArray[arrayIndex])) {
-                if (sameRangeEntryAsNext(charArray, arrayIndex - 2)) {
-                    return false;
-                }
-            }
-            if (sameRangeEntryAsNext(charArray, arrayIndex - 1)) {
-                return false;
-            }
-            // Otherwise, this is start of a range.
-            return true;
         }
 
         /**
